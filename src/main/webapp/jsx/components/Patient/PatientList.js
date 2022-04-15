@@ -232,7 +232,7 @@ const Patients = (props) => {
        <Card>
          <CardBody>
 
-         <Link to={"register-patient"} >
+         {/* <Link to={"register-patient"} >
             <Button
                 variant="contained"
                 color="primary"
@@ -243,7 +243,7 @@ const Patients = (props) => {
                 <span style={{ textTransform: "capitalize" }}>New Patient</span>
             </Button>
             </Link>        
-        <br/><br/>
+        <br/><br/> */}
        
             <MaterialTable
             icons={tableIcons}
