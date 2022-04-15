@@ -4,38 +4,43 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import RegisterPatient from './main/webapp/components/RegisterPatient'
-import Dashboard from './main/webapp/components/Dashboard'
+
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import "./main/webapp/vendor/bootstrap-select/dist/css/bootstrap-select.min.css";
+import "./../src/main/webapp/css/style.css";
+
+import Home from './main/webapp/jsx/components/Home'
+
+
 
 export default function App() {
   return (
-    <Router>
+
       <div>
       <ToastContainer />
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
          
-          <Route path="/register-patient">
-            <RegisterPatientPage />
+{/*           
+          <Route path="/patient-dashboard">
+            <PatientDetail />
           </Route>
+          <Route path="/edit-patient">
+            <EditPatient />
+          </Route> */}
           <Route path="/">
-            <Dashboard />
+            <Home />
           </Route>
+        
           
         </Switch>
       </div>
-    </Router>
+ 
   );
 }
 
-function PatientDashboard() {
-  return <Dashboard />;
-}
-function RegisterPatientPage() {
-  return <RegisterPatient />;
-}
+
 
 
