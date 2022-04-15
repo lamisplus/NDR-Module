@@ -41,7 +41,8 @@ import moment from "moment";
 import Enrollment from './../Enrollment/EnrollmentForm'
 import ArtCommencement from './../ArtCommencement/ArtCommencement'
 import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling'
-import DifferentiatedCare from './../DifferentiatedCare/DifferentiatedCare'
+import DifferentiatedCare from './../DifferentiatedCare/DifferentiatedCare';
+import StatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -124,6 +125,8 @@ const Patients = (props) => {
     const Anctoggle = () => setAncModal(!ancModal);
     const [careModal, setCareModal] = useState(false);
     const Caretoggle = () => setCareModal(!careModal);
+    const [clientStatusUpdateModal, setClientStatusUpdateModal] = useState(false);
+    const ClientStatusUpdatetoggle = () => setClientStatusUpdateModal(!clientStatusUpdateModal);
     // const [deleteModal, setDeleteModal] = useState(false);
     // const Deletetoggle = () => setDeleteModal(!deleteModal);
 
@@ -174,6 +177,10 @@ const Patients = (props) => {
     const loadCare =(row)=> {
         setpatientObj({...patientObj, ...row});
             setCareModal(!careModal)
+    }
+    const loadStatusUpdate =(row)=> {
+        setpatientObj({...patientObj, ...row});
+        setClientStatusUpdateModal(!clientStatusUpdateModal)
     }
     // const DeletePatientModal =(row)=> {
     //     setpatientObj({...patientObj, ...row});
@@ -324,7 +331,7 @@ const Patients = (props) => {
                                         <span style={{color: '#000'}}>Differentiated Care</span>
                                                                    
                                   </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadEnrollment(row)}>
+                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadStatusUpdate(row)}>
                                      
                                         <FaTrash size="15"  />{" "}
                                         <span style={{color: '#000'}}>Client Status Update</span>
@@ -361,6 +368,7 @@ const Patients = (props) => {
       <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} loadPatients={patients}/>
       <EnhancedAdherenceCounseling  toggle={Anctoggle} showModal={ancModal} patientObj={patientObj} loadPatients={patients}/> 
       <DifferentiatedCare toggle={Caretoggle} showModal={careModal} patientObj={patientObj} loadPatients={patients}/>
+      <StatusUpdate toggle={ClientStatusUpdatetoggle} showModal={clientStatusUpdateModal} patientObj={patientObj} loadPatients={patients}/>
     </div>
   );
 }
