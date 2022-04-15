@@ -1,0 +1,15 @@
+basePackage: org.lamisplus.modules.hiv
+name: HivModule
+store: true
+menus:
+  - icon: wc
+    disabled: false
+    name: hiv
+    state: hiv
+    url: /across/resources/static/hiv/index.html
+umdLocation: /across/resources/static/hiv/index.html
+webModules:
+  - breadcrumb: HIV
+    name: HivModule
+    path: hiv
+    position: 99
