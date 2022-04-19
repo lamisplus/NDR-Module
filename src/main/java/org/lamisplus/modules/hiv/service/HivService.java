@@ -2,11 +2,13 @@ package org.lamisplus.modules.hiv.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDTO;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repository.HivEnrollmentRepository;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -17,14 +19,15 @@ public class HivService {
 
 
     @Transactional
-    public HivEnrollment createHivEnrollment(HivEnrollment hivEnrollment) {
+    public HivEnrollmentDTO createHivEnrollment(HivEnrollment hivEnrollment) {
+        hivEnrollment.setUuid(UUID.randomUUID().toString());
         return hivEnrollmentRepository.save(hivEnrollment);
 
     }
 
     @Transactional
-    public HivEnrollment updateHivEnrollment(Long id, HivEnrollment hivEnrollment) {
-        HivEnrollment hivEnrollment1 = hivEnrollmentRepository.findById(id).orElseThrow(()-> new RuntimeException("mme"));
+    public HivEnrollmentDTO updateHivEnrollment(Long id, HivEnrollment hivEnrollment) {
+        hivEnrollmentRepository.findById(id).orElseThrow(()-> new RuntimeException("mme"));
 
         return hivEnrollmentRepository.save(hivEnrollment);
     }
@@ -34,7 +37,7 @@ public class HivService {
 
     }
 
-    public HivEnrollment getHivEnrollmentById(Long id) {
+    public HivEnrollmentDTO getHivEnrollmentById(Long id) {
         return hivEnrollmentRepository.findById(id).orElseThrow(()-> new RuntimeException("mme"));
 
     }

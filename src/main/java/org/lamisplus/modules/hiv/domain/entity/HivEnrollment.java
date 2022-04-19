@@ -74,13 +74,17 @@ public class HivEnrollment{
     @NonNull
     @Column(name = "person_id")
     private Long personId;
-    @Type(type = "jsonb-node")
-    @Column(columnDefinition = "jsonb")
+
+    @Type(type = "jsonb")
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "extra",
+            nullable = false,
+            columnDefinition = "jsonb")
     private JsonNode extra;
     private String uuid;
     @Basic
     @Column(name = "archived")
-    private Integer archived;
+    private int archived;
     @Basic
     @Column(name = "date_created", nullable = true)
     private LocalDateTime dateCreated = LocalDateTime.now ();
