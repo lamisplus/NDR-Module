@@ -44,7 +44,7 @@ server:
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
   http2:
     enabled: true
-  port: 8088
+  port: 8089
 
   tomcat:
     uri-encoding: UTF-8
@@ -98,7 +98,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/lamisplus
-    password: amos33
+    password: emeka
     username: postgres
 
   jpa:

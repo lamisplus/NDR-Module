@@ -2,8 +2,7 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.hiv.domain.views.HivEnrollmentCreatView;
-import org.lamisplus.modules.hiv.domain.views.HivEnrollmentUpdateView;
+import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.service.HivService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ public class HivController {
     @RequestMapping(value = "",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollmentCreatView> createHivEnrollment(@RequestBody HivEnrollmentCreatView hiv) {
+    public ResponseEntity<HivEnrollment> createHivEnrollment(@RequestBody HivEnrollment hiv) {
         return ResponseEntity.ok (hivService.createHivEnrollment (hiv));
     }
 
@@ -30,23 +29,23 @@ public class HivController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
 
-    public ResponseEntity<List<HivEnrollmentUpdateView>> getAllHivEnrollments() {
-        return ResponseEntity.ok (hivService.getAll ());
+    public ResponseEntity<List<HivEnrollment>> getAllHivEnrollments() {
+        return ResponseEntity.ok (hivService.getAll());
     }
 
     @RequestMapping(value = "/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollmentUpdateView> getHivEnrollmentById(@PathVariable("id") Long id) {
+    public ResponseEntity<HivEnrollment> getHivEnrollmentById(@PathVariable("id") Long id) {
         return ResponseEntity.ok (hivService.getHivEnrollmentById (id));
     }
 
     @RequestMapping(value = "/{id}",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollmentUpdateView> updateHivEnrollmentById(
+    public ResponseEntity<HivEnrollment> updateHivEnrollmentById(
             @PathVariable("id") Long id,
-            @RequestBody HivEnrollmentUpdateView hivEnrollmentUpdateView) {
+            @RequestBody HivEnrollment hivEnrollmentUpdateView) {
         return ResponseEntity.ok (hivService.updateHivEnrollment (id, hivEnrollmentUpdateView));
     }
 
@@ -57,5 +56,4 @@ public class HivController {
         hivService.deleteHivEnrollment (id);
         return ResponseEntity.accepted ().build ();
     }
-
 }

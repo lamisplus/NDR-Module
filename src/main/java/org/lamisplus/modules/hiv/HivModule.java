@@ -38,7 +38,7 @@ public class HivModule extends AcrossModule
                 getClass().getPackage().getName() +".domain.mapper",
                 getClass().getPackage().getName() +".utility",
                 getClass().getPackage().getName() +".component",
-                getClass().getPackage().getName() +".repo"));
+                getClass().getPackage().getName() +".repository"));
     }
     @Override
     public String getName() {
