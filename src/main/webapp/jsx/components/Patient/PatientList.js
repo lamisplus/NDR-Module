@@ -110,7 +110,9 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-let patientListObj=[{"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":1,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},{"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":1,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
+let patientListObj=[
+    {"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":1,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},
+    {"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":1,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
 
 
 const Patients = (props) => {
@@ -255,11 +257,11 @@ const Patients = (props) => {
                   field: "name",
                 },
                 { title: "Hospital Number", field: "hospital_number", filtering: false },
-                { title: "DOB", field: "dob", filtering: false },
+                { title: "Gender", field: "gender", filtering: false },
                 { title: "Age", field: "age", filtering: false },
                 { title: "Enrollment Status", field: "v_status", filtering: false },
                 { title: "ART Number", field: "v_status", filtering: false },
-                { title: "Status", field: "status", filtering: false },        
+                // { title: "Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
               data={ patientListObj.map((row) => ({
@@ -268,7 +270,7 @@ const Patients = (props) => {
                     hospital_number: row.participant_id,
                     address: row.address,
                     phone_number:  row.phone,
-                    dob:row.dob,
+                    gender:row.gender===1? "Male" : "Female",
                     age: (row.dob === 0 ||
                         row.dob === undefined ||
                         row.dob === null ||
@@ -276,8 +278,8 @@ const Patients = (props) => {
                           ? 0
                           : calculate_age(moment(row.dob).format("DD-MM-YYYY")),
                     v_status:  VaccinationStatus(row),
-                    status: CurrentStatus(row.current_status) 
-                            ,
+                    // status: CurrentStatus(row.current_status)
+                    //         ,
                     actions:
             
                     <div>
@@ -315,25 +317,25 @@ const Patients = (props) => {
                                   </MenuItem>
                                   <MenuItem style={{ color:"#000 !important"}} onClick={() => loadEnrollment(row)}>
                                      
-                                        <FaTrash size="15"  />{" "}
+                                        <FaSyringe size="15"  />{" "}
                                         <span style={{color: '#000'}}>Clinic Follow Up Visit</span>
                                                                    
                                   </MenuItem>
                                   <MenuItem style={{ color:"#000 !important"}} onClick={() => loadAnc(row)}>
                                      
-                                        <FaTrash size="15"  />{" "}
+                                        <FaSyringe size="15"  />{" "}
                                         <span style={{color: '#000'}}>Enhanced Adhrence Counselling</span>
                                                                    
                                   </MenuItem>
                                   <MenuItem style={{ color:"#000 !important"}} onClick={() => loadCare(row)}>
                                      
-                                        <FaTrash size="15"  />{" "}
+                                        <FaSyringe size="15"  />{" "}
                                         <span style={{color: '#000'}}>Differentiated Care</span>
                                                                    
                                   </MenuItem>
                                   <MenuItem style={{ color:"#000 !important"}} onClick={() => loadStatusUpdate(row)}>
                                      
-                                        <FaTrash size="15"  />{" "}
+                                        <FaSyringe size="15"  />{" "}
                                         <span style={{color: '#000'}}>Client Status Update</span>
                                                                    
                                   </MenuItem>
