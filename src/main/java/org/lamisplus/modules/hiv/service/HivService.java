@@ -21,6 +21,7 @@ public class HivService {
     @Transactional
     public HivEnrollmentDTO createHivEnrollment(HivEnrollment hivEnrollment) {
         hivEnrollment.setUuid(UUID.randomUUID().toString());
+        hivEnrollment.setId(null);
         return hivEnrollmentRepository.save(hivEnrollment);
 
     }
