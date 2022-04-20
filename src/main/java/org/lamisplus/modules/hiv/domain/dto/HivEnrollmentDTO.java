@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Data
@@ -21,11 +20,11 @@ public class HivEnrollmentDTO {
 
     private LocalDate dateConfirmedHiv;
 
-    private LocalDate dateEnrolledPMTCT;
+    //private LocalDate dateEnrolledPMTCT;
 
     private String sourceOfReferrer;
 
-    private LocalDateTime timeHivDiagnosis;
+    //private LocalDateTime timeHivDiagnosis;
 
     private Long tbStatusId;
 
@@ -39,7 +38,7 @@ public class HivEnrollmentDTO {
 
     private Long enrollmentSettingId;
 
-    private LocalDate dateStarted;
+   // private LocalDate dateStarted;
 
     private Boolean sendMessage;
 
@@ -53,7 +52,7 @@ public class HivEnrollmentDTO {
 
     private String ovcNumber;
 
-    private LocalDate dateOfLpm;
+    //private LocalDate dateOfLpm;
 
     private Long pregnancyStatusId;
 }

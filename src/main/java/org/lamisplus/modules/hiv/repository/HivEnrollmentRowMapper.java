@@ -15,9 +15,9 @@ public class HivEnrollmentRowMapper implements RowMapper<HivEnrollmentDTO> {
         hivEnrollmentDTO.setArchived (rs.getInt ("archived"));
         hivEnrollmentDTO.setBreastfeeding (rs.getBoolean ("breastfeeding"));
         hivEnrollmentDTO.setDateConfirmedHiv (rs.getDate ("date_confirmed_hiv").toLocalDate ());
-        hivEnrollmentDTO.setDateEnrolledPMTCT (rs.getDate ("date_enrolled_pmtct").toLocalDate ());
+       // hivEnrollmentDTO.setDateEnrolledPMTCT (rs.getDate ("date_enrolled_pmtct").toLocalDate ());
         hivEnrollmentDTO.setDateOfRegistration (rs.getDate ("date_of_registration").toLocalDate ());
-        hivEnrollmentDTO.setDateStarted (rs.getDate ("date_started").toLocalDate ());
+       // hivEnrollmentDTO.setDateStarted (rs.getDate ("date_started").toLocalDate ());
         hivEnrollmentDTO.setEnrollmentSettingId (rs.getLong ("enrollment_setting_id"));
         hivEnrollmentDTO.setEntryPointId (rs.getLong ("entry_point_id"));
         hivEnrollmentDTO.setPersonId (rs.getLong ("person_id"));
@@ -31,7 +31,7 @@ public class HivEnrollmentRowMapper implements RowMapper<HivEnrollmentDTO> {
         hivEnrollmentDTO.setUuid (rs.getString ("uuid"));
         hivEnrollmentDTO.setOvcNumber (rs.getString ("ovc_number"));
         hivEnrollmentDTO.setPregnancyStatusId (rs.getLong ("pregnancy_status_id"));
-        hivEnrollmentDTO.setDateOfLpm (rs.getDate ("date_of_lpm").toLocalDate ());
+        //hivEnrollmentDTO.setDateOfLpm (rs.getDate ("date_of_lpm").toLocalDate ());
         hivEnrollmentDTO.setFacilityName (rs.getString ("facility_name"));
         return hivEnrollmentDTO;
     }
