@@ -28,7 +28,6 @@
             date_started              date,
             enrollment_setting_id     bigint,
             entry_point_id            bigint,
-            extra                     jsonb,
             modified_by               character varying(255) COLLATE pg_catalog."default",
             person_id                 bigint,
             pregnant                  boolean,

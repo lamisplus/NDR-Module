@@ -3,6 +3,7 @@ package org.lamisplus.modules.hiv.domain.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -44,7 +45,7 @@ public class HivEnrollmentDTO {
 
     private Long personId;
 
-    private Object extra;
+    //private Object  extra;
     private String uuid;
 
     private int archived;

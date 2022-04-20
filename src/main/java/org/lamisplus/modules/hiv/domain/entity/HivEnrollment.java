@@ -1,7 +1,6 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.lamisplus.modules.hiv.utility.SecurityUtils;
@@ -75,12 +73,12 @@ public class HivEnrollment{
     @Column(name = "person_id")
     private Long personId;
 
-    @Type(type = "jsonb")
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "extra",
-            nullable = false,
-            columnDefinition = "jsonb")
-    private JsonNode extra;
+//    @Type(type = "jsonb")
+//    @Basic(fetch = FetchType.LAZY)
+//    @Column(name = "extra",
+//            nullable = false,
+//            columnDefinition = "jsonb")
+//    private JsonNode extra;
     private String uuid;
     @Basic
     @Column(name = "archived")
