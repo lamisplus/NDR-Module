@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
         @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
 })
 @AllArgsConstructor
-public class HivEnrollment{
+public class HivEnrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -73,16 +73,22 @@ public class HivEnrollment{
     @Column(name = "person_id")
     private Long personId;
 
-//    @Type(type = "jsonb")
-//    @Basic(fetch = FetchType.LAZY)
-//    @Column(name = "extra",
-//            nullable = false,
-//            columnDefinition = "jsonb")
-//    private JsonNode extra;
     private String uuid;
     @Basic
     @Column(name = "archived")
     private int archived;
+    @Basic
+    @Column(name = "facility_name")
+    private String facilityName;
+    @Basic
+    @Column(name = "ovc_number")
+    private String ovcNumber;
+    @Basic
+    @Column(name = "date_of_lpm")
+    private LocalDate dateOfLpm;
+    @Basic
+    @Column(name = "pregnancy_status_id")
+    private Long pregnancyStatusId;
     @Basic
     @Column(name = "date_created", nullable = true)
     private LocalDateTime dateCreated = LocalDateTime.now ();
