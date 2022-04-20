@@ -14,12 +14,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class HivEnrollmentRepository {
     private final JdbcTemplate jdbcTemplate;
+
     public List<HivEnrollment> findAll() {
         String selectAllQuery = "SELECT * FROM hiv_enrollment";
         return jdbcTemplate.query (
                 selectAllQuery,
                 new BeanPropertyRowMapper<HivEnrollment> (HivEnrollment.class));
     }
+
     public int deleteById(Long id) {
         return jdbcTemplate.update ("DELETE FROM hiv_enrollment WHERE id=?", id);
     }
@@ -34,8 +36,8 @@ public class HivEnrollmentRepository {
                     " modified_by, person_id, " +
                     "pregnant, send_message, source_of_referrer, " +
                     "status_at_registration_id, target_group_id, tb_status_id, " +
-                    "time_hiv_diagnosis, unique_id, uuid)" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "time_hiv_diagnosis, unique_id, uuid, facility_name, pregnancy_status_id, ovc_number, date_of_lpm)" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
             jdbcTemplate.update (insertQuery,
                                  hivEnrollment.getArchived (),
                                  hivEnrollment.getBreastfeeding (),
@@ -67,7 +69,8 @@ public class HivEnrollmentRepository {
                     "modified_by=?, person_id=?, " +
                     "pregnant=?, send_message=?, source_of_referrer=?, " +
                     "status_at_registration_id=?, target_group_id=?, tb_status_id=?, " +
-                    "time_hiv_diagnosis=?, unique_id=? " +
+                    "time_hiv_diagnosis=?, unique_id=?, facility_name =?, pregnancy_status_id = ?, ovc_number = ?," +
+                    "date_of_lpm = ? " +
                     " WHERE id=?";
             jdbcTemplate.update (updateQuery,
                                  hivEnrollment.getArchived (),

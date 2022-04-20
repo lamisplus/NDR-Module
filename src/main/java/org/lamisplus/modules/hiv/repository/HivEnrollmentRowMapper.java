@@ -29,7 +29,10 @@ public class HivEnrollmentRowMapper implements RowMapper<HivEnrollmentDTO> {
         hivEnrollmentDTO.setTbStatusId (rs.getLong ("tb_status_id"));
         hivEnrollmentDTO.setUniqueId (rs.getString ("unique_id"));
         hivEnrollmentDTO.setUuid (rs.getString ("uuid"));
-
+        hivEnrollmentDTO.setOvcNumber (rs.getString ("ovc_number"));
+        hivEnrollmentDTO.setPregnancyStatusId (rs.getLong ("pregnancy_status_id"));
+        hivEnrollmentDTO.setDateOfLpm (rs.getDate ("date_of_lpm").toLocalDate ());
+        hivEnrollmentDTO.setFacilityName (rs.getString ("facility_name"));
         return hivEnrollmentDTO;
     }
 }

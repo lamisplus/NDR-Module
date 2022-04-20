@@ -45,8 +45,15 @@ public class HivEnrollmentDTO {
 
     private Long personId;
 
-    //private Object  extra;
     private String uuid;
 
     private int archived;
+
+    private String facilityName;
+
+    private String ovcNumber;
+
+    private LocalDate dateOfLpm;
+
+    private Long pregnancyStatusId;
 }

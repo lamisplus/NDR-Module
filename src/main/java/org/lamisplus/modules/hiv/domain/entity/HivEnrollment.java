@@ -90,7 +90,7 @@ public class HivEnrollment {
     @Column(name = "pregnancy_status_id")
     private Long pregnancyStatusId;
     @Basic
-    @Column(name = "date_created", nullable = true)
+    @Column(name = "date_created")
     private LocalDateTime dateCreated = LocalDateTime.now ();
     @Column(name = "created_by", updatable = false)
     @JsonIgnore
