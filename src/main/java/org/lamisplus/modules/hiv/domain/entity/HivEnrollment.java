@@ -1,5 +1,6 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.hiv.utility.SecurityUtils;
 
 import javax.persistence.*;
@@ -45,12 +47,18 @@ public class HivEnrollment {
     @Column(name = "target_group_id")
     private Long targetGroupId;
     @Column(name = "date_confirmed_hiv")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateConfirmedHiv;
     @Column(name = "date_enrolled_pmtct")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateEnrolledPMTCT;
     @Column(name = "source_of_referrer")
     private String sourceOfReferrer;
     @Column(name = "time_hiv_diagnosis")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime timeHivDiagnosis;
     private Long tbStatusId;
     @Column(name = "pregnant")
@@ -58,6 +66,8 @@ public class HivEnrollment {
     @Column(name = "breastfeeding")
     private Boolean breastfeeding;
     @Column(name = "date_of_registration")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfRegistration;
     @NonNull
     @Column(name = "status_at_registration_id")
@@ -66,6 +76,8 @@ public class HivEnrollment {
     @NonNull
     private Long enrollmentSettingId;
     @Column(name = "date_started")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateStarted;
     @Column(name = "send_message")
     private Boolean sendMessage;
@@ -85,18 +97,22 @@ public class HivEnrollment {
     private String ovcNumber;
     @Basic
     @Column(name = "date_of_lpm")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfLpm;
     @Basic
     @Column(name = "pregnancy_status_id")
     private Long pregnancyStatusId;
     @Basic
     @Column(name = "date_created")
+    @JsonIgnore
     private LocalDateTime dateCreated = LocalDateTime.now ();
     @Column(name = "created_by", updatable = false)
     @JsonIgnore
     private String createdBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
     @Basic
     @Column(name = "date_modified")
+    @JsonIgnore
     private LocalDateTime dateModified = LocalDateTime.now ();
     @Basic
     @Column(name = "modified_by", updatable = false)

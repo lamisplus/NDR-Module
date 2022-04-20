@@ -60,18 +60,23 @@ public class HivEnrollmentRepository {
                                  hivEnrollment.getTbStatusId (),
                                  hivEnrollment.getTimeHivDiagnosis (),
                                  hivEnrollment.getUniqueId (),
-                                 hivEnrollment.getUuid ());
+                                 hivEnrollment.getUuid (),
+                                 hivEnrollment.getFacilityName (),
+                                 hivEnrollment.getPregnancyStatusId (),
+                                 hivEnrollment.getOvcNumber (),
+                                 hivEnrollment.getDateOfLpm ());
 
         } else {
-            String updateQuery = "UPDATE hiv_enrollment SET archived=?, breastfeeding=?, date_confirmed_hiv=?, " +
-                    "date_enrolled_pmtct=?, date_modified=?, date_of_registration=?, " +
-                    "date_started=?, enrollment_setting_id=?, entry_point_id=?, " +
-                    "modified_by=?, person_id=?, " +
-                    "pregnant=?, send_message=?, source_of_referrer=?, " +
-                    "status_at_registration_id=?, target_group_id=?, tb_status_id=?, " +
-                    "time_hiv_diagnosis=?, unique_id=?, facility_name =?, pregnancy_status_id = ?, ovc_number = ?," +
-                    "date_of_lpm = ? " +
-                    " WHERE id=?";
+            String updateQuery =
+                    "UPDATE hiv_enrollment SET archived=?, breastfeeding=?, date_confirmed_hiv=?, " +
+                            "date_enrolled_pmtct=?, date_modified=?, date_of_registration=?, " +
+                            "date_started=?, enrollment_setting_id=?, entry_point_id=?, " +
+                            "modified_by=?, person_id=?, " +
+                            "pregnant=?, send_message=?, source_of_referrer=?, " +
+                            "status_at_registration_id=?, target_group_id=?, tb_status_id=?, " +
+                            "time_hiv_diagnosis=?, unique_id=?, facility_name =?, pregnancy_status_id = ?, ovc_number = ?," +
+                            "date_of_lpm = ? " +
+                            " WHERE id=?";
             jdbcTemplate.update (updateQuery,
                                  hivEnrollment.getArchived (),
                                  hivEnrollment.getBreastfeeding (),
@@ -92,6 +97,10 @@ public class HivEnrollmentRepository {
                                  hivEnrollment.getTbStatusId (),
                                  hivEnrollment.getTimeHivDiagnosis (),
                                  hivEnrollment.getUniqueId (),
+                                 hivEnrollment.getFacilityName (),
+                                 hivEnrollment.getPregnancyStatusId (),
+                                 hivEnrollment.getOvcNumber (),
+                                 hivEnrollment.getDateOfLpm (),
                                  hivEnrollment.getId ()
             );
         }
