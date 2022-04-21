@@ -30,7 +30,7 @@ import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
 //import { useHistory } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
-import {FaSyringe, FaUserEdit, FaShare, FaTrash} from "react-icons/fa";
+import {FaSyringe, FaUserEdit, FaShare, FaEye} from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
@@ -111,8 +111,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 let patientListObj=[
-    {"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":1,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},
-    {"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":1,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
+    {"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":2,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},
+    {"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":2,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
 
 
 const Patients = (props) => {
@@ -293,16 +293,16 @@ const Patients = (props) => {
                                         to={{pathname: "/patient-dashboard", state: { patientObj: row  }}}>
                                         <MdDashboard size="15" color="black" />{" "}<span style={{color: '#000'}}>Patient Dashboard</span>
                                   </Link>                               
-                                </MenuItem>
+                                </MenuItem>   */}
                                 <MenuItem style={{ color:"#000 !important"}}>
                                     <Link
                                         to={{
-                                            pathname: "/edit-patient",
+                                            pathname: "/view-history",
                                             state: { patientObj: row  }
                                         }}>
-                                    <FaUserEdit size="15" color="black" />{" "}<span style={{color: '#000'}}>Edit Patient</span>                   
+                                    <FaEye size="15" color="black" />{" "}<span style={{color: '#000'}}>View History</span>                   
                                     </Link>
-                                </MenuItem>                                       */}
+                                </MenuItem>                                    
                                   <MenuItem style={{ color:"#000 !important"}}  onClick={() => loadEnrollment(row)}>
                                      
                                         <FaShare size="15"  />{" "}

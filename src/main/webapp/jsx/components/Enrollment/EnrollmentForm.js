@@ -60,7 +60,7 @@ const Enrollment = (props) => {
     let history = useHistory();
     const classes = useStyles()
     const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({unique_id: "",date_hiv_enrollment:"",entry_point:"", facility_name:"",status_registration:"",date_confirmed_hiv:"",source_referral:"",enrollment_setting:"",pregnancy_status:"",date_lmp:"",tb_status:"",target_group:"",ovc_enrolled:"",ovc_number:""});
+    const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [carePoints, setCarePoints] = useState([]);
@@ -193,7 +193,7 @@ const Enrollment = (props) => {
         const handleInputChange = e => {
             
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
-            if(e.target.name ==="entry_point" ){
+            if(e.target.name ==="entryPointId" ){
                 console.log(e.target.value)
                 if(e.target.value==="21"){
                     setTransferIn(true)
@@ -201,8 +201,9 @@ const Enrollment = (props) => {
                     setTransferIn(false)
                 }
             }
-            
+
           }
+          
     //Handle CheckBox 
     const handleCheckBox =e =>{
         if(e.target.checked){
@@ -215,16 +216,17 @@ const Enrollment = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();
         
-          objValues.patient_id= patientObj.id
-
+          objValues.personId= patientObj.id
+          delete objValues['tableData'];
+            console.log(objValues)
           setSaving(true);
-          axios.post(`${baseUrl}covid/patientstatus`,objValues,
+          axios.post(`${baseUrl}hiv`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  toast.success("Transfer successful");
+                  toast.success("Record save successful");
                   props.toggle()
                   props.loadPatients()
                   //history.push("/")
@@ -257,36 +259,36 @@ const Enrollment = (props) => {
                                 
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
-                                        <Label for="unique_id">Unique ID No  * </Label>
+                                        <Label for="uniqueId">Unique ID No  * </Label>
                                         <Input
                                             type="text"
-                                            name="unique_id"
-                                            id="unique_id"
+                                            name="uniqueId"
+                                            id="uniqueId"
                                             onChange={handleInputChange}
-                                            value={values.unique_id}
+                                            value={objValues.uniqueId}
                                             required
                                         />
-                                        {errors.unique_id !=="" ? (
-                                            <span className={classes.error}>{errors.unique_id}</span>
+                                        {errors.uniqueId !=="" ? (
+                                            <span className={classes.error}>{errors.uniqueId}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
-                                        <Label for="date_hiv_enrollment">Date of Enrollment * </Label>
+                                        <Label for="dateOfRegistration">Date of Enrollment * </Label>
                                         <DateTimePicker
                                             time={false}
-                                            name="date_hiv_enrollment"
-                                            id="date_hiv_enrollment"
-                                            value={values.regDate}
+                                            name="dateOfRegistration"
+                                            id="dateOfRegistration"
+                                            value={objValues.regDate}
                                             onChange={value1 =>
-                                                setValues({ ...values, date_hiv_enrollment: moment(value1).format("YYYY-MM-DD") })
+                                                setObjValues({ ...objValues, dateOfRegistration: moment(value1).format("YYYY-MM-DD") })
                                             }
                                             
                                                 max={new Date()}
                                         />
-                                        {errors.date_hiv_enrollment !=="" ? (
-                                            <span className={classes.error}>{errors.date_hiv_enrollment}</span>
+                                        {errors.dateOfRegistration !=="" ? (
+                                            <span className={classes.error}>{errors.dateOfRegistration}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -294,13 +296,13 @@ const Enrollment = (props) => {
                                 <div className="row">
                                     <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label for="entry_point">Care Entry Point</Label>
+                                    <Label for="entryPointId">Care Entry Point</Label>
                                     <Input
                                         type="select"
-                                        name="entry_point"
-                                        id="entry_point"
+                                        name="entryPointId"
+                                        id="entryPointId"
                                         onChange={handleInputChange}
-                                        value={values.entry_point}
+                                        value={objValues.entryPointId}
                                         required
                                     >
                                     <option value=""> </option>
@@ -310,8 +312,8 @@ const Enrollment = (props) => {
                                             {value.display}
                                         </option>
                                     ))}
-                                    {errors.entry_point !=="" ? (
-                                            <span className={classes.error}>{errors.entry_point}</span>
+                                    {errors.entryPointId !=="" ? (
+                                            <span className={classes.error}>{errors.entryPointId}</span>
                                         ) : "" }
                                     </Input>
                                     </FormGroup>
@@ -324,10 +326,10 @@ const Enrollment = (props) => {
                                             <Label >Facility Name</Label>
                                             <Input
                                                 type="text"
-                                                name="facility_name"
-                                                id="facility_name"
+                                                name="facilityName"
+                                                id="facilityName"
                                                 onChange={handleInputChange}
-                                                value={values.facility_name}
+                                                value={objValues.facilityName}
                                                 required
                                             />
                                             </FormGroup>
@@ -342,10 +344,10 @@ const Enrollment = (props) => {
                                     <Label >HIV Status at Registration</Label>
                                     <Input
                                         type="select"
-                                        name="status_registration"
-                                        id="status_registration"
+                                        name="statusAtRegistrationId"
+                                        id="statusAtRegistrationId"
                                         onChange={handleInputChange}
-                                        value={values.status_registration}
+                                        value={objValues.statusAtRegistrationId}
                                         required
                                     >
                                     <option value=""> </option>
@@ -355,8 +357,8 @@ const Enrollment = (props) => {
                                             {value.display}
                                         </option>
                                     ))}
-                                    {errors.status_registration !=="" ? (
-                                            <span className={classes.error}>{errors.status_registration}</span>
+                                    {errors.statusAtRegistrationId !=="" ? (
+                                            <span className={classes.error}>{errors.statusAtRegistrationId}</span>
                                         ) : "" }
                                     </Input>
                                     </FormGroup>
@@ -367,21 +369,16 @@ const Enrollment = (props) => {
                                         <Label >Date of Confirmed HIV Test *</Label>
                                         <DateTimePicker
                                             time={false}
-                                            name="date_confirmed_hiv"
-                                            id="date_confirmed_hiv"
-                                            value={values.regDate}
+                                            name="dateConfirmedHiv"
+                                            id="dateConfirmedHiv"
+                                            value={objValues.regDate}
                                             onChange={value1 =>
-                                                setValues({ ...values, date_confirmed_hiv: moment(value1).format("YYYY-MM-DD") })
+                                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
                                             }
                                             
                                                 max={new Date()}
                                         />
-                                            {values.date_confirmed_hiv ==="Invalid date" ? (
-                                                <span className={classes.error}>{"This field is required"}</span>
-                                            ) : "" }
-                                            {errors.date_confirmed_hiv !=="" ? (
-                                            <span className={classes.error}>{errors.date_confirmed_hiv}</span>
-                                        ) : "" }
+                                           
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-6">
@@ -389,9 +386,9 @@ const Enrollment = (props) => {
                                         <Label >Source of Referral</Label>
                                         <Input
                                             type="select"
-                                            name="source_referral"
-                                            id="source_referral"
-                                            value={values.source_referral}
+                                            name="sourceOfReferrer"
+                                            id="sourceOfReferrer"
+                                            value={objValues.sourceOfReferrer}
                                             onChange={handleInputChange}
                                             required
                                             >
@@ -403,8 +400,8 @@ const Enrollment = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
-                                        {errors.source_referral !=="" ? (
-                                            <span className={classes.error}>{errors.source_referral}</span>
+                                        {errors.sourceOfReferrer !=="" ? (
+                                            <span className={classes.error}>{errors.sourceOfReferrer}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -414,9 +411,9 @@ const Enrollment = (props) => {
                                         <Label >Enrollment Setting</Label>
                                         <Input
                                             type="select"
-                                            name="enrollment_setting"
-                                            id="enrollment_setting"
-                                            value={values.enrollment_setting}
+                                            name="enrollmentSettingId"
+                                            id="enrollmentSettingId"
+                                            value={objValues.enrollmentSettingId}
                                             onChange={handleInputChange}
                                             required
                                             >
@@ -428,8 +425,8 @@ const Enrollment = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
-                                        {errors.enrollment_setting !=="" ? (
-                                            <span className={classes.error}>{errors.enrollment_setting}</span>
+                                        {errors.enrollmentSettingId !=="" ? (
+                                            <span className={classes.error}>{errors.enrollmentSettingId}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -437,18 +434,18 @@ const Enrollment = (props) => {
                                     patientObj.gender !== 1 ?
                                         (
                                         <div className = "form-group mb-3 col-md-6" >
-                                        <FormGroup >
-                                        < Label > Pregnancy < /Label>
-                                        < Input
+                                        <FormGroup>
+                                        <Label> Pregnancy </Label>
+                                        <Input
                                             type = "select"
-                                            name = "pregnancy_status"
-                                            id = "pregnancy_status"
-                                            value = {values.pregnancy_status}
+                                            name = "pregnancyStatusId"
+                                            id = "pregnancyStatusId"
+                                            value = {objValues.pregnancyStatusId}
                                             onChange = {handleInputChange}
                                             required
                                             >
                                             < option
-                                            value = "" > < /option>
+                                            value = "" > </option>
 
                                             {
                                                 pregnancyStatus.map((value) => (
@@ -456,17 +453,19 @@ const Enrollment = (props) => {
                                                 key = {value.id}
                                                 value = {value.id} >
                                                     {value.display}
-                                                    < /option>
+                                                    </option>
                                             ))
                                             }
                                         </Input>
+                                        
                                             {
                                                 errors.pregnancy_status !== "" ? (
-                                                    < span className = {classes.error} > {errors.pregnancy_status} < /span>
+                                                    < span className = {classes.error} > {errors.pregnancy_status} </span>
+                                                    
                                             ) :
                                                 ""
                                             }
-                                        </FormGroup>
+                                      </FormGroup>  
                                     </div>
                                 )
                                 :
@@ -480,21 +479,16 @@ const Enrollment = (props) => {
                                         <Label >Date of LPM </Label>
                                         <DateTimePicker
                                             time={false}
-                                            name="date_lmp"
-                                            id="date_lmp"
+                                            name="dateOfLpm"
+                                            id="dateOfLpm"
                                             value={values.regDate}
                                             onChange={value1 =>
-                                                setValues({ ...values, date_lmp: moment(value1).format("YYYY-MM-DD") })
+                                                setObjValues({ ...objValues, dateOfLpm: moment(value1).format("YYYY-MM-DD") })
                                             }
 
                                                 max={new Date()}
                                         />
-                                            {values.date_lmp ==="Invalid date" ? (
-                                                <span className={classes.error}>{"This field is required"}</span>
-                                            ) : "" }
-                                            {errors.date_lmp !=="" ? (
-                                            <span className={classes.error}>{errors.date_lmp}</span>
-                                        ) : "" }
+                                            
                                         </FormGroup>
                                     </div>
                                 )
@@ -506,9 +500,9 @@ const Enrollment = (props) => {
                                         <Label >TB Status</Label>
                                         <Input
                                             type="select"
-                                            name="tb_status"
-                                            id="tb_status"
-                                            value={values.tb_status}
+                                            name="tbStatusId"
+                                            id="tbStatusId"
+                                            value={objValues.tbStatusId}
                                             onChange={handleInputChange}
                                             required
                                             >
@@ -520,8 +514,8 @@ const Enrollment = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
-                                        {errors.tb_status !=="" ? (
-                                            <span className={classes.error}>{errors.tb_status}</span>
+                                        {errors.tbStatusId !=="" ? (
+                                            <span className={classes.error}>{errors.tbStatusId}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -530,9 +524,9 @@ const Enrollment = (props) => {
                                         <Label >KP Target Group</Label>
                                         <Input
                                             type="select"
-                                            name="target_group"
-                                            id="target_group"
-                                            value={values.target_group}
+                                            name="targetGroupId"
+                                            id="targetGroupId"
+                                            value={objValues.targetGroupId}
                                             onChange={handleInputChange}
                                             required
                                             >
@@ -544,8 +538,8 @@ const Enrollment = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
-                                        {errors.target_group !=="" ? (
-                                            <span className={classes.error}>{errors.target_group}</span>
+                                        {errors.targetGroupId !=="" ? (
+                                            <span className={classes.error}>{errors.targetGroupId}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -575,11 +569,11 @@ const Enrollment = (props) => {
                                             <FormGroup>
                                             <Label >OVC Number</Label>
                                             <Input
-                                                type="select"
-                                                name="ovc_number"
-                                                id="ovc_number"
+                                                type="text"
+                                                name="ovcNumber"
+                                                id="ovcNumber"
                                                 onChange={handleInputChange}
-                                                value={values.ovc_number}
+                                                value={objValues.ovcNumber}
                                                 required
                                             />
                                             </FormGroup>
