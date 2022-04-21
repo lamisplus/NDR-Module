@@ -11,6 +11,7 @@ import "./main/webapp/vendor/bootstrap-select/dist/css/bootstrap-select.min.css"
 import "./../src/main/webapp/css/style.css";
 
 import Home from './main/webapp/jsx/components/Home'
+import PatientDetail from './main/webapp/jsx/components/Patient/PatientDetail'
 
 
 
@@ -23,10 +24,11 @@ export default function App() {
             renders the first one that matches the current URL. */}
         <Switch>
          
-{/*           
-          <Route path="/patient-dashboard">
+          
+          <Route path="/patient-history">
             <PatientDetail />
           </Route>
+          {/* 
           <Route path="/edit-patient">
             <EditPatient />
           </Route> */}

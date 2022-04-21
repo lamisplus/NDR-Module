@@ -297,7 +297,7 @@ const Patients = (props) => {
                                 <MenuItem style={{ color:"#000 !important"}}>
                                     <Link
                                         to={{
-                                            pathname: "/view-history",
+                                            pathname: "/patient-history",
                                             state: { patientObj: row  }
                                         }}>
                                     <FaEye size="15" color="black" />{" "}<span style={{color: '#000'}}>View History</span>                   
