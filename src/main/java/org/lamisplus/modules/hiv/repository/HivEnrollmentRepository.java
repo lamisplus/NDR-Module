@@ -23,9 +23,9 @@ public class HivEnrollmentRepository {
     }
 
     public int deleteById(Long id) {
-        return jdbcTemplate.update ("DELETE FROM hiv_enrollment WHERE id=?", id);
+        String deleteQuery  = "UPDATE hiv_enrollment SET archived = 1";
+        return jdbcTemplate.update (deleteQuery, id);
     }
-
     public HivEnrollmentDTO save(HivEnrollment hivEnrollment) {
         if (hivEnrollment.getId () == null || hivEnrollment.getId () == 0) {
 
@@ -122,6 +122,16 @@ public class HivEnrollmentRepository {
                 findByUuidQuery,
                 new Object[]{uuid},
                 new HivEnrollmentRowMapper ()));
+    }
+
+    public Boolean isPersonExist(Long personId) {
+        String  checkPersonQuery = "SELECT EXISTS(SELECT FROM person where id = ?)";
+        return jdbcTemplate.queryForObject (checkPersonQuery, Boolean.class, personId);
+    }
+
+    public Boolean isPersonEnrolled(Long personId) {
+        String  checkEnrollmentQuery = "SELECT EXISTS(SELECT FROM hiv_enrollment where id = ?)";
+        return jdbcTemplate.queryForObject (checkEnrollmentQuery, Boolean.class, personId);
     }
 }
 

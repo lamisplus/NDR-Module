@@ -20,6 +20,8 @@ import org.lamisplus.modules.hiv.utility.SecurityUtils;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -118,5 +120,9 @@ public class HivEnrollment {
     @Column(name = "modified_by", updatable = false)
     @JsonIgnore
     private String modifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
+
+    @OneToMany(mappedBy = "hivEnrollment", orphanRemoval = true)
+    private Set<ART> arts = new LinkedHashSet<> ();
+
 
 }

@@ -22,6 +22,11 @@ public class HivService {
     public HivEnrollmentDTO createHivEnrollment(HivEnrollment hivEnrollment) {
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
         hivEnrollment.setId (null);
+        final Long personId = hivEnrollment.getPersonId ();
+        Boolean isPersonValid = hivEnrollmentRepository.isPersonExist (personId);
+        if (!isPersonValid) throw new RuntimeException ("No such Person found on the application");
+        Boolean isPersonEnrolled = hivEnrollmentRepository.isPersonEnrolled (personId);
+        if (isPersonEnrolled) throw new RuntimeException ("Enrollment has already been done for this person");
         return hivEnrollmentRepository.save (hivEnrollment);
 
     }
