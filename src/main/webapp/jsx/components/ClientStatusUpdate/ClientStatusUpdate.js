@@ -100,7 +100,7 @@ const ClientStatusUpdate = (props) => {
          
               <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
              <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Client Status Update - <b>{patientObj.first_name + " " + patientObj.last_name }</b>
+                 Client Status Update - <b>{patientObj.firstname + " " + patientObj.surname }</b>
                  <Button
                     variant=""
                     className="btn-close"

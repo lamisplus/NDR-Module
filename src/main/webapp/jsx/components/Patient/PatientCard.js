@@ -83,16 +83,10 @@ function PatientCard(props) {
   }
 
   const CurrentStatus = (currentStatus)=>{
-    if(currentStatus==="4"){
-        return (<Label color="blue" size="mini">Current Status: <b>Admitted</b></Label>);
-    }else if(currentStatus==="5"){
-        return (<Label color="olive" size="mini">Current Status: <b>ICU</b></Label>);
-    }else if(currentStatus==="6"){
-        return (<Label color="teal" size="mini">Current Status: <b>Discharge</b></Label>);
-    }else if(currentStatus==="7"){
-        return (<Label color="red" size="mini">Current Status: <b>Dead</b></Label>);
+    if(currentStatus===true){
+        return (<Label color="blue" size="mini">active</Label>);
     }else {
-        return   (<Label color="green" size="mini">Current Status: <b>Active</b></Label>);
+        return   (<Label color="yellow" size="mini">None</Label>);
     }
 
 }
@@ -120,26 +114,26 @@ const HIVStatus = (patient)=>{
                     <Row className={"mt-1"}>
                     <Col md={12} className={classes.root2}>
                         <b style={{fontSize: "25px"}}>
-                        {patientObj.first_name + " " + patientObj.last_name }
+                        {patientObj.firstname + " " + patientObj.surname }
                         </b>
                         
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Patient ID : <b>{patientObj.participant_id }</b>
+                        Patient ID : <b>{patientObj.id }</b>
                     </span>
                     </Col>
 
                     <Col md={4} className={classes.root2}>
                     <span>
-                        Date Of Birth : <b>{patientObj.dob }</b>
+                        Date Of Birth : <b>{patientObj.dateOfBirth }</b>
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Age : <b>{calculate_age(moment(patientObj.dob).format("DD-MM-YYYY"))}</b>
+                        Age : <b>{calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))}</b>
                     </span>
                     </Col>
                     <Col md={4}>
@@ -152,7 +146,7 @@ const HIVStatus = (patient)=>{
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Phone Number : <b>{patientObj.phone }</b>
+                        {/* Phone Number : <b>{patientObj.phone }</b> */}
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>
@@ -164,7 +158,7 @@ const HIVStatus = (patient)=>{
 
                     <Col md={12}>
                     {HIVStatus(patientObj)}
-                    {CurrentStatus(patientObj.current_status)}
+                    {CurrentStatus(patientObj.active)}
                     
                     </Col>
                     </Row>

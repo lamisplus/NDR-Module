@@ -244,7 +244,7 @@ const Enrollment = (props) => {
          
               <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
              <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 HIV Enrollment Form - <b>{patientObj.first_name + " " + patientObj.last_name }</b>
+                 HIV Enrollment Form - <b>{patientObj.firstname + " " + patientObj.surname }</b>
                  <Button
                     variant=""
                     className="btn-close"

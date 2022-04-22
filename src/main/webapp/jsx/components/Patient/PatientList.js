@@ -110,9 +110,9 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-let patientListObj=[
-    {"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":2,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},
-    {"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":2,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
+// let patientListObj=[
+//     {"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":2,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},
+//     {"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":2,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
 
 
 const Patients = (props) => {
@@ -138,7 +138,7 @@ const Patients = (props) => {
         ///GET LIST OF Patients
         async function patients() {
             axios
-                .get(`${baseUrl}covid/patients`,
+                .get(`${baseUrl}patient`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
@@ -189,18 +189,7 @@ const Patients = (props) => {
     //     setDeleteModal(!deleteModal)
     // }
     
-    const VaccinationStatusIcon = (patient)=>{
-        //patient.first_name + " "  + patient. last_name,
-        if(patient.vaccination_status===""){
-            return (<><Icon name='dot circle outline' color="yellow"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }else if(patient.vaccination_status==="1"){
-            return (<><Icon name='dot circle outline' color="blue"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }else if(patient.vaccination_status==="2"){
-            return (<><Icon name='dot circle outline' color="green"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }else {
-            return (<><Icon name='dot circle outline' color="red"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }
-    }
+    
     const VaccinationStatus = (patient)=>{
         //console.log(patient)
         if(patient.vaccination_status===null){
@@ -214,16 +203,10 @@ const Patients = (props) => {
         }
     }
     const CurrentStatus = (currentStatus)=>{
-        if(currentStatus==="4"){
+        if(currentStatus===true){
             return (<Label color="blue" size="mini">active</Label>);
-        }else if(currentStatus==="5"){
-            return (<Label color="olive" size="mini">active</Label>);
-        }else if(currentStatus==="6"){
-            return (<Label color="teal" size="mini">active</Label>);
-        }else if(currentStatus==="7"){
-            return (<Label color="red" size="mini">active</Label>);
         }else {
-            return   (<Label color="green" size="mini">None</Label>);
+            return   (<Label color="yellow" size="mini">None</Label>);
         }
 
     }
@@ -257,28 +240,28 @@ const Patients = (props) => {
                   field: "name",
                 },
                 { title: "Hospital Number", field: "hospital_number", filtering: false },
-                { title: "Gender", field: "gender", filtering: false },
+                //{ title: "Gender", field: "gender", filtering: false },
                 { title: "Age", field: "age", filtering: false },
-                { title: "Enrollment Status", field: "v_status", filtering: false },
-                { title: "ART Number", field: "v_status", filtering: false },
-                // { title: "Status", field: "status", filtering: false },
+                //{ title: "Enrollment Status", field: "v_status", filtering: false },
+                //{ title: "ART Number", field: "v_status", filtering: false },
+                { title: "Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
-              data={ patientListObj.map((row) => ({
+              data={ patientList.map((row) => ({
                   //Id: manager.id,
-                    name: VaccinationStatusIcon(row),
-                    hospital_number: row.participant_id,
+                    name:row.firstname + " " + row.surname,
+                    hospital_number: row.id,
                     address: row.address,
-                    phone_number:  row.phone,
-                    gender:row.gender===1? "Male" : "Female",
-                    age: (row.dob === 0 ||
-                        row.dob === undefined ||
-                        row.dob === null ||
-                        row.dob === "" )
+                   //phone_number:  row.phone,
+                    //gender:row.gender===1? "Male" : "Female",
+                    age: (row.dateOfBirth === 0 ||
+                        row.dateOfBirth === undefined ||
+                        row.dateOfBirth === null ||
+                        row.dateOfBirth === "" )
                           ? 0
-                          : calculate_age(moment(row.dob).format("DD-MM-YYYY")),
-                    v_status:  VaccinationStatus(row),
-                    // status: CurrentStatus(row.current_status)
+                          : calculate_age(moment(row.dateOfBirth).format("DD-MM-YYYY")),
+                    
+                    status: CurrentStatus(row.active),
                     //         ,
                     actions:
             
