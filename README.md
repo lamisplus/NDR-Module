@@ -29,7 +29,7 @@ https://github.com/lamisplus/hiv-module.git
 ```
 ### Build Command
 ```bash
-cd patient-module
+cd hiv-module
 mvn clean package
 ```
 
