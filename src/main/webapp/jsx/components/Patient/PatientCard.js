@@ -100,11 +100,9 @@ function PatientCard(props) {
 const HIVStatus = (patient)=>{
     //console.log(patient)
     if(patient.vaccination_status===null){
-        return (<><Label color="yellow" size="mini">HIV Status: Not Vaccinated</Label></> )
+        return (<><Label color="teal" size="mini">HIV Status: Negative</Label></> )
     }else if(patient.vaccination_status==="1"){
-        return (<><Label color="teal" size="mini">HIV Status: Partially Vaccinated</Label></> )
-    }else if(patient.vaccination_status==="2"){
-        return (<><Label color="green" size="mini">HIV Status: Fully Vaccinated</Label></> )
+        return (<><Label color="red" size="mini">HIV Status: Positive</Label></> )
     }else {
         return ""
     }
