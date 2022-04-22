@@ -6,7 +6,7 @@
 
     <property name="autoIncrement" value="true"/>
 
-    <changeSet id="20222403110406-0001" author="datafiamos">
+    <changeSet id="2022221-001" author="amos-data-fi">
         <sql>
             CREATE SEQUENCE if NOT EXISTS hiv_enrollment_id_seq
             START WITH 1
@@ -15,35 +15,40 @@
             NO MAXVALUE
             CACHE 1;
             CREATE TABLE IF NOT EXISTS hiv_enrollment
-            (
-            id                        bigint NOT NULL DEFAULT nextval('hiv_enrollment_id_seq'::regclass),
-            archived                  integer,
-            breastfeeding             boolean,
-            created_by                character varying(255) COLLATE pg_catalog."default",
-            date_confirmed_hiv        date,
-            date_created              timestamp without time zone,
-            date_enrolled_pmtct       date,
-            date_modified             timestamp without time zone,
-            date_of_registration      date,
-            date_started              date,
-            enrollment_setting_id     bigint,
-            entry_point_id            bigint,
-            modified_by               character varying(255) COLLATE pg_catalog."default",
-            person_id                 bigint,
-            pregnant                  boolean,
-            send_message              boolean,
-            source_of_referrer        character varying(255) COLLATE pg_catalog."default",
-            status_at_registration_id bigint,
-            target_group_id           bigint,
-            tb_status_id              bigint,
-            time_hiv_diagnosis        timestamp without time zone,
-            unique_id                 character varying(255) COLLATE pg_catalog."default",
-            uuid                      character varying(255) COLLATE pg_catalog."default",
-            CONSTRAINT hiv_enrollment_pkey PRIMARY KEY (id)
+             (
+                id bigint NOT NULL DEFAULT nextval('hiv_enrollment_id_seq'::regclass),
+                archived integer,
+                breastfeeding boolean,
+                created_by character varying(255) COLLATE pg_catalog."default",
+                date_confirmed_hiv date,
+                date_created timestamp without time zone,
+                date_enrolled_pmtct date,
+                date_modified timestamp without time zone,
+                date_of_lpm date,
+                date_of_registration date,
+                date_started date,
+                enrollment_setting_id bigint,
+                entry_point_id bigint,
+                facility_name character varying(255) COLLATE pg_catalog."default",
+                modified_by character varying(255) COLLATE pg_catalog."default",
+                ovc_number character varying(255) COLLATE pg_catalog."default",
+                person_id bigint,
+                pregnancy_status_id bigint,
+                pregnant boolean,
+                send_message boolean,
+                source_of_referrer character varying(255) COLLATE pg_catalog."default",
+                status_at_registration_id bigint,
+                target_group_id bigint,
+                tb_status_id bigint,
+                time_hiv_diagnosis timestamp without time zone,
+                unique_id character varying(255) COLLATE pg_catalog."default",
+                uuid character varying(255) COLLATE pg_catalog."default",
+                CONSTRAINT hiv_enrollment_pkey PRIMARY KEY (id)
             )
+
         </sql>
     </changeSet>
-    <changeSet id="20222403110406-00002" author="datafiamos">
+    <changeSet id="2022221-002" author="amos-data-fi">
         <sql>
             ALTER TABLE person
                 OWNER to postgres;
