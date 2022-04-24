@@ -2,7 +2,7 @@ package org.lamisplus.modules.hiv.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDTO;
+import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repository.HivEnrollmentRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class HivService {
     private final HivEnrollmentRepository hivEnrollmentRepository;
 
     @Transactional
-    public HivEnrollmentDTO createHivEnrollment(HivEnrollment hivEnrollment) {
+    public HivEnrollmentDto createHivEnrollment(HivEnrollment hivEnrollment) {
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
         hivEnrollment.setId (null);
         final Long personId = hivEnrollment.getPersonId ();
@@ -32,7 +32,7 @@ public class HivService {
     }
 
     @Transactional
-    public HivEnrollmentDTO updateHivEnrollment(Long id, HivEnrollment hivEnrollment) {
+    public HivEnrollmentDto updateHivEnrollment(Long id, HivEnrollment hivEnrollment) {
         hivEnrollmentRepository
                 .findById (id)
                 .orElseThrow (() -> new RuntimeException ("Enrollment not found with id -> " + id));
@@ -44,7 +44,7 @@ public class HivService {
 
     }
 
-    public HivEnrollmentDTO getHivEnrollmentById(Long id) {
+    public HivEnrollmentDto getHivEnrollmentById(Long id) {
         return hivEnrollmentRepository
                 .findById (id)
                 .orElseThrow (() -> new RuntimeException ("Enrollment not found with id -> " + id));

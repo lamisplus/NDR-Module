@@ -1,14 +1,14 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.lamisplus.modules.base.domain.entity.AbstractAuditingEntity;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "art")
@@ -51,13 +51,17 @@ public class ART extends AbstractAuditingEntity {
 
     @Column(name = "uuid", nullable = false, unique = true)
     private String uuid;
-
-    @ElementCollection
-    @Column(name = "regimen")
-    @CollectionTable(name = "art_regimen_ids", joinColumns = @JoinColumn(name = "art_id"))
-    private Set<Long> regimenIds = new LinkedHashSet<> ();
     @ManyToOne(optional = false)
     @JoinColumn(name = "hiv_enrollment_id", nullable = false)
     private HivEnrollment hivEnrollment;
+    @Type(type = "jsonb-node")
+    @Column(columnDefinition = "jsonb", name = "regimen", nullable = false)
+    private JsonNode regimen;
+
+    @Column(name = "art_status", nullable = false)
+    private Long art_status;
+
+    @Column(name = "archived")
+    private Long archived;
 
 }

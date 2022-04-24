@@ -2,7 +2,7 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDTO;
+import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.service.HivService;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ public class HivController {
     @RequestMapping(value = "",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollmentDTO> createHivEnrollment(@RequestBody HivEnrollment hiv) {
+    public ResponseEntity<HivEnrollmentDto> createHivEnrollment(@RequestBody HivEnrollment hiv) {
         return ResponseEntity.ok (hivService.createHivEnrollment (hiv));
     }
 
@@ -37,14 +37,14 @@ public class HivController {
     @RequestMapping(value = "/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollmentDTO> getHivEnrollmentById(@PathVariable("id") Long id) {
+    public ResponseEntity<HivEnrollmentDto> getHivEnrollmentById(@PathVariable("id") Long id) {
         return ResponseEntity.ok (hivService.getHivEnrollmentById (id));
     }
 
     @RequestMapping(value = "/{id}",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollmentDTO> updateHivEnrollmentById(
+    public ResponseEntity<HivEnrollmentDto> updateHivEnrollmentById(
             @PathVariable("id") Long id,
             @RequestBody HivEnrollment hivEnrollmentUpdateView) {
         return ResponseEntity.ok (hivService.updateHivEnrollment (id, hivEnrollmentUpdateView));
