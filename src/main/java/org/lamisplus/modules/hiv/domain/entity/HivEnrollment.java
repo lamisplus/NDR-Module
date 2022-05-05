@@ -59,7 +59,6 @@ public class HivEnrollment implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime timeHivDiagnosis;
-    private Long tbStatusId;
     @Column(name = "pregnant")
     private Boolean pregnant;
     @Column(name = "breastfeeding")
@@ -102,6 +101,11 @@ public class HivEnrollment implements Serializable {
     @Basic
     @Column(name = "pregnancy_status_id")
     private Long pregnancyStatusId;
+
+    @Basic
+    @Column(name = "tb_status_id")
+    private Long tbStatusId;
+
     @Basic
     @Column(name = "date_created")
     @JsonIgnore
@@ -117,9 +121,5 @@ public class HivEnrollment implements Serializable {
     @Column(name = "modified_by", updatable = false)
     @JsonIgnore
     private String modifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
-
-   // @OneToMany(mappedBy = "hivEnrollment", orphanRemoval = true)
-    //private Set<ART> arts = new LinkedHashSet<> ();
-
 
 }
