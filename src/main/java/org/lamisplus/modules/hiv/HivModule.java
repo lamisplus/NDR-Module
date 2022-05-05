@@ -4,7 +4,7 @@ import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.modules.web.AcrossWebModule;
+import org.lamisplus.modules.patient.PatientModule;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -19,27 +19,22 @@ import java.util.List;
 
 @AcrossApplication(
         modules = {
-                AcrossHibernateJpaModule.NAME,
-                AcrossWebModule.NAME
+                 AcrossHibernateJpaModule.NAME,
+                 PatientModule.NAME
         })
-public class HivModule extends AcrossModule
-{
+public class HivModule extends AcrossModule {
     public final static String NAME = "HivModule";
 
 
-    public HivModule(){
-        super();
-        addApplicationContextConfigurer(new ComponentScanConfigurer(
-                getClass().getPackage().getName() +".controller",
-                getClass().getPackage().getName() +".service",
-                getClass().getPackage().getName() +".config",
-                getClass().getPackage().getName() +".domain",
-                getClass().getPackage().getName() +".installers",
-                getClass().getPackage().getName() +".domain.mapper",
-                getClass().getPackage().getName() +".utility",
-                getClass().getPackage().getName() +".component",
-                getClass().getPackage().getName() +".repository"));
+    public HivModule() {
+        super ();
+        addApplicationContextConfigurer (new ComponentScanConfigurer (
+                getClass ().getPackage ().getName () + ".repository",
+                getClass ().getPackage ().getName () + ".service",
+                getClass ().getPackage ().getName () + ".controller"
+        ));
     }
+
     @Override
     public String getName() {
         return NAME;
@@ -47,14 +42,14 @@ public class HivModule extends AcrossModule
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .securityContexts(Arrays.asList(securityContext()))
-                .securitySchemes(Arrays.asList(apiKey()))
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
+        return new Docket (DocumentationType.SWAGGER_2)
+                .apiInfo (apiInfo ())
+                .securityContexts (Arrays.asList (securityContext ()))
+                .securitySchemes (Arrays.asList (apiKey ()))
+                .select ()
+                .apis (RequestHandlerSelectors.any ())
+                .paths (PathSelectors.any ())
+                .build ();
     }
 
     /*
@@ -63,25 +58,25 @@ public class HivModule extends AcrossModule
      */
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Lamisplus")
-                .description("Lamisplus Application Api Documentation")
-                .license("Apache 2.0")
-                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
-                .termsOfServiceUrl("http://swagger.io/terms/")
-                .version("1.0.0").contact(new Contact("Development Team","http://lamisplus.org/base-module", "info@lamisplus.org"))
-                .build();
+        return new ApiInfoBuilder ()
+                .title ("Lamisplus")
+                .description ("Lamisplus Application Api Documentation")
+                .license ("Apache 2.0")
+                .licenseUrl ("http://www.apache.org/licenses/LICENSE-2.0.html")
+                .termsOfServiceUrl ("http://swagger.io/terms/")
+                .version ("1.0.0").contact (new Contact ("Development Team", "http://lamisplus.org/base-module", "info@lamisplus.org"))
+                .build ();
     }
 
     private SecurityContext securityContext() {
-        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+        return SecurityContext.builder ().securityReferences (defaultAuth ()).build ();
     }
 
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope authorizationScope = new AuthorizationScope ("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+        return Arrays.asList (new SecurityReference ("JWT", authorizationScopes));
     }
 
     /*
@@ -92,6 +87,6 @@ public class HivModule extends AcrossModule
      * Sending Authorization:
      */
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey ("JWT", "Authorization", "header");
     }
 }

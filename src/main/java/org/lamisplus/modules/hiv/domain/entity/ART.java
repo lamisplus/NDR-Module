@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.lamisplus.modules.base.domain.entity.AbstractAuditingEntity;
+import org.lamisplus.modules.base.domain.entities.AbstractAuditingEntity;
 
 import javax.persistence.*;
 import java.sql.Date;

@@ -8,7 +8,6 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,10 +17,9 @@ import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.hiv.utility.SecurityUtils;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -35,8 +33,7 @@ import java.util.Set;
         @TypeDef(name = "jsonb-node", typeClass = JsonNodeBinaryType.class),
         @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
 })
-@AllArgsConstructor
-public class HivEnrollment {
+public class HivEnrollment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -121,8 +118,8 @@ public class HivEnrollment {
     @JsonIgnore
     private String modifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
 
-    @OneToMany(mappedBy = "hivEnrollment", orphanRemoval = true)
-    private Set<ART> arts = new LinkedHashSet<> ();
+   // @OneToMany(mappedBy = "hivEnrollment", orphanRemoval = true)
+    //private Set<ART> arts = new LinkedHashSet<> ();
 
 
 }
