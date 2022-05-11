@@ -1,4 +1,4 @@
-package org.lamisplus.modules.hiv.repository;
+package org.lamisplus.modules.hiv.repositories;
 
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.springframework.data.jpa.repository.JpaRepository;

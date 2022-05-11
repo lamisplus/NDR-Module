@@ -7,74 +7,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.TransactionManager;
 
-import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Properties;
 
-@Configuration
 @RequiredArgsConstructor
-@EnableJpaRepositories(basePackages = "org.lamisplus.modules.hiv.repository")
-//        repositoryFactoryBeanClass = BlazePersistenceRepositoryFactoryBean.class)
 @Slf4j
-@EnableTransactionManagement
+@Configuration
+@EnableJpaRepositories(
+        transactionManagerRef = "hivTransactionManger",
+        basePackages = "org.lamisplus.modules.hiv.repositories"
+
+)
 public class DomainConfiguration {
 
     private final DataSource dataSource;
 
-    //
-//    @Bean
-//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-//    @Lazy(false)
-//    public CriteriaBuilderFactory createCriteriaBuilderFactory() {
-//        CriteriaBuilderConfiguration config = Criteria.getDefault();
-//        return config.createCriteriaBuilderFactory(entityManagerFactory);
-//    }
-//
-//    @Bean
-//    public EntityViewManager evm(CriteriaBuilderFactory cbf, EntityViewConfiguration entityViewConfiguration) {
-//        entityViewConfiguration.setProperty(ConfigurationProperties.UPDATER_STRICT_CASCADING_CHECK, "false");
-//        entityViewConfiguration.addEntityViewListener(AuditViewListenersConfiguration.class);
-//        return entityViewConfiguration.createEntityViewManager(cbf);
-//    }
-//
-//    @Bean
-//    public EntityManager entityManager(List<EntityManager> entityManagers) {
-//         log.info ("entity manager", entityManagers.get (0).toString ());
-//        return entityManagers.get (0);
-//    }
-    @Bean
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan("org.lamisplus.modules.hiv");
-        sessionFactory.setHibernateProperties (hibernateProperties ());
-        return sessionFactory;
-    }
+    @PersistenceUnit
+    private  final EntityManagerFactory entityManagerFactory;
+
 
     @Bean(name = "hivTransactionManger")
     @Primary
-    public PlatformTransactionManager hibernateTransactionManager() {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
-        return transactionManager;
+    public TransactionManager transactionManager(){
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+        jpaTransactionManager.setDataSource(dataSource);
+        jpaTransactionManager.setEntityManagerFactory (entityManagerFactory);
+        return jpaTransactionManager;
     }
 
-    @Bean
-    public EntityManager entityManager(List<EntityManager> entityManagers) {
-        log.info ("entity manager BaseEntity {}", entityManagers.get (0).toString ());
-        return entityManagers.get (0);
-    }
-    private final Properties hibernateProperties() {
-        Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.ddl-auto", "update");
-        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        return hibernateProperties;
-    }
 
 }

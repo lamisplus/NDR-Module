@@ -1,39 +1,23 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vladmihalcea.hibernate.type.array.IntArrayType;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+import lombok.*;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
-import org.lamisplus.modules.hiv.utility.SecurityUtils;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "hiv_enrollment")
-@Data
-@TypeDefs({
-        @TypeDef(name = "string-array", typeClass = StringArrayType.class),
-        @TypeDef(name = "int-array", typeClass = IntArrayType.class),
-        @TypeDef(name = "json", typeClass = JsonStringType.class),
-        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
-        @TypeDef(name = "jsonb-node", typeClass = JsonNodeBinaryType.class),
-        @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
-})
-public class HivEnrollment implements Serializable {
+@Builder(toBuilder = true)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = "id")
+public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -53,12 +37,11 @@ public class HivEnrollment implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateEnrolledPMTCT;
-    @Column(name = "source_of_referrer")
-    private String sourceOfReferrer;
+    @Column(name = "source_of_referrer_id")
+    private Long sourceOfReferrerId;
     @Column(name = "time_hiv_diagnosis")
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime timeHivDiagnosis;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime timeHivDiagnosis;
     @Column(name = "pregnant")
     private Boolean pregnant;
     @Column(name = "breastfeeding")
@@ -80,16 +63,17 @@ public class HivEnrollment implements Serializable {
     @Column(name = "send_message")
     private Boolean sendMessage;
     @NonNull
-    @Column(name = "person_id")
     private Long personId;
 
     private String uuid;
     @Basic
     @Column(name = "archived")
     private int archived;
+
     @Basic
     @Column(name = "facility_name")
     private String facilityName;
+
     @Basic
     @Column(name = "ovc_number")
     private String ovcNumber;
@@ -106,20 +90,16 @@ public class HivEnrollment implements Serializable {
     @Column(name = "tb_status_id")
     private Long tbStatusId;
 
-    @Basic
-    @Column(name = "date_created")
-    @JsonIgnore
-    private LocalDateTime dateCreated = LocalDateTime.now ();
-    @Column(name = "created_by", updatable = false)
-    @JsonIgnore
-    private String createdBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
-    @Basic
-    @Column(name = "date_modified")
-    @JsonIgnore
-    private LocalDateTime dateModified = LocalDateTime.now ();
-    @Basic
-    @Column(name = "modified_by", updatable = false)
-    @JsonIgnore
-    private String modifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
+
+
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    /**
+     * @return a cloned or detached version of this entity
+     */
 
 }

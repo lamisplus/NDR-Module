@@ -2,7 +2,7 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
+import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.service.HivService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,34 +17,28 @@ import java.util.List;
 public class HivController {
     private final HivService hivService;
 
-    @RequestMapping(value = "",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollment> createHivEnrollment(@RequestBody HivEnrollment hiv) throws Exception {
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<HivEnrollmentDto> createHivEnrollment(@RequestBody HivEnrollmentDto hiv) {
         return ResponseEntity.ok (hivService.createHivEnrollment (hiv));
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<HivEnrollment>> getAllHivEnrollments() {
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<HivEnrollmentDto>> getAllHivEnrollments() {
         return ResponseEntity.ok (hivService.getAll());
     }
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollment> getHivEnrollmentById(@PathVariable("id") Long id) {
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<HivEnrollmentDto> getHivEnrollmentById(@PathVariable("id") Long id) {
         return ResponseEntity.ok (hivService.getHivEnrollmentById (id));
     }
 
-    @RequestMapping(value = "/{id}",
-            method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivEnrollment> updateHivEnrollmentById(
-            @PathVariable("id") Long id,
-            @RequestBody HivEnrollment hivEnrollment) {
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<HivEnrollmentDto> updateHivEnrollmentById(@PathVariable("id") Long id, @RequestBody HivEnrollmentDto hivEnrollment) {
         return ResponseEntity.ok (hivService.updateHivEnrollment (id, hivEnrollment));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}",  produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteHivEnrollmentById(@PathVariable("id") Long id) {
         hivService.deleteHivEnrollment (id);
         return ResponseEntity.accepted ().build ();
