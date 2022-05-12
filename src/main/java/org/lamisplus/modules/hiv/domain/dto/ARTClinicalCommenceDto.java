@@ -1,21 +1,28 @@
 package org.lamisplus.modules.hiv.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
 
+import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @Builder
-public class ARTDto implements Serializable {
+@NoArgsConstructor
+public class ARTClinicalCommenceDto implements Serializable {
     private  Long id;
-    private  Date artDate;
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate visitDate;
     private  String cd4;
     private  Long cd4Percentage;
     @JsonIgnore
@@ -32,6 +39,8 @@ public class ARTDto implements Serializable {
     private  VitalSignDto vitalSignDto;
     @NotNull
     private Long facilityId;
+    @NotNull
+    private Long personId;
     @NotNull
     private Long clinicalStageId;
 }

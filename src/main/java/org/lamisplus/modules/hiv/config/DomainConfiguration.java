@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -22,6 +23,7 @@ import javax.sql.DataSource;
         basePackages = "org.lamisplus.modules.hiv.repositories"
 
 )
+@EnableTransactionManagement
 public class DomainConfiguration {
 
     private final DataSource dataSource;

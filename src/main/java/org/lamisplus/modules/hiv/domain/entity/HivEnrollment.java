@@ -95,6 +95,7 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
 
     @Override
     public boolean isNew() {
+
         return id == null;
     }
 

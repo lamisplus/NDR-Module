@@ -34,7 +34,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
         TransactionalTestExecutionListener.class
 })
 
-class HivServiceTest {
+class HivEnrollmentServiceTest {
 
 
 

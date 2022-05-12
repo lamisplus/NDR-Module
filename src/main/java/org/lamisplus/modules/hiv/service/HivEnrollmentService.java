@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class HivService {
+public class HivEnrollmentService {
 
     private final PersonService personService;
     private final HivEnrollmentRepository hivEnrollmentRepository;
