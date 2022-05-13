@@ -7,6 +7,7 @@ import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @PastOrPresent
     @Column(name = "visit_date")
     private LocalDate visitDate;
 
@@ -111,8 +113,17 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @Column(columnDefinition = "jsonb")
     JsonNode adheres;
 
+    @PastOrPresent
     @Column(name = "next_appointment")
     private LocalDate nextAppointment;
+
+    @PastOrPresent
+    @Column(name = "lmp_date")
+    private LocalDate lmpDate;
+
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "tb_screen")
+    private JsonNode TBScreen;
 
     @Override
     public boolean isNew() {

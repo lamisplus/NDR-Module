@@ -11,6 +11,7 @@ import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
 
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -43,4 +44,8 @@ public class ARTClinicalCommenceDto implements Serializable {
     private Long personId;
     @NotNull
     private Long clinicalStageId;
+    @PastOrPresent
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate lmpDate;
 }

@@ -12,6 +12,7 @@ import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
 
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -19,6 +20,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ARTClinicVisitDto implements Serializable {
+    @Type(type = "jsonb")
+    JsonNode adverseDrugReactions;
     private Long id;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -47,14 +50,19 @@ public class ARTClinicVisitDto implements Serializable {
     @Type(type = "jsonb")
     private JsonNode adheres;
     private String adrScreened;
-    @Type(type = "jsonb")
-    JsonNode adverseDrugReactions;
     private String adherenceLevel;
     @Type(type = "jsonb")
-    JsonNode opportunisticInfections;
+    private JsonNode opportunisticInfections;
+    @Type(type = "jsonb")
+    private JsonNode TbScreen;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @PastOrPresent
     private LocalDate nextAppointment;
+    @PastOrPresent
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate lmpDate;
 
 
 }

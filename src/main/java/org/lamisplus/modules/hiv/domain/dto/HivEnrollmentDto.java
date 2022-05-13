@@ -17,36 +17,36 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HivEnrollmentDto implements Serializable {
-    private  Long facilityId;
-    private  Long id;
-    private  String uniqueId;
-    private  Long entryPointId;
-    private  Long targetGroupId;
+    private Long facilityId;
+    private Long id;
+    private String uniqueId;
+    private Long entryPointId;
+    private Long targetGroupId;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private  LocalDate dateConfirmedHiv;
+    private LocalDate dateConfirmedHiv;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private  LocalDate dateEnrolledPMTCT;
-    private  Long sourceOfReferrerId;
+    private LocalDate dateEnrolledPMTCT;
+    private Long sourceOfReferrerId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    private  ZonedDateTime timeHivDiagnosis;
-    private  Boolean pregnant;
-    private  Boolean breastfeeding;
+    private ZonedDateTime timeHivDiagnosis;
+    private Boolean pregnant;
+    private Boolean breastfeeding;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private  LocalDate dateOfRegistration;
-    private  Long statusAtRegistrationId;
-    private  Long enrollmentSettingId;
+    private LocalDate dateOfRegistration;
+    private Long statusAtRegistrationId;
+    private Long enrollmentSettingId;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private  LocalDate dateStarted;
-    private  Long personId;
-    private  String facilityName;
-    private  String ovcNumber;
+    private LocalDate dateStarted;
+    private Long personId;
+    private String facilityName;
+    private String ovcNumber;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfLpm;
-    private  Long pregnancyStatusId;
-    private  Long tbStatusId;
+    private Long pregnancyStatusId;
+    private Long tbStatusId;
 }

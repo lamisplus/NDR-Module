@@ -2,8 +2,12 @@ package org.lamisplus.modules.hiv.domain.entity;
 
 import lombok.*;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
@@ -14,26 +18,46 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-public class HIVStatusTracker {
+public class HIVStatusTracker extends  HivAuditEntity  implements Persistable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "hiv_status_id", nullable = false)
-    private Long hivStatusId;
+    @Column(name = "hiv_status", nullable = false)
+    @NonNull
+    private String hivStatus;
 
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    @PastOrPresent
+    @Column(name = "status_date", nullable = false)
+    @NotNull
+    private LocalDate statusDate;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "person_id")
     private Person person;
 
     @Column(name = "tracking_outcome")
-    private String trackingOutcome;
+    private String trackOutcome;
 
+    @PastOrPresent
     @Column(name = "track_date")
     private LocalDate trackDate;
 
+    @Column(name = "agreed_date")
+    private LocalDate agreedDate;
+
+    @Size(max = 100)
+    @Column(name = "reason_for_interruption")
+    private String reasonForInterruption;
+
+    @Size(max = 100)
+    @Column(name = "CAUSE_OF_DEATH")
+    private String causeOfDeath;
+
+    private Boolean auto = false;
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
 }
