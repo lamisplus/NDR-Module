@@ -43,7 +43,7 @@ public class ARTCommenceController {
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteArtCommencementId(@PathVariable("id") Long id) {
-        artCommenceService.archivedArt (id);
+        artCommenceService.archivedArtCommenceClinical (id);
         return ResponseEntity.accepted ().build ();
     }
 }

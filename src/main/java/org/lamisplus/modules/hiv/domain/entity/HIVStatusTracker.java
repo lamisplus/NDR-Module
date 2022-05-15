@@ -1,7 +1,6 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
 import lombok.*;
-import org.lamisplus.modules.patient.domain.entity.Person;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -18,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-public class HIVStatusTracker extends  HivAuditEntity  implements Persistable<Long> {
+public class HIVStatusTracker extends HivAuditEntity implements Persistable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -33,9 +32,9 @@ public class HIVStatusTracker extends  HivAuditEntity  implements Persistable<Lo
     @NotNull
     private LocalDate statusDate;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "person_id")
-    private Person person;
+    @Column(name = "person_id", nullable = false)
+    @NotNull
+    private Long personId;
 
     @Column(name = "tracking_outcome")
     private String trackOutcome;
@@ -56,6 +55,13 @@ public class HIVStatusTracker extends  HivAuditEntity  implements Persistable<Lo
     private String causeOfDeath;
 
     private Boolean auto = false;
+
+    private String uuid;
+
+    @Basic
+    @Column(name = "archived")
+    private int archived;
+
     @Override
     public boolean isNew() {
         return id == null;
