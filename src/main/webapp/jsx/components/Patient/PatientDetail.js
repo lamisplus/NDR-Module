@@ -9,8 +9,8 @@ import CardContent from '@mui/material/CardContent';
 import PatientCardDetail from './PatientCard'
 import { useHistory } from "react-router-dom";
 import {   Tab, Tabs, } from "react-bootstrap";
-import PatientHistory from './../History/PatientHistory';
-
+import SubMenu from './SubMenu';
+import RecentHistory from './../History/RecentHistory';
 
 const styles = theme => ({
   root: {
@@ -71,8 +71,8 @@ function PatientCard(props) {
             </Link>
             <br/><br/>
             <PatientCardDetail patientObj={patientObj}/>
-            <br/><br/>
-            <PatientHistory />
+            <SubMenu />
+            <RecentHistory />
 
          </CardContent>
       </Card>

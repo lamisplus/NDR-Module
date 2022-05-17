@@ -86,7 +86,7 @@ function PatientCard(props) {
     if(currentStatus===true){
         return (<Label color="blue" size="mini">active</Label>);
     }else {
-        return   (<Label color="yellow" size="mini">None</Label>);
+        return   (<Label color="green" size="mini">Active</Label>);
     }
 
 }
@@ -114,7 +114,7 @@ const HIVStatus = (patient)=>{
                     <Row className={"mt-1"}>
                     <Col md={12} className={classes.root2}>
                         <b style={{fontSize: "25px"}}>
-                        {patientObj.firstname + " " + patientObj.surname }
+                        {patientObj.first_name + " " + patientObj.last_name }
                         </b>
                         
                     </Col>
@@ -152,7 +152,7 @@ const HIVStatus = (patient)=>{
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Address : <b>{patientObj.address } </b>
+                        {/* Address : <b>{patientObj.address } </b> */}
                     </span>
                     </Col>
 
@@ -166,11 +166,67 @@ const HIVStatus = (patient)=>{
                 </Row>
             
                 </ExpansionPanelSummary>
+                <ExpansionPanelDetails className={classes.details}>
                 
+                    <Button
+                            color='red'
+                            content='BloodType'
+                            //icon='heart'
+                            label={{ basic: true, color: 'red', pointing: 'left', content: 'AB+' }}
+                            />
+                            
+                  
+                <Button
+                            basic
+                            color='blue'
+                            content='Height'
+                            icon='fork'
+                            label={{
+                                as: 'a',
+                                basic: true,
+                                color: 'blue',
+                                pointing: 'left',
+                                content: '74.5 in',
+                            }}
+                            />
+              
+                <Button
+                            basic
+                            color='blue'
+                            content='Weight'
+                            icon='fork'
+                            label={{
+                                as: 'a',
+                                basic: true,
+                                color: 'blue',
+                                pointing: 'left',
+                                content: '74.5 in',
+                            }}
+                            />
+               
+                
+                <div className={classes.column}>
+                  <Button primary  floated='right'> HIV Enrollment</Button>
+                </div>
+                <div className={classes.column}>
+                  {" "}<Button secondary >ART Commencement </Button>
+                </div>
+                {/* <div className={classes.column}>
+                   
+                    <div>
+                     
+                    </div>
+                    <div>
+                      
+                    </div>    
+                   
+                </div> */}
+                </ExpansionPanelDetails>
                 <Divider />
+                <ExpansionPanelActions expandIcon={<ExpandMoreIcon />}>
                 
+                </ExpansionPanelActions>
             </ExpansionPanel>
-            {/* <Vaccination toggle={toggle} showModal={modal} patientObj={patientObj}/> */}
            
     </div>
   );

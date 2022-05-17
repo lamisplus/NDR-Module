@@ -190,19 +190,18 @@ const Enrollment = (props) => {
            });
        
      }
-        const handleInputChange = e => {
-            
-            setObjValues ({...objValues,  [e.target.name]: e.target.value});
-            if(e.target.name ==="entryPointId" ){
-                console.log(e.target.value)
-                if(e.target.value==="21"){
-                    setTransferIn(true)
-                }else{
-                    setTransferIn(false)
-                }
+    const handleInputChange = e => {
+        
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        if(e.target.name ==="entryPointId" ){
+            if(e.target.value==="21"){
+                setTransferIn(true)
+            }else{
+                setTransferIn(false)
             }
+        }
 
-          }
+        }
           
     //Handle CheckBox 
     const handleCheckBox =e =>{
@@ -211,7 +210,17 @@ const Enrollment = (props) => {
         }else{
             setOvcEnrolled(false)
         }
-    }      
+    }  
+    
+    const validate = () => {
+        let temp = { ...errors }
+        //temp.name = details.name ? "" : "This field is required"
+        //temp.description = details.description ? "" : "This field is required"
+        setErrors({
+            ...temp
+            })    
+        return Object.values(temp).every(x => x == "")
+  }
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();
@@ -476,7 +485,7 @@ const Enrollment = (props) => {
                                         (
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
-                                        <Label >Date of LPM </Label>
+                                        <Label >Date of LMP </Label>
                                         <DateTimePicker
                                             time={false}
                                             name="dateOfLpm"

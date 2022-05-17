@@ -42,7 +42,8 @@ import Enrollment from './../Enrollment/EnrollmentForm'
 import ArtCommencement from './../ArtCommencement/ArtCommencement'
 import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling'
 import DifferentiatedCare from './../DifferentiatedCare/DifferentiatedCare';
-import StatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
+import StatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate';
+import ClinicFollowUp from './../ClinicFollowUpVisit/ClinicFollowUp';
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -129,6 +130,8 @@ const Patients = (props) => {
     const Caretoggle = () => setCareModal(!careModal);
     const [clientStatusUpdateModal, setClientStatusUpdateModal] = useState(false);
     const ClientStatusUpdatetoggle = () => setClientStatusUpdateModal(!clientStatusUpdateModal);
+    const [clinicFollowUpModal, setClinicFollowUpModal] = useState(false);
+    const ClinicFollowUptoggle = () => setClinicFollowUpModal(!clinicFollowUpModal);
     // const [deleteModal, setDeleteModal] = useState(false);
     // const Deletetoggle = () => setDeleteModal(!deleteModal);
 
@@ -138,7 +141,7 @@ const Patients = (props) => {
         ///GET LIST OF Patients
         async function patients() {
             axios
-                .get(`${baseUrl}patient`,
+                .get(`${baseUrl}patient/`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
@@ -163,7 +166,12 @@ const Patients = (props) => {
                 }
                 return age_now + " year(s)";
         };
-
+    
+    const getHospitalNumber = (identifier) => {
+        const identifiers = JSON.parse(identifier);
+        const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');
+        return hospitalNumber ? hospitalNumber.value : '';
+    };
     const loadEnrollment =(row)=> {
         setpatientObj({...patientObj, ...row});
             setModal(!modal)
@@ -184,24 +192,16 @@ const Patients = (props) => {
         setpatientObj({...patientObj, ...row});
         setClientStatusUpdateModal(!clientStatusUpdateModal)
     }
+    const loadClinicFolowUp = (row) =>{
+        setpatientObj({...patientObj, ...row});
+        setClinicFollowUpModal(!clinicFollowUpModal)
+    }
     // const DeletePatientModal =(row)=> {
     //     setpatientObj({...patientObj, ...row});
     //     setDeleteModal(!deleteModal)
     // }
     
-    
-    const VaccinationStatus = (patient)=>{
-        //console.log(patient)
-        if(patient.vaccination_status===null){
-            return (<><Label color="yellow" size="mini">Not Enroll</Label></> )
-        }else if(patient.vaccination_status==="1"){
-            return (<><Label color="teal" size="mini">Enrolled</Label></> )
-        }else if(patient.vaccination_status==="2"){
-            return (<><Label color="green" size="mini">Enrolled</Label></> )
-        }else {
-            return ""
-        }
-    }
+
     const CurrentStatus = (currentStatus)=>{
         if(currentStatus===true){
             return (<Label color="blue" size="mini">active</Label>);
@@ -240,7 +240,7 @@ const Patients = (props) => {
                   field: "name",
                 },
                 { title: "Hospital Number", field: "hospital_number", filtering: false },
-                //{ title: "Gender", field: "gender", filtering: false },
+                { title: "Gender", field: "gender", filtering: false },
                 { title: "Age", field: "age", filtering: false },
                 //{ title: "Enrollment Status", field: "v_status", filtering: false },
                 //{ title: "ART Number", field: "v_status", filtering: false },
@@ -249,11 +249,11 @@ const Patients = (props) => {
               ]}
               data={ patientList.map((row) => ({
                   //Id: manager.id,
-                    name:row.firstname + " " + row.surname,
-                    hospital_number: row.id,
-                    address: row.address,
+                    name:row.firstName + " " + row.surname,
+                    //hospital_number: getHospitalNumber(row.identifier),
+                    //address: row.address,
                    //phone_number:  row.phone,
-                    //gender:row.gender===1? "Male" : "Female",
+                    gender:row.gender.display,
                     age: (row.dateOfBirth === 0 ||
                         row.dateOfBirth === undefined ||
                         row.dateOfBirth === null ||
@@ -262,7 +262,7 @@ const Patients = (props) => {
                           : calculate_age(moment(row.dateOfBirth).format("DD-MM-YYYY")),
                     
                     status: CurrentStatus(row.active),
-                    //         ,
+                 
                     actions:
             
                     <div>
@@ -298,7 +298,7 @@ const Patients = (props) => {
                                         <span style={{color: '#000'}}>ART Commencement</span>
                                                                    
                                   </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadEnrollment(row)}>
+                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadClinicFolowUp(row)}>
                                      
                                         <FaSyringe size="15"  />{" "}
                                         <span style={{color: '#000'}}>Clinic Follow Up Visit</span>
@@ -354,6 +354,7 @@ const Patients = (props) => {
       <EnhancedAdherenceCounseling  toggle={Anctoggle} showModal={ancModal} patientObj={patientObj} loadPatients={patients}/> 
       <DifferentiatedCare toggle={Caretoggle} showModal={careModal} patientObj={patientObj} loadPatients={patients}/>
       <StatusUpdate toggle={ClientStatusUpdatetoggle} showModal={clientStatusUpdateModal} patientObj={patientObj} loadPatients={patients}/>
+      <ClinicFollowUp toggle={ClinicFollowUptoggle} showModal={clinicFollowUpModal} patientObj={patientObj} loadPatients={patients} />
     </div>
   );
 }
