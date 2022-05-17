@@ -12,8 +12,12 @@ import lombok.ToString;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.lamisplus.modules.patient.utility.SecurityUtils;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
@@ -27,19 +31,22 @@ import java.time.LocalDateTime;
         @TypeDef(name = "jsonb-node", typeClass = JsonNodeBinaryType.class),
         @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
 })
+@EntityListeners({AuditingEntityListener.class})
 public class HivAuditEntity {
-    @Column(name = "created_date")
+    @Column(name = "created_date", updatable = false)
+    @CreatedDate
     private LocalDateTime createdDate = LocalDateTime.now ();
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", updatable = false)
     @JsonIgnore
     @ToString.Exclude
     private String createdBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
 
-    @Column(name = "last_modified_date")
+    @Column(name = "last_modified_date", insertable = false)
+    @LastModifiedDate
     private LocalDateTime lastModifiedDate = LocalDateTime.now ();
 
-    @Column(name = "last_modified_by", updatable = false)
+    @Column(name = "last_modified_by" ,insertable = false )
     @JsonIgnore
     @ToString.Exclude
     private String lastModifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
