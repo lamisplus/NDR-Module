@@ -1,40 +1,23 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.vladmihalcea.hibernate.type.array.IntArrayType;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.lamisplus.modules.hiv.utility.SecurityUtils;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import org.lamisplus.modules.hiv.utility.LocalDateConverter;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "hiv_enrollment")
-@Data
-@TypeDefs({
-        @TypeDef(name = "string-array", typeClass = StringArrayType.class),
-        @TypeDef(name = "int-array", typeClass = IntArrayType.class),
-        @TypeDef(name = "json", typeClass = JsonStringType.class),
-        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
-        @TypeDef(name = "jsonb-node", typeClass = JsonNodeBinaryType.class),
-        @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
-})
-@AllArgsConstructor
-public class HivEnrollment{
+@Builder(toBuilder = true)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = "id")
+public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -47,19 +30,25 @@ public class HivEnrollment{
     @Column(name = "target_group_id")
     private Long targetGroupId;
     @Column(name = "date_confirmed_hiv")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateConfirmedHiv;
     @Column(name = "date_enrolled_pmtct")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateEnrolledPMTCT;
-    @Column(name = "source_of_referrer")
-    private String sourceOfReferrer;
+    @Column(name = "source_of_referrer_id")
+    private Long sourceOfReferrerId;
     @Column(name = "time_hiv_diagnosis")
-    private LocalDateTime timeHivDiagnosis;
-    private Long tbStatusId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime timeHivDiagnosis;
     @Column(name = "pregnant")
     private Boolean pregnant;
     @Column(name = "breastfeeding")
     private Boolean breastfeeding;
     @Column(name = "date_of_registration")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfRegistration;
     @NonNull
     @Column(name = "status_at_registration_id")
@@ -68,31 +57,50 @@ public class HivEnrollment{
     @NonNull
     private Long enrollmentSettingId;
     @Column(name = "date_started")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateStarted;
     @Column(name = "send_message")
     private Boolean sendMessage;
     @NonNull
-    @Column(name = "person_id")
     private Long personId;
-    @Type(type = "jsonb-node")
-    @Column(columnDefinition = "jsonb")
-    private JsonNode extra;
+
     private String uuid;
     @Basic
     @Column(name = "archived")
-    private Integer archived;
+    private int archived;
+
     @Basic
-    @Column(name = "date_created", nullable = true)
-    private LocalDateTime dateCreated = LocalDateTime.now ();
-    @Column(name = "created_by", updatable = false)
-    @JsonIgnore
-    private String createdBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
+    @Column(name = "facility_name")
+    private String facilityName;
+
     @Basic
-    @Column(name = "date_modified")
-    private LocalDateTime dateModified = LocalDateTime.now ();
+    @Column(name = "ovc_number")
+    private String ovcNumber;
     @Basic
-    @Column(name = "modified_by", updatable = false)
-    @JsonIgnore
-    private String modifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
+    @Column(name = "date_of_lpm")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateOfLpm;
+    @Basic
+    @Column(name = "pregnancy_status_id")
+    private Long pregnancyStatusId;
+
+    @Basic
+    @Column(name = "tb_status_id")
+    private Long tbStatusId;
+
+
+
+
+    @Override
+    public boolean isNew() {
+
+        return id == null;
+    }
+
+    /**
+     * @return a cloned or detached version of this entity
+     */
 
 }

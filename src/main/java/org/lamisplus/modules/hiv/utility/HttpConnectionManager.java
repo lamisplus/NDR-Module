@@ -26,7 +26,7 @@ public class HttpConnectionManager {
     }
 
     public String post(byte[] bytes, String url) throws IOException {
-        RequestBody body = RequestBody.create (MediaType.parse("application/json; charset=utf-8"), bytes);
+        RequestBody body = RequestBody.create(bytes, MediaType.parse("application/json; charset=utf-8"));
         String hash = Hashing.sha256().hashBytes(bytes).toString();
 
         Request request = new Request.Builder()
