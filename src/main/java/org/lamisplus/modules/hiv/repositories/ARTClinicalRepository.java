@@ -10,7 +10,11 @@ import java.util.Optional;
 @Repository
 public interface ARTClinicalRepository extends CommonJpaRepository<ARTClinical, Long> {
     List<ARTClinical> findByArchivedAndIsCommencementIsTrue(int i);
+
     List<ARTClinical> findByArchivedAndIsCommencementIsFalse(int i);
 
     Optional<ARTClinical> findByPersonIdAndIsCommencementIsTrue(Long personId);
+
+    List<ARTClinical> findAllByPersonIdAndIsCommencementIsFalseAndArchived(Long id, Integer archived);
+
 }

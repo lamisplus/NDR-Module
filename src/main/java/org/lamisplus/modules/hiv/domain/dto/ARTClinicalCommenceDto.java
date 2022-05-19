@@ -32,6 +32,7 @@ public class ARTClinicalCommenceDto implements Serializable {
     private  String clinicalNote;
     private  String uuid;
     private  Long hivEnrollmentId;
+    @JsonIgnore
     private  Long artStatusId;
     private  Long whoStagingId;
     private Long regimenId;

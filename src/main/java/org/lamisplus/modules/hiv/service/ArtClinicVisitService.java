@@ -85,7 +85,7 @@ public class ArtClinicVisitService {
 
 
     @NotNull
-    private ARTClinicVisitDto convertToClinicVisitDto(ARTClinical artClinical) {
+    public ARTClinicVisitDto convertToClinicVisitDto(ARTClinical artClinical) {
         VitalSignDto vitalSignDto = vitalSignService.getVitalSignById (artClinical.getVitalSignId ());
         ARTClinicVisitDto artClinicVisitDto = new ARTClinicVisitDto ();
         BeanUtils.copyProperties (artClinical, artClinicVisitDto);
@@ -97,7 +97,7 @@ public class ArtClinicVisitService {
 
 
     @NotNull
-    private ARTClinical convertDtoToART(ARTClinicVisitDto artClinicVisitDto, Long vitalSignId) {
+    public ARTClinical convertDtoToART(ARTClinicVisitDto artClinicVisitDto, Long vitalSignId) {
         ARTClinical artClinical = new ARTClinical ();
         log.info ("converted Dto 1 {}", artClinicVisitDto);
         BeanUtils.copyProperties (artClinicVisitDto, artClinical);
