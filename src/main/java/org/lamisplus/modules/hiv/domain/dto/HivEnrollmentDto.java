@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 
 import javax.persistence.Convert;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -49,4 +50,6 @@ public class HivEnrollmentDto implements Serializable {
     private LocalDate dateOfLpm;
     private Long pregnancyStatusId;
     private Long tbStatusId;
+    @NotNull
+    private Long visitId;
 }

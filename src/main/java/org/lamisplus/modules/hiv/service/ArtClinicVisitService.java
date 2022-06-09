@@ -3,14 +3,14 @@ package org.lamisplus.modules.hiv.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.hiv.domain.dto.ARTClinicVisitDto;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
-import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
-import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
-import org.lamisplus.modules.patient.service.VitalSignService;
+import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +28,16 @@ public class ArtClinicVisitService {
 
     private final VitalSignService vitalSignService;
 
+    private final CurrentUserOrganizationService organizationUtil;
+
 
     public ARTClinicVisitDto createArtClinicVisit(ARTClinicVisitDto artClinicVisitDto) {
         Long hivEnrollmentId = artClinicVisitDto.getHivEnrollmentId ();
         HivEnrollment hivEnrollment = hivEnrollmentRepository
                 .findById (hivEnrollmentId)
-                .orElseThrow (() -> new NoRecordFoundException ("no hiv enrollment found for id " + hivEnrollmentId));
-        if (hivEnrollment.getPersonId () != artClinicVisitDto.getPersonId ())
-            throw new NoRecordFoundException ("no person is  found for id " + artClinicVisitDto.getPersonId ());
+                .orElseThrow (() -> new EntityNotFoundException (ArtClinicVisitService.class, "errorMessage","no hiv enrollment found for id " + hivEnrollmentId));
+        if (!hivEnrollment.getPersonId ().equals (artClinicVisitDto.getPersonId ()))
+            throw new EntityNotFoundException (ArtClinicVisitService.class, "errorMessage","No person is  found for id " + artClinicVisitDto.getPersonId ());
         Long vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
@@ -80,7 +82,7 @@ public class ArtClinicVisitService {
     private ARTClinical getExistClinicVisit(Long id) {
         return artClinicalRepository
                 .findById (id)
-                .orElseThrow (() -> new NoRecordFoundException ("No clinic visit found for this Id " + id));
+                .orElseThrow (() -> new EntityNotFoundException (ArtClinicVisitService.class, "errorMessage","No clinic visit found for this Id " + id));
     }
 
 
@@ -102,6 +104,7 @@ public class ArtClinicVisitService {
         log.info ("converted Dto 1 {}", artClinicVisitDto);
         BeanUtils.copyProperties (artClinicVisitDto, artClinical);
         artClinical.setVitalSignId (vitalSignId);
+        artClinical.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         log.info ("converted entity 1 {}", artClinical);
         return artClinical;
     }

@@ -27,6 +27,8 @@ public class HIVStatusTrackerService {
     private final HIVStatusTrackerRepository hivStatusTrackerRepository;
     private final PersonService personService;
 
+    private final CurrentUserOrganizationService organizationUtil;
+
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         PersonResponseDto existPerson = personService.getPersonById (hivStatusTrackerDto.getPersonId ());
         log.info ("person   from status status {}", existPerson.getSurname ());
@@ -97,6 +99,7 @@ public class HIVStatusTrackerService {
     public HIVStatusTracker convertDtoToEntity(HIVStatusTrackerDto hivStatusTrackerDto) {
         HIVStatusTracker hivStatusTracker = new HIVStatusTracker ();
         BeanUtils.copyProperties (hivStatusTrackerDto, hivStatusTracker);
+        hivStatusTracker.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         return hivStatusTracker;
     }
 

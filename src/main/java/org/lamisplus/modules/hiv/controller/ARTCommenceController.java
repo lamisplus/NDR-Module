@@ -14,12 +14,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/hiv/art/commencement")
+@RequestMapping("/api/v1/hiv/art/commencement")
 public class ARTCommenceController {
 
     private final ArtCommenceService artCommenceService;
 
-    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HivPatientDto> createArtCommencement(@RequestBody ARTClinicalCommenceDto artClinicalCommenceDto) {
         return ResponseEntity.ok (artCommenceService.createArtCommence (artClinicalCommenceDto));
     }

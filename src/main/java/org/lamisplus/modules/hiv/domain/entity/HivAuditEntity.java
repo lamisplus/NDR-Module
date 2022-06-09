@@ -16,9 +16,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -42,14 +40,23 @@ public class HivAuditEntity {
     @ToString.Exclude
     private String createdBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
 
-    @Column(name = "last_modified_date", insertable = false)
+    @Column(name = "last_modified_date")
     @LastModifiedDate
     private LocalDateTime lastModifiedDate = LocalDateTime.now ();
 
-    @Column(name = "last_modified_by" ,insertable = false )
+    @Column(name = "last_modified_by" )
     @JsonIgnore
     @ToString.Exclude
     private String lastModifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
 
     private Long facilityId;
+
+    private Long visitId;
+
+    @PrePersist
+    @PreUpdate
+    public void update() {
+        lastModifiedDate = LocalDateTime.now ();
+        lastModifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
+    }
 }

@@ -32,6 +32,8 @@ public class HivEnrollmentService {
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
 
+    private final CurrentUserOrganizationService organizationUtil;
+
 
 
 
@@ -84,6 +86,7 @@ public class HivEnrollmentService {
         HivEnrollment hivEnrollment = new HivEnrollment ();
         BeanUtils.copyProperties (dto, hivEnrollment);
         log.info ("entity converted {} ", hivEnrollment);
+        hivEnrollment.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         return hivEnrollment;
     }
 
@@ -100,7 +103,7 @@ public class HivEnrollmentService {
         PersonResponseDto bioData = personService.getPersonById (personId);
         HivEnrollmentDto hivEnrollmentDto = convertToDto (entity);
         HivPatientDto hivPatientDto = new HivPatientDto ();
-        hivPatientDto.setBioData (bioData);
+        BeanUtils.copyProperties (bioData, hivPatientDto);
         hivPatientDto.setEnrolled (true);
         Long statusAtRegistrationId = entity.getStatusAtRegistrationId ();
         Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (statusAtRegistrationId);

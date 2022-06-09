@@ -14,9 +14,9 @@ import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.controller.exception.AlreadyExistException;
 import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
-import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
 import org.lamisplus.modules.patient.service.PersonService;
-import org.lamisplus.modules.patient.service.VitalSignService;
+import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +44,8 @@ public class ArtCommenceService {
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
 
+    private final CurrentUserOrganizationService organizationUtil;
+
 
     public HivPatientDto createArtCommence(ARTClinicalCommenceDto artClinicalCommenceDto) {
         Long hivEnrollmentId = artClinicalCommenceDto.getHivEnrollmentId ();
@@ -57,7 +59,7 @@ public class ArtCommenceService {
                 .findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
         if (artCommenceExist)
             throw new AlreadyExistException ("Art Commencement already exist for this person " + personId);
-        Long vitalSignId = vitalSignService.registerVitalSign (artClinicalCommenceDto.getVitalSignDto ()).getId ();
+        Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
         ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setIsCommencement (true);
@@ -74,9 +76,9 @@ public class ArtCommenceService {
 
     public HivPatientDto updateArtCommence(Long id, ARTClinicalCommenceDto artClinicalCommenceDto) {
         ARTClinical existArtClinical = getExistArt (id);
-        Long vitalSignId = vitalSignService
-                .updateVitalSign (artClinicalCommenceDto.getVitalSignDto ().getId (), artClinicalCommenceDto.getVitalSignDto ()).getId ();
-        ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, vitalSignId);
+       // Long vitalSignId = vitalSignService
+          //      .updateVitalSign (artClinicalCommenceDto.getVitalSignId (), artClinicalCommenceDto.getVitalSignDto ()).getId ();
+        ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, artClinicalCommenceDto.getVitalSignId ());
         artClinical.setId (existArtClinical.getId ());
         artClinical.setUuid (existArtClinical.getUuid ());
         artClinical.setCreatedBy (existArtClinical.getCreatedBy ());
@@ -132,7 +134,7 @@ public class ArtCommenceService {
         VitalSignDto vitalSignDto = vitalSignService.getVitalSignById (artClinical.getVitalSignId ());
         ARTClinicalCommenceDto artClinicalCommenceDto = new ARTClinicalCommenceDto ();
         BeanUtils.copyProperties (artClinical, artClinicalCommenceDto);
-        artClinicalCommenceDto.setVitalSignDto (vitalSignDto);
+        artClinicalCommenceDto.setVitalSignId (vitalSignDto.getId ());
         return artClinicalCommenceDto;
     }
 
@@ -142,6 +144,7 @@ public class ArtCommenceService {
         ARTClinical artClinical = new ARTClinical ();
         BeanUtils.copyProperties (artClinicalCommenceDto, artClinical);
         artClinical.setVitalSignId (vitalSignId);
+        artClinical.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         return artClinical;
     }
 
@@ -152,7 +155,7 @@ public class ArtCommenceService {
         HivPatientDto hivEnrollmentBy = enrollmentService.getHivEnrollmentById (entity.getHivEnrollmentId ());
         HivPatientDto hivPatientDto = new HivPatientDto ();
         hivPatientDto.setArtCommence (artClinicalCommenceDto);
-        hivPatientDto.setBioData (bioData);
+        BeanUtils.copyProperties (bioData, hivPatientDto);
         hivPatientDto.setEnrolled (true);
         hivPatientDto.setCommenced (true);
         hivPatientDto.setCurrentStatus (hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId (entity.getPersonId ()));
