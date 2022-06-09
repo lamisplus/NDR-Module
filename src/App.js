@@ -12,7 +12,7 @@ import "./../src/main/webapp/css/style.css";
 
 import Home from './main/webapp/jsx/components/Home'
 import PatientDetail from './main/webapp/jsx/components/Patient/PatientDetail'
-
+import RegisterPatientPage from './main/webapp/jsx/components/Patient/RegisterPatient';
 
 
 export default function App() {
@@ -28,10 +28,10 @@ export default function App() {
           <Route path="/patient-history">
             <PatientDetail />
           </Route>
-          {/* 
-          <Route path="/edit-patient">
-            <EditPatient />
-          </Route> */}
+ 
+          <Route path="/register-patient">
+            <RegisterPatientPage />
+          </Route>
           <Route path="/">
             <Home />
           </Route>

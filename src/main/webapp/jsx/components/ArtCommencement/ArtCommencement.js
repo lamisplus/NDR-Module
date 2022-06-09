@@ -70,27 +70,32 @@ const ArtCommencement = (props) => {
     const [pregancyStatus, setPregancyStatus] = useState([]);
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
-                                                    patient_id:props.patientObj.id,
+                                                    personId:props.patientObj.id,
                                                     visitDate: "",
                                                     viralLoad: "",
                                                     whoStagingId:"",
+                                                    clinicalStageId:"",
                                                     cd4: "",
                                                     cd4Percentage: "",
-                                                    isCommencement: "",
+                                                    isCommencement: true,
                                                     functionalStatusId: "",
                                                     clinicalNote: "",
-                                                    enrollmentId: "",
-                                                    vitalSignDto:""
+                                                    hivEnrollmentId: "",
+                                                    vitalSignDto:"",
+                                                    facilityId:1,
+                                                    regimenTypeId: 0,
+                                                    regimenId:0                                                   
+
                                                 });
 
     const [vital, setVitalSignDto]= useState({
                                                 bodyWeight: "",
                                                 diastolic:"",
                                                 encounterDate: "",
-                                                facilityId: 0,
+                                                facilityId: 1,
                                                 height: "",
                                                 personId: props.patientObj.id,
-                                                serviceTypeId: "",
+                                                serviceTypeId: 1,
                                                 systolic:"" 
                                             })
 
@@ -193,25 +198,30 @@ const ArtCommencement = (props) => {
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {        
             e.preventDefault();        
-            objValues.patient_id = props.patientObj.id
+            objValues.personId = props.patientObj.bioData.id
+            vital.encounterDate = objValues.visitDate
+            vital.personId=props.patientObj.bioData.id
             objValues.vitalSignDto= vital
-          
+            objValues.hivEnrollmentId= props.patientObj.enrollment.id
+            objValues.clinicalStageId = objValues.whoStagingId
+            
             setSaving(true);
-            axios.post(`${baseUrl}hiv/art/commencement`,objValues,
+            axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
               .then(response => {
                   setSaving(false);
+                  props.patientObj.commenced=true
                   toast.success("Record save successful");
                   props.toggle()
-                  props.loadPatients()
-                  //history.push("/")
+                  props.PatientCurrentStatus()
 
               })
               .catch(error => {
                   setSaving(false);
                   toast.error("Something went wrong");
+                 
               });
           
         }
@@ -221,7 +231,7 @@ const ArtCommencement = (props) => {
          
               <Modal show={props.showModal} toggle={props.toggle} className="fade" size="xl">
              <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 ART Commencement - <b>{patientObj.firstName + " " + patientObj.surname }</b>
+                 ART Commencement 
                  <Button
                     variant=""
                     className="btn-close"
@@ -281,9 +291,9 @@ const ArtCommencement = (props) => {
                                     <Label >Original Regimen Line  </Label>
                                     <Input
                                             type="select"
-                                            name="tbStatusId"
-                                            id="tbStatusId"
-                                            value={objValues.tbStatusId}
+                                            name="regimenId"
+                                            id="regimenId"
+                                            value={objValues.regimenId}
                                             onChange={handleInputChange}
                                             required
                                             >
@@ -303,9 +313,9 @@ const ArtCommencement = (props) => {
                                     <Label >Original Regimen</Label>
                                     <Input
                                             type="select"
-                                            name="tbStatusId"
-                                            id="tbStatusId"
-                                            value={objValues.tbStatusId}
+                                            name="regimenTypeId"
+                                            id="regimenTypeId"
+                                            value={objValues.regimenTypeId}
                                             onChange={handleInputChange}
                                             required
                                             >
@@ -328,17 +338,17 @@ const ArtCommencement = (props) => {
                                         <Label >Viral Load at Start of ART *</Label>
                                         <Input
                                             type="date"
-                                            name="artStartDate"
-                                            id="artStartDate"
+                                            name="viralLoad"
+                                            id="viralLoad"
                                             onChange={handleInputChange2}
-                                            value={objValues.cd4}
+                                            value={objValues.viralLoad}
                                             required
                                         />
-                                            {values.dob ==="Invalid date" ? (
+                                            {values.viralLoad ==="Invalid date" ? (
                                                 <span className={classes.error}>{"This field is required"}</span>
                                             ) : "" }
-                                            {errors.dob !=="" ? (
-                                            <span className={classes.error}>{errors.dob}</span>
+                                            {errors.viralLoad !=="" ? (
+                                            <span className={classes.error}>{errors.viralLoad}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -423,7 +433,10 @@ const ArtCommencement = (props) => {
                                                kg
                                             </InputGroupText>
                                         </InputGroup>
-                                        
+                                        {vital.bodyWeight > 200 ? (
+                                                <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
+                                            ) : "" 
+                                        }
                                         </FormGroup>
                                     </div>
                                    
@@ -442,7 +455,9 @@ const ArtCommencement = (props) => {
                                                m
                                             </InputGroupText>
                                         </InputGroup>
-                                        
+                                        {vital.height > 3 ? (
+                                            <span className={classes.error}>{"Height cannot be greater than 3."}</span>
+                                        ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
@@ -460,7 +475,9 @@ const ArtCommencement = (props) => {
                                                 systolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
-                                       
+                                        {vital.systolic > 200 ? (
+                                                <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                                            ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
@@ -479,7 +496,9 @@ const ArtCommencement = (props) => {
                                                 diastolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
-                                       
+                                        {vital.diastolic > 200 ? (
+                                            <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                                        ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">

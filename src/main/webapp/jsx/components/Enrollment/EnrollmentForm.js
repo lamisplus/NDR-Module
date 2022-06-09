@@ -118,7 +118,7 @@ const Enrollment = (props) => {
      //Get list of HIV STATUS ENROLLMENT
      const HivStatus =()=>{
         axios
-           .get(`${baseUrl}application-codesets/v2/SOURCE_REFERRAL`,
+           .get(`${baseUrl}application-codesets/v2/HIV_STATUS_ENROL`,
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
@@ -201,7 +201,7 @@ const Enrollment = (props) => {
             }
         }
 
-        }
+    }
           
     //Handle CheckBox 
     const handleCheckBox =e =>{
@@ -220,16 +220,16 @@ const Enrollment = (props) => {
             ...temp
             })    
         return Object.values(temp).every(x => x == "")
-  }
+    }
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();
         
           objValues.personId= patientObj.id
+          patientObj.enrolled=true
           delete objValues['tableData'];
-            console.log(objValues)
           setSaving(true);
-          axios.post(`${baseUrl}hiv`,objValues,
+          axios.post(`${baseUrl}hiv/enrollment`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
@@ -237,8 +237,8 @@ const Enrollment = (props) => {
                   setSaving(false);
                   toast.success("Record save successful");
                   props.toggle()
-                  props.loadPatients()
-                  //history.push("/")
+                  props.patientObj.enrolled=true
+                  props.PatientCurrentStatus()
 
               })
               .catch(error => {
@@ -251,9 +251,9 @@ const Enrollment = (props) => {
   return (      
       <div >
          
-              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
+              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="xl">
              <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 HIV Enrollment Form - <b>{patientObj.firstname + " " + patientObj.surname }</b>
+                 Initial Clinic Evaluation 
                  <Button
                     variant=""
                     className="btn-close"

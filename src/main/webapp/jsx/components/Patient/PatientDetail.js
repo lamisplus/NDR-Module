@@ -8,7 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import PatientCardDetail from './PatientCard'
 import { useHistory } from "react-router-dom";
-import {   Tab, Tabs, } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
 
@@ -53,12 +53,15 @@ function PatientCard(props) {
     const [key, setKey] = useState('home');
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-    //console.log(patientObj)
+
   return (
     <div className={classes.root}>
       <Card >
         <CardContent>
-        <Link to={"/"} >
+            <PatientCardDetail patientObj={patientObj}/>
+            
+            <SubMenu patientObj={patientObj}/>
+            <Link to={"/"} >
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -68,12 +71,25 @@ function PatientCard(props) {
             >
                 <span style={{ textTransform: "capitalize" }}>Back</span>
             </ButtonMui>
-            </Link>
-            <br/><br/>
-            <PatientCardDetail patientObj={patientObj}/>
-            <SubMenu />
-            <RecentHistory />
+          </Link>
+          <br/><br/>
+          <RecentHistory />
+          {/* {patientObj.enrolled===true ?
+              ( 
+                <RecentHistory />
+                )
+                    :
 
+                (
+                  <Alert
+                      variant="info"
+                      className="alert-dismissible solid fade show"
+                    >
+                      <p>No Recent Activity Found</p>
+                    </Alert>
+                )
+                    
+                } */}
          </CardContent>
       </Card>
     </div>

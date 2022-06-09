@@ -1,7 +1,7 @@
 import React, {useState, Fragment } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import Dashboard from './Patient/PatientList'
-
+import CheckedInPatients from './Patient/CheckedInPatients'
 
 const divStyle = {
   borderRadius: "2px",
@@ -28,14 +28,14 @@ const Home = () => {
                     activeKey={key}
                     onSelect={(k) => setKey(k)}
                     className="mb-3"
-                    >
-                    <Tab eventKey="home" title="Patients">                   
-                      <Dashboard />
-                    </Tab>
-                    
-                    </Tabs>
-
-
+                >
+                  {/* <Tab eventKey="checked-in" title="Checked In Patients">                   
+                    <CheckedInPatients />
+                  </Tab> */}
+                  <Tab eventKey="home" title="Find Patients">                   
+                    <Dashboard />
+                  </Tab>                    
+                </Tabs>
               </div>
             </Card.Body>
           </Card>

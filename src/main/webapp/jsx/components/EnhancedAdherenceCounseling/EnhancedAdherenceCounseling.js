@@ -100,7 +100,7 @@ const Enrollment = (props) => {
          
               <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
              <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Enhanced Adherence Counselling - <b>{patientObj.firstname + " " + patientObj.surname }</b>
+                 Enhanced Adherence Counselling 
                  <Button
                     variant=""
                     className="btn-close"
