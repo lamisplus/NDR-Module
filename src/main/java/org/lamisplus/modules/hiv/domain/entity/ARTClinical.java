@@ -47,7 +47,7 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @Column(name = "clinical_note")
     private String clinicalNote;
 
-    @Column(name = "uuid", nullable = false, unique = true)
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false )
     private String uuid;
     @Column(name = "hiv_enrollment_id")
     @NotNull

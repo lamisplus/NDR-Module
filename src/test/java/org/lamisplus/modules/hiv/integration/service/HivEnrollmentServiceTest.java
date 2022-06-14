@@ -47,7 +47,7 @@ class HivEnrollmentServiceTest {
 
 
     @Configuration
-    @AcrossTestConfiguration(modulePackages = {"org.lamisplus.modules"},
+    @AcrossTestConfiguration(modulePackages = {"org.lamisplus"},
             expose = {PasswordEncoder.class},
             modules = {BaseModule.NAME, PatientModule.NAME}
     )

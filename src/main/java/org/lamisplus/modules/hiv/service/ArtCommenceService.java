@@ -1,7 +1,10 @@
 package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
+import org.audit4j.core.util.Log;
 import org.jetbrains.annotations.NotNull;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.controller.apierror.RecordExistException;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
 import org.lamisplus.modules.hiv.domain.dto.ARTClinicalCommenceDto;
@@ -11,7 +14,6 @@ import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
-import org.lamisplus.modules.patient.controller.exception.AlreadyExistException;
 import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.service.PersonService;
@@ -53,13 +55,16 @@ public class ArtCommenceService {
         StringBuilder stringBuilder = new StringBuilder ();
         hivEnrollmentRepository
                 .findById (hivEnrollmentId)
-                .orElseThrow (() -> new NoRecordFoundException ("No hiv enrollment found for id " + hivEnrollmentId));
+                .orElseThrow (() -> new EntityNotFoundException (ArtCommenceService.class, "errorMessage", "No hiv enrollment found for id " + hivEnrollmentId));
         Long personId = artClinicalCommenceDto.getPersonId ();
         boolean artCommenceExist = artClinicalRepository
                 .findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
         if (artCommenceExist)
-            throw new AlreadyExistException ("Art Commencement already exist for this person " + personId);
+            throw new RecordExistException (ArtCommenceService.class, "errorMessage", "Art Commencement already exist for this person " + personId);
         Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
+        if(vitalSignId == null){
+            vitalSignId = processAndSaveVitalSign (artClinicalCommenceDto);
+        }
         ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setIsCommencement (true);
@@ -74,13 +79,25 @@ public class ArtCommenceService {
     }
 
 
+    private Long processAndSaveVitalSign(ARTClinicalCommenceDto artClinicalCommenceDto) {
+        Long vitalSignId;
+        VitalSignDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto ();
+        vitalSignDto.setVisitId (artClinicalCommenceDto.getVisitId ());
+        vitalSignDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        vitalSignDto.setEncounterDate (artClinicalCommenceDto.getVisitDate ());
+        Log.info ("vitalSign dto {}", vitalSignDto);
+        VitalSignDto saveVitalSignDto = vitalSignService.registerVitalSign (vitalSignDto);
+        vitalSignId = saveVitalSignDto.getId ();
+        return vitalSignId;
+    }
+
+
     public HivPatientDto updateArtCommence(Long id, ARTClinicalCommenceDto artClinicalCommenceDto) {
         ARTClinical existArtClinical = getExistArt (id);
        // Long vitalSignId = vitalSignService
           //      .updateVitalSign (artClinicalCommenceDto.getVitalSignId (), artClinicalCommenceDto.getVitalSignDto ()).getId ();
         ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, artClinicalCommenceDto.getVitalSignId ());
         artClinical.setId (existArtClinical.getId ());
-        artClinical.setUuid (existArtClinical.getUuid ());
         artClinical.setCreatedBy (existArtClinical.getCreatedBy ());
         artClinical.setCreatedDate (existArtClinical.getCreatedDate ());
         return convertArtCommenceToHivPatientDto (artClinicalRepository.save (artClinical));
