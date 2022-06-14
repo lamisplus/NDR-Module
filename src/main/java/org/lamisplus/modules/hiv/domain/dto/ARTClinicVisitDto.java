@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
-import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
@@ -63,6 +63,8 @@ public class ARTClinicVisitDto implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate lmpDate;
+    @NotNull
+    private Long visitId;
 
 
 }

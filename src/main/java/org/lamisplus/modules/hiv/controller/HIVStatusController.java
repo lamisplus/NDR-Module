@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/hiv/status/")
+@RequestMapping("/api/v1/hiv/status/")
 public class HIVStatusController {
 
     private final HIVStatusTrackerService hivStatusTrackerService;

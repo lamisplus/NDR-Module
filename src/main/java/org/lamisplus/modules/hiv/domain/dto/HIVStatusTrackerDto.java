@@ -24,6 +24,8 @@ public class HIVStatusTrackerDto implements Serializable {
     private LocalDate statusDate;
     @NotNull
     private Long personId;
+    @NotNull
+    private Long visitId;
     private String trackOutcome;
     @PastOrPresent
     private LocalDate trackDate;
@@ -32,4 +34,5 @@ public class HIVStatusTrackerDto implements Serializable {
     private String reasonForInterruption;
     @Size(max = 100)
     private String causeOfDeath;
+
 }

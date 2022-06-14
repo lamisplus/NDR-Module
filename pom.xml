@@ -89,6 +89,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.lamisplus.modules</groupId>
+            <artifactId>triage</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>

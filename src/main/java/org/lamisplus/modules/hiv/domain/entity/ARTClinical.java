@@ -42,13 +42,12 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @Column(name = "functional_status_id")
     private Long functionalStatusId;
 
-    @NotNull
     private Long clinicalStageId;
 
     @Column(name = "clinical_note")
     private String clinicalNote;
 
-    @Column(name = "uuid", nullable = false, unique = true)
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false )
     private String uuid;
     @Column(name = "hiv_enrollment_id")
     @NotNull
@@ -58,7 +57,7 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 
     private long  regimenTypeId;
 
-    @Column(name = "art_status_id", nullable = false)
+    @Column(name = "art_status_id", nullable = false, updatable = false)
     private Long artStatusId;
 
     @Column(name = "archived")

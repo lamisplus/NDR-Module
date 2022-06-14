@@ -12,6 +12,7 @@ import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,8 @@ public class HIVStatusTrackerService {
 
     private final HIVStatusTrackerRepository hivStatusTrackerRepository;
     private final PersonService personService;
+
+    private final CurrentUserOrganizationService organizationUtil;
 
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         PersonResponseDto existPerson = personService.getPersonById (hivStatusTrackerDto.getPersonId ());
@@ -93,13 +96,14 @@ public class HIVStatusTrackerService {
                 .orElseThrow (() -> new NoRecordFoundException ("Status find for this id " + id));
     }
 
-    private HIVStatusTracker convertDtoToEntity(HIVStatusTrackerDto hivStatusTrackerDto) {
+    public HIVStatusTracker convertDtoToEntity(HIVStatusTrackerDto hivStatusTrackerDto) {
         HIVStatusTracker hivStatusTracker = new HIVStatusTracker ();
         BeanUtils.copyProperties (hivStatusTrackerDto, hivStatusTracker);
+        hivStatusTracker.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         return hivStatusTracker;
     }
 
-    private HIVStatusTrackerDto convertEntityToDto(HIVStatusTracker hivStatusTracker) {
+    public HIVStatusTrackerDto convertEntityToDto(HIVStatusTracker hivStatusTracker) {
         HIVStatusTrackerDto hivStatusTrackerDto = new HIVStatusTrackerDto ();
         BeanUtils.copyProperties (hivStatusTracker, hivStatusTrackerDto);
         return hivStatusTrackerDto;
@@ -107,4 +111,7 @@ public class HIVStatusTrackerService {
     }
 
 
+    public HIVStatusTracker findDistinctFirstByPersonIdAndStatusDate(Long personId, LocalDate visitDate) {
+        return hivStatusTrackerRepository.findDistinctFirstByPersonIdAndStatusDate (personId, visitDate);
+    }
 }

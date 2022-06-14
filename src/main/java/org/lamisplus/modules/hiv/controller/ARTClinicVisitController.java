@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/hiv/art/clinic-visit")
+@RequestMapping("/api/v1/hiv/art/clinic-visit")
 public class ARTClinicVisitController {
 
     private final ArtClinicVisitService artClinicVisitService;

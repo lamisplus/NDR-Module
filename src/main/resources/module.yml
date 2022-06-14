@@ -2,7 +2,7 @@ basePackage: org.lamisplus.modules.hiv
 name: HivModule
 store: true
 menus:
-  - icon: wc
+  - icon:
     disabled: false
     name: Hiv
     state: hiv

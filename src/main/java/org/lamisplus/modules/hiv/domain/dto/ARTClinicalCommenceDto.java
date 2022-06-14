@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
-import org.lamisplus.modules.patient.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
@@ -32,12 +32,13 @@ public class ARTClinicalCommenceDto implements Serializable {
     private  String clinicalNote;
     private  String uuid;
     private  Long hivEnrollmentId;
+    @JsonIgnore
     private  Long artStatusId;
     private  Long whoStagingId;
     private Long regimenId;
     private Long regimenTypeId;
     @NotNull
-    private  VitalSignDto vitalSignDto;
+    private  Long vitalSignId;
     @NotNull
     private Long facilityId;
     @NotNull
@@ -48,4 +49,8 @@ public class ARTClinicalCommenceDto implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate lmpDate;
+    @NotNull
+    private Long visitId;
+    VitalSignDto vitalSignDto;
+
 }

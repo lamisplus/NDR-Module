@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.lamisplus.modules.base.BaseModule;
 import org.lamisplus.modules.hiv.HivModule;
 import org.lamisplus.modules.patient.PatientModule;
+import org.lamisplus.modules.triage.TriageModule;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,15 +47,17 @@ class HivEnrollmentServiceTest {
 
 
     @Configuration
-    @AcrossTestConfiguration(modulePackages = {"org.lamisplus.modules"},
+    @AcrossTestConfiguration(modulePackages = {"org.lamisplus"},
             expose = {PasswordEncoder.class},
-            modules = {BaseModule.NAME})
+            modules = {BaseModule.NAME, PatientModule.NAME}
+    )
     @PropertySource(value = "classpath:across-test.properties")
     static class Config implements AcrossContextConfigurer {
 
         @Override
         public void configure(AcrossContext context) {
             context.addModule (new PatientModule ());
+            context.addModule (new TriageModule ());
             context.addModule(new HivModule());
         }
     }
