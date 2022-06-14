@@ -12,9 +12,9 @@ import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
+import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
-import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
@@ -55,12 +55,12 @@ public class ArtCommenceService {
         StringBuilder stringBuilder = new StringBuilder ();
         hivEnrollmentRepository
                 .findById (hivEnrollmentId)
-                .orElseThrow (() -> new EntityNotFoundException (ArtCommenceService.class, "errorMessage", "No hiv enrollment found for id " + hivEnrollmentId));
+                .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
         Long personId = artClinicalCommenceDto.getPersonId ();
         boolean artCommenceExist = artClinicalRepository
                 .findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
         if (artCommenceExist)
-            throw new RecordExistException (ArtCommenceService.class, "errorMessage", "Art Commencement already exist for this person " + personId);
+            throw new RecordExistException (ARTClinical.class, "personId",  ""+personId);
         Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
         if(vitalSignId == null){
             vitalSignId = processAndSaveVitalSign (artClinicalCommenceDto);
@@ -132,7 +132,7 @@ public class ArtCommenceService {
     private ARTClinical getExistArt(Long id) {
         return artClinicalRepository
                 .findById (id)
-                .orElseThrow (() -> new NoRecordFoundException ("No ART found for this Id " + id));
+                .orElseThrow (() -> new EntityNotFoundException (ARTClinical.class, "id", ""+ id));
     }
 
     private void processAndSaveHIVStatus(LocalDate visitDate, Long personId, String hivStatus) {
