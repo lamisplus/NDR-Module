@@ -187,10 +187,10 @@ const getAddress = (identifier) => {
 
                     <Col md={12}>
                     {/* {HIVStatus(patientObj)} */}
-                    <span>
+                    {/* <span>
                         {" "}
                         <b>Status : </b>
-                      </span>
+                      </span> */}
                     </Col>
                     </Row>
                     </Col>
@@ -236,10 +236,12 @@ const getAddress = (identifier) => {
                 <div className={classes.column}>
                   <Button primary  floated='right' onClick={() => loadEnrollment(patientObj)}>Initial Clinic Evaluation</Button>
                 </div>
-               
+               {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
-                  {" "}<Button secondary onClick={() => loadArt(patientObj)} >ART Commencement </Button>
+                {" "}<Button secondary onClick={() => loadArt(patientObj)} >ART Commencement </Button>
                 </div>
+                )
+               }
                     
                 {/* <div className={classes.column}>
                    

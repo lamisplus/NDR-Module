@@ -45,15 +45,17 @@ function SubMenu(props) {
 
     return (
         <div>
-            {patientObj.enrolled===true ?
+            {patientObj.commenced!==true ?
                 (
-                <Menu size="mini" color={"black"} inverted>
+                <Menu size="mini" color={"grey"} inverted >
                     
-                    <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up </Menu.Item>
-                    <Menu.Item onClick={() => loadAnc(patientObj)}> Enhanced Adherence Counselling</Menu.Item>
-                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)}>Clint Status Update</Menu.Item>
-                    <Menu.Item>Laboratory</Menu.Item>
-                    <Menu.Item>Pharmacy Refill</Menu.Item>
+                    <Menu.Item onClick={() => loadClinicFolowUp(patientObj)} style={{color:"black"}} disabled>  Clinic Follow Up </Menu.Item>
+                    <Menu.Item onClick={() => loadAnc(patientObj)} color={"black"} disabled> Enhanced Adherence Counselling</Menu.Item>
+                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Clint Status Update</Menu.Item>
+                    <Menu.Item disabled>PMTCT</Menu.Item>
+                    <Menu.Item disabled>HEI</Menu.Item>
+                    <Menu.Item disabled>Cervical Cancer</Menu.Item>
+                    <Menu.Item disabled>PREP</Menu.Item>
                     
                 </Menu>
                )

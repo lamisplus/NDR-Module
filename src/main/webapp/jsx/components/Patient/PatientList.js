@@ -120,6 +120,7 @@ const Patients = (props) => {
                 .then((response) => {
                     //console.log(response.data)
                     setPatientList(response.data);
+                   
                 })
                 .catch((error) => {    
                 });        
@@ -145,7 +146,8 @@ const Patients = (props) => {
         const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
         return hospitalNumber ? hospitalNumber.value : '';
     };
-
+    let p =[{id: 1, name : "ade"}, {id: 2, name:"ade55"}];
+    console.log(p[p.length - 1])
 
   return (
     <div>
@@ -205,26 +207,37 @@ const Patients = (props) => {
                           Actions <span aria-hidden>▾</span>
                         </MenuButton>
                             <MenuList style={{ color:"#000000 !important"}} >
-                                {row.currentStatus!== "NOT ENROLLED" && (
-                                <MenuItem style={{ color:"#000 !important"}}>
-                                    <Link
-                                        to={{
-                                            pathname: "/patient-history",
-                                            state: { patientObj: row  }
-                                        }}>
-                                    <MdDashboard size="15" color="black" />{" "}<span style={{color: '#000'}}>Patient Dashboard</span>                   
-                                    </Link>
-                                </MenuItem>
-                                )}
-                                <MenuItem style={{ color:"#000 !important"}}>
-                                    <Link
-                                        to={{
-                                            pathname: "/register-patient",
-                                            state: { patientObj: row  }
-                                        }}>
-                                    <TiArrowForward size="15" color="black" />{" "}<span style={{color: '#000'}}>Enrollment Patient</span>                   
-                                    </Link>
-                                </MenuItem>                                      
+                                {row.currentStatus!== "NOT ENROLLED" ?
+                                    (
+                                        <>
+                                            <MenuItem style={{ color:"#000 !important"}}>
+                                                <Link
+                                                    to={{
+                                                        pathname: "/patient-history",
+                                                        state: { patientObj: row  }
+                                                    }}>
+                                                <MdDashboard size="15" color="black" />{" "}<span style={{color: '#000'}}>Patient Dashboard</span>                   
+                                                </Link>
+                                            </MenuItem>
+                                        </>
+                                    )
+                                    :
+                                    (
+                                        <>
+                                            <MenuItem style={{ color:"#000 !important"}}>
+                                                <Link
+                                                    to={{
+                                                        pathname: "/register-patient",
+                                                        state: { patientId : row.id }
+                                                    }}>
+                                                <TiArrowForward size="15" color="black" />{" "}<span style={{color: '#000'}}>Enrollment Patient</span>                   
+                                                </Link>
+                                            </MenuItem>  
+                                        </>
+                                    )
+
+                                }
+                                                                    
     
                           </MenuList>
                     </Menu>

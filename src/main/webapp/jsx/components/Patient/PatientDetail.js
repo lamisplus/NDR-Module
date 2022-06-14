@@ -50,7 +50,7 @@ const styles = theme => ({
 
 function PatientCard(props) {
     let history = useHistory();
-    const [key, setKey] = useState('home');
+    const [art, setArt] = useState(false);
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
 
@@ -58,9 +58,9 @@ function PatientCard(props) {
     <div className={classes.root}>
       <Card >
         <CardContent>
-            <PatientCardDetail patientObj={patientObj}/>
+            <PatientCardDetail patientObj={patientObj} setArt={setArt}/>
             
-            <SubMenu patientObj={patientObj}/>
+            <SubMenu patientObj={patientObj} art={art}/>
             <Link to={"/"} >
             <ButtonMui
                 variant="contained"

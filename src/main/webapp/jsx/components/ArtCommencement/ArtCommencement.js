@@ -67,6 +67,8 @@ const ArtCommencement = (props) => {
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [tbStatus, setTbStatus] = useState([]);
+    const [regimenLine, setRegimenLine] = useState([]);
+    const [regimenType, setRegimenType] = useState([]);
     const [pregancyStatus, setPregancyStatus] = useState([]);
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
@@ -104,6 +106,7 @@ const ArtCommencement = (props) => {
         WhoStaging();
         TBStatus();
         PreganacyStatus();
+        RegimenLine();
       }, []);
       //Get list of WhoStaging
       const WhoStaging =()=>{
@@ -120,6 +123,36 @@ const ArtCommencement = (props) => {
            });
        
         }
+        //Get list of RegimenLine
+        const RegimenLine =()=>{
+        axios
+           .get(`${baseUrl}hiv/regimen/types`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setRegimenLine(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+        }
+         //Get list of RegimenLine
+         const RegimenType =(id)=>{
+            axios
+               .get(`${baseUrl}hiv/regimen/types/${id}`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   //console.log(response.data);
+                   setRegimenType(response.data);
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+            }
         //Get list of PREGANACY_STATUS
       const PreganacyStatus =()=>{
         axios
@@ -171,7 +204,13 @@ const ArtCommencement = (props) => {
         const handleInputChangeVitalSignDto = e => {            
             setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
         }
-
+        const handleSelecteRegimen = e => { 
+            let regimenID=  e.target.value
+            setObjValues ({...objValues, regimenId:regimenID});
+            RegimenType(regimenID)           
+            //setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+        }
+        
         const handleInputChange2 = e => {
         let temp = { ...errors }
         if(e.target.name === objValues.bodyWeight && e.target.value >3){
@@ -196,15 +235,14 @@ const ArtCommencement = (props) => {
         }
           
         /**** Submit Button Processing  */
-        const handleSubmit = (e) => {        
-            e.preventDefault();        
-            objValues.personId = props.patientObj.bioData.id
+        const handleSubmit = (e) => {                  
+            e.preventDefault();                     
+            objValues.personId = props.patientObj.id
             vital.encounterDate = objValues.visitDate
-            vital.personId=props.patientObj.bioData.id
+            vital.personId=props.patientObj.id
             objValues.vitalSignDto= vital
             objValues.hivEnrollmentId= props.patientObj.enrollment.id
-            objValues.clinicalStageId = objValues.whoStagingId
-            
+            objValues.clinicalStageId = objValues.whoStagingId 
             setSaving(true);
             axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
@@ -220,7 +258,12 @@ const ArtCommencement = (props) => {
               })
               .catch(error => {
                   setSaving(false);
-                  toast.error("Something went wrong");
+                  if(error.apierror){
+                    toast.error(error.apierror.message);
+                  }else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+                  
                  
               });
           
@@ -293,15 +336,15 @@ const ArtCommencement = (props) => {
                                             type="select"
                                             name="regimenId"
                                             id="regimenId"
-                                            value={objValues.regimenId}
-                                            onChange={handleInputChange}
+                                            //value={objValues.regimenId}
+                                            onChange={handleSelecteRegimen}
                                             required
                                             >
                                              <option value=""> </option>
                       
-                                                {tbStatus.map((value) => (
+                                                {regimenLine.map((value) => (
                                                     <option key={value.id} value={value.id}>
-                                                        {value.display}
+                                                        {value.description}
                                                     </option>
                                                 ))}
                                         </Input>
@@ -321,9 +364,9 @@ const ArtCommencement = (props) => {
                                             >
                                              <option value=""> </option>
                       
-                                                {tbStatus.map((value) => (
+                                                {regimenType.map((value) => (
                                                     <option key={value.id} value={value.id}>
-                                                        {value.display}
+                                                        {value.description}
                                                     </option>
                                                 ))}
                                         </Input>

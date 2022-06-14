@@ -15,7 +15,7 @@ import {Card, CardContent} from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 import AddIcon from "@material-ui/icons/Add";
 import CancelIcon from "@material-ui/icons/Cancel";
-import {ToastContainer} from "react-toastify";
+import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import {Link, useHistory, useLocation} from "react-router-dom";
@@ -90,6 +90,7 @@ const UserRegistration = (props) => {
     });
     const [today, setToday] = useState(new Date().toISOString().substr(0, 10).replace('T', ' '));
     const [contacts, setContacts] = useState([]);
+    const [patientDTO, setPatientDTO]= useState({"person":"", "hivEnrollment":""})
     const [saving, setSaving] = useState(false);
     const [ageDisabled, setAgeDisabled] = useState(true);
     const [showRelative, setShowRelative] = useState(false);
@@ -110,7 +111,7 @@ const UserRegistration = (props) => {
     const locationState = location.state;
     let patientId = null;
     patientId = locationState ? locationState.patientId : null;
-
+    ///console.log(patientId)
     const getNames = (relationship) => {
         const surname = relationship.surname;
         const firstName = relationship.firstname;
@@ -241,7 +242,7 @@ const UserRegistration = (props) => {
                 ],
                 contact: contacts,
                 contactPoint: [],
-                dateOfBirth: new Date(data.dob),
+                dateOfBirth: format(new Date(data.dob), 'yyyy-MM-dd'),
                 deceased: false,
                 deceasedDateTime: null,
                 firstName: data.firstName,
@@ -258,9 +259,9 @@ const UserRegistration = (props) => {
                 surname: data.lastName,
                 educationId: data.highestQualification,
                 employmentStatusId: data.employmentStatus,
-                dateOfRegistration: data.dateOfRegistration,
+                dateOfRegistration: format(new Date(data.dateOfRegistration), 'yyyy-MM-dd'),
                 isDateOfBirthEstimated: data.dateOfBirth == "Actual" ? false : true,
-                hiveEnrollmentDetails:objValues,
+                //hivEnrollment:objValues,
             };
             const phone = {
                 "type": "phone",
@@ -282,11 +283,17 @@ const UserRegistration = (props) => {
             }
             patientForm.contactPoint.push(phone);
             if (patientId) {
-                patientForm.id = null;
-                const response = await axios.put(`${baseUrl}patient/${patientId}`, patientForm, { headers: {"Authorization" : `Bearer ${token}`} });
+                patientForm.id = patientId;
+                patientDTO.person=patientForm;
+                patientDTO.hivEnrollment=objValues;
+                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             } else {
-                const response = await axios.post(`${baseUrl}patient/`, patientForm, { headers: {"Authorization" : `Bearer ${token}`} });
+                patientForm.id = patientId;
+                patientDTO.person=patientForm;
+                patientDTO.hivEnrollment=objValues;
+                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             }
+            toast.success("Record save successful");
             history.push('/');
         } catch (e) {
             console.log(e);
@@ -619,7 +626,7 @@ const UserRegistration = (props) => {
                 setTransferIn(false)
             }
         }
-
+        
     }
           
     //Handle CheckBox 
@@ -1233,17 +1240,15 @@ const UserRegistration = (props) => {
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label for="dateOfRegistration">Date of Enrollment * </Label>
-                                    <DateTimePicker
-                                        time={false}
-                                        name="dateOfRegistration"
-                                        id="dateOfRegistration"
-                                        value={objValues.regDate}
-                                        onChange={value1 =>
-                                            setObjValues({ ...objValues, dateOfRegistration: moment(value1).format("YYYY-MM-DD") })
-                                        }
-                                        
-                                            max={new Date()}
+                                    <Input
+                                    type="date"
+                                    name="dateOfRegistration"
+                                    id="dateOfRegistration"
+                                    onChange={handleInputChange}
+                                    value={objValues.dateOfRegistration}
+                                    required
                                     />
+                                   
                                     {errors.dateOfRegistration !=="" ? (
                                         <span className={classes.error}>{errors.dateOfRegistration}</span>
                                     ) : "" }
