@@ -80,22 +80,19 @@ public class ArtCommenceService {
 
 
     private Long processAndSaveVitalSign(ARTClinicalCommenceDto artClinicalCommenceDto) {
-        Long vitalSignId;
         VitalSignDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto ();
         vitalSignDto.setVisitId (artClinicalCommenceDto.getVisitId ());
         vitalSignDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         vitalSignDto.setEncounterDate (artClinicalCommenceDto.getVisitDate ());
         Log.info ("vitalSign dto {}", vitalSignDto);
         VitalSignDto saveVitalSignDto = vitalSignService.registerVitalSign (vitalSignDto);
-        vitalSignId = saveVitalSignDto.getId ();
-        return vitalSignId;
+        return saveVitalSignDto.getId ();
+
     }
 
 
     public HivPatientDto updateArtCommence(Long id, ARTClinicalCommenceDto artClinicalCommenceDto) {
         ARTClinical existArtClinical = getExistArt (id);
-       // Long vitalSignId = vitalSignService
-          //      .updateVitalSign (artClinicalCommenceDto.getVitalSignId (), artClinicalCommenceDto.getVitalSignDto ()).getId ();
         ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, artClinicalCommenceDto.getVitalSignId ());
         artClinical.setId (existArtClinical.getId ());
         artClinical.setCreatedBy (existArtClinical.getCreatedBy ());
@@ -108,12 +105,11 @@ public class ArtCommenceService {
         ARTClinical artClinical = getExistArt (id);
         HIVStatusTracker hivStatusTracker = hivStatusTrackerService
                 .findDistinctFirstByPersonIdAndStatusDate (artClinical.getPersonId (), artClinical.getVisitDate ());
-        artClinical.setArchived (1);
-        hivStatusTracker.setArchived (1);
-        artClinicalRepository.save (artClinical);
         if (hivStatusTracker != null) {
             hivStatusTrackerService.archivedHIVStatusTracker (hivStatusTracker.getId ());
         }
+        artClinical.setArchived (1);
+        artClinicalRepository.save (artClinical);
     }
 
     public HivPatientDto getArtById(Long id) {
