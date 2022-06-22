@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 // import { Link } from 'react-router-dom';
 import { Row } from "react-bootstrap";
 import {  Modal, Button, Table  } from "react-bootstrap";
-import { Input, Label, FormGroup, InputGroupText, InputGroup  } from "reactstrap";
+import { Input, Label, FormGroup, InputGroupText, InputGroup, Col , CardBody, Card } from "reactstrap";
 import { Tab, Grid,} from 'semantic-ui-react'
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
@@ -12,6 +12,7 @@ import axios from "axios";
 import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete'
+import Select from "react-select";
 
 const useStyles = makeStyles(theme => ({ 
     button: {
@@ -41,6 +42,7 @@ const ClinicFollowUp = (props) => {
   const [infection, setInfection] = useState({illnessInfection:"", ondateInfection:""});
   const [infectionList, setInfectionList] = useState([]);
   const [TBForms, setTBForms] = useState(false)
+  const [regimenDrugs, setRegimenDrug] = useState([])
   const [objValues, setObjValues] = useState({
                                                 adherenceLevel: "",
                                                 adheres: {},
@@ -702,6 +704,273 @@ const ClinicFollowUp = (props) => {
 
     </Tab.Pane> 
   },
+  { menuItem: 'LABORATORY', render: () => 
+  <Tab.Pane>
+    <div className="row">
+    <Row>
+            <Col md={6} className="form-group mb-3">
+                <FormGroup>
+                    <Label for="encounterDate">Encounter Date & Time*</Label>
+                    <Input
+                      type="datetime-local"
+                    />
+                </FormGroup>
+            </Col>
+            <Col md={6} className="form-group mb-3">
+                <FormGroup>
+                    <Label for="testGroup">Select Test Order*</Label>
+                    <Select
+                        required
+                        isMulti={false}
+                      />
+                </FormGroup>
+            </Col>
+            <Col md={6} className="form-group mb-3">
+                <FormGroup>
+                    <Label for="testGroup">Select Test*</Label>
+
+                    <Select
+                        required
+                        isMulti={false}
+                      />
+                </FormGroup>
+            </Col>
+            <Col md={6} className="form-group mb-3">
+                <FormGroup>
+                    <Label for="priority">Select Priority*</Label>
+                    <Select
+                        required
+                        isMulti={false}
+                      />
+                </FormGroup>
+            </Col>
+
+                <Col md={6} className="form-group mb-3">
+                    <FormGroup>
+                        <Label for="vlIndication">VL Indication*</Label>
+                        <Select
+                        required
+                        isMulti={false}
+                      />
+                    </FormGroup>
+                </Col>
+
+            <Col md={6} className="form-group mb-3">
+                <FormGroup>
+                    <Label for="sampleOrderedBy">Test Ordered By*</Label>
+                    <Input
+                        required
+                        name="sampleOrderedBy"
+                        id="sampleOrderedBy"
+                        
+                    />
+                </FormGroup>
+            </Col>
+
+            <Col md={12}>                  
+                  <LabelSui as='a' color='black'  className="float-end" onClick={addInfection}  size='tiny' style={{ marginTop:20}}>
+                    <Icon name='plus' /> Add Test
+                </LabelSui>
+                  
+            </Col>
+        </Row>
+    </div>
+  </Tab.Pane> 
+},
+{ menuItem: 'PHARMACY', render: () => 
+  <Tab.Pane>
+      <div className="row">
+                            
+                            <div className="form-group mb-3 col-md-4">
+                                <FormGroup>
+                                <Label for="artDate">Encounter Date * </Label>
+                                <Input
+                                    type="datetime-local"
+                                    name="visitDate"
+                                    id="visitDate"
+                                    // onChange={handleInputChange}
+                                    // value={objValues.visitDate}
+                                    required
+                                />
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-4"></div>
+                        
+                            <div className="form-group mb-3 col-md-4"></div>
+                            <div className="form-group mb-3 col-md-12">
+                                <FormGroup>
+                                <Label >Select Regimen *</Label>
+                                <Input
+                                    type="select"
+                                    name="drugName"
+                                    id="drugName"
+                                    // value={objValues.drugName}
+                                    // onChange={handleSelectedRegimen}
+                                    
+                                    >
+                                    <option value="Select"> </option>
+                                    {/*                 
+                                        {regimens.map((value) => (
+                                            <option key={value.id} value={value.id}>
+                                                {value.name}
+                                            </option>
+                                        ))} */}
+                                </Input>
+                                
+                                </FormGroup>
+                            </div>
+                            {regimenDrugs.length >0 ? 
+                                (
+                                    <>
+                                        <Card>
+                                        <CardBody>
+                                        <h4>Enter Drugs Information </h4>
+                                        <div className="row">
+                                        {regimenDrugs.map((drugsInfo) => (
+                                            <>
+                                        <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Drug </Label>
+                                        <Input
+                                                type="text"
+                                                // name={drugsInfo.name}
+                                                // id={drugsInfo.name}
+                                                // value={drugsInfo.name}
+                                                // onChange={handleInputChangeOtherDetails}
+                                                // required
+                                                ></Input>
+                                        </FormGroup>
+                                        </div>
+                                        
+                                        <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >	Dosage Strength - {drugsInfo.abbrev}</Label>
+                                        <Input
+                                                type="number"
+                                                // name={drugsInfo.code}
+                                                // id={drugsInfo.code}
+                                                // value=""
+                                                // onChange={handleInputChangeOtherDetails}
+                                                required
+                                                >
+                                                
+                                            </Input>
+                                        
+                                        </FormGroup>
+                                        </div>
+                                    
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >Dosage Unit *</Label>
+                                            <Input
+                                                type="select"
+                                                // name={drugsInfo.code}
+                                                // id={drugsInfo.code}
+                                                // onChange={handleInputChangeOtherDetails}
+                                                // value=""
+                                                required
+                                            >
+                                                <option value="Select"> </option>
+                        
+                                                    {/* {dosageUnit.map((value) => (
+                                                        <option key={value.id} value={value.id}>
+                                                            {value.display}
+                                                        </option>
+                                                    ))} */}
+                                            </Input>
+                                            
+                                            </FormGroup>
+                                        </div>
+                                        </>
+                                        ))
+                                        }
+                                        </div>
+                                        </CardBody>
+                                        </Card>
+                                        <br/>
+                                    </>
+                                )
+                                :
+                                ""
+                            }
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Dose Frequency</Label>
+                                <Input
+                                    type="number"
+                                    name="dosageFrequency"
+                                    id="dosageFrequency"
+                                    // value={objValues.dosageFrequency}
+                                    // onChange={handleInputChange}
+                                    required
+                                    >
+                                    
+                                </Input>
+                                {/* {errors.dosageFrequency !=="" ? (
+                                    <span className={classes.error}>{errors.dosageFrequency}</span>
+                                ) : "" } */}
+                                </FormGroup>
+                            </div>
+                            
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Start Date </Label>
+                                <Input
+                                    type="date"
+                                    name="startDate"
+                                    id="startDate"
+                                    // value={objValues.startDate}
+                                    // onChange={handleInputChange}
+                                    required
+                                    >
+                                        
+                                </Input>
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Duration </Label>
+                                <Input
+                                    type="number"
+                                    name="duration"
+                                    id="duration"
+                                    // value={objValues.duration}
+                                    // onChange={handleInputChange}
+                                    required
+                                    >
+                                    
+                                </Input>
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Duration Unit </Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="number"
+                                        name="durationUnit"
+                                        id="durationUnit"
+                                        // onChange={handleInputChange}
+                                        // value={objValues.durationUnit} 
+                                    />
+                                    
+                                    
+                                </InputGroup>
+                                {/* {objValues.bodyWeight > 200 ? (
+                                        <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
+                                    ) : "" } */}
+                                </FormGroup>
+                            </div>
+                            <Col md={12}>                  
+                                  <LabelSui as='a' color='black'  className="float-end" onClick={addInfection}  size='tiny' style={{ marginTop:20}}>
+                                    <Icon name='plus' /> Add Drug
+                                </LabelSui>
+                                  
+                            </Col>
+
+      </div>
+  </Tab.Pane> 
+},
 ]
 
 /**** Submit Button Processing  */

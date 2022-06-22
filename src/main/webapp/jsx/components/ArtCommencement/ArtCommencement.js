@@ -340,7 +340,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleSelecteRegimen}
                                             required
                                             >
-                                             <option value=""> </option>
+                                             <option value="Select"> </option>
                       
                                                 {regimenLine.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -362,7 +362,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value=""> </option>
+                                             <option value="Select"> </option>
                       
                                                 {regimenType.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -406,7 +406,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value=""> </option>
+                                             <option value="Select"> </option>
                       
                                                 {clinicalStage.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -429,7 +429,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value=""> </option>
+                                             <option value="Select"> </option>
                       
                                                 {functionalStatus.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -450,7 +450,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value=""> </option>
+                                             <option value="Select"> </option>
                       
                                                 {tbStatus.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -555,7 +555,7 @@ const ArtCommencement = (props) => {
                                             value={objValues.address}
                                             required
                                         >
-                                            <option value=""> </option>
+                                            <option value="Select"> </option>
                       
                                             {pregancyStatus.map((value) => (
                                                 <option key={value.id} value={value.id}>

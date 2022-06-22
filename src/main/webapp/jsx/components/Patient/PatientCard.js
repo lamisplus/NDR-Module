@@ -16,11 +16,12 @@ import { Col, Row } from "reactstrap";
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-import Enrollment from './../Enrollment/EnrollmentForm';
+import ClinicEvaluationFrom from './../InitailClinicEvaluation/ClinicEvaluationFrom';
 import ArtCommencement from './../ArtCommencement/ArtCommencement';
 import axios from "axios";
-import { url as baseUrl } from "./../../../api";
-import { token as token } from "./../../../api";
+import { url as baseUrl, token } from "./../../../api";
+import Typography from '@material-ui/core/Typography';
+import CaptureBiometric from './CaptureBiometric';
 
 //Dtate Picker package
 Moment.locale("en");
@@ -64,15 +65,52 @@ const styles = theme => ({
 function PatientCard(props) {
   const { classes } = props;
   const patientObjs = props.patientObj ? props.patientObj : {}
+  const permissions= props.permissions ? props.permissions : [];
   const [patientObj, setpatientObj] = useState(patientObjs)
+  const [patientBiometricStatus, setPatientBiometricStatus]= useState(props.patientObj.biometricStatus);
+  const [biometricStatus, setBiometricStatus] = useState(false);
+  const [devices, setDevices] = useState([]);
   const [modal, setModal] = useState(false);
-  const [hivStatus, setHivStatus] = useState();
   const toggle = () => setModal(!modal);
+  const [biometricModal, setBiometricModal] = useState(false);
+  const BiometricModalToggle = () => setBiometricModal(!biometricModal);
+  const [hivStatus, setHivStatus] = useState();
   const [artModal, setArtModal] = useState(false);
   const Arttoggle = () => setArtModal(!artModal);
   useEffect(() => {
     PatientCurrentStatus()
   }, []);
+  useEffect(() => {         
+    CheckBiometric();
+  }, []);
+ //Get list of KP
+ const CheckBiometric =()=>{
+    axios
+       .get(`${baseUrl}modules/check?moduleName=biometric`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {
+           setBiometricStatus(response.data);
+           if(response.data===true){
+            axios
+                .get(`${baseUrl}biometrics/devices`,
+                    { headers: {"Authorization" : `Bearer ${token}`} }
+                )
+                .then((response) => {
+                    setDevices(response.data);
+                    
+                })
+                .catch((error) => {
+                    console.log(error)
+                });
+           
+            }
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+    }
     ///GET LIST OF Patients
     async function PatientCurrentStatus() {
         axios
@@ -129,7 +167,10 @@ const getAddress = (identifier) => {
   const address = identifiers.address.find(obj => obj.city);      
   return address ? address.city : '';
 };
-
+const handleBiometricCapture = (id) => { 
+  let patientObjID= id
+  setBiometricModal(!biometricModal);
+}
 
   
   return (
@@ -186,11 +227,48 @@ const getAddress = (identifier) => {
                     </Col>
 
                     <Col md={12}>
-                    {/* {HIVStatus(patientObj)} */}
-                    {/* <span>
-                        {" "}
-                        <b>Status : </b>
-                      </span> */}
+                      {biometricStatus===true ? (
+                          <>
+                              <div >
+                                  <Typography variant="caption">
+                                      <Label color={patientBiometricStatus===true? "green" : "red"} size={"mini"}>
+                                          Biometric Status
+                                          <Label.Detail>{patientBiometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
+                                      </Label>
+                                      {patientBiometricStatus!==true ? (
+                                    
+                                          <>
+                                              {permissions.includes('patient_check_in') || permissions.includes("all_permission") ? (
+                                                  <>
+                                                  <Label as='a' color='teal' onClick={() => handleBiometricCapture(patientObj.id)} tag>
+                                                      Capture Now
+                                                  </Label>
+                                                  </>
+                                              )
+                                              :""
+                                              }
+                                          </>
+                                      )
+                                      :""
+                                      }
+                                      
+                                  </Typography>
+                              </div>
+                          </>
+                          )
+                          :
+                          <>
+                              <div >
+                                  <Typography variant="caption">
+                                      <Label color={"red"} size={"mini"}>
+                                          Biometric Not Install
+                                          
+                                      </Label>
+                                    
+                                  </Typography>
+                              </div>
+                          </>
+                      }
                     </Col>
                     </Row>
                     </Col>
@@ -259,8 +337,9 @@ const getAddress = (identifier) => {
                 
                 </ExpansionPanelActions>
             </ExpansionPanel>
-      <Enrollment toggle={toggle} showModal={modal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>      
+      <ClinicEvaluationFrom toggle={toggle} showModal={modal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>      
       <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>
+      <CaptureBiometric modalstatus={biometricModal} togglestatus={BiometricModalToggle} patientId={patientObj.id} biometricDevices={devices} setPatientBiometricStatus={setPatientBiometricStatus} />
     </div>
   );
 }

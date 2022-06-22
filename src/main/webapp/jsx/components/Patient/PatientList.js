@@ -230,7 +230,7 @@ const Patients = (props) => {
                                                         pathname: "/register-patient",
                                                         state: { patientId : row.id }
                                                     }}>
-                                                <TiArrowForward size="15" color="black" />{" "}<span style={{color: '#000'}}>Enrollment Patient</span>                   
+                                                <TiArrowForward size="15" color="black" />{" "}<span style={{color: '#000'}}>Enroll Patient</span>                   
                                                 </Link>
                                             </MenuItem>  
                                         </>

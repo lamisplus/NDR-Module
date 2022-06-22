@@ -13,13 +13,10 @@ const Home = () => {
 
 
   return (
-    <Fragment>
-     
-      <Row>
-       
+    <Fragment>   
+      <Row>       
         <Col xl={12}>
-          <Card style={divStyle}>
-            
+          <Card style={divStyle}>            
             <Card.Body>
               {/* <!-- Nav tabs --> */}
               <div className="custom-tab-1">

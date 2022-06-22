@@ -11,6 +11,9 @@ import { useHistory } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
+import Consultation from './../Consultation/Home'
+import Pharmacy from './../Pharmacy/Index'
+import Laboratory from './../Laboratory/index'
 
 const styles = theme => ({
   root: {
@@ -51,16 +54,17 @@ const styles = theme => ({
 function PatientCard(props) {
     let history = useHistory();
     const [art, setArt] = useState(false);
+    const [activeContent, setActiveContent] = useState('recent-history');
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-
+    console.log(activeContent)
   return (
     <div className={classes.root}>
       <Card >
         <CardContent>
-            <PatientCardDetail patientObj={patientObj} setArt={setArt}/>
+            <PatientCardDetail patientObj={patientObj} setArt={setArt} />
             
-            <SubMenu patientObj={patientObj} art={art}/>
+            <SubMenu patientObj={patientObj} art={art} setActiveContent={setActiveContent}/>
             <Link to={"/"} >
             <ButtonMui
                 variant="contained"
@@ -72,24 +76,11 @@ function PatientCard(props) {
                 <span style={{ textTransform: "capitalize" }}>Back</span>
             </ButtonMui>
           </Link>
-          <br/><br/>
-          <RecentHistory />
-          {/* {patientObj.enrolled===true ?
-              ( 
-                <RecentHistory />
-                )
-                    :
-
-                (
-                  <Alert
-                      variant="info"
-                      className="alert-dismissible solid fade show"
-                    >
-                      <p>No Recent Activity Found</p>
-                    </Alert>
-                )
-                    
-                } */}
+          <br/><br/><br/>
+          {activeContent==='recent-history' &&(<RecentHistory />)}
+          {activeContent==='consultation' &&( <Consultation />)}
+          {activeContent==='pharmacy' &&( <Pharmacy />)}
+          {activeContent==='laboratory' &&( <Laboratory />)}
          </CardContent>
       </Card>
     </div>

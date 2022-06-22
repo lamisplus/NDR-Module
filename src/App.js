@@ -17,29 +17,28 @@ import RegisterPatientPage from './main/webapp/jsx/components/Patient/RegisterPa
 
 export default function App() {
   return (
-
+    <Router>
       <div>
       <ToastContainer />
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-         
-          
           <Route path="/patient-history">
             <PatientDetail />
-          </Route>
- 
+          </Route> 
           <Route path="/register-patient">
             <RegisterPatientPage />
           </Route>
+          <Route path="/register-patient">
+            {/* <consultation /> */}
+          </Route>
           <Route path="/">
             <Home />
-          </Route>
-        
+          </Route>       
           
         </Switch>
       </div>
- 
+ </Router>
   );
 }
 
