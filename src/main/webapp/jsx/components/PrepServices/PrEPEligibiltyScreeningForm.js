@@ -131,137 +131,123 @@ const PrEPEligibiltyScreeningForm = (props) => {
     }
 
   return (      
-      <div >
-         
-              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="xl">
-             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                    PrEP Eligibilty Screening Form
-                 <Button
-                    variant=""
-                    className="btn-close"
-                    onClick={props.toggle}
-                ></Button>
-            </Modal.Header>
-                <Modal.Body>                   
-                        <Card >
-                            <CardBody>
-                            <form >
-                                <div className="row">
-                                
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="uniqueId">Client Name * </Label>
-                                        <Input
-                                            type="text"
-                                            name="uniqueId"
-                                            id="uniqueId"
-                                            onChange={handleInputChange}
-                                            value={objValues.uniqueId}
-                                            required
-                                        />
-                                        <span >Surname First</span>
-                                        {errors.uniqueId !=="" ? (
-                                            <span className={classes.error}>{errors.uniqueId}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="uniqueId">Age * </Label>
-                                        <Input
-                                            type="number"
-                                            name="uniqueId"
-                                            id="uniqueId"
-                                            onChange={handleInputChange}
-                                            value={objValues.uniqueId}
-                                            required
-                                        />
-                                       
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Date Of Visit *</Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateConfirmedHiv"
-                                            id="dateConfirmedHiv"
-                                            value={objValues.regDate}
-                                            onChange={value1 =>
-                                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                           
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="uniqueId">Education Level </Label>
-                                        <Input
-                                            type="text"
-                                            name="uniqueId"
-                                            id="uniqueId"
-                                            onChange={handleInputChange}
-                                            value={objValues.uniqueId}
-                                            required
-                                        />
-                                       
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="uniqueId">Occupation </Label>
-                                        <Input
-                                            type="text"
-                                            name="uniqueId"
-                                            id="uniqueId"
-                                            onChange={handleInputChange}
-                                            value={objValues.uniqueId}
-                                            required
-                                        />
-                                        
-                                        </FormGroup>
-                                    </div>
-                                    <br/><br/>
-                                    <h3>Pre-test Counselling / Risk Counselling</h3><br/>
-                                </div>
-
-                                {saving ? <Spinner /> : ""}
-                                <br />
+      <div>                   
+        <Card >
+            <CardBody>
+            <form >
+                <div className="row">
+                    <h2>PrEP Eligibilty Screening Form</h2>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="uniqueId">Client Name * </Label>
+                        <Input
+                            type="text"
+                            name="uniqueId"
+                            id="uniqueId"
+                            onChange={handleInputChange}
+                            value={objValues.uniqueId}
+                            required
+                        />
+                        <span >Surname First</span>
+                        {errors.uniqueId !=="" ? (
+                            <span className={classes.error}>{errors.uniqueId}</span>
+                        ) : "" }
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="uniqueId">Age * </Label>
+                        <Input
+                            type="number"
+                            name="uniqueId"
+                            id="uniqueId"
+                            onChange={handleInputChange}
+                            value={objValues.uniqueId}
+                            required
+                        />
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label >Date Of Visit *</Label>
+                        <DateTimePicker
+                            time={false}
+                            name="dateConfirmedHiv"
+                            id="dateConfirmedHiv"
+                            value={objValues.regDate}
+                            onChange={value1 =>
+                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
+                            }
                             
-                                <MatButton
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.button}
-                                    startIcon={<SaveIcon />}
-                                    onClick={handleSubmit}
-                                    >
-                                    {!saving ? (
-                                    <span style={{ textTransform: "capitalize" }}>Save</span>
-                                    ) : (
-                                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                    )}
-                                </MatButton>
-                          
-                            <MatButton
-                                variant="contained"
-                                className={classes.button}
-                                startIcon={<CancelIcon />}
-                                onClick={props.toggle}
-                                
-                            >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton>
-                          
-                                </form>
-                            </CardBody>
-                        </Card> 
-                    </Modal.Body>
-        
-      </Modal>
+                                max={new Date()}
+                        />
+                            
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="uniqueId">Education Level </Label>
+                        <Input
+                            type="text"
+                            name="uniqueId"
+                            id="uniqueId"
+                            onChange={handleInputChange}
+                            value={objValues.uniqueId}
+                            required
+                        />
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="uniqueId">Occupation </Label>
+                        <Input
+                            type="text"
+                            name="uniqueId"
+                            id="uniqueId"
+                            onChange={handleInputChange}
+                            value={objValues.uniqueId}
+                            required
+                        />
+                        
+                        </FormGroup>
+                    </div>
+                    <br/><br/>
+                    <h3>Pre-test Counselling / Risk Counselling</h3><br/>
+                </div>
+
+                {saving ? <Spinner /> : ""}
+                <br />
+            
+                <MatButton
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    onClick={handleSubmit}
+                    >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    )}
+                </MatButton>
+            
+            <MatButton
+                variant="contained"
+                className={classes.button}
+                startIcon={<CancelIcon />}
+                onClick={props.toggle}
+                
+            >
+                <span style={{ textTransform: "capitalize" }}>Cancel</span>
+            </MatButton>
+            
+                </form>
+            </CardBody>
+        </Card>                    
     </div>
   );
 }

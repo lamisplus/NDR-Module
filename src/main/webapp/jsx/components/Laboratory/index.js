@@ -40,7 +40,7 @@ const Laboratory = (props) => {
 
   return (      
       <div >
-        <h3>Laboratory Test Order</h3>
+        <h2>Laboratory Test Order</h2>
                    
         <Card >
             <CardBody>
@@ -57,7 +57,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="testGroup">Select Test Order*</Label>
+                            <Label for="testGroup">Select Test Group*</Label>
                             <Select
                                 required
                                 isMulti={false}

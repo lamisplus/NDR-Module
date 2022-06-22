@@ -216,7 +216,7 @@ const Widget = (props) => {
 
   return (
         <div>
-          <h2>Clinic Follow-up Visit</h2>
+          <h2>Child Clinic Follow-up Visit</h2>
           <Grid columns='equal'>           
           <Grid.Column>
             <Segment>

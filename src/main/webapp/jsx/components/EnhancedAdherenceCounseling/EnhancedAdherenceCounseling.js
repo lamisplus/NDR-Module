@@ -96,98 +96,84 @@ const Enrollment = (props) => {
     }
 
   return (      
-      <div >
-         
-              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
-             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Enhanced Adherence Counselling 
-                 <Button
-                    variant=""
-                    className="btn-close"
-                    onClick={props.toggle}
-                ></Button>
-            </Modal.Header>
-                <Modal.Body>                   
-                        <Card >
-                            <CardBody>
-                            <form >
-                                <div className="row">
+        <div>                   
+            <Card >
+                <CardBody>
+                <form >
+                    <div className="row">
+                    <h2>Enhanced Adherence Counselling </h2>
+                    <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="participant_id">Date of 1st EAC Session </Label>
+                            <DateTimePicker
+                                time={false}
+                                name="dateRegistration"
+                                id="dateRegistration"
+                                value={values.regDate}
+                                onChange={value1 =>
+                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
+                                }
                                 
-                                <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="participant_id">Date of 1st EAC Session </Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateRegistration"
-                                            id="dateRegistration"
-                                            value={values.regDate}
-                                            onChange={value1 =>
-                                                setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                        {errors.participant_id !=="" ? (
-                                            <span className={classes.error}>{errors.participant_id}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="participant_id">Date of 1st EAC Completion </Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateRegistration"
-                                            id="dateRegistration"
-                                            value={values.regDate}
-                                            onChange={value1 =>
-                                                setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                        {errors.participant_id !=="" ? (
-                                            <span className={classes.error}>{errors.participant_id}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                 
-                                </div>
+                                    max={new Date()}
+                            />
+                            {errors.participant_id !=="" ? (
+                                <span className={classes.error}>{errors.participant_id}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="participant_id">Date of 1st EAC Completion </Label>
+                            <DateTimePicker
+                                time={false}
+                                name="dateRegistration"
+                                id="dateRegistration"
+                                value={values.regDate}
+                                onChange={value1 =>
+                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
+                                }
                                 
-                                {saving ? <Spinner /> : ""}
-                                <br />
-                            
-                                <MatButton
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                className={classes.button}
-                                startIcon={<SaveIcon />}
-                                onClick={handleSubmit}
-                                 >
-                                {!saving ? (
-                                <span style={{ textTransform: "capitalize" }}>Save</span>
-                                ) : (
-                                <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                )}
-                                </MatButton>
-                          
-                                <MatButton
-                                    variant="contained"
-                                    className={classes.button}
-                                    startIcon={<CancelIcon />}
-                                    onClick={props.toggle}
-                                >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton>
-                          
-                                </form>
-                            </CardBody>
-                        </Card> 
-                    </Modal.Body>
-        
-      </Modal>
-    </div>
+                                    max={new Date()}
+                            />
+                            {errors.participant_id !=="" ? (
+                                <span className={classes.error}>{errors.participant_id}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        
+                    </div>
+                    
+                    {saving ? <Spinner /> : ""}
+                    <br />
+                
+                    <MatButton
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    onClick={handleSubmit}
+                        >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    )}
+                    </MatButton>
+                
+                    <MatButton
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<CancelIcon />}
+                        onClick={props.toggle}
+                    >
+                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                </MatButton>
+                
+                    </form>
+                </CardBody>
+            </Card>                    
+        </div>
   );
 }
 

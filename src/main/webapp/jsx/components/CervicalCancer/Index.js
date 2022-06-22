@@ -72,7 +72,7 @@ const CervicalCancer = (props) => {
     const [pregancyStatus, setPregancyStatus] = useState([]);
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
-                                                    personId:props.patientObj.id,
+                                                    personId:"",
                                                     visitDate: "",
                                                     viralLoad: "",
                                                     whoStagingId:"",
@@ -96,7 +96,7 @@ const CervicalCancer = (props) => {
                                                 encounterDate: "",
                                                 facilityId: 1,
                                                 height: "",
-                                                personId: props.patientObj.id,
+                                                personId: "",
                                                 serviceTypeId: 1,
                                                 systolic:"" 
                                             })
@@ -270,144 +270,130 @@ const CervicalCancer = (props) => {
         }
 
   return (      
-      <div >
-         
-              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
-             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Cervical Cancer 
-                 <Button
-                    variant=""
-                    className="btn-close"
-                    onClick={props.toggle}
-                ></Button>
-            </Modal.Header>
-                <Modal.Body>                   
-                        <Card >
-                            <CardBody>
-                            <form >
-                                <div className="row">
-                                
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="artDate">Date of Screening * </Label>
-                                        <Input
-                                            type="date"
-                                            name="visitDate"
-                                            id="visitDate"
-                                            onChange={handleInputChange}
-                                            value={objValues.visitDate}
-                                            required
-                                        />
-                                        </FormGroup>
-                                    </div>
+         <div>                 
+            <Card >
+                <CardBody>
+                <form >
+                    <div className="row">
+                        <h2> Cervical Cancer </h2>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="artDate">Date of Screening * </Label>
+                            <Input
+                                type="date"
+                                name="visitDate"
+                                id="visitDate"
+                                onChange={handleInputChange}
+                                value={objValues.visitDate}
+                                required
+                            />
+                            </FormGroup>
+                        </div>
 
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Screen Type</Label>
-                                    <Input
-                                            type="select"
-                                            name="regimenId"
-                                            id="regimenId"
-                                            //value={objValues.regimenId}
-                                            onChange={handleSelecteRegimen}
-                                            required
-                                            >
-                                             <option value="Select"> </option>
-                      
-                                                {regimenLine.map((value) => (
-                                                    <option key={value.id} value={value.id}>
-                                                        {value.description}
-                                                    </option>
-                                                ))}
-                                        </Input>
-                                    </FormGroup>
-                                    </div>
-                                    
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Screening Method</Label>
-                                    <Input
-                                            type="select"
-                                            name="regimenTypeId"
-                                            id="regimenTypeId"
-                                            value={objValues.regimenTypeId}
-                                            onChange={handleInputChange}
-                                            required
-                                            >
-                                             <option value="Select"> </option>
-                      
-                                                {regimenType.map((value) => (
-                                                    <option key={value.id} value={value.id}>
-                                                        {value.description}
-                                                    </option>
-                                                ))}
-                                        </Input>
-                                    {/* {errors.last_name !=="" ? (
-                                            <span className={classes.error}>{errors.last_name}</span>
-                                        ) : "" } */}
-                                    </FormGroup>
-                                    </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label >Screen Type</Label>
+                        <Input
+                                type="select"
+                                name="regimenId"
+                                id="regimenId"
+                                //value={objValues.regimenId}
+                                onChange={handleSelecteRegimen}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {regimenLine.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                    ))}
+                            </Input>
+                        </FormGroup>
+                        </div>
+                        
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label >Screening Method</Label>
+                        <Input
+                                type="select"
+                                name="regimenTypeId"
+                                id="regimenTypeId"
+                                value={objValues.regimenTypeId}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {regimenType.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                    ))}
+                            </Input>
+                        {/* {errors.last_name !=="" ? (
+                                <span className={classes.error}>{errors.last_name}</span>
+                            ) : "" } */}
+                        </FormGroup>
+                        </div>
 
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Screening Result *</Label>
-                                        <Input
-                                            type="select"
-                                            name="whoStagingId"
-                                            id="whoStagingId"
-                                            value={objValues.whoStagingId}
-                                            onChange={handleInputChange}
-                                            required
-                                            >
-                                             <option value="Select"> </option>
-                      
-                                                {clinicalStage.map((value) => (
-                                                    <option key={value.id} value={value.id}>
-                                                        {value.display}
-                                                    </option>
-                                                ))}
-                                        </Input>
-                                        
-                                        </FormGroup>
-                                    </div>
-
-
-                                </div>
-                                
-                                {saving ? <Spinner /> : ""}
-                            <br />
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Screening Result *</Label>
+                            <Input
+                                type="select"
+                                name="whoStagingId"
+                                id="whoStagingId"
+                                value={objValues.whoStagingId}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {clinicalStage.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>
                             
-                                <MatButton
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                className={classes.button}
-                                startIcon={<SaveIcon />}
-                                onClick={handleSubmit}
-                            >
-                                {!saving ? (
-                                <span style={{ textTransform: "capitalize" }}>Save</span>
-                                ) : (
-                                <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                )}
-                            </MatButton>
-                          
-                            <MatButton
-                                variant="contained"
-                                className={classes.button}
-                                startIcon={<CancelIcon />}
-                                
-                            >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton>
-                          
-                                </form>
-                            </CardBody>
-                        </Card> 
-                    </Modal.Body>
-        
-      </Modal>
-    </div>
+                            </FormGroup>
+                        </div>
+
+
+                    </div>
+                    
+                    {saving ? <Spinner /> : ""}
+                <br />
+                
+                    <MatButton
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    onClick={handleSubmit}
+                >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    )}
+                </MatButton>
+                
+                <MatButton
+                    variant="contained"
+                    className={classes.button}
+                    startIcon={<CancelIcon />}
+                    
+                >
+                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                </MatButton>
+                
+                    </form>
+                </CardBody>
+            </Card>                     
+        </div>
   );
 }
 

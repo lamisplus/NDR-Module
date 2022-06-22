@@ -95,137 +95,124 @@ const ClientStatusUpdate = (props) => {
     }
 
   return (      
-      <div >
-         
-            <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
-            <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Client Status Update 
-                 <Button
-                    variant=""
-                    className="btn-close"
-                    onClick={props.toggle}
-                ></Button>
-             </Modal.Header>
-                <Modal.Body>                   
-                        <Card >
-                            <CardBody>
-                            <form >
-                                <div className="row">
-                                <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >New Status</Label>
-                                        <Input
-                                            type="select"
-                                            name="gender"
-                                            id="gender"
-                                            value={values.gender}
-                                            onChange={handleInputChange}
-                                            required
-                                            >
-                                            <option value=""> Please Select</option>
-                                            <option value="1"> Male</option>
-                                            <option value="2"> Female</option>
-                                        </Input>
-                                        {errors.gender !=="" ? (
-                                            <span className={classes.error}>{errors.gender}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="participant_id">Date of New Status </Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateRegistration"
-                                            id="dateRegistration"
-                                            value={values.regDate}
-                                            onChange={value1 =>
-                                                setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                        {errors.participant_id !=="" ? (
-                                            <span className={classes.error}>{errors.participant_id}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Tracking Outcome</Label>
-                                        <Input
-                                            type="select"
-                                            name="gender"
-                                            id="gender"
-                                            value={values.gender}
-                                            onChange={handleInputChange}
-                                            required
-                                            >
-                                            <option value=""> Please Select</option>
-                                            <option value="1"> Male</option>
-                                            <option value="2"> Female</option>
-                                        </Input>
-                                        {errors.gender !=="" ? (
-                                            <span className={classes.error}>{errors.gender}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="participant_id">Date of Tracked</Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateRegistration"
-                                            id="dateRegistration"
-                                            value={values.regDate}
-                                            onChange={value1 =>
-                                                setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                        {errors.participant_id !=="" ? (
-                                            <span className={classes.error}>{errors.participant_id}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-                                 
-                                </div>
-                                
-                                {saving ? <Spinner /> : ""}
-                                <br />
-                            
-                                <MatButton
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                className={classes.button}
-                                startIcon={<SaveIcon />}
-                                onClick={handleSubmit}
-                                 >
-                                {!saving ? (
-                                <span style={{ textTransform: "capitalize" }}>Save</span>
-                                ) : (
-                                <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                )}
-                                </MatButton>
-                          
-                                <MatButton
-                                    variant="contained"
-                                    className={classes.button}
-                                    startIcon={<CancelIcon />}
-                                    onClick={props.toggle}
+        <div>                  
+            <Card >
+                <CardBody>
+                <form >
+                    <div className="row">
+                        <h2> Client Status Update </h2>
+                    <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >New Status</Label>
+                            <Input
+                                type="select"
+                                name="gender"
+                                id="gender"
+                                value={values.gender}
+                                onChange={handleInputChange}
+                                required
                                 >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton>
-                          
-                            </form>
-                            </CardBody>
-                        </Card> 
-                    </Modal.Body>
-        
-      </Modal>
-    </div>
+                                <option value=""> Please Select</option>
+                                <option value="1"> Male</option>
+                                <option value="2"> Female</option>
+                            </Input>
+                            {errors.gender !=="" ? (
+                                <span className={classes.error}>{errors.gender}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="participant_id">Date of New Status </Label>
+                            <DateTimePicker
+                                time={false}
+                                name="dateRegistration"
+                                id="dateRegistration"
+                                value={values.regDate}
+                                onChange={value1 =>
+                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
+                                }
+                                
+                                    max={new Date()}
+                            />
+                            {errors.participant_id !=="" ? (
+                                <span className={classes.error}>{errors.participant_id}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Tracking Outcome</Label>
+                            <Input
+                                type="select"
+                                name="gender"
+                                id="gender"
+                                value={values.gender}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                <option value=""> Please Select</option>
+                                <option value="1"> Male</option>
+                                <option value="2"> Female</option>
+                            </Input>
+                            {errors.gender !=="" ? (
+                                <span className={classes.error}>{errors.gender}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="participant_id">Date of Tracked</Label>
+                            <DateTimePicker
+                                time={false}
+                                name="dateRegistration"
+                                id="dateRegistration"
+                                value={values.regDate}
+                                onChange={value1 =>
+                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
+                                }
+                                
+                                    max={new Date()}
+                            />
+                            {errors.participant_id !=="" ? (
+                                <span className={classes.error}>{errors.participant_id}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        
+                    </div>
+                    
+                    {saving ? <Spinner /> : ""}
+                    <br />
+                
+                    <MatButton
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    onClick={handleSubmit}
+                        >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    )}
+                    </MatButton>
+                
+                    <MatButton
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<CancelIcon />}
+                        onClick={props.toggle}
+                    >
+                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                </MatButton>
+                
+                </form>
+                </CardBody>
+            </Card>                  
+        </div>
   );
 }
 
