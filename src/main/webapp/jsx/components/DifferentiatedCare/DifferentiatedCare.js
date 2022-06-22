@@ -117,7 +117,7 @@ const ArtCommencement = (props) => {
          
               <Modal show={props.showModal} toggle={props.toggle} className="fade" size="xl">
              <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Differentiated Care - <b>{patientObj.first_name + " " + patientObj.last_name }</b>
+                 Differentiated Care - <b>{patientObj.firstname + " " + patientObj.surname }</b>
                  <Button
                     variant=""
                     className="btn-close"

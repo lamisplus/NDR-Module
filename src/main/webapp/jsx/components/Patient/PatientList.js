@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import MaterialTable from 'material-table';
 import axios from "axios";
-import { url as baseUrl } from "./../../../api";
-import { token as token } from "./../../../api";
+
+import { token as token, url as baseUrl } from "./../../../api";
 import { forwardRef } from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import { Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -23,14 +22,10 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import {  Card,CardBody,} from 'reactstrap';
-import Button from "@material-ui/core/Button";
-import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
-//import { useHistory } from "react-router-dom";
-import { FaUserPlus } from "react-icons/fa";
-import {FaSyringe, FaUserEdit, FaShare, FaTrash} from "react-icons/fa";
+import Button from "@material-ui/core/Button";
 import { MdDashboard } from "react-icons/md";
 import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
@@ -38,11 +33,8 @@ import { Label } from 'semantic-ui-react'
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-import Enrollment from './../Enrollment/EnrollmentForm'
-import ArtCommencement from './../ArtCommencement/ArtCommencement'
-import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling'
-import DifferentiatedCare from './../DifferentiatedCare/DifferentiatedCare';
-import StatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
+import { FaUserPlus } from "react-icons/fa";
+import {TiArrowForward} from 'react-icons/ti'
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -110,25 +102,11 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-let patientListObj=[{"id":5,"uuid":"18ec0eb0-7298-48b9-890b-d0c6578d51e7","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"536HTJG445","gender":1,"dob":"2020-01-28","phone":"08103910237","current_status":null,"vaccination_status":null,"address":"15 Unity Estate Saburi Extension, Deidei Abuja"},{"id":2,"uuid":"eee2d7e8-e9c1-4963-b2eb-6dcc1944f9e3","first_name":"Mathew","mid_name":"","last_name":"Adegbite","participant_id":"TUGVF89555","gender":1,"dob":"2001-07-13","phone":"08103910237","current_status":"5","vaccination_status":"2","address":"15 Unity Estate Saburi Extension, Deidei Abuja"}]
-
-
+const patientObjList=[{"id":1,"visitId":1,"active":true,"surname":"Adegbite","firstName":"Elijah","otherName":"","gender":{"id":3,"display":"Transgender(Female to male)"},"deceased":false,"maritalStatus":{"id":6,"display":"Married"},"employmentStatus":{"id":89,"display":"Employed"},"education":{"id":11,"display":"Senior Secondary"},"organization":null,"dateOfBirth":"1978-06-14","deceasedDateTime":null,"identifier":{"identifier":[{"type":"HospitalNumber","value":"445t","assignerId":1}]},"contact":null,"contactPoint":{"contactPoint":[{"type":"email","value":"mathewadegbite@gmail.com"},{"type":"phone","value":"09077772883"}]},"address":{"address":[{"city":"1 Governor Road Ikotun Lagos","line":[""],"stateId":26,"district":"557","countryId":1,"postalCode":"","organisationUnitId":0}]},"dateOfRegistration":"2022-06-04","isDateOfBirthEstimated":true}]
 const Patients = (props) => {
     
     const [patientList, setPatientList] = useState([])
     const [patientObj, setpatientObj] = useState([])
-    const [modal, setModal] = useState(false);
-    const toggle = () => setModal(!modal);
-    const [artModal, setArtModal] = useState(false);
-    const Arttoggle = () => setArtModal(!artModal);
-    const [ancModal, setAncModal] = useState(false);
-    const Anctoggle = () => setAncModal(!ancModal);
-    const [careModal, setCareModal] = useState(false);
-    const Caretoggle = () => setCareModal(!careModal);
-    const [clientStatusUpdateModal, setClientStatusUpdateModal] = useState(false);
-    const ClientStatusUpdatetoggle = () => setClientStatusUpdateModal(!clientStatusUpdateModal);
-    // const [deleteModal, setDeleteModal] = useState(false);
-    // const Deletetoggle = () => setDeleteModal(!deleteModal);
 
     useEffect(() => {
         patients()
@@ -136,12 +114,13 @@ const Patients = (props) => {
         ///GET LIST OF Patients
         async function patients() {
             axios
-                .get(`${baseUrl}covid/patients`,
+                .get(`${baseUrl}hiv/patients`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                    console.log(response.data)
+                    //console.log(response.data)
                     setPatientList(response.data);
+                   
                 })
                 .catch((error) => {    
                 });        
@@ -161,90 +140,32 @@ const Patients = (props) => {
                 }
                 return age_now + " year(s)";
         };
-
-    const loadEnrollment =(row)=> {
-        setpatientObj({...patientObj, ...row});
-            setModal(!modal)
-    }
-    const loadArt =(row)=> {
-        setpatientObj({...patientObj, ...row});
-            setArtModal(!artModal)
-    }
-    const loadAnc =(row)=> {
-        setpatientObj({...patientObj, ...row});
-            setAncModal(!ancModal)
-    }
-    const loadCare =(row)=> {
-        setpatientObj({...patientObj, ...row});
-            setCareModal(!careModal)
-    }
-    const loadStatusUpdate =(row)=> {
-        setpatientObj({...patientObj, ...row});
-        setClientStatusUpdateModal(!clientStatusUpdateModal)
-    }
-    // const DeletePatientModal =(row)=> {
-    //     setpatientObj({...patientObj, ...row});
-    //     setDeleteModal(!deleteModal)
-    // }
     
-    const VaccinationStatusIcon = (patient)=>{
-        //patient.first_name + " "  + patient. last_name,
-        if(patient.vaccination_status===""){
-            return (<><Icon name='dot circle outline' color="yellow"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }else if(patient.vaccination_status==="1"){
-            return (<><Icon name='dot circle outline' color="blue"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }else if(patient.vaccination_status==="2"){
-            return (<><Icon name='dot circle outline' color="green"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }else {
-            return (<><Icon name='dot circle outline' color="red"/>{ patient.first_name + " "  + patient. last_name}</> )
-        }
-    }
-    const VaccinationStatus = (patient)=>{
-        //console.log(patient)
-        if(patient.vaccination_status===null){
-            return (<><Label color="yellow" size="mini">Not Enroll</Label></> )
-        }else if(patient.vaccination_status==="1"){
-            return (<><Label color="teal" size="mini">Enrolled</Label></> )
-        }else if(patient.vaccination_status==="2"){
-            return (<><Label color="green" size="mini">Enrolled</Label></> )
-        }else {
-            return ""
-        }
-    }
-    const CurrentStatus = (currentStatus)=>{
-        if(currentStatus==="4"){
-            return (<Label color="blue" size="mini">active</Label>);
-        }else if(currentStatus==="5"){
-            return (<Label color="olive" size="mini">active</Label>);
-        }else if(currentStatus==="6"){
-            return (<Label color="teal" size="mini">active</Label>);
-        }else if(currentStatus==="7"){
-            return (<Label color="red" size="mini">active</Label>);
-        }else {
-            return   (<Label color="green" size="mini">None</Label>);
-        }
-
-    }
-
+    const getHospitalNumber = (identifier) => {     
+        const identifiers = identifier;
+        const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
+        return hospitalNumber ? hospitalNumber.value : '';
+    };
+    let p =[{id: 1, name : "ade"}, {id: 2, name:"ade55"}];
+    console.log(p[p.length - 1])
 
   return (
     <div>
        <Card>
          <CardBody>
-
-         {/* <Link to={"register-patient"} >
-            <Button
-                variant="contained"
-                color="primary"
-                className=" float-end ms-2"
-                startIcon={<FaUserPlus size="10"/>}
-
-            >
-                <span style={{ textTransform: "capitalize" }}>New Patient</span>
-            </Button>
-            </Link>        
-        <br/><br/> */}
-       
+         <Link to={"register-patient"}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className=" float-end"
+                    startIcon={<FaUserPlus size="10"/>}
+                >
+                    <span style={{ textTransform: "capitalize" }}>New Patient</span>
+                </Button>
+                </Link>
+                <br/><br/>
+                <br/>
+        
             <MaterialTable
             icons={tableIcons}
               title="Find Patient "
@@ -255,29 +176,29 @@ const Patients = (props) => {
                   field: "name",
                 },
                 { title: "Hospital Number", field: "hospital_number", filtering: false },
-                { title: "DOB", field: "dob", filtering: false },
+                { title: "Gender", field: "gender", filtering: false },
                 { title: "Age", field: "age", filtering: false },
-                { title: "Enrollment Status", field: "v_status", filtering: false },
-                { title: "ART Number", field: "v_status", filtering: false },
-                { title: "Status", field: "status", filtering: false },        
+                //{ title: "Enrollment Status", field: "v_status", filtering: false },
+                //{ title: "ART Number", field: "v_status", filtering: false },
+                { title: "Current Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
-              data={ patientListObj.map((row) => ({
+              data={ patientList.map((row) => ({
                   //Id: manager.id,
-                    name: VaccinationStatusIcon(row),
-                    hospital_number: row.participant_id,
-                    address: row.address,
-                    phone_number:  row.phone,
-                    dob:row.dob,
-                    age: (row.dob === 0 ||
-                        row.dob === undefined ||
-                        row.dob === null ||
-                        row.dob === "" )
+                    name:row.firstName + " " + row.surname,
+                    hospital_number: getHospitalNumber(row.identifier),
+                    //address: row.address,
+                   //phone_number:  row.phone,
+                    gender:row.gender.display,
+                    age: (row.dateOfBirth === 0 ||
+                        row.dateOfBirth === undefined ||
+                        row.dateOfBirth === null ||
+                        row.dateOfBirth === "" )
                           ? 0
-                          : calculate_age(moment(row.dob).format("DD-MM-YYYY")),
-                    v_status:  VaccinationStatus(row),
-                    status: CurrentStatus(row.current_status) 
-                            ,
+                          : calculate_age(moment(row.dateOfBirth).format("DD-MM-YYYY")),
+                    
+                    status: (<Label color="blue" size="mini">{row.currentStatus}</Label>),
+                 
                     actions:
             
                     <div>
@@ -286,58 +207,38 @@ const Patients = (props) => {
                           Actions <span aria-hidden>▾</span>
                         </MenuButton>
                             <MenuList style={{ color:"#000000 !important"}} >
-                                {/* <MenuItem  style={{ color:"#000 !important"}}>                      
-                                    <Link
-                                        to={{pathname: "/patient-dashboard", state: { patientObj: row  }}}>
-                                        <MdDashboard size="15" color="black" />{" "}<span style={{color: '#000'}}>Patient Dashboard</span>
-                                  </Link>                               
-                                </MenuItem>
-                                <MenuItem style={{ color:"#000 !important"}}>
-                                    <Link
-                                        to={{
-                                            pathname: "/edit-patient",
-                                            state: { patientObj: row  }
-                                        }}>
-                                    <FaUserEdit size="15" color="black" />{" "}<span style={{color: '#000'}}>Edit Patient</span>                   
-                                    </Link>
-                                </MenuItem>                                       */}
-                                  <MenuItem style={{ color:"#000 !important"}}  onClick={() => loadEnrollment(row)}>
-                                     
-                                        <FaShare size="15"  />{" "}
-                                        <span style={{color: '#000'}}>HIV Enrollment</span>
+                                {row.currentStatus!== "NOT ENROLLED" ?
+                                    (
+                                        <>
+                                            <MenuItem style={{ color:"#000 !important"}}>
+                                                <Link
+                                                    to={{
+                                                        pathname: "/patient-history",
+                                                        state: { patientObj: row  }
+                                                    }}>
+                                                <MdDashboard size="15" color="black" />{" "}<span style={{color: '#000'}}>Patient Dashboard</span>                   
+                                                </Link>
+                                            </MenuItem>
+                                        </>
+                                    )
+                                    :
+                                    (
+                                        <>
+                                            <MenuItem style={{ color:"#000 !important"}}>
+                                                <Link
+                                                    to={{
+                                                        pathname: "/register-patient",
+                                                        state: { patientId : row.id }
+                                                    }}>
+                                                <TiArrowForward size="15" color="black" />{" "}<span style={{color: '#000'}}>Enroll Patient</span>                   
+                                                </Link>
+                                            </MenuItem>  
+                                        </>
+                                    )
+
+                                }
                                                                     
-                                  </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadArt(row)}>
-                                     
-                                        <FaSyringe size="15"  />{" "}
-                                        <span style={{color: '#000'}}>ART Commencement</span>
-                                                                   
-                                  </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadEnrollment(row)}>
-                                     
-                                        <FaTrash size="15"  />{" "}
-                                        <span style={{color: '#000'}}>Clinic Follow Up Visit</span>
-                                                                   
-                                  </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadAnc(row)}>
-                                     
-                                        <FaTrash size="15"  />{" "}
-                                        <span style={{color: '#000'}}>Enhanced Adhrence Counselling</span>
-                                                                   
-                                  </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadCare(row)}>
-                                     
-                                        <FaTrash size="15"  />{" "}
-                                        <span style={{color: '#000'}}>Differentiated Care</span>
-                                                                   
-                                  </MenuItem>
-                                  <MenuItem style={{ color:"#000 !important"}} onClick={() => loadStatusUpdate(row)}>
-                                     
-                                        <FaTrash size="15"  />{" "}
-                                        <span style={{color: '#000'}}>Client Status Update</span>
-                                                                   
-                                  </MenuItem>
-                                  
+    
                           </MenuList>
                     </Menu>
                   </div>
@@ -361,14 +262,11 @@ const Patients = (props) => {
                           debounceInterval: 400
                       }}
             />
-    
+           
         </CardBody>
        </Card>
-      <Enrollment toggle={toggle} showModal={modal} patientObj={patientObj} loadPatients={patients}/>      
-      <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} loadPatients={patients}/>
-      <EnhancedAdherenceCounseling  toggle={Anctoggle} showModal={ancModal} patientObj={patientObj} loadPatients={patients}/> 
-      <DifferentiatedCare toggle={Caretoggle} showModal={careModal} patientObj={patientObj} loadPatients={patients}/>
-      <StatusUpdate toggle={ClientStatusUpdatetoggle} showModal={clientStatusUpdateModal} patientObj={patientObj} loadPatients={patients}/>
+      
+      
     </div>
   );
 }

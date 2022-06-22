@@ -14,8 +14,7 @@ import { useHistory } from "react-router-dom";
 import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
 import { DateTimePicker } from "react-widgets";
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
+
 import moment from "moment";
 import { Spinner } from "reactstrap";
 
@@ -65,9 +64,9 @@ const ClientStatusUpdate = (props) => {
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
  
-        const handleInputChange = e => {
-            setObjValues ({...objValues,  [e.target.name]: e.target.value});
-          }
+    const handleInputChange = e => {
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        }
           
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
@@ -98,15 +97,15 @@ const ClientStatusUpdate = (props) => {
   return (      
       <div >
          
-              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
-             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 Client Status Update - <b>{patientObj.first_name + " " + patientObj.last_name }</b>
+            <Modal show={props.showModal} toggle={props.toggle} className="fade" size="lg">
+            <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
+                 Client Status Update 
                  <Button
                     variant=""
                     className="btn-close"
                     onClick={props.toggle}
                 ></Button>
-            </Modal.Header>
+             </Modal.Header>
                 <Modal.Body>                   
                         <Card >
                             <CardBody>
@@ -220,7 +219,7 @@ const ClientStatusUpdate = (props) => {
                                 <span style={{ textTransform: "capitalize" }}>Cancel</span>
                             </MatButton>
                           
-                                </form>
+                            </form>
                             </CardBody>
                         </Card> 
                     </Modal.Body>

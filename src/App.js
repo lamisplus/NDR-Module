@@ -11,33 +11,34 @@ import "./main/webapp/vendor/bootstrap-select/dist/css/bootstrap-select.min.css"
 import "./../src/main/webapp/css/style.css";
 
 import Home from './main/webapp/jsx/components/Home'
-
+import PatientDetail from './main/webapp/jsx/components/Patient/PatientDetail'
+import RegisterPatientPage from './main/webapp/jsx/components/Patient/RegisterPatient';
 
 
 export default function App() {
   return (
-
+    <Router>
       <div>
       <ToastContainer />
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-         
-{/*           
-          <Route path="/patient-dashboard">
+          <Route path="/patient-history">
             <PatientDetail />
+          </Route> 
+          <Route path="/register-patient">
+            <RegisterPatientPage />
           </Route>
-          <Route path="/edit-patient">
-            <EditPatient />
-          </Route> */}
+          <Route path="/register-patient">
+            {/* <consultation /> */}
+          </Route>
           <Route path="/">
             <Home />
-          </Route>
-        
+          </Route>       
           
         </Switch>
       </div>
- 
+ </Router>
   );
 }
 

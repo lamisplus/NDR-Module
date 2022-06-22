@@ -1,8 +1,7 @@
 import React, {useState, Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import Dashboard from './Patient/PatientList'
-
+import CheckedInPatients from './Patient/CheckedInPatients'
 
 const divStyle = {
   borderRadius: "2px",
@@ -14,13 +13,10 @@ const Home = () => {
 
 
   return (
-    <Fragment>
-     
-      <Row>
-       
+    <Fragment>   
+      <Row>       
         <Col xl={12}>
-          <Card style={divStyle}>
-            
+          <Card style={divStyle}>            
             <Card.Body>
               {/* <!-- Nav tabs --> */}
               <div className="custom-tab-1">
@@ -29,14 +25,14 @@ const Home = () => {
                     activeKey={key}
                     onSelect={(k) => setKey(k)}
                     className="mb-3"
-                    >
-                    <Tab eventKey="home" title="Patients">                   
-                      <Dashboard />
-                    </Tab>
-                    
-                    </Tabs>
-
-
+                >
+                  {/* <Tab eventKey="checked-in" title="Checked In Patients">                   
+                    <CheckedInPatients />
+                  </Tab> */}
+                  <Tab eventKey="home" title="Find Patients">                   
+                    <Dashboard />
+                  </Tab>                    
+                </Tabs>
               </div>
             </Card.Body>
           </Card>
