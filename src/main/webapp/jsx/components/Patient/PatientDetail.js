@@ -17,7 +17,7 @@ import Laboratory from './../Laboratory/index';
 import AncPnc from './../PmtctServices/AncPnc';
 import AncEnrollement from './../PmtctServices/AncEnrollement';
 import ChildConsultation from './../ChildConsultation/Home';
-import LabourDelivery from './../PmtctServices/LabourDelivery';
+//import LabourDelivery from './../PmtctServices/LabourDelivery';
 import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
 import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
 import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
@@ -26,6 +26,8 @@ import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
 import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling';
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
+import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom'
+
 
 const styles = theme => ({
   root: {
@@ -70,12 +72,15 @@ function PatientCard(props) {
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
     console.log(activeContent)
+
+
   return (
     <div className={classes.root}>
       <Card >
         <CardContent>
-            <PatientCardDetail patientObj={patientObj} setArt={setArt} />            
+            <PatientCardDetail patientObj={patientObj} setArt={setArt} setActiveContent={setActiveContent}/>            
             <SubMenu patientObj={patientObj} art={art} setActiveContent={setActiveContent}/>
+            <br/>
             <Link to={"/"} >
             <ButtonMui
                 variant="contained"
@@ -95,7 +100,7 @@ function PatientCard(props) {
           {activeContent==='laboratory' &&( <Laboratory />)}
           {activeContent==='anc-pnc' &&( <AncPnc />)}
           {activeContent==='anc-enrollment' &&( <AncEnrollement />)}
-          {activeContent==='labour-delivery' &&( <LabourDelivery />)}
+          {/* {activeContent==='labour-delivery' &&( <LabourDelivery />)} */}
           {activeContent==='prep-commencement' &&( <PrEPCommencementForm />)}
           {activeContent==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions />)}
           {activeContent==='prep-screening' &&( <PrEPEligibiltyScreeningForm />)}
@@ -104,6 +109,7 @@ function PatientCard(props) {
           {activeContent==='counseling' &&( <EnhancedAdherenceCounseling />)}
           {activeContent==='cervical-cancer' &&( <CervicalCancer />)}
           {activeContent==='status-update' &&( <ClientStatusUpdate />)}
+          {activeContent==='adult-evaluation' &&( <AdultClinicEvaluationFrom />)}
          </CardContent>
       </Card>
     </div>

@@ -2,18 +2,7 @@ import React, { useState } from "react";
 import {Dropdown, Menu } from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling'
-import DifferentiatedCare from './../DifferentiatedCare/DifferentiatedCare';
-import StatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate';
-import ClinicFollowUp from './../ClinicFollowUpVisit/ClinicFollowUp';
-import CervicalCancer from './../CervicalCancer/Index'
-import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm'
-import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions'
-import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm'
-import Pharmacy from './../Pharmacy/Index'
-import Laboratory from './../Laboratory/index'
-import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm'
-import PrEPVisit from './../PrepServices/PrEPVisit'
+
 
 const useStyles = makeStyles((theme) => ({
     navItemText: {
@@ -25,40 +14,14 @@ function SubMenu(props) {
     const classes = useStyles();
     const patientObjs = props.patientObj ? props.patientObj : {}
     const [patientObj, setpatientObj] = useState(patientObjs)
-    const [ancModal, setAncModal] = useState(false);
-    const Anctoggle = () => setAncModal(!ancModal);
-    const [careModal, setCareModal] = useState(false);
-    const Caretoggle = () => setCareModal(!careModal);
-    const [clientStatusUpdateModal, setClientStatusUpdateModal] = useState(false);
-    const ClientStatusUpdatetoggle = () => setClientStatusUpdateModal(!clientStatusUpdateModal);
-    const [clinicFollowUpModal, setClinicFollowUpModal] = useState(false);
-    const ClinicFollowUptoggle = () => setClinicFollowUpModal(!clinicFollowUpModal);
-    const [cervicalCancerModal, setCervicalCancerModal] = useState(false);
-    const CervicalCancerToggle = () => setCervicalCancerModal(!cervicalCancerModal)
-    //Laboratory Modal
-    const [laboratoryModal, setLaboratoryModal] = useState(false);
-    const LaboratoryToggle = () => setLaboratoryModal(!laboratoryModal)
-    //Pharmacy Modal
-    const [pharmacyModal, setPharmacyModal] = useState(false);
-    const PharmacyToggle = () => setPharmacyModal(!pharmacyModal)
-    //PreP Services Forms
-    const [prEPRegistrationFormModal, setPrEPRegistrationFormModal] = useState(false);
-    const PrEPRegistrationFormToggle = () => setPrEPRegistrationFormModal(!prEPRegistrationFormModal)
-    const [prEPDiscontinuationsInterruptionsModal, setPrEPDiscontinuationsInterruptionsModal] = useState(false);
-    const PrEPDiscontinuationsInterruptionsToggle = () => setPrEPDiscontinuationsInterruptionsModal(!prEPDiscontinuationsInterruptionsModal)
-    const [prEPCommencementFormModal, setPrEPCommencementFormModal] = useState(false);
-    const PrEPCommencementFormToggle = () => setPrEPCommencementFormModal(!prEPCommencementFormModal)
-    const [prEPEligibiltyScreeningFormModal, setPrEPEligibiltyScreeningFormModal] = useState(false);
-    const PrEPEligibiltyScreeningFormToggle = () => setPrEPEligibiltyScreeningFormModal(!prEPEligibiltyScreeningFormModal)
-    const [prEPVisitModal, setPrEPVisitModal] = useState(false);
-    const PrEPVisitToggle = () => setPrEPVisitModal(!prEPVisitModal)
+
     
     const loadAnc =(row)=> {
         props.setActiveContent('counseling')
     }
     const loadCare =(row)=> {
-        setpatientObj({...patientObj, ...row});
-            setCareModal(!careModal)
+        // setpatientObj({...patientObj, ...row});
+        //     setCareModal(!careModal)
     }
     const loadStatusUpdate =(row)=> {
         props.setActiveContent('status-update')
@@ -70,8 +33,8 @@ function SubMenu(props) {
         props.setActiveContent('laboratory')
     }
     const loadClinicFolowUp = (row) =>{
-        setpatientObj({...patientObj, ...row});
-        setClinicFollowUpModal(!clinicFollowUpModal)
+        // setpatientObj({...patientObj, ...row});
+        // setClinicFollowUpModal(!clinicFollowUpModal)
     }
     const loadCervicalCancer = (row) =>{
         props.setActiveContent('cervical-cancer')
@@ -160,9 +123,7 @@ function SubMenu(props) {
                 </Menu>
                )
            }
-            
-            <DifferentiatedCare toggle={Caretoggle} showModal={careModal} patientObj={patientObj} />
-           
+                       
         </div>
     );
 }

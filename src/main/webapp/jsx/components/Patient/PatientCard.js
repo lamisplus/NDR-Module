@@ -16,7 +16,7 @@ import { Col, Row } from "reactstrap";
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-import ClinicEvaluationFrom from './../InitailClinicEvaluation/ClinicEvaluationFrom';
+import ClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom';
 import ArtCommencement from './../ArtCommencement/ArtCommencement';
 import axios from "axios";
 import { url as baseUrl, token } from "./../../../api";
@@ -140,8 +140,7 @@ function PatientCard(props) {
               return age_now + " year(s)";
     };
     const loadEnrollment =(row)=> {
-      setpatientObj({...patientObj, ...row});
-          setModal(!modal)
+      props.setActiveContent('adult-evaluation')
   }
   const loadArt =(row)=> {
       setpatientObj({...patientObj, ...row});
@@ -337,7 +336,7 @@ const handleBiometricCapture = (id) => {
                 
                 </ExpansionPanelActions>
             </ExpansionPanel>
-      <ClinicEvaluationFrom toggle={toggle} showModal={modal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>      
+     
       <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>
       <CaptureBiometric modalstatus={biometricModal} togglestatus={BiometricModalToggle} patientId={patientObj.id} biometricDevices={devices} setPatientBiometricStatus={setPatientBiometricStatus} />
     </div>
