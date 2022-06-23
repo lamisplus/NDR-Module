@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const ClinicEvaluationFrom = (props) => {
+const ChildClinicEvaluationForm = (props) => {
     const patientObj = props.patientObj;
     console.log(patientObj)
     let history = useHistory();
@@ -125,7 +125,7 @@ const ClinicEvaluationFrom = (props) => {
             <CardBody>
             <form >
                 <div className="row">
-                    <h2>Adult- Initial Clinical Evaluation </h2>
+                    <h2>Pediatric - Initial Clinical Evaluation </h2>
                     <h3>Medical History</h3>
                     {/* Medical History form inputs */}
                         <div className="form-group mb-3 col-md-2"> 
@@ -3595,4 +3595,4 @@ const ClinicEvaluationFrom = (props) => {
   );
 }
 
-export default ClinicEvaluationFrom;
+export default ChildClinicEvaluationForm;
