@@ -12,8 +12,22 @@ import { Alert } from "react-bootstrap";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
 import Consultation from './../Consultation/Home'
-import Pharmacy from './../Pharmacy/Index'
-import Laboratory from './../Laboratory/index'
+import Pharmacy from './../Pharmacy/Index';
+import Laboratory from './../Laboratory/index';
+import AncPnc from './../PmtctServices/AncPnc';
+import AncEnrollement from './../PmtctServices/AncEnrollement';
+import ChildConsultation from './../ChildConsultation/Home';
+//import LabourDelivery from './../PmtctServices/LabourDelivery';
+import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
+import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
+import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
+import PrEPVisit from './../PrepServices/PrEPVisit';
+import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
+import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling';
+import CervicalCancer from './../CervicalCancer/Index';
+import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
+import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom'
+
 
 const styles = theme => ({
   root: {
@@ -58,13 +72,15 @@ function PatientCard(props) {
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
     console.log(activeContent)
+
+
   return (
     <div className={classes.root}>
       <Card >
         <CardContent>
-            <PatientCardDetail patientObj={patientObj} setArt={setArt} />
-            
+            <PatientCardDetail patientObj={patientObj} setArt={setArt} setActiveContent={setActiveContent}/>            
             <SubMenu patientObj={patientObj} art={art} setActiveContent={setActiveContent}/>
+            <br/>
             <Link to={"/"} >
             <ButtonMui
                 variant="contained"
@@ -76,11 +92,24 @@ function PatientCard(props) {
                 <span style={{ textTransform: "capitalize" }}>Back</span>
             </ButtonMui>
           </Link>
-          <br/><br/><br/>
+          <br/><br/>
           {activeContent==='recent-history' &&(<RecentHistory />)}
           {activeContent==='consultation' &&( <Consultation />)}
+          {activeContent==='child-consultation' &&( <ChildConsultation />)}
           {activeContent==='pharmacy' &&( <Pharmacy />)}
           {activeContent==='laboratory' &&( <Laboratory />)}
+          {activeContent==='anc-pnc' &&( <AncPnc />)}
+          {activeContent==='anc-enrollment' &&( <AncEnrollement />)}
+          {/* {activeContent==='labour-delivery' &&( <LabourDelivery />)} */}
+          {activeContent==='prep-commencement' &&( <PrEPCommencementForm />)}
+          {activeContent==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions />)}
+          {activeContent==='prep-screening' &&( <PrEPEligibiltyScreeningForm />)}
+          {activeContent==='prep-visit' &&( <PrEPVisit />)}
+          {activeContent==='prep-registration' &&( <PrEPRegistrationForm />)} 
+          {activeContent==='counseling' &&( <EnhancedAdherenceCounseling />)}
+          {activeContent==='cervical-cancer' &&( <CervicalCancer />)}
+          {activeContent==='status-update' &&( <ClientStatusUpdate />)}
+          {activeContent==='adult-evaluation' &&( <AdultClinicEvaluationFrom />)}
          </CardContent>
       </Card>
     </div>

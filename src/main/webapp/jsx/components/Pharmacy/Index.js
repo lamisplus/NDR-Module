@@ -40,8 +40,7 @@ const Pharmacy = (props) => {
 
   return (      
       <div >
-        <h3>Pharmacy Drug Refill</h3>
-        
+        <h2>Pharmacy Drug Refill</h2>        
         <Card >
             <CardBody>
             <form >

@@ -246,143 +246,129 @@ const PrEPDiscontinuationsInterruptions = (props) => {
     }
 
   return (      
-      <div >
-         
-              <Modal show={props.showModal} toggle={props.toggle} className="fade" size="xl">
-             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                    PrEP Discontinuations & Interruptions
-                 <Button
-                    variant=""
-                    className="btn-close"
-                    onClick={props.toggle}
-                ></Button>
-            </Modal.Header>
-                <Modal.Body>                   
-                        <Card >
-                            <CardBody>
-                            <form >
-                                <div className="row">
-                                
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label for="uniqueId">Interruption Type * </Label>
-                                        <Input
-                                            type="select"
-                                            name="entryPointId"
-                                            id="entryPointId"
-                                            onChange={handleInputChange}
-                                            value={objValues.entryPointId}
-                                            required
-                                            >
-                                            <option value="">select </option>
-                                            <option value="stop"> Stop</option>
-                                            <option value="default">Default </option>
-                                            {errors.entryPointId !=="" ? (
-                                                    <span className={classes.error}>{errors.entryPointId}</span>
-                                                ) : "" }
-                                        </Input>
-                                       
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Date of Interruption *</Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateConfirmedHiv"
-                                            id="dateConfirmedHiv"
-                                            value={objValues.regDate}
-                                            onChange={value1 =>
-                                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                           
-                                        </FormGroup>
-                                    </div>
-                                   
-                                </div>
-                                <div className="row">
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label for="entryPointId">Why?</Label>
-                                    <Input
-                                        type="select"
-                                        name="entryPointId"
-                                        id="entryPointId"
-                                        onChange={handleInputChange}
-                                        value={objValues.entryPointId}
-                                        required
-                                    >
-                                    <option value=""> </option>
-                      
-                                    {carePoints.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                                    {errors.entryPointId !=="" ? (
-                                            <span className={classes.error}>{errors.entryPointId}</span>
-                                        ) : "" }
-                                    </Input>
-                                    </FormGroup>
-                                    
-                                    </div>                               
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Date of restart if placed back on medication</Label>
-                                        <DateTimePicker
-                                            time={false}
-                                            name="dateConfirmedHiv"
-                                            id="dateConfirmedHiv"
-                                            value={objValues.regDate}
-                                            onChange={value1 =>
-                                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
-                                            }
-                                            
-                                                max={new Date()}
-                                        />
-                                           
-                                        </FormGroup>
-                                    </div>
-                                  
-                                </div>
-                                
-                                {saving ? <Spinner /> : ""}
-                                <br />
-                            
-                                <MatButton
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.button}
-                                    startIcon={<SaveIcon />}
-                                    onClick={handleSubmit}
-                                    >
-                                    {!saving ? (
-                                    <span style={{ textTransform: "capitalize" }}>Save</span>
-                                    ) : (
-                                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                    )}
-                                </MatButton>
-                          
-                            <MatButton
-                                variant="contained"
-                                className={classes.button}
-                                startIcon={<CancelIcon />}
-                                onClick={props.toggle}
-                                
+      <div>                   
+        <Card >
+            <CardBody>
+            <form >
+                <div className="row">
+                    <h2> PrEP Discontinuations & Interruptions</h2>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="uniqueId">Interruption Type * </Label>
+                        <Input
+                            type="select"
+                            name="entryPointId"
+                            id="entryPointId"
+                            onChange={handleInputChange}
+                            value={objValues.entryPointId}
+                            required
                             >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton>
-                          
-                                </form>
-                            </CardBody>
-                        </Card> 
-                    </Modal.Body>
+                            <option value="">select </option>
+                            <option value="stop"> Stop</option>
+                            <option value="default">Default </option>
+                            {errors.entryPointId !=="" ? (
+                                    <span className={classes.error}>{errors.entryPointId}</span>
+                                ) : "" }
+                        </Input>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label >Date of Interruption *</Label>
+                        <DateTimePicker
+                            time={false}
+                            name="dateConfirmedHiv"
+                            id="dateConfirmedHiv"
+                            value={objValues.regDate}
+                            onChange={value1 =>
+                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
+                            }
+                            
+                                max={new Date()}
+                        />
+                            
+                        </FormGroup>
+                    </div>
+                    
+                </div>
+                <div className="row">
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label for="entryPointId">Why?</Label>
+                    <Input
+                        type="select"
+                        name="entryPointId"
+                        id="entryPointId"
+                        onChange={handleInputChange}
+                        value={objValues.entryPointId}
+                        required
+                    >
+                    <option value=""> </option>
         
-      </Modal>
+                    {carePoints.map((value) => (
+                        <option key={value.id} value={value.id}>
+                            {value.display}
+                        </option>
+                    ))}
+                    {errors.entryPointId !=="" ? (
+                            <span className={classes.error}>{errors.entryPointId}</span>
+                        ) : "" }
+                    </Input>
+                    </FormGroup>
+                    
+                    </div>                               
+                    <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label >Date of restart if placed back on medication</Label>
+                        <DateTimePicker
+                            time={false}
+                            name="dateConfirmedHiv"
+                            id="dateConfirmedHiv"
+                            value={objValues.regDate}
+                            onChange={value1 =>
+                                setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
+                            }
+                            
+                                max={new Date()}
+                        />
+                            
+                        </FormGroup>
+                    </div>
+                    
+                </div>
+                
+                {saving ? <Spinner /> : ""}
+                <br />
+            
+                <MatButton
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    onClick={handleSubmit}
+                    >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    )}
+                </MatButton>
+            
+            <MatButton
+                variant="contained"
+                className={classes.button}
+                startIcon={<CancelIcon />}
+                onClick={props.toggle}
+                
+            >
+                <span style={{ textTransform: "capitalize" }}>Cancel</span>
+            </MatButton>
+            
+                </form>
+            </CardBody>
+        </Card>                    
     </div>
   );
 }
