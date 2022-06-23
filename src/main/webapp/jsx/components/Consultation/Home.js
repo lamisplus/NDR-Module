@@ -401,12 +401,12 @@ const Widget = (props) => {
                         Post Patient
                     </Button>
                   </List.Item>
-                  <List.Item>
+                  {/* <List.Item>
                   <Button icon labelPosition='right' color='green' fluid>
                       <Icon name='eye' />
                         View History
                     </Button>
-                  </List.Item>
+                  </List.Item> */}
                   <List.Item>
                   <Button icon labelPosition='right' color='blue' fluid>
                       <Icon name='calendar alternate' />
@@ -419,7 +419,7 @@ const Widget = (props) => {
               <b>Previous Clinical Notes</b>
             </Card.Content>
             <Card.Content>
-              <Feed>
+              {/* <Feed>
                 <Feed.Event>
                   <Feed.Content>
                     <Feed.Date content='20-03-2022' />
@@ -437,7 +437,7 @@ const Widget = (props) => {
                     </Feed.Summary>
                   </Feed.Content>
                 </Feed.Event>
-              </Feed>
+              </Feed> */}
             </Card.Content>
           </Card>
 

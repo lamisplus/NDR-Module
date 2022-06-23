@@ -78,11 +78,10 @@ function PatientCard(props) {
   const [artModal, setArtModal] = useState(false);
   const Arttoggle = () => setArtModal(!artModal);
   useEffect(() => {
-    PatientCurrentStatus()
-  }, []);
-  useEffect(() => {         
+    PatientCurrentStatus();
     CheckBiometric();
-  }, []);
+  }, [props.patientObj]);
+
  //Get list of KP
  const CheckBiometric =()=>{
     axios
@@ -124,6 +123,21 @@ function PatientCard(props) {
             .catch((error) => {    
             });        
     }
+    const get_age = dob => {
+      var today = new Date();
+      var dateParts = dob.split("-");
+      var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+      var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+      var age_now = today.getFullYear() - birthDate.getFullYear();
+      var m = today.getMonth() - birthDate.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                  age_now--;
+              }
+          if (age_now === 0) {
+                  return m + " month(s)";
+              }
+              return age_now ;
+    }
     const calculate_age = dob => {
       var today = new Date();
       var dateParts = dob.split("-");
@@ -139,37 +153,41 @@ function PatientCard(props) {
               }
               return age_now + " year(s)";
     };
-    const loadEnrollment =(row)=> {
+    const loadAdultEvaluation =(row)=> {
       props.setActiveContent('adult-evaluation')
-  }
-  const loadArt =(row)=> {
-      setpatientObj({...patientObj, ...row});
-          setArtModal(!artModal)
-  }
-  
-  const CurrentStatus = ()=>{
+    }
+    const loadChildEvaluation =(row)=> {
+      props.setActiveContent('child-evaluation')
+    }
+    
+    const loadArt =(row)=> {
+        setpatientObj({...patientObj, ...row});
+            setArtModal(!artModal)
+    }
+    
+    const CurrentStatus = ()=>{
 
-        return (  <Label color="blue" size="mini">{hivStatus}</Label>);
-}
-const getHospitalNumber = (identifier) => {     
-  const identifiers = identifier;
-  const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
-  return hospitalNumber ? hospitalNumber.value : '';
-};
-const getPhoneNumber = (identifier) => {     
-  const identifiers = identifier;
-  const phoneNumber = identifiers.contactPoint.find(obj => obj.type == 'phone');       
-  return phoneNumber ? phoneNumber.value : '';
-};
-const getAddress = (identifier) => {     
-  const identifiers = identifier;
-  const address = identifiers.address.find(obj => obj.city);      
-  return address ? address.city : '';
-};
-const handleBiometricCapture = (id) => { 
-  let patientObjID= id
-  setBiometricModal(!biometricModal);
-}
+          return (  <Label color="blue" size="mini">{hivStatus}</Label>);
+  }
+    const getHospitalNumber = (identifier) => {     
+      const identifiers = identifier;
+      const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
+      return hospitalNumber ? hospitalNumber.value : '';
+    };
+    const getPhoneNumber = (identifier) => {     
+      const identifiers = identifier;
+      const phoneNumber = identifiers.contactPoint.find(obj => obj.type == 'phone');       
+      return phoneNumber ? phoneNumber.value : '';
+    };
+    const getAddress = (identifier) => {     
+      const identifiers = identifier;
+      const address = identifiers.address.find(obj => obj.city);      
+      return address ? address.city : '';
+    };
+    const handleBiometricCapture = (id) => { 
+      let patientObjID= id
+      setBiometricModal(!biometricModal);
+    }
 
   
   return (
@@ -311,7 +329,7 @@ const handleBiometricCapture = (id) => {
                         />
                                
                 <div className={classes.column}>
-                  <Button primary  floated='right' onClick={() => loadEnrollment(patientObj)}>Initial Clinic Evaluation</Button>
+                  <Button primary  floated='right' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }>Initial Clinic Evaluation</Button>
                 </div>
                {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>

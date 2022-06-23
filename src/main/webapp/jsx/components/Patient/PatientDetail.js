@@ -27,7 +27,7 @@ import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/Enhanc
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom'
-
+import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
 
 const styles = theme => ({
   root: {
@@ -71,8 +71,6 @@ function PatientCard(props) {
     const [activeContent, setActiveContent] = useState('recent-history');
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-    console.log(activeContent)
-
 
   return (
     <div className={classes.root}>
@@ -110,6 +108,7 @@ function PatientCard(props) {
           {activeContent==='cervical-cancer' &&( <CervicalCancer />)}
           {activeContent==='status-update' &&( <ClientStatusUpdate />)}
           {activeContent==='adult-evaluation' &&( <AdultClinicEvaluationFrom />)}
+          {activeContent==='child-evaluation' &&( <ChildClinicEvaluationForm />)}
          </CardContent>
       </Card>
     </div>
