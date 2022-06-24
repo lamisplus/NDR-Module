@@ -338,16 +338,6 @@ function PatientCard(props) {
                 )
                }
                     
-                {/* <div className={classes.column}>
-                   
-                    <div>
-                     
-                    </div>
-                    <div>
-                      
-                    </div>    
-                   
-                </div> */}
                 </ExpansionPanelDetails>
                 <Divider />
                 <ExpansionPanelActions expandIcon={<ExpandMoreIcon />}>
@@ -355,7 +345,7 @@ function PatientCard(props) {
                 </ExpansionPanelActions>
             </ExpansionPanel>
      
-      <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>
+      <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus} setArt={props.setArt}/>
       <CaptureBiometric modalstatus={biometricModal} togglestatus={BiometricModalToggle} patientId={patientObj.id} biometricDevices={devices} setPatientBiometricStatus={setPatientBiometricStatus} />
     </div>
   );

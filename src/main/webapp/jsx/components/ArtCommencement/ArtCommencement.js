@@ -250,6 +250,7 @@ const ArtCommencement = (props) => {
             )
               .then(response => {
                   setSaving(false);
+                  props.setArt(true)
                   props.patientObj.commenced=true
                   toast.success("Record save successful");
                   props.toggle()
@@ -340,7 +341,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleSelecteRegimen}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {regimenLine.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -362,7 +363,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {regimenType.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -406,7 +407,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {clinicalStage.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -429,7 +430,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {functionalStatus.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -450,7 +451,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {tbStatus.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -544,41 +545,47 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-                                    <div className="form-group mb-3 col-md-4">
-                                        <FormGroup>
-                                        <Label >Pregnancy Status</Label>
-                                        <Input
-                                            type="select"
-                                            name="address"
-                                            id="address"
-                                            onChange={handleInputChange}
-                                            value={objValues.address}
-                                            required
-                                        >
-                                            <option value="Select"> </option>
-                      
-                                            {pregancyStatus.map((value) => (
-                                                <option key={value.id} value={value.id}>
-                                                    {value.display}
-                                                </option>
-                                            ))}
-                                        </Input>
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-4">
-                                        <FormGroup>
-                                        <Label >LMP</Label>
-                                        <Input
-                                            type="date"
-                                            name="LMPDate"
-                                            id="LMPDate"
-                                            onChange={handleInputChange}
-                                            value={values.address}
-                                            required
-                                        />
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-8">
+                                    {props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)"? (
+                                        <>
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >Pregnancy Status</Label>
+                                            <Input
+                                                type="select"
+                                                name="address"
+                                                id="address"
+                                                onChange={handleInputChange}
+                                                value={objValues.address}
+                                                required
+                                            >
+                                                <option value=""> Select</option>
+                        
+                                                {pregancyStatus.map((value) => (
+                                                    <option key={value.id} value={value.id}>
+                                                        {value.display}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                            </FormGroup>
+                                        </div>
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >LMP</Label>
+                                            <Input
+                                                type="date"
+                                                name="LMPDate"
+                                                id="LMPDate"
+                                                onChange={handleInputChange}
+                                                value={values.address}
+                                                required
+                                            />
+                                            </FormGroup>
+                                        </div>
+                                        </>
+                                    ) :
+                                    ""
+                                    }
+                                    <div className="form-group mb-3 col-md-12">
                                         <FormGroup>
                                         <Label >Clinical Notes</Label>
                                         <Input

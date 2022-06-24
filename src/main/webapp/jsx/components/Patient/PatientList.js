@@ -102,11 +102,9 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-const patientObjList=[{"id":1,"visitId":1,"active":true,"surname":"Adegbite","firstName":"Elijah","otherName":"","gender":{"id":3,"display":"Transgender(Female to male)"},"deceased":false,"maritalStatus":{"id":6,"display":"Married"},"employmentStatus":{"id":89,"display":"Employed"},"education":{"id":11,"display":"Senior Secondary"},"organization":null,"dateOfBirth":"1978-06-14","deceasedDateTime":null,"identifier":{"identifier":[{"type":"HospitalNumber","value":"445t","assignerId":1}]},"contact":null,"contactPoint":{"contactPoint":[{"type":"email","value":"mathewadegbite@gmail.com"},{"type":"phone","value":"09077772883"}]},"address":{"address":[{"city":"1 Governor Road Ikotun Lagos","line":[""],"stateId":26,"district":"557","countryId":1,"postalCode":"","organisationUnitId":0}]},"dateOfRegistration":"2022-06-04","isDateOfBirthEstimated":true}]
-const Patients = (props) => {
-    
+
+const Patients = (props) => {    
     const [patientList, setPatientList] = useState([])
-    const [patientObj, setpatientObj] = useState([])
 
     useEffect(() => {
         patients()
@@ -146,8 +144,6 @@ const Patients = (props) => {
         const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
         return hospitalNumber ? hospitalNumber.value : '';
     };
-    let p =[{id: 1, name : "ade"}, {id: 2, name:"ade55"}];
-    console.log(p[p.length - 1])
 
   return (
     <div>

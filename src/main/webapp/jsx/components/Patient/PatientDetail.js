@@ -8,7 +8,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import PatientCardDetail from './PatientCard'
 import { useHistory } from "react-router-dom";
-import { Alert } from "react-bootstrap";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
 import Consultation from './../Consultation/Home'
@@ -17,7 +16,7 @@ import Laboratory from './../Laboratory/index';
 import AncPnc from './../PmtctServices/AncPnc';
 import AncEnrollement from './../PmtctServices/AncEnrollement';
 import ChildConsultation from './../ChildConsultation/Home';
-//import LabourDelivery from './../PmtctServices/LabourDelivery';
+import LabourDelivery from './../PmtctServices/LabourDelivery';
 import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
 import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
 import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
@@ -98,7 +97,7 @@ function PatientCard(props) {
           {activeContent==='laboratory' &&( <Laboratory />)}
           {activeContent==='anc-pnc' &&( <AncPnc />)}
           {activeContent==='anc-enrollment' &&( <AncEnrollement />)}
-          {/* {activeContent==='labour-delivery' &&( <LabourDelivery />)} */}
+          {activeContent==='labour-delivery' &&( <LabourDelivery />)}
           {activeContent==='prep-commencement' &&( <PrEPCommencementForm />)}
           {activeContent==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions />)}
           {activeContent==='prep-screening' &&( <PrEPEligibiltyScreeningForm />)}
