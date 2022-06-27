@@ -135,7 +135,7 @@ public class HivPatientService {
                 hivPatientDto.setCurrentStatus (status.get ().getDisplay ());
             }
         } else {
-            hivPatientDto.setCurrentStatus ("NOT ENROLLED");
+            hivPatientDto.setCurrentStatus ("Not Enrolled");
         }
     }
 

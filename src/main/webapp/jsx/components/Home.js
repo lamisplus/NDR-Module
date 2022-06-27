@@ -1,8 +1,8 @@
 import React, {useState, Fragment } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import Dashboard from './Patient/PatientList'
-import CheckedInPatients from './Patient/CheckedInPatients'
-
+//import CheckedInPatients from './Patient/CheckedInPatients'
+import PageTitle from "./../layouts/PageTitle";
 const divStyle = {
   borderRadius: "2px",
   fontSize: 14,
@@ -13,7 +13,9 @@ const Home = () => {
 
 
   return (
-    <Fragment>   
+    <Fragment>  
+      <br/><br/>
+      <PageTitle motherMenu="HIV" /> 
       <Row>       
         <Col xl={12}>
           <Card style={divStyle}>            

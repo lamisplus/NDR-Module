@@ -4,7 +4,7 @@ store: true
 menus:
   - icon:
     disabled: false
-    name: Hiv
+    name: HIV
     state: hiv
     url: /across/resources/static/hiv/index.html
 umdLocation: /across/resources/static/hiv/index.html

@@ -35,6 +35,7 @@ import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
 import { FaUserPlus } from "react-icons/fa";
 import {TiArrowForward} from 'react-icons/ti'
+
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -147,6 +148,7 @@ const Patients = (props) => {
 
   return (
     <div>
+
        <Card>
          <CardBody>
          <Link to={"register-patient"}>
@@ -176,7 +178,7 @@ const Patients = (props) => {
                 { title: "Age", field: "age", filtering: false },
                 //{ title: "Enrollment Status", field: "v_status", filtering: false },
                 //{ title: "ART Number", field: "v_status", filtering: false },
-                { title: "Current Status", field: "status", filtering: false },
+                { title: "ART Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
               data={ patientList.map((row) => ({
@@ -203,7 +205,7 @@ const Patients = (props) => {
                           Actions <span aria-hidden>▾</span>
                         </MenuButton>
                             <MenuList style={{ color:"#000000 !important"}} >
-                                {row.currentStatus!== "NOT ENROLLED" ?
+                                {row.currentStatus!== "Not Enrolled" ?
                                     (
                                         <>
                                             <MenuItem style={{ color:"#000 !important"}}>

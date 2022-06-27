@@ -85,6 +85,7 @@ const schema = yup.object().shape({
 });
 
 const UserRegistration = (props) => {
+    const [femaleStatus, setfemaleStatus]= useState(false)
     const { register, setValue, getValues, setError, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
@@ -153,6 +154,9 @@ const UserRegistration = (props) => {
             setValue('hospitalNumber', hospitalNumber ? hospitalNumber.value : '');
             setValue('maritalStatus', maritalStatus.id);
             setValue('employmentStatus', employmentStatus.id);
+            if(gender.id==="3" || gender.id==="4"){
+                setfemaleStatus(true)
+            }
             setValue('sex', gender.id);
             setValue('highestQualification', education.id);
             setValue('dob', format(new Date(patient.dateOfBirth), 'yyyy-MM-dd'));
@@ -376,6 +380,11 @@ const UserRegistration = (props) => {
         } else {
             setStateUnitOptions([]);
         }
+    };
+    const onSexChange = async (e) => {
+        if (e.target.value=== "3" || e.target.value=== "4") {
+            setfemaleStatus(true)
+        } 
     };
     const onStateChange = async (e) => {
         if (e.target.value) {
@@ -637,7 +646,7 @@ const UserRegistration = (props) => {
             setOvcEnrolled(false)
         }
     }  
-    
+
 
     return (
         <>
@@ -753,6 +762,7 @@ const UserRegistration = (props) => {
                                                         name="sex"
                                                         id="sex"
                                                         {...register("sex")}
+                                                        onChange={(e) => onSexChange(e)}
                                                     >
                                                         <option value={""}></option>
                                                         {genderRows}
@@ -936,7 +946,7 @@ const UserRegistration = (props) => {
                                                     type="text"
                                                     name="country"
                                                     id="country"
-                                                    {...register("countryId")}
+                                                    {...register("countryId")}                                               
                                                     onChange={(e) => onCountryChange(e)}>
                                                     <option value={""}></option>
                                                     {topLevelUnitCountryRows}
@@ -1392,7 +1402,8 @@ const UserRegistration = (props) => {
                                     ) : "" }
                                     </FormGroup>
                                 </div>
-                           
+                                {femaleStatus===true ? (
+                                    <>
                                     <div className = "form-group mb-3 col-md-6" >
                                     <FormGroup>
                                     <Label> Pregnancy </Label>
@@ -1439,7 +1450,11 @@ const UserRegistration = (props) => {
                                         
                                     </FormGroup>
                                 </div>
-                            
+                                </>
+                                )
+                                :
+                                ""
+                                }
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label >TB Status</Label>
