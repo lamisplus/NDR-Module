@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "DRUG")
+@Table(name = "hiv_drug")
 @Data
 @ToString(of = "abbrev")
 public class Drug implements Serializable, Persistable<Long> {
