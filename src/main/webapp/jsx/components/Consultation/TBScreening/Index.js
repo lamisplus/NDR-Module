@@ -1,95 +1,19 @@
-import React, { Fragment, useState, useEffect } from "react";
-// import { Link } from 'react-router-dom';
-import { Row } from "react-bootstrap";
-import {  Modal, Button, Table  } from "react-bootstrap";
-import { Input, Label, FormGroup, InputGroupText, InputGroup, Col , CardBody, Card } from "reactstrap";
-import { Tab, Grid,} from 'semantic-ui-react'
-import MatButton from '@material-ui/core/Button'
+import React, { useState, useEffect } from "react";
+import { Input, Label, FormGroup} from "reactstrap";
 import { makeStyles } from '@material-ui/core/styles'
 import { token, url as baseUrl } from "./../../../../api";
 import axios from "axios";
 
-const useStyles = makeStyles(theme => ({ 
-    button: {
-      margin: theme.spacing(1)
-    },
-    error: {
-      color: "#f85032",
-      fontSize: "11px",
-  },
-  success: {
-      color: "#4BB543 ",
-      fontSize: "11px",
-  },
-}))
-let adherenceLevelObj= []
 
-const ADR = (props) => {
-  const patientObj = props.patientObj;
-  const classes = useStyles();
-  const [clinicalStage, setClinicalStage] = useState([]);
-  const [functionalStatus, setFunctionalStatus] = useState([]);
-  const [adherenceLevel, setAdherenceLevel] = useState([]);
+
+const TBScreeningForm = (props) => {
   const [tbStatus, setTbStatus] = useState([]); 
   const [TBForms, setTBForms] = useState(false) 
-  const [objValues, setObjValues] = useState({
-                                                adherenceLevel: "",
-                                                adheres: {},
-                                                adrScreened: "",
-                                                adverseDrugReactions: {},
-                                                artStatusId: 0,
-                                                cd4: "",
-                                                cd4Percentage: 0,
-                                                clinicalNote: "",
-                                                clinicalStageId: 0,
-                                                facilityId: 0,
-                                                functionalStatusId: 0,
-                                                hivEnrollmentId: 0,
-                                                nextAppointment: "",
-                                                lmpDate:"",
-                                                oiScreened: "",
-                                                opportunisticInfections: {},
-                                                personId: 0,
-                                                stiIds: "",
-                                                stiTreated: "",
-                                                uuid: "",
-                                                visitDate: "",
-                                                
-                                                whoStagingId: 0
-                                              });
-  const [vital, setVitalSignDto]= useState({
-                                            bodyWeight: "",
-                                            diastolic:"",
-                                            encounterDate: "",
-                                            facilityId: 1,
-                                            height: "",
-                                            personId: "",
-                                            serviceTypeId: 1,
-                                            systolic:"" 
-                                            })
 
 
-useEffect(() => {
-    FunctionalStatus();
-    WhoStaging();
+  useEffect(() => {
     TBStatus();
     }, []);
-
-    //Get list of WhoStaging
-    const WhoStaging =()=>{
-    axios
-        .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-        )
-        .then((response) => {
-            //console.log(response.data);
-            setClinicalStage(response.data);
-        })
-        .catch((error) => {
-        //console.log(error);
-        });
-    
-    }
 
     ///GET LIST OF FUNCTIONAL%20_STATUS
     // TB STATUS
@@ -108,22 +32,9 @@ useEffect(() => {
     
     }
 
-    async function FunctionalStatus() {
-    axios
-        .get(`${baseUrl}application-codesets/v2/FUNCTIONAL%20_STATUS`,
-        { headers: {"Authorization" : `Bearer ${token}`} }
-        )
-        .then((response) => {
-            
-            setFunctionalStatus(response.data);
-            //setValues(response.data)
-        })
-        .catch((error) => {    
-        });        
-    }
     const handleInputChange = e => {
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        if(e.target.name ==="whoStagingId" ){
+      props.setTbObj ({...props.tbObj,  [e.target.name]: e.target.value});
+        if(e.target.name ==="antiTBDrug" ){
           if(e.target.value==="NO"){
               setTBForms(true)
           }else{
@@ -141,13 +52,13 @@ useEffect(() => {
               <Label >Patient on Anti TB Drugs?</Label>
               <Input
                   type="select"
-                  name="whoStagingId"
-                  id="whoStagingId"
-                  value={objValues.whoStagingId}
+                  name="antiTBDrug"
+                  id="antiTBDrug"
+                  value={props.tbObj.antiTBDrug}
                   onChange={handleInputChange}
                   required
                   >
-                    <option value=""> </option>
+                    <option value="">Select </option>
                     <option value="YES"> YES</option>
                     <option value="NO">NO </option>
 
@@ -162,13 +73,13 @@ useEffect(() => {
                 <Label >Patient Currently on IPT?</Label>
                 <Input
                     type="select"
-                    name="functionalStatusId"
-                    id="functionalStatusId"
-                    value={objValues.functionalStatusId}
+                    name="currentOnIpt"
+                    id="currentOnIpt"
+                    value={props.tbObj.currentOnIpt}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value=""> Select</option>
                       <option value="YES"> YES</option>
                         <option value="NO">NO </option>
                 </Input>
@@ -179,13 +90,13 @@ useEffect(() => {
                 <Label >Couching?</Label>
                 <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="couching"
+                    id="couching"
+                    value={props.tbObj.couching}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value=""> Select</option>
                       <option value="YES"> YES</option>
                       <option value="NO">NO </option>
                 </Input>
@@ -196,13 +107,13 @@ useEffect(() => {
                 <Label >Night Sweat?</Label>
                 <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="nightSweat"
+                    id="nightSweat"
+                    value={props.tbObj.nightSweat}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value=""> Select</option>
                       <option value="YES"> YES</option>
                       <option value="NO">NO </option>
                 </Input>
@@ -213,13 +124,13 @@ useEffect(() => {
                 <Label >Fever</Label>
                 <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="fever"
+                    id="fever"
+                    value={props.tbObj.fever}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value="">Select </option>
                       <option value="YES"> YES</option>
                       <option value="NO">NO </option>
                 </Input>
@@ -227,16 +138,16 @@ useEffect(() => {
               </div>
               <div className="form-group mb-3 col-md-4">
               <FormGroup>
-                <Label >Countact with TB Case?</Label>
+                <Label >Contact with TB Case?</Label>
                 <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="contactWithTBCase"
+                    id="contactWithTBCase"
+                    value={props.tbObj.contactWithTBCase}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value=""> Select</option>
                       <option value="YES"> YES</option>
                       <option value="NO">NO </option>
                 </Input>
@@ -247,13 +158,13 @@ useEffect(() => {
                 <Label >Lethergy</Label>
                 <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="lethergy"
+                    id="lethergy"
+                    value={props.tbObj.lethergy}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value="">Select </option>
                       <option value="YES"> YES</option>
                     <option value="NO">NO </option>
                 </Input>
@@ -266,11 +177,11 @@ useEffect(() => {
                     type="select"
                     name="tbStatusId"
                     id="tbStatusId"
-                    value={objValues.tbStatusId}
+                    value={props.tbObj.tbStatusId}
                     onChange={handleInputChange}
                     required
                     >
-                      <option value=""> </option>
+                      <option value="">Select </option>
 
                         {tbStatus.map((value) => (
                             <option key={value.id} value={value.id}>
@@ -293,4 +204,4 @@ useEffect(() => {
 
 
 
-export default ADR;
+export default TBScreeningForm;

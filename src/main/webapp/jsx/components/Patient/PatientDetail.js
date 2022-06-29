@@ -90,24 +90,24 @@ function PatientCard(props) {
             </ButtonMui>
           </Link>
           <br/><br/>
-          {activeContent==='recent-history' &&(<RecentHistory />)}
-          {activeContent==='consultation' &&( <Consultation />)}
-          {activeContent==='child-consultation' &&( <ChildConsultation />)}
-          {activeContent==='pharmacy' &&( <Pharmacy />)}
-          {activeContent==='laboratory' &&( <Laboratory />)}
-          {activeContent==='anc-pnc' &&( <AncPnc />)}
-          {activeContent==='anc-enrollment' &&( <AncEnrollement />)}
-          {activeContent==='labour-delivery' &&( <LabourDelivery />)}
-          {activeContent==='prep-commencement' &&( <PrEPCommencementForm />)}
-          {activeContent==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions />)}
-          {activeContent==='prep-screening' &&( <PrEPEligibiltyScreeningForm />)}
+          {activeContent==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='consultation' &&( <Consultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='anc-enrollment' &&( <AncEnrollement patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='labour-delivery' &&( <LabourDelivery patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='prep-commencement' &&( <PrEPCommencementForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='prep-screening' &&( <PrEPEligibiltyScreeningForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='prep-visit' &&( <PrEPVisit />)}
-          {activeContent==='prep-registration' &&( <PrEPRegistrationForm />)} 
-          {activeContent==='counseling' &&( <EnhancedAdherenceCounseling />)}
-          {activeContent==='cervical-cancer' &&( <CervicalCancer />)}
-          {activeContent==='status-update' &&( <ClientStatusUpdate />)}
-          {activeContent==='adult-evaluation' &&( <AdultClinicEvaluationFrom />)}
-          {activeContent==='child-evaluation' &&( <ChildClinicEvaluationForm />)}
+          {activeContent==='prep-registration' &&( <PrEPRegistrationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)} 
+          {activeContent==='counseling' &&( <EnhancedAdherenceCounseling patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='cervical-cancer' &&( <CervicalCancer patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='status-update' &&( <ClientStatusUpdate patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='adult-evaluation' &&( <AdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
          </CardContent>
       </Card>
     </div>

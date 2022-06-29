@@ -1,8 +1,7 @@
 import React, {useState,useEffect} from "react";
-import { Grid, Segment, Label, Icon, List,Button, Card, Feed,  } from 'semantic-ui-react'
+import { Grid, Segment, Label, Icon, List,Button, Card,} from 'semantic-ui-react'
 // Page titie
-import {FormGroup, Input, Label as FormLabelName} from "reactstrap";
-import {  Checkbox, Table } from 'semantic-ui-react'
+import {FormGroup, Input, Label as FormLabelName, InputGroup, InputGroupText} from "reactstrap";
 import ADR from './ADR/Index'
 import OpportunisticInfection from './OpportunisticInfection/Index'
 import TBScreening from './TBScreening/Index'
@@ -11,10 +10,12 @@ import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import axios from "axios";
-import AddVitals from './Vitals/AddVitals'
+//import AddVitals from './Vitals/AddVitals'
 import AddAllergy from './Allergies/AddAllergy'
 import AddCondition from './Conditions/AddCondition'
 import PostPatient from './PostPatient/Index'
+import moment from "moment";
+import { toast} from "react-toastify";
 
 
 let adherenceLevelObj= []
@@ -61,55 +62,78 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Widget = (props) => {
+const ClinicVisit = (props) => {
+  const patientObj = props.patientObj ? props.patientObj : {}
+  console.log(patientObj)
   const classes = useStyles()
   const [saving, setSaving] = useState(false);
   const [clinicalStage, setClinicalStage] = useState([]);
   const [functionalStatus, setFunctionalStatus] = useState([]);
   const [adherenceLevel, setAdherenceLevel] = useState([]);
   const [tbStatus, setTbStatus] = useState([]);
-  const [prepSideEffect, setPrepSideEffect] = useState([]);
   const [TBForms, setTBForms] = useState(false)
-  const [addVitalModal, setAddVitalModal] = useState(false);
-  const AddVitalToggle = () => setAddVitalModal(!addVitalModal)
+  // const [addVitalModal, setAddVitalModal] = useState(false);
+  // const AddVitalToggle = () => setAddVitalModal(!addVitalModal)
   const [addConditionModal, setAddConditionModal] = useState(false);
   const AddConditionToggle = () => setAddConditionModal(!addConditionModal)
   const [addAllergyModal, setAddAllergyModal] = useState(false);
   const AddAllergyToggle = () => setAddAllergyModal(!addAllergyModal)
   const [postPatientModal, setPostPatientModal] = useState(false);
   const PostPatientToggle = () => setPostPatientModal(!postPatientModal)
+  //opportunistic infection Object
+  const [infection, setInfection] = useState({illnessInfection:"", ondateInfection:""});
+  //ADR array Object 
+  const [adrObj, setAdrObj] = useState({adr:"", adrOnsetDate:""});
   const [objValues, setObjValues] = useState({
                                                 adherenceLevel: "",
                                                 adheres: {},
                                                 adrScreened: "",
                                                 adverseDrugReactions: {},
-                                                artStatusId: 0,
+                                                artStatusId: patientObj.artCommence.id,
                                                 cd4: "",
                                                 cd4Percentage: 0,
                                                 clinicalNote: "",
                                                 clinicalStageId: 0,
                                                 facilityId: 0,
                                                 functionalStatusId: 0,
-                                                hivEnrollmentId: 0,
+                                                hivEnrollmentId: patientObj.enrollment.id,
                                                 nextAppointment: "",
                                                 lmpDate:"",
                                                 oiScreened: "",
                                                 opportunisticInfections: {},
-                                                personId: 0,
+                                                personId: patientObj.id,
+                                                tbScreen:{},
                                                 stiIds: "",
                                                 stiTreated: "",
                                                 uuid: "",
-                                                visitDate: "",
-                                                
+                                                visitDate: "",                                                
                                                 whoStagingId: 0
                                               });
+  const [vital, setVitalSignDto]= useState({
+                                            bodyWeight: "",
+                                            diastolic:"",
+                                            encounterDate: "",
+                                            facilityId: 1,
+                                            height: "",
+                                            personId:props.patientObj.id,
+                                            serviceTypeId: 1,
+                                            systolic:"" 
+                                             })
+  const [tbObj, setTbObj] = useState({currentOnIpt:"",
+                                      couching:"",
+                                      antiTBDrug:"",
+                                      nightSweat:"",
+                                      fever:"",
+                                      contactWithTBCase:"",
+                                      lethergy:"",
+                                      tbStatusId:""
+                                      });
 
   useEffect(() => {
     FunctionalStatus();
     WhoStaging();
     AdherenceLevel();
     TBStatus();
-    PrepSideEffect();
   }, []);
 
     //Get list of WhoStaging
@@ -121,22 +145,6 @@ const Widget = (props) => {
          .then((response) => {
              //console.log(response.data);
              setClinicalStage(response.data);
-         })
-         .catch((error) => {
-         //console.log(error);
-         });
-     
-      }
-       //Get list of WhoStaging
-      const PrepSideEffect =()=>{
-      axios
-         .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
-             { headers: {"Authorization" : `Bearer ${token}`} }
-         )
-         .then((response) => {
-             //console.log(response.data);
-             setPrepSideEffect(response.data);
-             adherenceLevelObj=response.data
          })
          .catch((error) => {
          //console.log(error);
@@ -196,10 +204,13 @@ const Widget = (props) => {
       }
     }
   }
-  const addVitalsModal =()=>{
-        //setpatientObj({...patientObj, ...row});
-        setAddVitalModal(!addVitalModal)
+  const handleInputChangeVitalSignDto = e => {            
+    setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
   }
+  // const addVitalsModal =()=>{
+  //       //setpatientObj({...patientObj, ...row});
+  //       setAddVitalModal(!addVitalModal)
+  // }
   const addConditionsModal =()=>{
     //setpatientObj({...patientObj, ...row});
     setAddConditionModal(!addConditionModal)
@@ -212,6 +223,33 @@ const Widget = (props) => {
     //setpatientObj({...patientObj, ...row});
     setPostPatientModal(!postPatientModal)
   }
+  /**** Submit Button Processing  */
+  const handleSubmit = (e) => {        
+    e.preventDefault(); 
+    objValues.visitDate= vital.encounterDate
+    objValues.adverseDrugReactions= adrObj
+    objValues.opportunisticInfections= infection
+    objValues.tbScreen=tbObj
+    objValues['vitalSignDto']= vital   
+    axios.post(`${baseUrl}hiv/art/clinic-visit/`,objValues,
+    { headers: {"Authorization" : `Bearer ${token}`}},
+    
+    )
+      .then(response => {
+          setSaving(false);
+          toast.success("Clinic Visit save successful");
+          props.setActiveContent('recent-history')
+      })
+      .catch(error => {
+          setSaving(false);
+          if(error.apierror){
+            toast.error(error.apierror.message);
+          }else{
+            toast.error("Something went wrong. Please try again...");
+          }    
+         
+      });
+  }
 
 
   return (
@@ -219,24 +257,7 @@ const Widget = (props) => {
           <h2>Clinic Follow-up Visit</h2>
           <Grid columns='equal'>           
           <Grid.Column>
-            <Segment>
-                <Label as='a' color='blue' ribbon>
-                  Recent Vitals
-                </Label>
-                <Label as='a' color='teal' onClick={() =>addVitalsModal()} className="float-end"  size='mini' >
-                  <Icon name='plus' /> 
-                </Label>
-                  <br/>
-                  <List celled >
-                <List.Item>Pulse <span className="float-end"><b>45bmp</b></span></List.Item>
-                <List.Item>Respiratory Rate <span className="float-end"><b>41bmp</b></span></List.Item>
-                <List.Item>Temperature <span className="float-end"><b>32<sub>0</sub>C</b></span></List.Item>
-                <List.Item>Blood Presure <span  className="float-end"><b>332/30</b></span></List.Item>
-                <List.Item>Height <span  className="float-end"><b>31.89m</b></span></List.Item>
-                <List.Item>Weight <span  className="float-end"><b>376kg</b></span></List.Item>
-                </List>
-
-            </Segment>
+           
             <Segment>
                
                 <Label as='a' color='black' ribbon>
@@ -276,18 +297,128 @@ const Widget = (props) => {
           </Grid.Column>
           <Grid.Column width={9}>            
             <Segment>
+            <Label as='a' color='blue' ribbon>
+                  <b>Vital Signs</b>
+            </Label>
+            <br/><br/>
+            <div className="row">
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <FormLabelName >Date of Visit </FormLabelName>
+                <Input
+                    type="date"
+                    name="encounterDate"
+                    id="encounterDate"
+                    value={vital.encounterDate}
+                    onChange={handleInputChangeVitalSignDto}
+                    max= {moment(new Date()).format("YYYY-MM-DD") }
+                    required
+                    > 
+                </Input>
+              
+                </FormGroup>
+            </div>
+            <div className="form-group mb-3 col-md-6"></div>
+            <div className="mb-3 col-md-6">
+            <FormGroup>
+            <FormLabelName >Body Weight</FormLabelName>
+            
+            <InputGroup>
+            <InputGroupText>
+                kg
+            </InputGroupText> 
+                <Input 
+                    type="number"
+                    name="bodyWeight"
+                    id="bodyWeight"
+                    onChange={handleInputChangeVitalSignDto}
+                    value={vital.bodyWeight} 
+                />   
+            </InputGroup>
+            {vital.bodyWeight > 200 ? (
+                    <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
+                ) : "" }
+            </FormGroup>
+            </div>
+        
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <FormLabelName >Height</FormLabelName>
+                <InputGroup>
+                <InputGroupText>
+                    m
+                </InputGroupText> 
+                    <Input 
+                        type="number"
+                        name="height"
+                        id="height"
+                        onChange={handleInputChangeVitalSignDto}
+                        value={vital.height} 
+                    />
+                    
+                </InputGroup>
+                {vital.height > 3 ? (
+                        <span className={classes.error}>{"Height cannot be greater than 3."}</span>
+                    ) : "" }
+                </FormGroup>
+            </div>
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <FormLabelName >Blood Pressure</FormLabelName>
+                <InputGroup> 
+                <InputGroupText>
+                    systolic(mmHg)
+                </InputGroupText>
+                    <Input 
+                        type="number"
+                        name="systolic"
+                        id="systolic"
+                        onChange={handleInputChangeVitalSignDto}
+                        value={vital.systolic} 
+                    />
+                    
+                </InputGroup>
+                {vital.systolic > 200 ? (
+                        <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                    ) : "" }
+                </FormGroup>
+            </div>
+            <div className="form-group mb-3 col-md-6">
+            <FormGroup>
+            <FormLabelName >Blood Pressure</FormLabelName>
+            
+            <InputGroup> 
+            <InputGroupText>
+                  diastolic(mmHg)
+              </InputGroupText>
+                <Input 
+                    type="text"
+                    name="diastolic"
+                    id="diastolic"
+                    onChange={handleInputChangeVitalSignDto}
+                    value={vital.diastolic} 
+                />
+                
+            </InputGroup>
+            {vital.diastolic > 200 ? (
+                    <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                ) : "" }
+            </FormGroup>
+            </div>
+            </div>
             <Label as='a' color='black' ribbon>
                   <b>Consultation</b>
             </Label>
-            <br/>
+            <br/><br/>
+
               <div className=" mb-3">
-              <FormLabelName >Encounter Date</FormLabelName>             
-               <input type="date" className="form-control" />
-              </div>
-              <br/>
-              <div className=" mb-3">
-              <FormLabelName >Visit Note</FormLabelName>              
-                 <textarea className="form-control"></textarea>
+              <FormLabelName >Clinical Notes</FormLabelName>              
+                 <textarea 
+                  name="clinicalNote"
+                  className="form-control"
+                  value={objValues.clinicalNote}
+                  onChange={handleInputChange}
+                 ></textarea>
               </div>
               <div className="row">
           
@@ -302,7 +433,7 @@ const Widget = (props) => {
                       onChange={handleInputChange}
                       required
                       >
-                        <option value="select"> </option>
+                        <option value="select">Select </option>
 
                           {clinicalStage.map((value) => (
                               <option key={value.id} value={value.id}>
@@ -324,7 +455,7 @@ const Widget = (props) => {
                 onChange={handleInputChange}
                 required
                 >
-                  <option value="select"> </option>
+                  <option value="select">Select </option>
 
                     {functionalStatus.map((value) => (
                         <option key={value.id} value={value.id}>
@@ -345,7 +476,7 @@ const Widget = (props) => {
                 onChange={handleInputChange}
                 required
                 >
-                  <option value="select"> </option>
+                  <option value="select">Select </option>
 
                     {adherenceLevel.map((value) => (
                         <option key={value.id} value={value.id}>
@@ -362,19 +493,20 @@ const Widget = (props) => {
                 Opportunistic Infection
               </Label>
               <br/><br/>
-              <OpportunisticInfection />
+              <OpportunisticInfection setInfection={setInfection} infection={infection}/>
               <br/>
               <Label as='a' color='pink' ribbon>
                 ADR
               </Label>
               <br/><br/>
-              <ADR />
+              <ADR setAdrObj={setAdrObj} adrObj={adrObj}/>
               <br/>
               <Label as='a' color='teal' ribbon>
                 TB Screening 
               </Label>
              <br/><br/>
-             <TBScreening />
+             {/* TB Screening Form */}
+             <TBScreening tbObj={tbObj} setTbObj={setTbObj}/>
              <br/>
              <MatButton
               type="submit"
@@ -382,7 +514,7 @@ const Widget = (props) => {
               color="primary"
               className={classes.button}
               startIcon={<SaveIcon />}
-              //onClick={handleSubmit}
+              onClick={handleSubmit}
               >
                   {!saving ? (
                   <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -444,7 +576,7 @@ const Widget = (props) => {
             </Segment>
           </Grid.Column>
         </Grid>
-        <AddVitals toggle={AddVitalToggle} showModal={addVitalModal} />
+        {/* <AddVitals toggle={AddVitalToggle} showModal={addVitalModal} /> */}
         <AddAllergy toggle={AddAllergyToggle} showModal={addAllergyModal} />
         <AddCondition toggle={AddConditionToggle} showModal={addConditionModal} />
         <PostPatient toggle={PostPatientToggle} showModal={postPatientModal} />
@@ -452,4 +584,4 @@ const Widget = (props) => {
     );
   };
 
-export default Widget;
+export default ClinicVisit;
