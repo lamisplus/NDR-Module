@@ -184,7 +184,7 @@ const ClientStatusUpdate = (props) => {
                                 >
                                 <option value="">Select</option>
                                 {hivStatus.map((value) => (
-                                <option key={value.id} value={value.id}>
+                                <option key={value.id} value={value.display}>
                                     {value.display}
                                 </option>
                                 ))}
@@ -224,7 +224,7 @@ const ClientStatusUpdate = (props) => {
                                 >
                                 <option value=""> Select</option>
                                 {trackingOutCome.map((value) => (
-                                <option key={value.id} value={value.id}>
+                                <option key={value.id} value={value.display}>
                                     {value.display}
                                 </option>
                                 ))}
@@ -283,7 +283,7 @@ const ClientStatusUpdate = (props) => {
                                 >
                                 <option value=""> Select</option>
                                 {reasonForInteruption.map((value) => (
-                                <option key={value.id} value={value.id}>
+                                <option key={value.id} value={value.display}>
                                     {value.display}
                                 </option>
                                 ))}
@@ -306,7 +306,7 @@ const ClientStatusUpdate = (props) => {
                                 >
                                 <option value=""> Select</option>
                                 {causeDeath.map((value) => (
-                                <option key={value.id} value={value.id}>
+                                <option key={value.id} value={value.display}>
                                     {value.display}
                                 </option>
                                 ))}
