@@ -16,6 +16,11 @@ import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
+import org.lamisplus.modules.patient.domain.entity.Encounter;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
+import org.lamisplus.modules.patient.repository.EncounterRepository;
+import org.lamisplus.modules.patient.repository.VisitRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 import org.lamisplus.modules.triage.service.VitalSignService;
@@ -48,21 +53,25 @@ public class ArtCommenceService {
 
     private final CurrentUserOrganizationService organizationUtil;
 
+    private final VisitRepository visitRepository;
+    private final EncounterRepository encounterRepository;
 
     public HivPatientDto createArtCommence(ARTClinicalCommenceDto artClinicalCommenceDto) {
+        Long personId = artClinicalCommenceDto.getPersonId ();
+        Person person = new Person ();
+        person.setId (personId);
+        Visit visit = createAVisit (artClinicalCommenceDto, person);
+        createAnEncounter (artClinicalCommenceDto, person, visit);
         Long hivEnrollmentId = artClinicalCommenceDto.getHivEnrollmentId ();
         Optional<ApplicationCodeSet> hivStatus = applicationCodesetRepository.findByDisplayAndCodesetGroup ("ART Start", "HIV_STATUS");
-        StringBuilder stringBuilder = new StringBuilder ();
-        hivEnrollmentRepository
-                .findById (hivEnrollmentId)
-                .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
-        Long personId = artClinicalCommenceDto.getPersonId ();
+        StringBuilder statusDisplay = new StringBuilder ();
+        hivEnrollmentRepository.findById (hivEnrollmentId).orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
         boolean artCommenceExist = artClinicalRepository
                 .findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
         if (artCommenceExist)
-            throw new RecordExistException (ARTClinical.class, "personId",  ""+personId);
+            throw new RecordExistException (ARTClinical.class, "personId", "" + personId);
         Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
-        if(vitalSignId == null){
+        if (vitalSignId == null) {
             vitalSignId = processAndSaveVitalSign (artClinicalCommenceDto);
         }
         ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, vitalSignId);
@@ -70,16 +79,41 @@ public class ArtCommenceService {
         artClinical.setIsCommencement (true);
         if (hivStatus.isPresent ()) {
             artClinical.setArtStatusId (hivStatus.get ().getId ());
-            stringBuilder.append (hivStatus.get ().getDisplay ());
+            statusDisplay.append (hivStatus.get ().getDisplay ());
         }
         artClinical.setArchived (0);
         ARTClinical saveArtClinical = artClinicalRepository.save (artClinical);
-        processAndSaveHIVStatus (saveArtClinical.getVisitDate (), saveArtClinical.getPersonId (), stringBuilder.toString ());
+        processAndSaveHIVStatus (saveArtClinical.getVisitDate (), saveArtClinical.getPersonId (), statusDisplay.toString ());
         return convertArtCommenceToHivPatientDto (saveArtClinical);
     }
 
+    public Visit createAVisit(ARTClinicalCommenceDto artClinicalCommenceDto,Person person) {
+        Visit visit = new Visit ();
+        visit.setVisitStartDate (artClinicalCommenceDto.getVisitDate ());
+        visit.setUuid (UUID.randomUUID ().toString ());
+        visit.setArchived (0);
+        visit.setPerson (person);
+        visit.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        visitRepository.save (visit);
+        return visit;
+    }
+    public void createAnEncounter(ARTClinicalCommenceDto artClinicalCommenceDto, Person person, Visit visit) {
+        Encounter encounter = new Encounter ();
+        encounter.setStatus ("PENDING");
+        encounter.setServiceCode ("hiv-code");
+        encounter.setPerson (person);
+        encounter.setEncounterDate (artClinicalCommenceDto.getVisitDate ());
+        encounter.setVisit (visit);
+        encounter.setArchived (0);
+        encounter.setUuid (UUID.randomUUID ().toString ());
+        encounterRepository.save (encounter);
+    }
 
-    private Long processAndSaveVitalSign(ARTClinicalCommenceDto artClinicalCommenceDto) {
+
+
+
+
+    public Long processAndSaveVitalSign(ARTClinicalCommenceDto artClinicalCommenceDto) {
         VitalSignDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto ();
         vitalSignDto.setVisitId (artClinicalCommenceDto.getVisitId ());
         vitalSignDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
@@ -128,7 +162,7 @@ public class ArtCommenceService {
     private ARTClinical getExistArt(Long id) {
         return artClinicalRepository
                 .findById (id)
-                .orElseThrow (() -> new EntityNotFoundException (ARTClinical.class, "id", ""+ id));
+                .orElseThrow (() -> new EntityNotFoundException (ARTClinical.class, "id", "" + id));
     }
 
     private void processAndSaveHIVStatus(LocalDate visitDate, Long personId, String hivStatus) {
