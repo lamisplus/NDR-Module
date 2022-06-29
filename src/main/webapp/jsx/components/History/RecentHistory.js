@@ -192,65 +192,14 @@ const Widget = () => {
                       </Dropdown>
                     </div>
                   </li>
-                  <li>
-                    <div className="timeline-panel">
-                      <div className="media me-2">
-                        <img  alt="" width="50"  />
-                      </div>
-                      <div className="media-body">
-                        <h5 className="mb-1">Dr sultads Send you Photo</h5>
-                        <small className="d-block">
-                          29 July 2020 - 02:26 PM
-                        </small>
-                      </div>
-                      <Dropdown className="dropdown">
-                        <Dropdown.Toggle
-                          variant="primary light"
-                          className=" i-false p-0 sharp"
-                        >
-                          <svg
-                            width="18px"
-                            height="18px"
-                            viewBox="0 0 24 24"
-                            version="1.1"
-                          >
-                            <g
-                              stroke="none"
-                              strokeWidth="1"
-                              fill="none"
-                              fillRule="evenodd"
-                            >
-                              <rect x="0" y="0" width="24" height="24" />
-                              <circle fill="#000000" cx="5" cy="12" r="2" />
-                              <circle fill="#000000" cx="12" cy="12" r="2" />
-                              <circle fill="#000000" cx="19" cy="12" r="2" />
-                            </g>
-                          </svg>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu className="dropdown-menu">
-                          <Dropdown.Item
-                            className="dropdown-item"
-                            to="/widget-basic"
-                          >
-                            Edit
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            className="dropdown-item"
-                            to="/widget-basic"
-                          >
-                            Delete
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </li>
+
                   <li>
                     <div className="timeline-panel">
                       <div className="media me-2 media-danger">RA</div>
                       <div className="media-body">
                         <h5 className="mb-1">Clinic Visit</h5>
                         <small className="d-block">
-                          29 July 2020 - 02:26 PM
+                          20 July 2021 - 02:26 PM
                         </small>
                       </div>
                       <Dropdown className="dropdown">
@@ -303,7 +252,7 @@ const Widget = () => {
                       <div className="media-body">
                         <h5 className="mb-1">Clinic Visit</h5>
                         <small className="d-block">
-                          29 July 2020 - 02:26 PM
+                          19 July 2020 - 02:26 PM
                         </small>
                       </div>
                       <Dropdown className="dropdown">

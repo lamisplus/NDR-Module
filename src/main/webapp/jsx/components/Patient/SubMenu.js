@@ -74,7 +74,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
                     {/* <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up Visit</Menu.Item> */}
                     <Menu.Item onClick={() => loadAnc(patientObj)} disabled> Enhanced Adherence Counselling</Menu.Item>
-                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Clint Status Update</Menu.Item>
+                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Clinic Status Update</Menu.Item>
                     <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)} disabled> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
@@ -114,7 +114,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadPharmacyModal()} > Pharmacy</Menu.Item>
                     {/* <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up Visit</Menu.Item> */}
                     <Menu.Item onClick={() => loadAnc(patientObj)}> Enhanced Adherence Counselling</Menu.Item>
-                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)}>Clint Status Update</Menu.Item>
+                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)}>Clinic Status Update</Menu.Item>
                     <Dropdown text="PrEP" labeled simple className='icon link item'>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)}> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>

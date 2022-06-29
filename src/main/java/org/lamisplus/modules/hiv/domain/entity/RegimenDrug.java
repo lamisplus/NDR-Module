@@ -23,7 +23,7 @@ public class RegimenDrug implements Serializable, Persistable<Long> {
     @JoinColumn(name = "drug_id")
     @ManyToOne(optional = false)
     @JsonIgnore
-    private Drug drug;
+    private HivDrug hivDrug;
 
     @JoinColumn(name = "regimen_id")
     @ManyToOne(optional = false)
