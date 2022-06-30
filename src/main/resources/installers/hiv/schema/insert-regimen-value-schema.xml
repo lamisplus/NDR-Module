@@ -9,7 +9,7 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*)
-                FROM drug
+                FROM hiv_drug
                 WHERE id = 1;
             </sqlCheck>
         </preConditions>

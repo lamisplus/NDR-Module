@@ -1,5 +1,6 @@
 basePackage: org.lamisplus.modules.hiv
 name: HivModule
+dependencies: {PatientModule: 1.0.0, TriageModule: 1.0.0 }
 store: true
 menus:
   - icon:

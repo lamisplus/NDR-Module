@@ -12,10 +12,10 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "HIV_DRUG")
+@Table(name = "hiv_drug")
 @Data
 @ToString(of = "abbrev")
-public class HivDrug implements Serializable, Persistable<Long> {
+public class Drug implements Serializable, Persistable<Long> {
 
     private static final long serialVersionUID = 1L;
     @Id

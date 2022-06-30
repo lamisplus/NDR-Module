@@ -246,14 +246,14 @@
     </changeSet>
     <changeSet id="20222005-004" author="amos-data-fi">
         <sql>
-            CREATE SEQUENCE hiv_drug_drug_id_seq
+            CREATE SEQUENCE hiv_drug_id_seq
                 START WITH 1
                 INCREMENT BY 1
                 NO MINVALUE
                 NO MAXVALUE CACHE 1;
             CREATE TABLE hiv_drug
             (
-                id        bigint DEFAULT nextval('hiv_drug_drug_id_seq'::regclass) NOT NULL,
+                id        bigint DEFAULT nextval('hiv_drug_id_seq'::regclass) NOT NULL,
                 abbrev    character varying(45)                                NOT NULL,
                 name      character varying(100)                               NOT NULL,
                 strength  character varying(45)                                NOT NULL,
