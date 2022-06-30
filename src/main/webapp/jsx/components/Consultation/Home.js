@@ -82,8 +82,10 @@ const ClinicVisit = (props) => {
   const PostPatientToggle = () => setPostPatientModal(!postPatientModal)
   //opportunistic infection Object
   const [infection, setInfection] = useState({illnessInfection:"", ondateInfection:""});
+  const [infectionList, setInfectionList] = useState([]);
   //ADR array Object 
   const [adrObj, setAdrObj] = useState({adr:"", adrOnsetDate:""});
+  const [adrList, setAdrList] = useState([]);
   const [objValues, setObjValues] = useState({
                                                 adherenceLevel: "",
                                                 adheres: {},
@@ -227,7 +229,7 @@ const ClinicVisit = (props) => {
   const handleSubmit = (e) => {        
     e.preventDefault(); 
     objValues.visitDate= vital.encounterDate
-    objValues.adverseDrugReactions= adrObj
+    objValues.adverseDrugReactions= adrList
     objValues.opportunisticInfections= infection
     objValues.tbScreen=tbObj
     objValues['vitalSignDto']= vital   
@@ -493,13 +495,13 @@ const ClinicVisit = (props) => {
                 Opportunistic Infection
               </Label>
               <br/><br/>
-              <OpportunisticInfection setInfection={setInfection} infection={infection}/>
+              <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList}/>
               <br/>
               <Label as='a' color='pink' ribbon>
                 ADR
               </Label>
               <br/><br/>
-              <ADR setAdrObj={setAdrObj} adrObj={adrObj}/>
+              <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}/>
               <br/>
               <Label as='a' color='teal' ribbon>
                 TB Screening 

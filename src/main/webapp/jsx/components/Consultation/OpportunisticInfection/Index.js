@@ -9,18 +9,18 @@ import DeleteIcon from '@material-ui/icons/Delete'
 
 
 const ADR = (props) => {
-  const [infectionList, setInfectionList] = useState([]);
+
   const handleInfectionInputChange = e => {
     props.setInfection ({...props.infection,  [e.target.name]: e.target.value});
     }
     
     const addInfection = e => { 
-    setInfectionList([...infectionList, props.infection])
+    props.setInfectionList([...props.infectionList, props.infection])
     }
     /* Remove ADR  function **/
     const removeInfection = index => {       
-    infectionList.splice(index, 1);
-    setInfectionList([...infectionList]);
+    props.infectionList.splice(index, 1);
+    props.setInfectionList([...props.infectionList]);
         
     };
                                             
@@ -64,7 +64,7 @@ const ADR = (props) => {
             <Icon name='plus' /> Add
         </LabelSui>
         </div>
-        {infectionList.length >0 
+        {props.infectionList.length >0 
           ?
             <List>
             <div style={{padding:'3px 0px'}} >
@@ -77,7 +77,7 @@ const ADR = (props) => {
                       </tr>
                   </thead>
                   <tbody>
-                {infectionList.map((relative, index) => (
+                {props.infectionList.map((relative, index) => (
 
                   <InfectionList
                       key={index}

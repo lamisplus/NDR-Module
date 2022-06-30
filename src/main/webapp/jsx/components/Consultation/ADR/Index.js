@@ -13,8 +13,7 @@ import moment from "moment";
 const ADR = (props) => {
 
   const [prepSideEffect, setPrepSideEffect] = useState([]);
-  // const [adrObj, setAdrObj] = useState({adr:"", adrOnsetDate:""});
-  const [adrList, setAdrList] = useState([]);
+  
   useEffect(() => {
     PrepSideEffect();
   }, []);
@@ -37,12 +36,12 @@ const ADR = (props) => {
     props.setAdrObj ({...props.adrObj,  [e.target.name]: e.target.value});
   }
   const addADR = e => { 
-    setAdrList([...adrList, props.adrObj])
+    props.setAdrList([...props.adrList, props.adrObj])
   }
   /* Remove ADR  function **/
   const removeRelativeLocation = index => {       
-      adrList.splice(index, 1);
-      setAdrList([...adrList]);
+      props.adrList.splice(index, 1);
+      props.setAdrList([...props.adrList]);
      
   };
 
@@ -61,8 +60,7 @@ const ADR = (props) => {
                 onChange={handAdrleInputChange}
                 required
                 >
-                  <option value=""> </option>
-
+                  <option value=""> Select</option>
                     {prepSideEffect.map((value) => (
                         <option key={value.id} value={value.display}>
                             {value.display}
@@ -95,7 +93,7 @@ const ADR = (props) => {
         </LabelSui>
         </div>
 
-        {adrList.length >0 
+        {props.adrList.length >0 
           ?
             <List>
             <Table  striped responsive>
@@ -107,7 +105,7 @@ const ADR = (props) => {
                       </tr>
                   </thead>
                   <tbody>
-                {adrList.map((relative, index) => (
+                {props.adrList.map((relative, index) => (
 
                   <RelativeList
                       key={index}
