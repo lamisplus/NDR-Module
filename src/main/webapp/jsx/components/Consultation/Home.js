@@ -230,7 +230,7 @@ const ClinicVisit = (props) => {
     e.preventDefault(); 
     objValues.visitDate= vital.encounterDate
     objValues.adverseDrugReactions= adrList
-    objValues.opportunisticInfections= infection
+    objValues.opportunisticInfections= infectionList
     objValues.tbScreen=tbObj
     objValues['vitalSignDto']= vital   
     axios.post(`${baseUrl}hiv/art/clinic-visit/`,objValues,
