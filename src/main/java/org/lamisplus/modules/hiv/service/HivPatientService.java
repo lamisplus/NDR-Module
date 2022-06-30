@@ -37,9 +37,9 @@ public class HivPatientService {
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
 
-    private  final  CurrentUserOrganizationService currentUserOrganizationService;
+    private final CurrentUserOrganizationService currentUserOrganizationService;
 
-    public  HivPatientDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto){
+    public HivPatientDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
         Long personId = hivPatientEnrollmentDto.getPerson ().getId ();
         processAndSavePatient (hivPatientEnrollmentDto, hivEnrollmentDto, personId);
@@ -48,12 +48,11 @@ public class HivPatientService {
     }
 
 
-
     private void processAndSavePatient(HivPatientEnrollmentDto hivPatientEnrollmentDto, HivEnrollmentDto hivEnrollmentDto, Long personId) {
-        if(personId == null){
+        if (personId == null) {
             PersonResponseDto person = personService.createPerson (hivPatientEnrollmentDto.getPerson ());
             hivEnrollmentDto.setPersonId (person.getId ());
-        }else {
+        } else {
             hivEnrollmentDto.setPersonId (personId);
         }
     }
@@ -74,12 +73,12 @@ public class HivPatientService {
     }
 
     public HivPatientDto getHivPatientById(Long personId) {
-       return convertPersonHivPatientDto (personId);
+        return convertPersonHivPatientDto (personId);
     }
 
 
     private HivPatientDto convertPersonHivPatientDto(Long personId) {
-        if(Boolean.TRUE.equals(personService.isPersonExist (personId))) {
+        if (Boolean.TRUE.equals (personService.isPersonExist (personId))) {
             PersonResponseDto bioData = personService.getPersonById (personId);
             Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (personId, 0);
             Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonIdAndIsCommencementIsTrue (personId);
@@ -95,10 +94,7 @@ public class HivPatientService {
     }
 
 
-
-
-
-//    private void addArtPharmacyRefillInfo(List<ArtPharmacy> artPharmacies, HivPatientDto hivPatientDto) {
+    //    private void addArtPharmacyRefillInfo(List<ArtPharmacy> artPharmacies, HivPatientDto hivPatientDto) {
 //        hivPatientDto.setArtClinicVisits (
 //                artPharmacies
 //                        .stream ()
@@ -107,12 +103,7 @@ public class HivPatientService {
 //        );
 //    }
     private void addArtClinicalInfo(List<ARTClinical> artClinics, HivPatientDto hivPatientDto) {
-        hivPatientDto.setArtClinicVisits (
-                artClinics
-                        .stream ()
-                        .map (artClinical -> artClinicVisitService.convertToClinicVisitDto (artClinical))
-                        .collect (Collectors.toList ())
-        );
+        hivPatientDto.setArtClinicVisits (artClinics.stream ().map (artClinicVisitService::convertToClinicVisitDto).collect (Collectors.toList ()));
     }
 
 
@@ -125,7 +116,6 @@ public class HivPatientService {
     }
 
 
-
     private void addEnrollmentInfo(Optional<HivEnrollmentDto> enrollment, HivPatientDto hivPatientDto) {
         if (enrollment.isPresent ()) {
             hivPatientDto.setEnrolled (true);
@@ -135,7 +125,7 @@ public class HivPatientService {
                 hivPatientDto.setCurrentStatus (status.get ().getDisplay ());
             }
         } else {
-            hivPatientDto.setCurrentStatus ("NOT ENROLLED");
+            hivPatientDto.setCurrentStatus ("Not Enrolled");
         }
     }
 

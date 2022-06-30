@@ -3,10 +3,10 @@ package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.controller.apierror.RecordExistException;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
-import org.lamisplus.modules.hiv.controller.exception.AlreadyExistException;
-import org.lamisplus.modules.hiv.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
@@ -41,7 +41,7 @@ public class HivEnrollmentService {
         final Long personId = hivEnrollmentDto.getPersonId ();
         PersonResponseDto person = personService.getPersonById (personId);
         if (hivEnrollmentRepository.getHivEnrollmentByPersonIdAndArchived (person.getId (), 0).isPresent ())
-            throw new AlreadyExistException ("Enrollment has already been done for person with this Id " + personId);
+            throw new RecordExistException (HivEnrollment.class, "personId", ""+person.getId ());
         HivEnrollment hivEnrollment = convertToEntity (hivEnrollmentDto);
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
         return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
@@ -79,7 +79,7 @@ public class HivEnrollmentService {
     private HivEnrollment getExistEnrollmentById(Long id) {
         return hivEnrollmentRepository
                 .findById (id)
-                .orElseThrow (() -> new NoRecordFoundException ("No enrollment found with give Id " + id));
+                .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + id));
     }
 
     private HivEnrollment convertToEntity(HivEnrollmentDto dto) {
@@ -115,7 +115,7 @@ public class HivEnrollmentService {
     }
 
 
-    public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId, int i) {
+    public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId) {
         Optional<HivEnrollment> hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonIdAndArchived (personId, 0);
         if(hivEnrollment.isPresent ()) {
             return Optional.of (convertToDto (hivEnrollment.get ()));
