@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "hiv_drug")
 @Data
 @ToString(of = "abbrev")
-public class Drug implements Serializable, Persistable<Long> {
+public class HIVDrug implements Serializable, Persistable<Long> {
 
     private static final long serialVersionUID = 1L;
     @Id
