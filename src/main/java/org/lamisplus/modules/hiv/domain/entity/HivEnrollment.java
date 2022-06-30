@@ -99,8 +99,5 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
         return id == null;
     }
 
-    /**
-     * @return a cloned or detached version of this entity
-     */
 
 }
