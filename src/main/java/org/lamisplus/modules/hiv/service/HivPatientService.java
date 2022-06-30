@@ -80,7 +80,7 @@ public class HivPatientService {
     private HivPatientDto convertPersonHivPatientDto(Long personId) {
         if (Boolean.TRUE.equals (personService.isPersonExist (personId))) {
             PersonResponseDto bioData = personService.getPersonById (personId);
-            Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (personId, 0);
+            Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (personId);
             Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonIdAndIsCommencementIsTrue (personId);
             List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonIdAndIsCommencementIsFalseAndArchived (personId, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
