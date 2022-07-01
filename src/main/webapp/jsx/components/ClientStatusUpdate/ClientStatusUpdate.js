@@ -57,15 +57,15 @@ const ClientStatusUpdate = (props) => {
     const [reasonForInteruption, setReasonForInteruption] = useState([]);
     const [causeDeath, setCauseDeath] = useState([]);
     const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({ agreedDate: "string",
-                                                causeOfDeath: "string",
-                                                facilityId: 0,
-                                                hivStatus: "string",
+    const [objValues, setObjValues] = useState({ agreedDate: null,
+                                                causeOfDeath: null,
+                                                facilityId: "",
+                                                hivStatus: "",
                                                 personId: "",
-                                                reasonForInterruption: "string",
-                                                statusDate: "string",
-                                                trackDate: "string",
-                                                trackOutcome: "string",
+                                                reasonForInterruption: "",
+                                                statusDate: null,
+                                                trackDate:null,
+                                                trackOutcome: "",
                                                 visitId: null
                                             });
     const [saving, setSaving] = useState(false);
