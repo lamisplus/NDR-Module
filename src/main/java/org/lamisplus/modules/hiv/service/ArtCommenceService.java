@@ -70,7 +70,10 @@ public class ArtCommenceService {
         StringBuilder statusDisplay = new StringBuilder ();
         HivEnrollment hivEnrollment = hivEnrollmentRepository.findById (hivEnrollmentId).orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
         boolean isEnrollmentDateAfterArtCommence = hivEnrollment.getDateOfRegistration ().isAfter (artClinicalCommenceDto.getVisitDate ());
-        if (isEnrollmentDateAfterArtCommence) throw  new IllegalTypeException (ARTClinical.class, "art commence date", "" + artClinicalCommenceDto.getVisitDate ());
+        if (isEnrollmentDateAfterArtCommence) {
+            final String message = artClinicalCommenceDto.getVisitDate () + " is below enrollment date " + hivEnrollment.getDateOfRegistration ();
+            throw  new IllegalTypeException (ARTClinical.class, "Art commence date", message);
+        }
         boolean artCommenceExist = artClinicalRepository.findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
         if (artCommenceExist) throw new RecordExistException (ARTClinical.class, "personId", "" + personId);
         Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
