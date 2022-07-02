@@ -82,34 +82,34 @@ function PatientCard(props) {
     CheckBiometric();
   }, [props.patientObj]);
 
- //Get list of KP
- const CheckBiometric =()=>{
-    axios
-       .get(`${baseUrl}modules/check?moduleName=biometric`,
-           { headers: {"Authorization" : `Bearer ${token}`} }
-       )
-       .then((response) => {
-           setBiometricStatus(response.data);
-           if(response.data===true){
-            axios
-                .get(`${baseUrl}biometrics/devices`,
-                    { headers: {"Authorization" : `Bearer ${token}`} }
-                )
-                .then((response) => {
-                    setDevices(response.data);
-                    
-                })
-                .catch((error) => {
-                    console.log(error)
-                });
-           
-            }
-       })
-       .catch((error) => {
-       //console.log(error);
-       });
-   
-    }
+  //Get list of KP
+  const CheckBiometric =()=>{
+      axios
+        .get(`${baseUrl}modules/check?moduleName=biometric`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            setBiometricStatus(response.data);
+            if(response.data===true){
+              axios
+                  .get(`${baseUrl}biometrics/devices`,
+                      { headers: {"Authorization" : `Bearer ${token}`} }
+                  )
+                  .then((response) => {
+                      setDevices(response.data);
+                      
+                  })
+                  .catch((error) => {
+                      console.log(error)
+                  });
+            
+              }
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+  }
     ///GET LIST OF Patients
     async function PatientCurrentStatus() {
         axios

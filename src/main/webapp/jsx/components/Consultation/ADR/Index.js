@@ -5,7 +5,7 @@ import { Input, Label, FormGroup, } from "reactstrap";
 import { makeStyles } from '@material-ui/core/styles'
 import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteIcon from '@material-ui/icons/Delete';
 import { url as baseUrl,token } from "./../../../../api";
 import axios from "axios";
 import moment from "moment";
@@ -116,10 +116,10 @@ const ADR = (props) => {
                   ))}
                   </tbody>
                   </Table>
-                </List>
-                :
-                ""
-            }       
+            </List>
+            :
+            ""
+        }       
     </div>
     </div>
      

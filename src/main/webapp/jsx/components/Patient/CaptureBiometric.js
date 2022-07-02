@@ -118,7 +118,6 @@ const CaptureBiometric = (props) => {
         const deviceName =e.target.value;
         const selectedDevice=biometricDevices.find((x)=> x.name ===deviceName )
         checkUrl= selectedDevice.url===null? baseUrl : selectedDevice.url
-        console.log(checkUrl)
         setObjValues({...objValues, device:deviceName})
         axios
            .get(`${checkUrl}biometrics/secugen/boot?reader=${deviceName}`,

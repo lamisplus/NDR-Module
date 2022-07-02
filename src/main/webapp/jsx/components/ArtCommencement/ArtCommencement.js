@@ -10,7 +10,7 @@ import { url as baseUrl, token } from "../../../api";
 //import { useHistory } from "react-router-dom";
 import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-
+import moment from "moment";
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import { Spinner } from "reactstrap";
 
@@ -71,21 +71,21 @@ const ArtCommencement = (props) => {
     const [pregancyStatus, setPregancyStatus] = useState([]);
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
-                                                    personId:props.patientObj.id,
-                                                    visitDate: "",
-                                                    viralLoad: "",
-                                                    whoStagingId:"",
-                                                    clinicalStageId:"",
-                                                    cd4: "",
-                                                    cd4Percentage: "",
-                                                    isCommencement: true,
-                                                    functionalStatusId: "",
-                                                    clinicalNote: "",
-                                                    hivEnrollmentId: "",
-                                                    vitalSignDto:"",
-                                                    facilityId:1,
-                                                    regimenTypeId: 0,
-                                                    regimenId:0                                                   
+                                                personId:props.patientObj.id,
+                                                visitDate: "",
+                                                viralLoad: "",
+                                                whoStagingId:"",
+                                                clinicalStageId:"",
+                                                cd4: "",
+                                                cd4Percentage: "",
+                                                isCommencement: true,
+                                                functionalStatusId: "",
+                                                clinicalNote: "",
+                                                hivEnrollmentId: "",
+                                                vitalSignDto:"",
+                                                facilityId:1,
+                                                regimenTypeId: 0,
+                                                regimenId:0                                                   
 
                                                 });
 
@@ -258,6 +258,7 @@ const ArtCommencement = (props) => {
               })
               .catch(error => {
                   setSaving(false);
+                  console.log(error.apierror)
                   if(error.apierror){
                     toast.error(error.apierror.message);
                   }else{
@@ -296,6 +297,7 @@ const ArtCommencement = (props) => {
                                             id="visitDate"
                                             onChange={handleInputChange}
                                             value={objValues.visitDate}
+                                            max= {moment(new Date()).format("YYYY-MM-DD") }
                                             required
                                         />
                                         </FormGroup>

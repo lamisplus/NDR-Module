@@ -75,7 +75,7 @@ function SubMenu(props) {
                     {/* <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up Visit</Menu.Item> */}
                     <Menu.Item onClick={() => loadAnc(patientObj)} disabled> Enhanced Adherence Counselling</Menu.Item>
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>
-                    <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
+                    {/* <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)} disabled> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPVisitForm(patientObj)} disabled><span  style={{color:"#fff",}}>PrEP Visit</span></Dropdown.Item>
@@ -83,9 +83,9 @@ function SubMenu(props) {
                                 <Dropdown.Item onClick={() => loadPrEPDiscontinuationsInterruptions(patientObj)} disabled><span  style={{color:"#fff",}}>PrEP Discontinuations & Interruptions</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPCommencementForm(patientObj)} disabled><span  style={{color:"#fff",}}>PrEP Commencement</span></Dropdown.Item>
                             </Dropdown.Menu>
-                            </Dropdown>
+                    </Dropdown> */}
                             
-                    {genderType===true ? 
+                    {/* {genderType===true ? 
                         (
                             <>
                             <Dropdown text="PMTCT"   labeled simple    className='icon link item' disabled>
@@ -100,7 +100,7 @@ function SubMenu(props) {
                             </>
                         )
                         :""
-                    }
+                    } */}
                     
                     
                 </Menu>
@@ -115,7 +115,7 @@ function SubMenu(props) {
                     {/* <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up Visit</Menu.Item> */}
                     <Menu.Item onClick={() => loadAnc(patientObj)}> Enhanced Adherence Counselling</Menu.Item>
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)}>Client Status Update</Menu.Item>
-                    <Dropdown text="PrEP" labeled simple className='icon link item'>
+                    {/* <Dropdown text="PrEP" labeled simple className='icon link item'>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)}> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPVisitForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Visit</span></Dropdown.Item>
@@ -123,9 +123,9 @@ function SubMenu(props) {
                                 <Dropdown.Item onClick={() => loadPrEPDiscontinuationsInterruptions(patientObj)}><span  style={{color:"#fff",}}>PrEP Discontinuations & Interruptions</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPCommencementForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Commencement</span></Dropdown.Item>
                             </Dropdown.Menu>
-                            </Dropdown>
+                    </Dropdown> */}
                             
-                    {genderType===true ? 
+                    {/* {genderType===true ? 
                         (
                             <>
                             <Dropdown text="PMTCT"   labeled simple    className='icon link item'>
@@ -140,7 +140,7 @@ function SubMenu(props) {
                             </>
                         )
                         :""
-                    }
+                    } */}
                     
                 </Menu>
                )

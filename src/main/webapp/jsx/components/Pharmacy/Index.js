@@ -86,6 +86,14 @@ const Pharmacy = (props) => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
        
     }
+    const handleSelectedRegimen = e => {
+        const regimenId= e.target.value
+        if(regimenId!==""){
+            RegimenType(regimenId)
+        }else{
+            setRegimenType([])
+        }
+    }
     const handleCheckBox =e =>{
         if(e.target.checked){
             setShowDsdModel(true)
@@ -276,9 +284,8 @@ const Pharmacy = (props) => {
                     type="select"
                     name="regimen"
                     id="regimen"
-                    // value={objValues.drugName}
-                    // onChange={handleSelectedRegimen}
-                    
+                    value={objValues.drugName}
+                    onChange={handleSelectedRegimen}                   
                     >
                     <option value="">Select </option>
                                     
@@ -300,24 +307,22 @@ const Pharmacy = (props) => {
                         <div className="row">
                         {regimenType.map((drugsInfo) => (
                             <>
-                        <div className="form-group mb-3 col-md-4">
+                        <div className="form-group mb-3 col-md-6">
                         <FormGroup>
-                        <Label >Drug </Label>
-                        <Input
-                                type="text"
-                                // name={drugsInfo.name}
-                                // id={drugsInfo.name}
-                                // value={drugsInfo.name}
-                                // onChange={handleInputChangeOtherDetails}
-                                // required
-                                ></Input>
+                        <Label ><b>Regimen Description</b> </Label>
+                         <b>{drugsInfo.description}</b>
                         </FormGroup>
                         </div>
-                        
-                        <div className="form-group mb-3 col-md-4">
+                        <div className="form-group mb-3 col-md-6">
                         <FormGroup>
-                        <Label >	Dosage Strength - {drugsInfo.abbrev}</Label>
-                        <Input
+                        <Label ><b>Regimen Composition </b></Label>
+                         <b>{drugsInfo.composition}</b>
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label >	Dosage Strength</Label>
+                            <Input
                                 type="number"
                                 // name={drugsInfo.code}
                                 // id={drugsInfo.code}
@@ -328,12 +333,75 @@ const Pharmacy = (props) => {
                                 
                             </Input>
                         
-                        </FormGroup>
+                            </FormGroup>
                         </div>
-                    
-                        <div className="form-group mb-3 col-md-4">
+                        <div className="form-group mb-3 col-md-3">
                             <FormGroup>
-                            <Label >Dosage Unit *</Label>
+                            <Label >	Dosage Frequency </Label>
+                            <Input
+                                type="number"
+                                // name={drugsInfo.code}
+                                // id={drugsInfo.code}
+                                // value=""
+                                // onChange={handleInputChangeOtherDetails}
+                                required
+                                >
+                                
+                            </Input>
+                        
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label >Duration</Label>
+                            <Input
+                                type="number"
+                                // name={drugsInfo.code}
+                                // id={drugsInfo.code}
+                                // value=""
+                                // onChange={handleInputChangeOtherDetails}
+                                required
+                                >
+                                
+                            </Input>
+                        
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label >Quantity Prescribed</Label>
+                            <Input
+                                type="number"
+                                // name={drugsInfo.code}
+                                // id={drugsInfo.code}
+                                // value=""
+                                // onChange={handleInputChangeOtherDetails}
+                                required
+                                >
+                                
+                            </Input>
+                        
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label >Quantity Dispsend</Label>
+                            <Input
+                                type="number"
+                                // name={drugsInfo.code}
+                                // id={drugsInfo.code}
+                                // value=""
+                                // onChange={handleInputChangeOtherDetails}
+                                required
+                                >
+                                
+                            </Input>
+                        
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label >Duration *</Label>
                             <Input
                                 type="select"
                                 // name={drugsInfo.code}
@@ -353,6 +421,8 @@ const Pharmacy = (props) => {
                             
                             </FormGroup>
                         </div>
+                        <div className="form-group mb-3 col-md-3"></div>
+                        <div className="form-group mb-3 col-md-3"></div>
                         </>
                         ))
                         }
@@ -365,74 +435,7 @@ const Pharmacy = (props) => {
                 :
                 ""
             }
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Dose Frequency</Label>
-                <Input
-                    type="number"
-                    name="dosageFrequency"
-                    id="dosageFrequency"
-                    // value={objValues.dosageFrequency}
-                    // onChange={handleInputChange}
-                    required
-                    >
-                    
-                </Input>
-                {/* {errors.dosageFrequency !=="" ? (
-                    <span className={classes.error}>{errors.dosageFrequency}</span>
-                ) : "" } */}
-                </FormGroup>
-            </div>
-            
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Start Date </Label>
-                <Input
-                    type="date"
-                    name="startDate"
-                    id="startDate"
-                    // value={objValues.startDate}
-                    // onChange={handleInputChange}
-                    required
-                    >
-                        
-                </Input>
-                </FormGroup>
-            </div>
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Duration </Label>
-                <Input
-                    type="number"
-                    name="duration"
-                    id="duration"
-                    // value={objValues.duration}
-                    // onChange={handleInputChange}
-                    required
-                    >
-                    
-                </Input>
-                </FormGroup>
-            </div>
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Duration Unit </Label>
-                <InputGroup> 
-                    <Input 
-                        type="number"
-                        name="durationUnit"
-                        id="durationUnit"
-                        // onChange={handleInputChange}
-                        // value={objValues.durationUnit} 
-                    />
-                    
-                    
-                </InputGroup>
-                {/* {objValues.bodyWeight > 200 ? (
-                        <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
-                    ) : "" } */}
-                </FormGroup>
-            </div>
+
             <Col md={12}>                  
                     <LabelSui as='a' color='black'  className="float-end" size='tiny' style={{ marginTop:20}}>
                     <Icon name='plus' /> Add Drug
