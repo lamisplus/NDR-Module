@@ -44,9 +44,8 @@ public class HivAuditEntity {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate = LocalDateTime.now ();
 
-    @Column(name = "last_modified_by" )
+    @Column(name = "last_modified_by")
     @JsonIgnore
-    @ToString.Exclude
     private String lastModifiedBy = SecurityUtils.getCurrentUserLogin ().orElse ("");
 
     private Long facilityId;

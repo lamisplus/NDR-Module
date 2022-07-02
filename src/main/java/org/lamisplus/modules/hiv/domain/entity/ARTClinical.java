@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "art_clinical")
+@Table(name = "hiv_art_clinical")
 @Builder(toBuilder = true)
 @Getter
 @Setter
@@ -69,12 +69,6 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 
     @Column(name = "who_staging_id")
     private Long whoStagingId;
-
-
-    @Column(name = "facility_id")
-    @NotNull
-    private Long facilityId;
-
 
     @Column(name = "person_id")
     @NotNull
