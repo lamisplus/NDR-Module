@@ -2,6 +2,7 @@ package org.lamisplus.modules.hiv.repositories;
 
 import com.foreach.across.modules.hibernate.jpa.repositories.CommonJpaRepository;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
+import org.lamisplus.modules.patient.domain.entity.Person;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,8 +14,8 @@ public interface ARTClinicalRepository extends CommonJpaRepository<ARTClinical, 
 
     List<ARTClinical> findByArchivedAndIsCommencementIsFalse(int i);
 
-    Optional<ARTClinical> findByPersonIdAndIsCommencementIsTrue(Long personId);
+    Optional<ARTClinical> findByPersonAndIsCommencementIsTrue(Person person);
 
-    List<ARTClinical> findAllByPersonIdAndIsCommencementIsFalseAndArchived(Long id, Integer archived);
+    List<ARTClinical> findAllByPersonAndIsCommencementIsFalseAndArchived(Person person, Integer archived);
 
 }
