@@ -9,12 +9,20 @@ import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
+import org.lamisplus.modules.patient.domain.dto.EncounterRequestDto;
+import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
+import org.lamisplus.modules.patient.domain.dto.VisitDto;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.service.EncounterService;
+import org.lamisplus.modules.patient.service.PersonService;
+import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,20 +38,42 @@ public class ArtClinicVisitService {
 
     private final CurrentUserOrganizationService organizationUtil;
 
+    private  final VisitService visitService;
+
+    private final EncounterService encounterService;
+
+    private final  ArtCommenceService artCommenceService;
+
+    private  final PersonService personService;
+
+
 
     public ARTClinicVisitDto createArtClinicVisit(ARTClinicVisitDto artClinicVisitDto) {
         Long hivEnrollmentId = artClinicVisitDto.getHivEnrollmentId ();
         HivEnrollment hivEnrollment = hivEnrollmentRepository
                 .findById (hivEnrollmentId)
-                .orElseThrow (() -> new EntityNotFoundException (ArtClinicVisitService.class, "errorMessage","no hiv enrollment found for id " + hivEnrollmentId));
+                .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", ""+ hivEnrollmentId));
         if (!hivEnrollment.getPersonId ().equals (artClinicVisitDto.getPersonId ()))
-            throw new EntityNotFoundException (ArtClinicVisitService.class, "errorMessage","No person is  found for id " + artClinicVisitDto.getPersonId ());
+            throw new EntityNotFoundException (Person.class, "personId", "" + artClinicVisitDto.getPersonId ());
+        getVisitIdIfVisitIsActive (artClinicVisitDto, hivEnrollment.getPersonId ());
         Long vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setArchived (0);
         artClinical.setIsCommencement (false);
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));
+    }
+
+
+
+    private void getVisitIdIfVisitIsActive(ARTClinicVisitDto artClinicVisitDto, Long personId) {
+        PersonResponseDto person = personService.getPersonById (personId);
+        if(person != null){
+            Long visitId = person.getVisitId ();
+            if(visitId != null){
+                artClinicVisitDto.setVisitId (visitId);
+            }
+        }
     }
 
 
@@ -82,7 +112,7 @@ public class ArtClinicVisitService {
     private ARTClinical getExistClinicVisit(Long id) {
         return artClinicalRepository
                 .findById (id)
-                .orElseThrow (() -> new EntityNotFoundException (ArtClinicVisitService.class, "errorMessage","No clinic visit found for this Id " + id));
+                .orElseThrow (() -> new EntityNotFoundException (ARTClinical.class, "id", "" + id));
     }
 
 
@@ -101,12 +131,35 @@ public class ArtClinicVisitService {
     @NotNull
     public ARTClinical convertDtoToART(ARTClinicVisitDto artClinicVisitDto, Long vitalSignId) {
         ARTClinical artClinical = new ARTClinical ();
+        if(artClinicVisitDto.getVisitId () == null){
+            processAndCreatePatientVisitAndEncounter (artClinicVisitDto, artClinical);
+        }
         log.info ("converted Dto 1 {}", artClinicVisitDto);
         BeanUtils.copyProperties (artClinicVisitDto, artClinical);
         artClinical.setVitalSignId (vitalSignId);
         artClinical.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         log.info ("converted entity 1 {}", artClinical);
         return artClinical;
+    }
+
+
+
+    private void processAndCreatePatientVisitAndEncounter(ARTClinicVisitDto artClinicVisitDto, ARTClinical artClinical) {
+        VisitDto visitDto = new VisitDto ();
+        visitDto.setVisitStartDate (artClinicVisitDto.getVisitDate ());
+        visitDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        visitDto.setPersonId (artClinicVisitDto.getPersonId ());
+        VisitDto visit = visitService.createVisit (visitDto);
+        EncounterRequestDto encounterRequestDto = new EncounterRequestDto ();
+        encounterRequestDto.setVisitId (visit.getId ());
+        Set<String> hivServiceCodes = artCommenceService.getHivServiceCodes ();
+        encounterRequestDto.setServiceCode (hivServiceCodes);
+        encounterRequestDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        encounterRequestDto.setEncounterDate (artClinicVisitDto.getVisitDate ());
+        encounterRequestDto.setStatus ("PENDING");
+        encounterRequestDto.setPersonId (artClinicVisitDto.getPersonId ());
+        encounterService.registerEncounter (encounterRequestDto);
+        artClinical.setVisitId (visit.getId ());
     }
 
 

@@ -1,9 +1,11 @@
 package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.audit4j.core.util.Log;
 import org.jetbrains.annotations.NotNull;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.controller.apierror.IllegalTypeException;
 import org.lamisplus.modules.base.controller.apierror.RecordExistException;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
@@ -15,14 +17,16 @@ import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
+import org.lamisplus.modules.patient.domain.dto.EncounterRequestDto;
+import org.lamisplus.modules.patient.domain.dto.EncounterResponseDto;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
-import org.lamisplus.modules.patient.domain.entity.Encounter;
-import org.lamisplus.modules.patient.domain.entity.Person;
-import org.lamisplus.modules.patient.domain.entity.Visit;
-import org.lamisplus.modules.patient.repository.EncounterRepository;
-import org.lamisplus.modules.patient.repository.VisitRepository;
+import org.lamisplus.modules.patient.domain.dto.VisitDto;
+import org.lamisplus.modules.patient.service.EncounterService;
 import org.lamisplus.modules.patient.service.PersonService;
+import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.domain.entity.TriagePostService;
+import org.lamisplus.modules.triage.repository.TriagePostServiceRepository;
 import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -30,11 +34,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArtCommenceService {
 
     private final ARTClinicalRepository artClinicalRepository;
@@ -50,26 +56,26 @@ public class ArtCommenceService {
     private final VitalSignService vitalSignService;
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
-
     private final CurrentUserOrganizationService organizationUtil;
+    private final VisitService visitService;
 
-    private final VisitRepository visitRepository;
-    private final EncounterRepository encounterRepository;
+    private final EncounterService encounterService;
+
+    private final TriagePostServiceRepository postServiceRepository;
 
     public HivPatientDto createArtCommence(ARTClinicalCommenceDto artClinicalCommenceDto) {
         Long personId = artClinicalCommenceDto.getPersonId ();
-        Person person = new Person ();
-        person.setId (personId);
-        Visit visit = createAVisit (artClinicalCommenceDto, person);
-        createAnEncounter (artClinicalCommenceDto, person, visit);
         Long hivEnrollmentId = artClinicalCommenceDto.getHivEnrollmentId ();
         Optional<ApplicationCodeSet> hivStatus = applicationCodesetRepository.findByDisplayAndCodesetGroup ("ART Start", "HIV_STATUS");
         StringBuilder statusDisplay = new StringBuilder ();
-        hivEnrollmentRepository.findById (hivEnrollmentId).orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
-        boolean artCommenceExist = artClinicalRepository
-                .findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
-        if (artCommenceExist)
-            throw new RecordExistException (ARTClinical.class, "personId", "" + personId);
+        HivEnrollment hivEnrollment = hivEnrollmentRepository.findById (hivEnrollmentId).orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
+        boolean isEnrollmentDateAfterArtCommence = hivEnrollment.getDateOfRegistration ().isAfter (artClinicalCommenceDto.getVisitDate ());
+        if (isEnrollmentDateAfterArtCommence) {
+            final String message = artClinicalCommenceDto.getVisitDate () + " is below enrollment date " + hivEnrollment.getDateOfRegistration ();
+            throw  new IllegalTypeException (ARTClinical.class, "Art commence date", message);
+        }
+        boolean artCommenceExist = artClinicalRepository.findByPersonIdAndIsCommencementIsTrue (personId).isPresent ();
+        if (artCommenceExist) throw new RecordExistException (ARTClinical.class, "personId", "" + personId);
         Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
         if (vitalSignId == null) {
             vitalSignId = processAndSaveVitalSign (artClinicalCommenceDto);
@@ -87,30 +93,44 @@ public class ArtCommenceService {
         return convertArtCommenceToHivPatientDto (saveArtClinical);
     }
 
-    public Visit createAVisit(ARTClinicalCommenceDto artClinicalCommenceDto,Person person) {
-        Visit visit = new Visit ();
-        visit.setVisitStartDate (artClinicalCommenceDto.getVisitDate ());
-        visit.setUuid (UUID.randomUUID ().toString ());
-        visit.setArchived (0);
-        visit.setPerson (person);
-        visit.setFacilityId (organizationUtil.getCurrentUserOrganization ());
-        visitRepository.save (visit);
+    @NotNull
+    private VisitDto processAndCreatePersonVisitAndEncounter(ARTClinicalCommenceDto artClinicalCommenceDto) {
+        VisitDto visit = createAVisit (artClinicalCommenceDto);
+        log.info (" visit art commence  {}", visit);
+        createAnEncounter (artClinicalCommenceDto, visit.getId ());
         return visit;
     }
-    public void createAnEncounter(ARTClinicalCommenceDto artClinicalCommenceDto, Person person, Visit visit) {
-        Encounter encounter = new Encounter ();
-        encounter.setStatus ("PENDING");
-        encounter.setServiceCode ("hiv-code");
-        encounter.setPerson (person);
-        encounter.setEncounterDate (artClinicalCommenceDto.getVisitDate ());
-        encounter.setVisit (visit);
-        encounter.setArchived (0);
-        encounter.setUuid (UUID.randomUUID ().toString ());
-        encounterRepository.save (encounter);
+
+    public VisitDto createAVisit(ARTClinicalCommenceDto artClinicalCommenceDto) {
+        VisitDto visitDto = new VisitDto ();
+        visitDto.setPersonId (artClinicalCommenceDto.getPersonId ());
+        visitDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        visitDto.setVisitStartDate (artClinicalCommenceDto.getVisitDate ());
+        return visitService.createVisit (visitDto);
+    }
+
+    public void createAnEncounter(ARTClinicalCommenceDto artClinicalCommenceDto, Long visitId) {
+        EncounterRequestDto encounterRequestDto = new EncounterRequestDto ();
+        encounterRequestDto.setPersonId (artClinicalCommenceDto.getPersonId ());
+        encounterRequestDto.setVisitId (visitId);
+        encounterRequestDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        encounterRequestDto.setEncounterDate (artClinicalCommenceDto.getVisitDate ());
+        Set<String> hivServiceCodes = getHivServiceCodes ();
+        encounterRequestDto.setServiceCode (hivServiceCodes);
+        encounterRequestDto.setStatus ("PENDING");
+        List<EncounterResponseDto> encounterResponseDtos = encounterService.registerEncounter (encounterRequestDto);
+        log.info (" encounter art commence  {}", encounterResponseDtos);
+
     }
 
 
-
+    @NotNull
+    public Set<String> getHivServiceCodes() {
+        return postServiceRepository.findAll ()
+                .stream ().filter (triagePostService -> triagePostService.getModuleServiceCode ().contains ("hiv"))
+                .map (TriagePostService::getModuleServiceCode)
+                .collect (Collectors.toSet ());
+    }
 
 
     public Long processAndSaveVitalSign(ARTClinicalCommenceDto artClinicalCommenceDto) {
@@ -190,7 +210,9 @@ public class ArtCommenceService {
     public ARTClinical convertDtoToART(ARTClinicalCommenceDto artClinicalCommenceDto, Long vitalSignId) {
         ARTClinical artClinical = new ARTClinical ();
         BeanUtils.copyProperties (artClinicalCommenceDto, artClinical);
+        VisitDto visit = processAndCreatePersonVisitAndEncounter (artClinicalCommenceDto);
         artClinical.setVitalSignId (vitalSignId);
+        artClinical.setVisitId (visit.getId ());
         artClinical.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         return artClinical;
     }

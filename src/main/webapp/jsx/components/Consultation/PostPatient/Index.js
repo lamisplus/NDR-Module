@@ -61,9 +61,7 @@ let newDate = new Date()
 
 const PostPatient = (props) => {
     const patientObj = props.patientObj;
-    //console.log(patientObj)
     const [selectedOption, setSelectedOption] = useState();
-    let history = useHistory();
     const classes = useStyles()
     const [services, setServices]= useState([]);
     //const [values, setValues] = useState([]);
@@ -80,8 +78,9 @@ const PostPatient = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
+                    const filterService = response.data.filter((x) => x.moduleServiceCode!=='consultation-code' && x.moduleServiceCode!=='hiv-code')
                     setServices(
-                        Object.entries(response.data).map(([key, value]) => ({
+                        Object.entries(filterService).map(([key, value]) => ({
                           label: value.moduleServiceName,
                           value: value.moduleServiceCode,
                         })))

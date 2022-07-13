@@ -106,6 +106,7 @@ const useStyles = makeStyles(theme => ({
 
 const Patients = (props) => {    
     const [patientList, setPatientList] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         patients()
@@ -117,11 +118,12 @@ const Patients = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                    //console.log(response.data)
+                    setLoading(false)
                     setPatientList(response.data);
                    
                 })
-                .catch((error) => {    
+                .catch((error) => {  
+                    setLoading(true)  
                 });        
         }
     const calculate_age = dob => {
@@ -181,6 +183,7 @@ const Patients = (props) => {
                 { title: "ART Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
+              isLoading={loading}
               data={ patientList.map((row) => ({
                   //Id: manager.id,
                     name:row.firstName + " " + row.surname,

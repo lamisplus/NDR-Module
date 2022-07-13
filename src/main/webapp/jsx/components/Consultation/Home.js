@@ -80,6 +80,8 @@ const ClinicVisit = (props) => {
   const AddAllergyToggle = () => setAddAllergyModal(!addAllergyModal)
   const [postPatientModal, setPostPatientModal] = useState(false);
   const PostPatientToggle = () => setPostPatientModal(!postPatientModal)
+  const [currentVitalSigns, setcurrentVitalSigns]= useState({})
+  const [showCurrentVitalSigns, setShowCurrentVitalSigns]= useState(false)
   //opportunistic infection Object
   const [infection, setInfection] = useState({illnessInfection:"", ondateInfection:""});
   const [infectionList, setInfectionList] = useState([]);
@@ -136,8 +138,25 @@ const ClinicVisit = (props) => {
     WhoStaging();
     AdherenceLevel();
     TBStatus();
+    VitalSigns()
   }, []);
-
+  //Check for the last Vital Signs
+    const VitalSigns =()=>{
+      axios
+          .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+              const lastVitalSigns = response.data[response.data.length - 1]
+              if(lastVitalSigns.encounterDate===moment(new Date()).format("YYYY-MM-DD")!==true){
+                setcurrentVitalSigns(lastVitalSigns)
+                setShowCurrentVitalSigns(true)
+              }
+          })
+          .catch((error) => {
+          //console.log(error);
+          });        
+  }
     //Get list of WhoStaging
     const WhoStaging =()=>{
       axios
@@ -196,23 +215,20 @@ const ClinicVisit = (props) => {
           .catch((error) => {    
           });        
       }
-  const handleInputChange = e => {
-    setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    if(e.target.name ==="whoStagingId" ){
-      if(e.target.value==="NO"){
-          setTBForms(true)
-      }else{
-          setTBForms(false)
+    const handleInputChange = e => {
+      setObjValues ({...objValues,  [e.target.name]: e.target.value});
+      if(e.target.name ==="whoStagingId" ){
+        if(e.target.value==="NO"){
+            setTBForms(true)
+        }else{
+            setTBForms(false)
+        }
       }
     }
-  }
   const handleInputChangeVitalSignDto = e => {            
     setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
   }
-  // const addVitalsModal =()=>{
-  //       //setpatientObj({...patientObj, ...row});
-  //       setAddVitalModal(!addVitalModal)
-  // }
+
   const addConditionsModal =()=>{
     //setpatientObj({...patientObj, ...row});
     setAddConditionModal(!addConditionModal)
@@ -224,6 +240,22 @@ const ClinicVisit = (props) => {
   const PostPatientService =(row)=> {
     //setpatientObj({...patientObj, ...row});
     setPostPatientModal(!postPatientModal)
+  }
+  //Handle CheckBox 
+  const handleCheckBox =e =>{
+    if(e.target.checked){
+      setVitalSignDto({...currentVitalSigns})
+    }else{
+      setVitalSignDto({ bodyWeight: "",
+                        diastolic:"",
+                        encounterDate: "",
+                        facilityId: 1,
+                        height: "",
+                        personId:props.patientObj.id,
+                        serviceTypeId: 1,
+                        systolic:""
+                      })
+    }
   }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {        
@@ -248,8 +280,7 @@ const ClinicVisit = (props) => {
             toast.error(error.apierror.message);
           }else{
             toast.error("Something went wrong. Please try again...");
-          }    
-         
+          }             
       });
   }
 
@@ -320,7 +351,25 @@ const ClinicVisit = (props) => {
               
                 </FormGroup>
             </div>
-            <div className="form-group mb-3 col-md-6"></div>
+            <div className="form-group mb-3 col-md-6">
+            {showCurrentVitalSigns && (
+            <div className="form-check custom-checkbox ml-1 ">
+                  <input
+                  type="checkbox"
+                  className="form-check-input"                  
+                  name="currentVitalSigns"
+                  id="currentVitalSigns"
+                  onChange={handleCheckBox}
+                  />
+                  <label
+                  className="form-check-label"
+                  htmlFor="basic_checkbox_1"
+                  >
+                  use current Vital Signs
+                  </label>
+              </div>
+              )}
+            </div>
             <div className="mb-3 col-md-6">
             <FormGroup>
             <FormLabelName >Body Weight</FormLabelName>

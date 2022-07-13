@@ -14,6 +14,7 @@ import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { toast} from "react-toastify";
+import {Alert } from "react-bootstrap";
 
 
 const useStyles = makeStyles(theme => ({ 
@@ -29,13 +30,14 @@ const useStyles = makeStyles(theme => ({
       fontSize: "11px",
   },
 }))
-let visitId=""
-let testGroupObj=""
 
 const Laboratory = (props) => {
+    console.log(props.patientObj.id)
+    let visitId=""
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [buttonHidden, setButtonHidden]= useState(false);
+    const [moduleStatus, setModuleStatus]= useState(false)
     const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
     const [priority, setPriority]=useState([])
@@ -45,7 +47,7 @@ const Laboratory = (props) => {
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [objValues, setObjValues] = useState({
                                                 orderDate:null,
-                                                patientId: "",
+                                                patientId: props.patientObj?props.patientObj.id:"",
                                                 tests: "",
                                                 visitId: ""
                                             });
@@ -63,7 +65,7 @@ const Laboratory = (props) => {
             ViraLoadIndication();
             PatientVisit();
             CheckLabModule();
-        }, []);
+        }, [props.patientObj.id]);
     //Get list of Test Group
     const TestGroup =()=>{
         axios
@@ -72,7 +74,6 @@ const Laboratory = (props) => {
             )
             .then((response) => {
                 setTestGroup(response.data);
-                testGroupObj=response.data
             })
             .catch((error) => {
             //console.log(error);
@@ -101,9 +102,11 @@ const Laboratory = (props) => {
               )
               .then((response) => {
                   if(response.data===true){
+                    setModuleStatus(true)
                     setButtonHidden(false)
                     }
                     else{
+                        setModuleStatus(false)
                         toast.error("Laboratory module is not install")
                         setButtonHidden(true)
                     }
@@ -122,19 +125,19 @@ const Laboratory = (props) => {
                 const lastVisit = response.data[response.data.length - 1]
                 if(lastVisit.status==="PENDING"){
                     visitId= lastVisit.id
-                    setCurrentVisit(true)
+                    //setCurrentVisit(true)
                     setButtonHidden(false)
                 }else{
                     toast.error("Patient do not have any active visit")
                     setButtonHidden(true)
-                    setCurrentVisit(false)
+                    //setCurrentVisit(false)
                 }
 
             })
             .catch((error) => {
             //console.log(error);
             });        
-}
+    }
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios
@@ -153,15 +156,18 @@ const Laboratory = (props) => {
         const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
         setTest(getTestList[0].labTests)
     }
-    const handleInputChange = e => {
+    const handleInputChangeObject = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});               
+    }
+    const handleInputChange = e => {
+        setTests ({...tests,  [e.target.name]: e.target.value});               
     }
     const handleInputChangeTest = e => {
         if(e.target.value==="16"){
             setShowVLIndication(true)
             setTests ({...tests,  labTestId: e.target.value});
         }else{
-            //setShowVLIndication(false)
+            setShowVLIndication(false)
             setTests ({...tests,  labTestId: e.target.value});
         }
         //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
@@ -177,14 +183,11 @@ const Laboratory = (props) => {
       };
     
     const handleSubmit = (e) => {        
-        e.preventDefault();  
-        objValues.patientId=props.patientObj.id  
+        e.preventDefault();   
         objValues.tests= testOrderList
         objValues.visitId= visitId 
         axios.post(`${baseUrl}laboratory/orders`,objValues,
-            { headers: {"Authorization" : `Bearer ${token}`}},
-            
-            )
+            { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
                 toast.success("Laboratory test order created successful");
@@ -196,13 +199,10 @@ const Laboratory = (props) => {
                     toast.error(error.apierror.message);
                 }else{
                     toast.error("Something went wrong. Please try again...");
-                }    
-                
+                }                    
             }); 
-
     }
 
-console.log(testGroupObj)
 
   return (      
       <div >
@@ -210,19 +210,20 @@ console.log(testGroupObj)
                    
         <Card >
             <CardBody>
-            {currentVisit &&(
+            {moduleStatus ? (
                 <form >
                 <div className="row">
                     
                     <Row>
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Encounter Date & Time*</Label>
+                                <Label for="encounterDate">Encounter Date*</Label>
                                 <Input
                                     type="date"
                                     name="orderDate"
                                     id="orderDate"
                                     value={objValues.orderDate}
+                                    onChange={handleInputChangeObject}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                 />
                             </FormGroup>
@@ -280,7 +281,7 @@ console.log(testGroupObj)
                                     <option value="">Select </option>
                                                     
                                         {priority.map((value) => (
-                                            <option key={value.id} value={value.id}>
+                                            <option key={value.id} value={value.display}>
                                                 {value.display}
                                             </option>
                                         ))}
@@ -328,19 +329,19 @@ console.log(testGroupObj)
                                         <th>Test Group</th>
                                         <th>Test</th>
                                         <th>Priority</th>
-                                        {showVLIndication ?  (<th>Vira Load Indication</th>) :""}
+                                        {/* {showVLIndication ?  (<th>Vira Load Indication</th>) :""} */}
                                         <th ></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {testOrderList.map((tests,showVLIndication, index, testGroup) => (
+                                {testOrderList.map((tests,index) => (
 
                                 <TestOrdersList
                                     key={index}
                                     index={index}
                                     order={tests}
-                                    showVLIndication={showVLIndication}
-                                    testGroupObjList={testGroup}
+                                    testGroupObj={testGroup}
+                                    vLIndicationObj={vLIndication}
                                     removeOrder={removeOrder}
                                 />
                                 ))}
@@ -363,6 +364,7 @@ console.log(testGroupObj)
                         className={classes.button}
                         startIcon={<SaveIcon />}
                         hidden={buttonHidden}
+                        disabled={testOrderList.length >0 ? false : true}
                         onClick={handleSubmit}
                         >
                         {!saving ? (
@@ -383,7 +385,19 @@ console.log(testGroupObj)
                 </MatButton>
                 
                 </form>
-            )}
+            )
+            
+            :
+            <>
+            <Alert
+                variant="warning"
+                className="alert-dismissible solid fade show"
+            >
+                <p>Laboratory Module is not install</p>
+            </Alert>
+           
+            </>
+            } 
             </CardBody>
         </Card> 
                    
@@ -394,17 +408,20 @@ function TestOrdersList({
     order,
     index,
     removeOrder,
-    showVLIndication,
-    testGroupObjList
+    testGroupObj,
+    vLIndicationObj,
   }) {
-    console.log(testGroupObjList)
-   //const labgroupName= testGroup;
-  
+    
+    const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
+    const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
+    const vLIndication=vLIndicationObj.length>0 ?
+       vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : ""
+
     return (
             <tr>
-                <th>{order.labTestGroupId}</th>
-                <th>{order.labTestId}</th>
-                {showVLIndication ?  (<th>{order.viralLoadIndication}</th>) :""}
+                <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
+                <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>
+               <th>{order.orderPriority}</th>
                 <th></th>
                 <th >
                     <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeOrder(index)}>

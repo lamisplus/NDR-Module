@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
 const Pharmacy = (props) => {
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
+    const [selectedOption, setSelectedOption] = useState();
     const [showDsdModel, setShowDsdModel] = useState(false);
     const [regimen, setRegimen] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
@@ -60,6 +61,7 @@ const Pharmacy = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
+            
             setRegimen(response.data);
         })
         .catch((error) => {
@@ -68,19 +70,35 @@ const Pharmacy = (props) => {
     
     }
     //Get list of RegimenLine
-    const RegimenType =(id)=>{
-    axios
-        .get(`${baseUrl}hiv/regimen/types/${id}`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-        )
-        .then((response) => {
-            //console.log(response.data);
-            setRegimenType(response.data);
-        })
-        .catch((error) => {
-        //console.log(error);
-        });
+    // const RegimenType =(id)=>{
+    // axios
+    //     .get(`${baseUrl}hiv/regimen/types/${id}`,
+    //         { headers: {"Authorization" : `Bearer ${token}`} }
+    //     )
+    //     .then((response) => {
+
+    //         setRegimenType(
+    //             Object.entries(response.data).map(([key, value]) => ({
+    //               label: value.description,
+    //               value: value.id,
+    //             })))
+    //     })
+    //     .catch((error) => {
+    //     //console.log(error);
+    //     });
     
+    // }
+    function RegimenType(id) {
+        async function getCharacters() {
+            const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            setRegimenType(
+                Object.entries(response.data).map(([key, value]) => ({
+                  label: value.description,
+                  value: value.id,
+                })))
+        }
+        getCharacters();
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -105,12 +123,14 @@ const Pharmacy = (props) => {
         const refillcount= e.target.value
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "DD-MM-YYYY").add(refillcount, 'days');
-        console.log(nextrefillDate)
+       // console.log(nextrefillDate)
     }
     const handleSubmit = (e) => {        
         e.preventDefault();         
         //console.log(objValues)
     }
+
+
 
   return (      
       <div >
@@ -279,7 +299,7 @@ const Pharmacy = (props) => {
             <hr/>
             <div className="form-group mb-3 col-md-12">
                 <FormGroup>
-                <Label >Select Regimen *</Label>
+                <Label >Select Regimen Type *</Label>
                 <Input
                     type="select"
                     name="regimen"
@@ -298,143 +318,73 @@ const Pharmacy = (props) => {
                 
                 </FormGroup>
             </div>
+            <div className="form-group mb-3 col-md-12">
+                <FormGroup>
+                <Label >Regimen *</Label>
+                <Select
+                    onChange={setSelectedOption}
+                    value={selectedOption}
+                    options={regimenType}
+                    isMulti="true"
+                    noOptionsMessage="true"
+                />
+                </FormGroup>
+            </div>
+            
             {regimenType.length >0 ? 
+
                 (
                     <>
                         <Card>
                         <CardBody>
                         <h4>Enter Drugs Information </h4>
                         <div className="row">
-                        {regimenType.map((drugsInfo) => (
-                            <>
-                        <div className="form-group mb-3 col-md-6">
-                        <FormGroup>
-                        <Label ><b>Regimen Description</b> </Label>
-                         <b>{drugsInfo.description}</b>
-                        </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                        <FormGroup>
-                        <Label ><b>Regimen Composition </b></Label>
-                         <b>{drugsInfo.composition}</b>
-                        </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3">
-                            <FormGroup>
-                            <Label >	Dosage Strength</Label>
-                            <Input
-                                type="number"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // value=""
-                                // onChange={handleInputChangeOtherDetails}
-                                required
-                                >
+
+                                <div className="form-group mb-3 col-md-6">
+                                    <FormGroup>
+                                    <Label >Regimen Name selected </Label>
+                                    <Input
+                                        type="number"
+                                        // name={drugsInfo.code}
+                                        // id={drugsInfo.code}
+                                        // value=""
+                                        // onChange={handleInputChangeOtherDetails}
+                                        required
+                                        >
+                                        
+                                    </Input>
                                 
-                            </Input>
-                        
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3">
-                            <FormGroup>
-                            <Label >	Dosage Frequency </Label>
-                            <Input
-                                type="number"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // value=""
-                                // onChange={handleInputChangeOtherDetails}
-                                required
-                                >
+                                    </FormGroup>
+                                </div>
+
+                                <div className="form-group mb-3 col-md-3">
+                                    <FormGroup>
+                                    <Label >Quantity Dispsend</Label>
+                                    <Input
+                                        type="number"
+                                        // name={drugsInfo.code}
+                                        // id={drugsInfo.code}
+                                        value="30"
+                                        // onChange={handleInputChangeOtherDetails}
+                                        required
+                                        >
+                                        
+                                    </Input>
                                 
-                            </Input>
-                        
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3">
-                            <FormGroup>
-                            <Label >Duration</Label>
-                            <Input
-                                type="number"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // value=""
-                                // onChange={handleInputChangeOtherDetails}
-                                required
-                                >
-                                
-                            </Input>
-                        
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3">
-                            <FormGroup>
-                            <Label >Quantity Prescribed</Label>
-                            <Input
-                                type="number"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // value=""
-                                // onChange={handleInputChangeOtherDetails}
-                                required
-                                >
-                                
-                            </Input>
-                        
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3">
-                            <FormGroup>
-                            <Label >Quantity Dispsend</Label>
-                            <Input
-                                type="number"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // value=""
-                                // onChange={handleInputChangeOtherDetails}
-                                required
-                                >
-                                
-                            </Input>
-                        
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3">
-                            <FormGroup>
-                            <Label >Duration *</Label>
-                            <Input
-                                type="select"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // onChange={handleInputChangeOtherDetails}
-                                // value=""
-                                required
-                            >
-                                <option value="Select"> </option>
-        
-                                    {/* {dosageUnit.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))} */}
-                            </Input>
-                            
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-3"></div>
-                        <div className="form-group mb-3 col-md-3"></div>
-                        </>
-                        ))
-                        }
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-3"></div>
+                                <div className="form-group mb-3 col-md-3"></div>
+                       
                         </div>
                         </CardBody>
                         </Card>
                         <br/>
-                    </>
-                )
-                :
-                ""
-            }
+                    </>                  
+                    )
+                    :
+                    ""
+                }
 
             <Col md={12}>                  
                     <LabelSui as='a' color='black'  className="float-end" size='tiny' style={{ marginTop:20}}>

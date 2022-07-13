@@ -122,7 +122,7 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "tb_screen")
-    private JsonNode TBScreen;
+    private JsonNode tbScreen;
 
     @Override
     public boolean isNew() {

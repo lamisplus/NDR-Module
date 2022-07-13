@@ -54,7 +54,7 @@ public class ARTClinicVisitDto implements Serializable {
     @Type(type = "jsonb")
     private JsonNode opportunisticInfections;
     @Type(type = "jsonb")
-    private JsonNode TbScreen;
+    private JsonNode tbScreen;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @PastOrPresent
