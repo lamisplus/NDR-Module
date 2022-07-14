@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
 function SubMenu(props) {
     const classes = useStyles();
     const patientObjs = props.patientObj ? props.patientObj : {}
+    const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
     const [patientObj, setpatientObj] = useState(patientObjs)
     const [genderType, setGenderType] = useState(props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)" ? true : false)
     const loadAnc =(row)=> {
@@ -72,7 +73,6 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => onClickConsultation()} disabled> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
-                    {/* <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up Visit</Menu.Item> */}
                     <Menu.Item onClick={() => loadAnc(patientObj)} disabled> Enhanced Adherence Counselling</Menu.Item>
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>
                     {/* <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
@@ -108,13 +108,13 @@ function SubMenu(props) {
                :
                (
                 <Menu size="mini" color={"black"} inverted>
-                    <Menu.Item onClick={() => onClickHome()} > Home</Menu.Item>
-                    <Menu.Item onClick={() => onClickConsultation()} > Clinic Visit</Menu.Item>
-                    <Menu.Item onClick={() => loadLaboratoryModal()} > Laboratory</Menu.Item>
-                    <Menu.Item onClick={() => loadPharmacyModal()} > Pharmacy</Menu.Item>
-                    {/* <Menu.Item onClick={() => loadClinicFolowUp(patientObj)}>  Clinic Follow Up Visit</Menu.Item> */}
-                    <Menu.Item onClick={() => loadAnc(patientObj)}> Enhanced Adherence Counselling</Menu.Item>
-                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)}>Client Status Update</Menu.Item>
+                    
+                    <Menu.Item onClick={() => onClickHome()} disabled={patientCurrentStatus} > Home</Menu.Item>
+                    <Menu.Item onClick={() => onClickConsultation()} disabled={patientCurrentStatus}> Clinic Visit</Menu.Item>
+                    <Menu.Item onClick={() => loadLaboratoryModal()} disabled={patientCurrentStatus}> Laboratory</Menu.Item>
+                    <Menu.Item onClick={() => loadPharmacyModal()} disabled={patientCurrentStatus}> Pharmacy</Menu.Item>
+                    <Menu.Item onClick={() => loadAnc(patientObj)} disabled={patientCurrentStatus}> Enhanced Adherence Counselling</Menu.Item>
+                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)} >Client Status Update</Menu.Item>
                     {/* <Dropdown text="PrEP" labeled simple className='icon link item'>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)}> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
