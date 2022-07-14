@@ -64,6 +64,7 @@ const styles = theme => ({
 
 function PatientCard(props) {
   const { classes } = props;
+  const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
   const patientObjs = props.patientObj ? props.patientObj : {}
   const permissions= props.permissions ? props.permissions : [];
   const [patientObj, setpatientObj] = useState(patientObjs)
@@ -333,9 +334,15 @@ function PatientCard(props) {
                 <div className={classes.column}>
                   <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }>Initial Clinic Evaluation</Button>
                 </div>
-                <div className={classes.column}>
-                  <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }>Mental Health Screening</Button>
-                </div>
+                {patientCurrentStatus !==true && props.patientObj.enrollment.targetGroupId !=="456" ?                   
+                  (
+                    <>
+                      <div className={classes.column}>
+                        <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }>Mental Health Screening</Button>
+                      </div>
+                    </>
+                  ) :""           
+              }
                {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
                 {" "}<Button secondary onClick={() => loadArt(patientObj)} >ART Commencement </Button>

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
-import { Input, Label, FormGroup, InputGroup,Row, Col , CardBody, Card } from "reactstrap";
+import { Input, Label, FormGroup, CardBody, Card } from "reactstrap";
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
@@ -34,6 +34,8 @@ const Pharmacy = (props) => {
     const [selectedOption, setSelectedOption] = useState([]);
     const [selectedOptionAdr, setSelectedOptionAdr] = useState([]);
     const [prepSideEffect, setPrepSideEffect] = useState([]);
+    const [mmdType, setmmdType]=useState();
+    const [showmmdType, setShowmmdType]=useState(false);
     const [showDsdModel, setShowDsdModel] = useState(false);
     const [showAdr, setShowAdr] = useState(false);
     const [showRegimen, setShowRegimen] = useState(false);
@@ -152,7 +154,24 @@ const Pharmacy = (props) => {
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
         setObjValues ({...objValues,  refillPeriod: refillcount}) 
-        setObjValues ({...objValues,  nextAppointment: nextDate})        
+        setObjValues ({...objValues,  nextAppointment: nextDate})
+        if(refillcount==="90"){
+            setShowmmdType(true)
+            setmmdType("MMD-3")
+        }else if(refillcount==="120"){
+            setShowmmdType(true)
+            setmmdType("MMD-4")
+        }else if(refillcount==="150"){
+            setShowmmdType(true)
+            setmmdType("MMD-5")
+        }else if(refillcount==="180"){
+            setShowmmdType(true)
+            setmmdType("MMD-6")
+        }else{
+            setShowmmdType(false)
+            setmmdType("")
+        }
+
     }
     const handleFormChange = (index, event) => {
         let data = [...regimenList];
@@ -182,6 +201,7 @@ const Pharmacy = (props) => {
         e.preventDefault();
         objValues.adverseDrugReactions=selectedOptionAdr
         objValues.personId=props.patientObj.id
+        objValues.mmdType=mmdType
         delete regimenList['name']
         objValues.regimen=regimenList
         axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
@@ -258,6 +278,8 @@ const Pharmacy = (props) => {
                     <option value="60">60 </option>
                     <option value="90">90 </option>
                     <option value="120">120 </option>
+                    <option value="150">150 </option>
+                    <option value="180">180 </option>
                 </Input>
                 
                 </FormGroup>
@@ -295,9 +317,25 @@ const Pharmacy = (props) => {
                 
                 </FormGroup>
             </div>
+            {showmmdType &&(
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >MMD Type</Label>
+                    <Input
+                        type="text"
+                        name="mmdType"
+                        id="mmdType"
+                        disabled="true"
+                        value={mmdType}
+                        onChange={handleInputChange}
+                    />
+                     
+                    </FormGroup>
+                </div>
+            )}
             {showDsdModel && (
             <div className="form-group mb-3 col-md-6">
-            <FormGroup>
+                <FormGroup>
                 <Label >DSD Models*</Label>
                 <Input
                     type="select"

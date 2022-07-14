@@ -604,7 +604,7 @@ const UserRegistration = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
-               //console.log(response.data);
+               console.log(response.data);
                setKP(response.data);
            })
            .catch((error) => {
@@ -1539,127 +1539,19 @@ const UserRegistration = (props) => {
                                         name="targetGroupId"
                                         id="targetGroupId"
                                         value={objValues.targetGroupId}
-                                        onChange={handleInputChangeTargetGroup}
+                                        onChange={handleInputChange}
                                         >
-                                         <option value=""> Select</option>
-                                         <option value="Gen Pop">Gen Pop </option>
-                                         <option value="KP">KP </option>
-                                    </Input>
-                                    
-                                    </FormGroup>
-                                </div>
-                                {showKP && (
-                                    <>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >KP Target Group</Label>
-                                        <Input
-                                            type="select"
-                                            name="targetGroupId"
-                                            id="targetGroupId"
-                                            value={objValues.targetGroupId}
-                                            onChange={handleInputChange}
-                                            required
-                                            >
-                                            <option value=""> Select</option>
-                    
+                                         <option value=""> Select</option>                    
                                                 {kP.map((value) => (
                                                     <option key={value.id} value={value.id}>
                                                         {value.display}
                                                     </option>
                                                 ))}
-                                        </Input>
-                                        </FormGroup>
-                                    </div>
-                                    <hr/>
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself?</Label>
-                                        <Input
-                                            type="select"
-                                            name="targetGroupId"
-                                            id="targetGroupId"
-                                            value={objValues.targetGroupId}
-                                            onChange={handleInputChangeKP}
-                                            required
-                                            >
-                                            <option value=""> Select</option>
-                                            <option value="YES"> YES</option>
-                                            <option value="NO"> NO</option>
-                                        </Input>
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Have you ever had spells or attacks when you suddenly felt anxious, frightened, uneasy to the extent that you began sweating, your heart began to beat rapidly, you were shaking or trembling, your stomach was upset, you felt dizzy or unsteady, as if you would faint? </Label>
-                                    <Input
-                                        type="select"
-                                        name="targetGroupId"
-                                        id="targetGroupId"
-                                        value={objValues.targetGroupId}
-                                        onChange={handleInputChangeKP}
-                                        required
-                                        >
-                                        <option value=""> Select</option>
-                                        <option value="YES"> YES</option>
-                                        <option value="NO"> NO</option>
                                     </Input>
+                                    
                                     </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Have you ever had nightmares or flashbacks because of being involved in some traumatic/terrible event? For example, domestic violence, rape, police raid or arrest, blackmail.</Label>
-                                    <Input
-                                        type="select"
-                                        name="targetGroupId"
-                                        id="targetGroupId"
-                                        value={objValues.targetGroupId}
-                                        onChange={handleInputChangeKP}
-                                        required
-                                        >
-                                       <option value=""> Select</option>
-                                        <option value="YES"> YES</option>
-                                        <option value="NO"> NO</option>
-                                    </Input>
-                                    </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Have you used drugs other than those required for medical reasons? For example, cannabis, cocaine, stimulants, or narcotics (e.g., heroin). May equally ask about the abuse of alcohol and other local drugs or psychoactive substances. </Label>
-                                    <Input
-                                        type="select"
-                                        name="targetGroupId"
-                                        id="targetGroupId"
-                                        value={objValues.targetGroupId}
-                                        onChange={handleInputChangeKP}
-                                        required
-                                        >
-                                        <option value=""> Select</option>
-                                        <option value="YES"> YES</option>
-                                        <option value="NO"> NO</option>
-                                    </Input>
-                                    </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >In recent time, has any one punched, slapped, kicked, bit, or caused you any type of physical or sexual harm?</Label>
-                                    <Input
-                                        type="select"
-                                        name="targetGroupId"
-                                        id="targetGroupId"
-                                        value={objValues.targetGroupId}
-                                        onChange={handleInputChangeKP}
-                                        required
-                                        >
-                                        <option value=""> Select</option>
-                                        <option value="YES"> YES</option>
-                                        <option value="NO"> NO</option>
-                                    </Input>
-                                    </FormGroup>
-                                    </div>
-                                    </>
-                                )}
-                                
+                                </div>
+                               
                             </div>
                                 </div>
                             </div>
