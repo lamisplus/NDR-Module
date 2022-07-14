@@ -37,7 +37,7 @@ const Laboratory = (props) => {
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [buttonHidden, setButtonHidden]= useState(false);
-    const [moduleStatus, setModuleStatus]= useState(false)
+    const [moduleStatus, setModuleStatus]= useState("0")
     const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
     const [priority, setPriority]=useState([])
@@ -102,11 +102,11 @@ const Laboratory = (props) => {
               )
               .then((response) => {
                   if(response.data===true){
-                    setModuleStatus(true)
+                    setModuleStatus("1")
                     setButtonHidden(false)
                     }
                     else{
-                        setModuleStatus(false)
+                        setModuleStatus("2")
                         toast.error("Laboratory module is not install")
                         setButtonHidden(true)
                     }
@@ -210,7 +210,7 @@ const Laboratory = (props) => {
                    
         <Card >
             <CardBody>
-            {moduleStatus ? (
+            {moduleStatus==="1" && (
                 <form >
                 <div className="row">
                     
@@ -385,9 +385,8 @@ const Laboratory = (props) => {
                 </MatButton>
                 
                 </form>
-            )
-            
-            :
+            )}
+            {moduleStatus==="2" && (
             <>
             <Alert
                 variant="warning"
@@ -397,7 +396,7 @@ const Laboratory = (props) => {
             </Alert>
            
             </>
-            } 
+            )} 
             </CardBody>
         </Card> 
                    

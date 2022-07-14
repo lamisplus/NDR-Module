@@ -156,6 +156,9 @@ function PatientCard(props) {
     const loadAdultEvaluation =(row)=> {
       props.setActiveContent('adult-evaluation')
     }
+    const loadMentalHealthScreening = ()=>{
+      props.setActiveContent('mhs')
+    }
     const loadChildEvaluation =(row)=> {
       props.setActiveContent('child-evaluation')
     }
@@ -294,14 +297,13 @@ function PatientCard(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.details}>
                 
-                    <Button
+                    {/* <Button
                       color='red'
                       content='BloodType'
                       //icon='heart'
                       label={{ basic: true, color: 'red', pointing: 'left', content: 'AB+' }}
-                    />
-                                  
-                    <Button
+                    /> */}                                  
+                    {/* <Button
                         basic
                         color='blue'
                         content='Height'
@@ -313,8 +315,8 @@ function PatientCard(props) {
                             pointing: 'left',
                             content: '74.5 in',
                         }}
-                      />              
-                      <Button
+                      />               */}
+                      {/* <Button
                         basic
                         color='blue'
                         content='Weight'
@@ -326,10 +328,13 @@ function PatientCard(props) {
                             pointing: 'left',
                             content: '74.5 in',
                         }}
-                        />
+                      /> */}
                                
                 <div className={classes.column}>
-                  <Button primary  floated='right' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }>Initial Clinic Evaluation</Button>
+                  <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }>Initial Clinic Evaluation</Button>
+                </div>
+                <div className={classes.column}>
+                  <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }>Mental Health Screening</Button>
                 </div>
                {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
