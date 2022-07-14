@@ -12,6 +12,8 @@ import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ public class HivEnrollmentService {
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
 
+    private  final PersonRepository personRepository;
+
     private final CurrentUserOrganizationService organizationUtil;
 
 
@@ -39,13 +43,15 @@ public class HivEnrollmentService {
 
     public HivPatientDto createHivEnrollment(HivEnrollmentDto hivEnrollmentDto) {
         final Long personId = hivEnrollmentDto.getPersonId ();
-        PersonResponseDto person = personService.getPersonById (personId);
-        if (hivEnrollmentRepository.getHivEnrollmentByPersonIdAndArchived (person.getId (), 0).isPresent ())
-            throw new RecordExistException (HivEnrollment.class, "personId", ""+person.getId ());
+        Person person = getPerson (personId);
+        if (hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0).isPresent ())
+            throw new RecordExistException (HivEnrollment.class, "person", String.valueOf (person.getId ()));
         HivEnrollment hivEnrollment = convertToEntity (hivEnrollmentDto);
+        hivEnrollment.setPerson (person);
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
         return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
     }
+
 
 
     public HivPatientDto updateHivEnrollment(Long id, HivEnrollmentDto hivEnrollmentDto) {
@@ -93,14 +99,15 @@ public class HivEnrollmentService {
     private HivEnrollmentDto convertToDto(HivEnrollment entity) {
         HivEnrollmentDto hivEnrollmentDto = new HivEnrollmentDto ();
         BeanUtils.copyProperties (entity, hivEnrollmentDto);
+        hivEnrollmentDto.setPersonId (entity.getPerson ().getId ());
         log.info ("dto converted {} ", hivEnrollmentDto);
         return hivEnrollmentDto;
     }
 
 
     private HivPatientDto convertHivEnrollmentToHivPatientDto(HivEnrollment entity) {
-        Long personId = entity.getPersonId ();
-        PersonResponseDto bioData = personService.getPersonById (personId);
+        Person person = entity.getPerson();
+        PersonResponseDto bioData = personService.getPersonById (person.getId ());
         HivEnrollmentDto hivEnrollmentDto = convertToDto (entity);
         HivPatientDto hivPatientDto = new HivPatientDto ();
         BeanUtils.copyProperties (bioData, hivPatientDto);
@@ -116,11 +123,17 @@ public class HivEnrollmentService {
 
 
     public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId) {
-        Optional<HivEnrollment> hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonIdAndArchived (personId, 0);
+        Person person = getPerson (personId);
+        Optional<HivEnrollment> hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0);
         if(hivEnrollment.isPresent ()) {
             return Optional.of (convertToDto (hivEnrollment.get ()));
         }
         return Optional.empty ();
+    }
+
+    public Person getPerson(Long personId) {
+        return personRepository.findById (personId)
+                .orElseThrow (() -> new EntityNotFoundException (Person.class, "id", String.valueOf (personId)));
     }
 }
 

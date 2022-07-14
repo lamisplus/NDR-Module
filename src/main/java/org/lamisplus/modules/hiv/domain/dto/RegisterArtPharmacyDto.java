@@ -34,11 +34,15 @@ public class RegisterArtPharmacyDto implements Serializable {
     private Boolean prescriptionError;
     private Boolean adherence;
     private String mmdType;
+    private Boolean isDevolve;
+    private Integer refillPeriod;
+    private String deliveryPoint;
+    private  String dsdModel;
     @Future
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate nextAppointment;
     private JsonNode extra;
     private JsonNode adverseDrugReactions;
-    private Set<Long> regimenId;
+    private Set<RegimenRequestDto> regimen;
 }

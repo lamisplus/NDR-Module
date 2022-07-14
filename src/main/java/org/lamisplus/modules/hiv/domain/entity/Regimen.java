@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "regimen")
+@Table(name = "hiv_regimen")
 @Builder(toBuilder = true)
 @Getter
 @Setter

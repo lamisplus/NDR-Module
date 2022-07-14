@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "REGIMEN_DRUG")
+@Table(name = "hiv_regimen_drug")
 @Data
 @ToString(of = "id")
 public class RegimenDrug implements Serializable, Persistable<Long> {

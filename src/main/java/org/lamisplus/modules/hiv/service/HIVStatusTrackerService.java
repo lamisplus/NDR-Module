@@ -3,11 +3,14 @@ package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
 import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.repositories.HIVStatusTrackerRepository;
 import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,8 @@ public class HIVStatusTrackerService {
 
     private final CurrentUserOrganizationService organizationUtil;
 
+    private final PersonRepository personRepository;
+
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         PersonResponseDto existPerson = personService.getPersonById (hivStatusTrackerDto.getPersonId ());
         log.info ("person   from status status {}", existPerson.getSurname ());
@@ -36,13 +41,12 @@ public class HIVStatusTrackerService {
         hivStatusTracker.setArchived (0);
         hivStatusTracker.setUuid (UUID.randomUUID ().toString ());
         hivStatusTracker.setAuto (false);
+        hivStatusTracker.setPersonId (getPersonUuid (existPerson.getId ()));
         return convertEntityToDto (hivStatusTrackerRepository.save (hivStatusTracker));
     }
 
     public HIVStatusTrackerDto updateHIVStatusTracker(Long id, HIVStatusTrackerDto hivStatusTrackerDto) {
         HIVStatusTracker existingHivStatusTracker = getExistingHivStatusTracker (id);
-        PersonResponseDto existPerson = personService.getPersonById (hivStatusTrackerDto.getPersonId ());
-        log.info ("person  updating from status status {}", existPerson.getSurname ());
         HIVStatusTracker hivStatusTracker = convertDtoToEntity (hivStatusTrackerDto);
         hivStatusTracker.setId (id);
         hivStatusTracker.setArchived (0);
@@ -59,8 +63,9 @@ public class HIVStatusTrackerService {
     }
 
     public String getPersonCurrentHIVStatusByPersonId(Long personId) {
+        String personUuid = getPersonUuid (personId);
         Comparator<HIVStatusTracker> personStatusDateComparator = Comparator.comparing (HIVStatusTracker::getStatusDate);
-        Optional<HIVStatusTracker> currentStatus = hivStatusTrackerRepository.findAllByPersonIdAndArchived (personId, 0)
+        Optional<HIVStatusTracker> currentStatus = hivStatusTrackerRepository.findAllByPersonIdAndArchived (personUuid, 0)
                 .stream ()
                 .max (personStatusDateComparator);
         if (currentStatus.isPresent ())
@@ -69,7 +74,8 @@ public class HIVStatusTrackerService {
     }
 
     public List<HIVStatusTrackerDto> getPersonHIVStatusByPersonId(Long personId) {
-        return hivStatusTrackerRepository.findAllByPersonIdAndArchived (personId, 0)
+        String personUuid = getPersonUuid (personId);
+        return hivStatusTrackerRepository.findAllByPersonIdAndArchived (personUuid, 0)
                 .stream ()
                 .map (this::convertEntityToDto)
                 .collect (Collectors.toList ());
@@ -111,7 +117,12 @@ public class HIVStatusTrackerService {
     }
 
 
-    public HIVStatusTracker findDistinctFirstByPersonIdAndStatusDate(Long personId, LocalDate visitDate) {
+    public HIVStatusTracker findDistinctFirstByPersonIdAndStatusDate(String personId, LocalDate visitDate) {
         return hivStatusTrackerRepository.findDistinctFirstByPersonIdAndStatusDate (personId, visitDate);
+    }
+
+    private String getPersonUuid(Long personId){
+       return personRepository.findById (personId).orElseThrow (() -> new EntityNotFoundException (Person.class, "id",String.valueOf (personId))).getUuid ();
+
     }
 }

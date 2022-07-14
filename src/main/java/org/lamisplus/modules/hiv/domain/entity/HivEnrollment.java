@@ -3,9 +3,11 @@ package org.lamisplus.modules.hiv.domain.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
+import org.lamisplus.modules.patient.domain.entity.Person;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -17,7 +19,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long> {
+public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -62,9 +64,11 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
     private LocalDate dateStarted;
     @Column(name = "send_message")
     private Boolean sendMessage;
-    @NonNull
-    private Long personId;
+    @OneToOne
+    @JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
+    private Person person;
 
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
     private String uuid;
     @Basic
     @Column(name = "archived")

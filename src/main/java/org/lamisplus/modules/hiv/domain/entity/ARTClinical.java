@@ -3,17 +3,18 @@ package org.lamisplus.modules.hiv.domain.entity;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.hibernate.annotations.Type;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "art_clinical")
+@Table(name = "hiv_art_clinical")
 @Builder(toBuilder = true)
 @Getter
 @Setter
@@ -25,7 +26,6 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
     @PastOrPresent
     @Column(name = "visit_date")
     private LocalDate visitDate;
@@ -46,44 +46,28 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 
     @Column(name = "clinical_note")
     private String clinicalNote;
-
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false )
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
     private String uuid;
-    @Column(name = "hiv_enrollment_id")
-    @NotNull
-    private Long hivEnrollmentId;
-
-    private long  regimenId;
-
-    private long  regimenTypeId;
-
+    @ManyToOne
+    @JoinColumn(name = "hiv_enrollment_uuid", referencedColumnName = "uuid", nullable = false)
+    private HivEnrollment hivEnrollment;
+    private long regimenId;
+    private long regimenTypeId;
     @Column(name = "art_status_id", nullable = false, updatable = false)
     private Long artStatusId;
-
     @Column(name = "archived")
     private Integer archived;
-
-    @NotNull
-    @Column(name = "vital_sign_id")
-    private Long vitalSignId;
-
+    @ManyToOne
+    @JoinColumn(name = "vital_sign_uuid", referencedColumnName = "uuid", nullable = false)
+    private VitalSign vitalSign;
     @Column(name = "who_staging_id")
     private Long whoStagingId;
-
-
-    @Column(name = "facility_id")
-    @NotNull
-    private Long facilityId;
-
-
-    @Column(name = "person_id")
-    @NotNull
-    Long personId;
-
+    @ManyToOne
+    @JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
+    private Person person;
     @Size(max = 5)
     @Column(name = "oi_screened")
     private String oiScreened;
-
     @Size(max = 50)
     @Column(name = "sti_ids")
     private String stiIds;
@@ -102,7 +86,7 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-    JsonNode  adverseDrugReactions;
+    JsonNode adverseDrugReactions;
 
     @Size(max = 15)
     @Column(name = "adherence_level")

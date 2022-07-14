@@ -21,7 +21,7 @@ public class RegimenService {
    public List<Regimen> getRegimenByTypeId(Long typeId) {
         RegimenType regimenType = regimenTypeRepository
                 .findById (typeId)
-                .orElseThrow (() -> new EntityNotFoundException (RegimenService.class, "Regimen type id not found " + typeId));
+                .orElseThrow (() -> new EntityNotFoundException (RegimenType.class, "id ", String.valueOf (typeId)));
         return regimenRepository.getAllByRegimenType (regimenType);
     }
 }

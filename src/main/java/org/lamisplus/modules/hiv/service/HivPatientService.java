@@ -1,6 +1,7 @@
 package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
@@ -9,6 +10,8 @@ import org.lamisplus.modules.hiv.domain.dto.HivPatientEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -28,10 +31,11 @@ public class HivPatientService {
 
     private final HIVStatusTrackerService statusTrackerService;
 
-    //private  final ArtPharmacyService artPharmacyService;
 
 
     private final PersonService personService;
+
+    private final PersonRepository personRepository;
 
     private final HivEnrollmentService hivEnrollmentService;
 
@@ -79,14 +83,15 @@ public class HivPatientService {
 
     private HivPatientDto convertPersonHivPatientDto(Long personId) {
         if (Boolean.TRUE.equals (personService.isPersonExist (personId))) {
+            Person person = getPerson (personId);
             PersonResponseDto bioData = personService.getPersonById (personId);
-            Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (personId);
-            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonIdAndIsCommencementIsTrue (personId);
-            List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonIdAndIsCommencementIsFalseAndArchived (personId, 0);
+            Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (bioData.getId ());
+            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonAndIsCommencementIsTrue (person);
+            List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
             addEnrollmentInfo (enrollment, hivPatientDto);
-            addArtCommencementInfo (personId, artCommencement, hivPatientDto);
+            addArtCommencementInfo (person.getId (), artCommencement, hivPatientDto);
             addArtClinicalInfo (artClinics, hivPatientDto);
             return hivPatientDto;
         }
@@ -94,14 +99,6 @@ public class HivPatientService {
     }
 
 
-    //    private void addArtPharmacyRefillInfo(List<ArtPharmacy> artPharmacies, HivPatientDto hivPatientDto) {
-//        hivPatientDto.setArtClinicVisits (
-//                artPharmacies
-//                        .stream ()
-//                        .map (artPharmacy -> artPharmacyService. (artClinical))
-//                        .collect (Collectors.toList ())
-//        );
-//    }
     private void addArtClinicalInfo(List<ARTClinical> artClinics, HivPatientDto hivPatientDto) {
         hivPatientDto.setArtClinicVisits (artClinics.stream ().map (artClinicVisitService::convertToClinicVisitDto).collect (Collectors.toList ()));
     }
@@ -127,6 +124,11 @@ public class HivPatientService {
         } else {
             hivPatientDto.setCurrentStatus ("Not Enrolled");
         }
+    }
+
+    public Person getPerson(Long personId) {
+        return personRepository.findById (personId)
+                .orElseThrow (() -> new EntityNotFoundException (Person.class, "id", String.valueOf (personId)));
     }
 
 }

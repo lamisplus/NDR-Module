@@ -17,6 +17,8 @@ import org.lamisplus.modules.patient.service.EncounterService;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.domain.entity.VitalSign;
+import org.lamisplus.modules.triage.repository.VitalSignRepository;
 import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,8 @@ public class ArtClinicVisitService {
 
     private  final PersonService personService;
 
+    private  final VitalSignRepository vitalSignRepository;
+
 
 
     public ARTClinicVisitDto createArtClinicVisit(ARTClinicVisitDto artClinicVisitDto) {
@@ -53,13 +57,15 @@ public class ArtClinicVisitService {
         HivEnrollment hivEnrollment = hivEnrollmentRepository
                 .findById (hivEnrollmentId)
                 .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", ""+ hivEnrollmentId));
-        if (!hivEnrollment.getPersonId ().equals (artClinicVisitDto.getPersonId ()))
+        if (!hivEnrollment.getPerson ().getId ().equals (artClinicVisitDto.getPersonId ()))
             throw new EntityNotFoundException (Person.class, "personId", "" + artClinicVisitDto.getPersonId ());
-        getVisitIdIfVisitIsActive (artClinicVisitDto, hivEnrollment.getPersonId ());
+        getVisitIdIfVisitIsActive (artClinicVisitDto, hivEnrollment.getPerson ().getId ());
         Long vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setArchived (0);
+        artClinical.setHivEnrollment (hivEnrollment);
+        artClinical.setPerson (hivEnrollment.getPerson ());
         artClinical.setIsCommencement (false);
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));
     }
@@ -80,12 +86,9 @@ public class ArtClinicVisitService {
     public ARTClinicVisitDto updateClinicVisit(Long id, ARTClinicVisitDto artClinicVisitDto) {
         ARTClinical existArtClinical = getExistClinicVisit (id);
         VitalSignDto vitalSignDto = artClinicVisitDto.getVitalSignDto ();
-        vitalSignService.updateVitalSign (existArtClinical.getVitalSignId (), vitalSignDto);
-        ARTClinical artClinical = convertDtoToART (artClinicVisitDto, existArtClinical.getVitalSignId ());
+        vitalSignService.updateVitalSign (existArtClinical.getVitalSign ().getId (), vitalSignDto);
+        ARTClinical artClinical = convertDtoToART (artClinicVisitDto, existArtClinical.getVitalSign ().getId ());
        artClinical.setId (existArtClinical.getId ());
-       artClinical.setCreatedDate (existArtClinical.getCreatedDate ());
-       artClinical.setCreatedBy (existArtClinical.getCreatedBy ());
-       artClinical.setUuid (existArtClinical.getUuid ());
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));
     }
 
@@ -118,7 +121,7 @@ public class ArtClinicVisitService {
 
     @NotNull
     public ARTClinicVisitDto convertToClinicVisitDto(ARTClinical artClinical) {
-        VitalSignDto vitalSignDto = vitalSignService.getVitalSignById (artClinical.getVitalSignId ());
+        VitalSignDto vitalSignDto = vitalSignService.getVitalSignById (artClinical.getVitalSign ().getId ());
         ARTClinicVisitDto artClinicVisitDto = new ARTClinicVisitDto ();
         BeanUtils.copyProperties (artClinical, artClinicVisitDto);
         artClinicVisitDto.setVitalSignDto (vitalSignDto);
@@ -136,7 +139,8 @@ public class ArtClinicVisitService {
         }
         log.info ("converted Dto 1 {}", artClinicVisitDto);
         BeanUtils.copyProperties (artClinicVisitDto, artClinical);
-        artClinical.setVitalSignId (vitalSignId);
+        VitalSign vitalSign = getVitalSign (vitalSignId);
+        artClinical.setVitalSign (vitalSign);
         artClinical.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         log.info ("converted entity 1 {}", artClinical);
         return artClinical;
@@ -162,5 +166,9 @@ public class ArtClinicVisitService {
         artClinical.setVisitId (visit.getId ());
     }
 
+    private VitalSign getVitalSign(Long vitalSignId){
+       return vitalSignRepository.findById (vitalSignId).orElseThrow (() -> new EntityNotFoundException (VitalSign.class, "id", String.valueOf (vitalSignId)));
+
+    }
 
 }

@@ -34,7 +34,7 @@ public class HIVStatusTracker extends HivAuditEntity implements Persistable<Long
 
     @Column(name = "person_id", nullable = false)
     @NotNull
-    private Long personId;
+    private String personId;
 
     @Column(name = "tracking_outcome")
     private String trackOutcome;

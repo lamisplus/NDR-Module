@@ -26,7 +26,6 @@ public class RegimenController {
 
     @GetMapping(value = "/types", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RegimenType>> getRegimenTypes() {
-
         return ResponseEntity.ok (repository.findAll ());
     }
 

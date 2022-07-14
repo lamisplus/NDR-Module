@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface HIVStatusTrackerRepository extends JpaRepository<HIVStatusTracker, Long>, JpaSpecificationExecutor<HIVStatusTracker> {
 
-    List<HIVStatusTracker> findAllByPersonIdAndArchived(Long personId, Integer archived);
+    List<HIVStatusTracker> findAllByPersonIdAndArchived(String personId, Integer archived);
 
-    HIVStatusTracker findDistinctFirstByPersonIdAndStatusDate(Long personId, LocalDate statusDate);
+    HIVStatusTracker findDistinctFirstByPersonIdAndStatusDate(String personId, LocalDate statusDate);
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "art_pharmacy")
+@Table(name = "hiv_art_pharmacy")
 @Builder(toBuilder = true)
 @Getter
 @Setter
@@ -33,7 +33,7 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
     private Long id;
 
     @NotNull
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_uuid",referencedColumnName = "uuid")
     @ManyToOne
     private Person person;
 
@@ -56,25 +56,26 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
 
     @Column(nullable = false, unique = true, updatable = false)
     private String uuid;
-
     @Future
     @Column(name = "next_appointment", nullable = false)
     private LocalDate nextAppointment;
-
     @Type(type = "jsonb-node")
     @Column(columnDefinition = "jsonb")
     private JsonNode extra;
-
-
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private JsonNode adverseDrugReactions;
-
+    @Column(name = "is_devolve")
+    private Boolean isDevolve;
+    @Column(name = "refill_period")
+    private Integer refillPeriod;
+    @Column(name = "delivery_point")
+    private String deliveryPoint;
+    @Column(name = "dsd_model")
+    private  String dsdModel;
     @OneToMany
     @ToString.Exclude
     private Set<Regimen> regimens = new LinkedHashSet<> ();
-
-
     @Override
     public boolean isNew() {
         return id == null;

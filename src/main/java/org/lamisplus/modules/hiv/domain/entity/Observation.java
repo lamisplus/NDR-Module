@@ -12,7 +12,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "observation")
+@Table(name = "hiv_observation")
 @Builder(toBuilder = true)
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class Observation extends HivAuditEntity  implements Persistable<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfObservation;
     @ManyToOne
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_uuid", referencedColumnName ="uuid" )
     private Person person;
     @Column(name = "type", unique = true)
     private String type;
