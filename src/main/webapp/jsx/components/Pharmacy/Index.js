@@ -199,6 +199,7 @@ const Pharmacy = (props) => {
      }
     const handleSubmit = (e) => {        
         e.preventDefault();
+        setSaving(true);
         objValues.adverseDrugReactions=selectedOptionAdr
         objValues.personId=props.patientObj.id
         objValues.mmdType=mmdType
@@ -513,6 +514,7 @@ const Pharmacy = (props) => {
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
+                    disabled={objValues.visitDate===null || saving ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

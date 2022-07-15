@@ -32,19 +32,20 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Laboratory = (props) => {
-    console.log(props.patientObj.id)
     let visitId=""
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
     const [buttonHidden, setButtonHidden]= useState(false);
     const [moduleStatus, setModuleStatus]= useState("0")
     const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
     const [priority, setPriority]=useState([])
-    const [currentVisit, setCurrentVisit]=useState(true)
+    //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
+    let temp = { ...errors }
     const [objValues, setObjValues] = useState({
                                                 orderDate:null,
                                                 patientId: props.patientObj?props.patientObj.id:"",
@@ -55,7 +56,7 @@ const Laboratory = (props) => {
                                         description: "",
                                         labTestGroupId: "",
                                         labTestId: "",
-                                        labTestOrderStatus: "",
+                                        labTestOrderStatus: 1,
                                         orderPriority: "",
                                         viralLoadIndication:""
                                     })
@@ -157,12 +158,15 @@ const Laboratory = (props) => {
         setTest(getTestList[0].labTests)
     }
     const handleInputChangeObject = e => {
+        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         setObjValues ({...objValues,  [e.target.name]: e.target.value});               
     }
     const handleInputChange = e => {
+        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         setTests ({...tests,  [e.target.name]: e.target.value});               
     }
     const handleInputChangeTest = e => {
+        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         if(e.target.value==="16"){
             setShowVLIndication(true)
             setTests ({...tests,  labTestId: e.target.value});
@@ -173,7 +177,10 @@ const Laboratory = (props) => {
         //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
     }
     const addOrder = e => { 
-        setTestOrderList([...testOrderList, tests])
+        
+        if(validate()){
+            setTestOrderList([...testOrderList, tests])
+        }
       }
       /* Remove ADR  function **/
       const removeOrder = index => {       
@@ -181,11 +188,23 @@ const Laboratory = (props) => {
         setTestOrderList([...testOrderList]);
          
       };
-    
+      //Validations of the forms
+      const validate = () => {        
+        temp.orderDate = objValues.orderDate ? "" : "This field is required"
+        temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
+        temp.labTestId = tests.labTestId ? "" : "This field is required"
+        temp.orderPriority = tests.orderPriority ? "" : "This field is required"
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+    }
+
     const handleSubmit = (e) => {        
         e.preventDefault();   
         objValues.tests= testOrderList
         objValues.visitId= visitId 
+        setSaving(true);
         axios.post(`${baseUrl}laboratory/orders`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
@@ -225,7 +244,11 @@ const Laboratory = (props) => {
                                     value={objValues.orderDate}
                                     onChange={handleInputChangeObject}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    required
                                 />
+                                {errors.orderDate !=="" ? (
+                                    <span className={classes.error}>{errors.orderDate}</span>
+                                ) : "" }
                             </FormGroup>
                         </Col>
                         <Col md={6} className="form-group mb-3">
@@ -246,6 +269,9 @@ const Laboratory = (props) => {
                                             </option>
                                         ))}
                                 </Input>
+                                {errors.labTestGroupId !=="" ? (
+                                    <span className={classes.error}>{errors.labTestGroupId}</span>
+                                ) : "" }
                             </FormGroup>
                         </Col>
                         <Col md={6} className="form-group mb-3">
@@ -255,7 +281,7 @@ const Laboratory = (props) => {
                                     type="select"
                                     name="labTestId"
                                     id="labTestId"
-                                    value={test.labTestId}
+                                    value={tests.labTestId}
                                     onChange={handleInputChangeTest}                   
                                     >
                                     <option value="">Select </option>
@@ -266,6 +292,9 @@ const Laboratory = (props) => {
                                             </option>
                                         ))}
                                 </Input>
+                                {errors.labTestId !=="" ? (
+                                    <span className={classes.error}>{errors.labTestId}</span>
+                                ) : "" }
                             </FormGroup>
                         </Col>
                         <Col md={6} className="form-group mb-3">
@@ -275,17 +304,20 @@ const Laboratory = (props) => {
                                     type="select"
                                     name="orderPriority"
                                     id="orderPriority"
-                                    value={test.orderPriority}
+                                    value={tests.orderPriority}
                                     onChange={handleInputChange}                   
                                     >
                                     <option value="">Select </option>
                                                     
                                         {priority.map((value) => (
-                                            <option key={value.id} value={value.display}>
+                                            <option key={value.id} value={value.id}>
                                                 {value.display}
                                             </option>
                                         ))}
                                 </Input>
+                                {errors.orderPriority !=="" ? (
+                                    <span className={classes.error}>{errors.orderPriority}</span>
+                                ) : "" }
                             </FormGroup>
                         </Col>
                         {showVLIndication && (
@@ -296,7 +328,7 @@ const Laboratory = (props) => {
                                     type="select"
                                     name="viralLoadIndication"
                                     id="viralLoadIndication"
-                                    value={test.viralLoadIndication}
+                                    value={tests.viralLoadIndication}
                                     onChange={handleInputChange}                   
                                     >
                                     <option value="">Select </option>
@@ -364,7 +396,7 @@ const Laboratory = (props) => {
                         className={classes.button}
                         startIcon={<SaveIcon />}
                         hidden={buttonHidden}
-                        disabled={testOrderList.length >0 ? false : true}
+                        disabled={testOrderList.length >0 || !saving ? false : true}
                         onClick={handleSubmit}
                         >
                         {!saving ? (

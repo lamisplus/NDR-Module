@@ -113,6 +113,7 @@ const Patients = (props) => {
       }, []);
         ///GET LIST OF Patients
         async function patients() {
+            setLoading(true)
             axios
                 .get(`${baseUrl}hiv/patients`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
@@ -123,7 +124,7 @@ const Patients = (props) => {
                    
                 })
                 .catch((error) => {  
-                    setLoading(true)  
+                    setLoading(false)  
                 });        
         }
     const calculate_age = dob => {

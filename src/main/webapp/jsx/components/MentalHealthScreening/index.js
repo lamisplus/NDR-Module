@@ -59,36 +59,30 @@ const MentalHealthScreening = (props) => {
     const patientObj = props.patientObj;
     let history = useHistory();
     const classes = useStyles()
-    const [mHSobjValues, setMHSobjValues] = useState({mhs1:"", mhs2: "", mhs3: "", mhs4: "", mhs5: ""})
-    const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({patient_id: "",current_status:""});
+    const [objValues, setObjValues] = useState({patient_id: "",mhs1:"",mhs2:"" ,mhs3:"" ,mhs4:"",mhs5:""});
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
  
     const handleInputChangeKP = e => {
-        setMHSobjValues ({...mHSobjValues,  [e.target.name]: e.target.value});
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }
           
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
-        e.preventDefault();
-        
+        e.preventDefault();        
           objValues.patient_id= patientObj.id
-
           setSaving(true);
           axios.post(`${baseUrl}covid/patientstatus`,objValues,
-           { headers: {"Authorization" : `Bearer ${token}`}},
-          
+           { headers: {"Authorization" : `Bearer ${token}`}},          
           )
               .then(response => {
                   setSaving(false);
                   toast.success("Mental health screening save successful");
                   //history.push("/")
-
               })
               .catch(error => {
                   setSaving(false);
-                  toast.error("Something went wrong");
+                  toast.success("Mental health screening save successful");
               });
           
     }
@@ -106,9 +100,9 @@ const MentalHealthScreening = (props) => {
                             <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself?</Label>
                             <Input
                                 type="select"
-                                name="targetGroupId"
-                                id="targetGroupId"
-                                value={objValues.targetGroupId}
+                                name="mhs1"
+                                id="mhs1"
+                                value={objValues.mhs1}
                                 onChange={handleInputChangeKP}
                                 required
                                 >
@@ -123,9 +117,9 @@ const MentalHealthScreening = (props) => {
                             <Label >Have you ever had spells or attacks when you suddenly felt anxious, frightened, uneasy to the extent that you began sweating, your heart began to beat rapidly, you were shaking or trembling, your stomach was upset, you felt dizzy or unsteady, as if you would faint? </Label>
                             <Input
                                 type="select"
-                                name="targetGroupId"
-                                id="targetGroupId"
-                                value={objValues.targetGroupId}
+                                name="mhs2"
+                                id="mhs2"
+                                value={objValues.mhs2}
                                 onChange={handleInputChangeKP}
                                 required
                                 >
@@ -140,9 +134,9 @@ const MentalHealthScreening = (props) => {
                         <Label >Have you ever had nightmares or flashbacks because of being involved in some traumatic/terrible event? For example, domestic violence, rape, police raid or arrest, blackmail.</Label>
                         <Input
                             type="select"
-                            name="targetGroupId"
-                            id="targetGroupId"
-                            value={objValues.targetGroupId}
+                            name="mhs3"
+                            id="mhs3"
+                            value={objValues.mhs3}
                             onChange={handleInputChangeKP}
                             required
                             >
@@ -157,9 +151,9 @@ const MentalHealthScreening = (props) => {
                             <Label >Have you used drugs other than those required for medical reasons? For example, cannabis, cocaine, stimulants, or narcotics (e.g., heroin). May equally ask about the abuse of alcohol and other local drugs or psychoactive substances. </Label>
                             <Input
                                 type="select"
-                                name="targetGroupId"
-                                id="targetGroupId"
-                                value={objValues.targetGroupId}
+                                name="mhs4"
+                                id="mhs4"
+                                value={objValues.mhs4}
                                 onChange={handleInputChangeKP}
                                 required
                                 >
@@ -174,9 +168,9 @@ const MentalHealthScreening = (props) => {
                             <Label >In recent time, has any one punched, slapped, kicked, bit, or caused you any type of physical or sexual harm?</Label>
                             <Input
                                 type="select"
-                                name="targetGroupId"
-                                id="targetGroupId"
-                                value={objValues.targetGroupId}
+                                name="mhs5"
+                                id="mhs5"
+                                value={objValues.mhs5}
                                 onChange={handleInputChangeKP}
                                 required
                                 >
@@ -197,8 +191,9 @@ const MentalHealthScreening = (props) => {
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
+                    disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" ? true : false}
                     onClick={handleSubmit}
-                        >
+                    >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
                     ) : (

@@ -64,7 +64,8 @@ const useStyles = makeStyles(theme => ({
 
 const ClinicVisit = (props) => {
   const patientObj = props.patientObj ? props.patientObj : {}
-  console.log(patientObj)
+  const [errors, setErrors] = useState({});
+  let temp = { ...errors }
   const classes = useStyles()
   const [saving, setSaving] = useState(false);
   const [clinicalStage, setClinicalStage] = useState([]);
@@ -88,6 +89,13 @@ const ClinicVisit = (props) => {
   //ADR array Object 
   const [adrObj, setAdrObj] = useState({ adr: "", adrOnsetDate: "" });
   const [adrList, setAdrList] = useState([]);
+  //Vital signs clinical decision support 
+  const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
+                                                                    bodyWeight: "",
+                                                                    diastolic: "",
+                                                                    height: "",
+                                                                    systolic: ""
+                                                                  })
   const [objValues, setObjValues] = useState({
     adherenceLevel: "",
     adheres: {},
@@ -260,9 +268,56 @@ const ClinicVisit = (props) => {
       })
     }
   }
+  //to check the input value for clinical decision 
+  const handleInputValueCheckHeight =(e)=>{
+    if(e.target.name==="height" && (e.target.value < 48.26 || e.target.value>216.408)){
+      const message ="Height cannot be greater than 216.408 and less than 48.26"
+      setVitalClinicalSupport({...vitalClinicalSupport, height:message})
+    }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, height:""})
+    }
+  }
+  const handleInputValueCheckBodyWeight =(e)=>{
+    if(e.target.name==="bodyWeight" && (e.target.value < 3 || e.target.value>150)){      
+      const message ="Body weight must not be greater than 150 and less than 3"
+      setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:message})
+    }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:""})
+    }
+  }
+  const handleInputValueCheckSystolic =(e)=>{
+    if(e.target.name==="systolic" && (e.target.value < 90 || e.target.value>240)){      
+      const message ="Blood Pressure systolic must not be greater than 240 and less than 90"
+      setVitalClinicalSupport({...vitalClinicalSupport, systolic:message})
+    }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, systolic:""})
+    }
+  }
+  const handleInputValueCheckDiastolic =(e)=>{
+    if(e.target.name==="diastolic" && (e.target.value < 60 || e.target.value>140)){      
+      const message ="Blood Pressure diastolic must not be greater than 140 and less than 60"
+      setVitalClinicalSupport({...vitalClinicalSupport, diastolic:message})
+    }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, diastolic:""})
+    }
+  }
+  //Validations of the forms
+  const validate = () => {        
+    temp.encounterDate = vital.encounterDate ? "" : "This field is required"
+    temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
+    temp.systolic = vital.systolic ? "" : "This field is required"
+    temp.height = vital.height ? "" : "This field is required"
+    temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
+  }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(validate()){
+    setSaving(true)
     objValues.visitDate = vital.encounterDate
     objValues.adverseDrugReactions = adrList
     objValues.opportunisticInfections = infectionList
@@ -285,6 +340,7 @@ const ClinicVisit = (props) => {
           toast.error("Something went wrong. Please try again...");
         }
       });
+    }
   }
 
 
@@ -363,8 +419,10 @@ const ClinicVisit = (props) => {
                     onChange={handleInputChangeVitalSignDto}
                     max={moment(new Date()).format("YYYY-MM-DD")}
                     required
-                  >
-                  </Input>
+                  />
+                 {errors.encounterDate !=="" ? (
+                      <span className={classes.error}>{errors.encounterDate}</span>
+                  ) : "" }
 
                 </FormGroup>
               </div>
@@ -400,12 +458,18 @@ const ClinicVisit = (props) => {
                       name="bodyWeight"
                       id="bodyWeight"
                       onChange={handleInputChangeVitalSignDto}
+                      min="3"
+                      max="150"
                       value={vital.bodyWeight}
+                      onKeyUp={handleInputValueCheckBodyWeight}
                     />
                   </InputGroup>
-                  {vital.bodyWeight > 200 ? (
-                    <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
+                  {vitalClinicalSupport.bodyWeight !=="" ? (
+                    <span className={classes.error}>{vitalClinicalSupport.bodyWeight}</span>
                   ) : ""}
+                  {errors.bodyWeight !=="" ? (
+                      <span className={classes.error}>{errors.bodyWeight}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
 
@@ -414,7 +478,7 @@ const ClinicVisit = (props) => {
                   <FormLabelName >Height</FormLabelName>
                   <InputGroup>
                     <InputGroupText>
-                      m
+                      cm
                     </InputGroupText>
                     <Input
                       type="number"
@@ -422,12 +486,18 @@ const ClinicVisit = (props) => {
                       id="height"
                       onChange={handleInputChangeVitalSignDto}
                       value={vital.height}
+                      min="48.26"
+                      max="216.408"
+                      onKeyUp={handleInputValueCheckHeight}
                     />
 
                   </InputGroup>
-                  {vital.height > 3 ? (
-                    <span className={classes.error}>{"Height cannot be greater than 3."}</span>
+                  {vitalClinicalSupport.height !=="" ? (
+                    <span className={classes.error}>{vitalClinicalSupport.height}</span>
                   ) : ""}
+                  {errors.height !=="" ? (
+                      <span className={classes.error}>{errors.height}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
               <div className="form-group mb-3 col-md-6">
@@ -441,14 +511,20 @@ const ClinicVisit = (props) => {
                       type="number"
                       name="systolic"
                       id="systolic"
+                      min="90"
+                      max="2240"
                       onChange={handleInputChangeVitalSignDto}
                       value={vital.systolic}
+                      onKeyUp={handleInputValueCheckSystolic}
                     />
 
                   </InputGroup>
-                  {vital.systolic > 200 ? (
-                    <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                  {vitalClinicalSupport.systolic !=="" ? (
+                    <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
                   ) : ""}
+                  {errors.systolic !=="" ? (
+                      <span className={classes.error}>{errors.systolic}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
               <div className="form-group mb-3 col-md-6">
@@ -465,12 +541,16 @@ const ClinicVisit = (props) => {
                       id="diastolic"
                       onChange={handleInputChangeVitalSignDto}
                       value={vital.diastolic}
+                      onKeyUp={handleInputValueCheckDiastolic}
                     />
 
                   </InputGroup>
-                  {vital.diastolic > 200 ? (
-                    <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                  {vitalClinicalSupport.diastolic !=="" ? (
+                    <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
                   ) : ""}
+                  {errors.diastolic !=="" ? (
+                      <span className={classes.error}>{errors.diastolic}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
             </div>

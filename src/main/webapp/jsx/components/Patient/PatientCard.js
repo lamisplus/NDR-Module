@@ -332,20 +332,20 @@ function PatientCard(props) {
                       /> */}
                                
                 <div className={classes.column}>
-                  <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }>Initial Clinic Evaluation</Button>
+                  <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }><span style={{fontSize:"11px"}}>Initial Clinic Evaluation</span></Button>
                 </div>
                 {patientCurrentStatus !==true && props.patientObj.enrollment.targetGroupId !=="456" ?                   
                   (
                     <>
                       <div className={classes.column}>
-                        <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }>Mental Health Screening</Button>
+                        <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }><span style={{fontSize:"11px"}}>Mental Health Screening</span></Button>
                       </div>
                     </>
                   ) :""           
               }
                {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
-                {" "}<Button secondary onClick={() => loadArt(patientObj)} >ART Commencement </Button>
+                {" "}<Button secondary onClick={() => loadArt(patientObj)} ><span style={{fontSize:"11px"}}>ART Commencement </span></Button>
                 </div>
                 )
                }

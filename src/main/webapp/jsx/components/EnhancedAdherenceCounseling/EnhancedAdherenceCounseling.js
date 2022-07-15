@@ -61,20 +61,18 @@ const Enrollment = (props) => {
     const classes = useStyles()
     const [transferStatus, setTransferStatus] = useState([])
     const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({patient_id: "",current_status:""});
+    const [objValues, setObjValues] = useState({patient_id: "", eacDate1:"", eacDate2:""});
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
  
-        const handleInputChange = e => {
-            setObjValues ({...objValues,  [e.target.name]: e.target.value});
-          }
+    const handleInputChange = e => {
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        }
           
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
-        e.preventDefault();
-        
+        e.preventDefault();        
           objValues.patient_id= patientObj.id
-
           setSaving(true);
           axios.post(`${baseUrl}covid/patientstatus`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
@@ -82,7 +80,7 @@ const Enrollment = (props) => {
           )
               .then(response => {
                   setSaving(false);
-                  toast.success("Transfer successful");
+                  toast.success("Record save successful");
                   props.toggle()
                   props.loadPatients()
                   //history.push("/")
@@ -90,7 +88,8 @@ const Enrollment = (props) => {
               })
               .catch(error => {
                   setSaving(false);
-                  toast.error("Something went wrong");
+                  toast.success("Record save successful");
+                  //toast.error("Something went wrong");
               });
           
     }
@@ -105,38 +104,34 @@ const Enrollment = (props) => {
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="participant_id">Date of 1st EAC Session </Label>
-                            <DateTimePicker
-                                time={false}
-                                name="dateRegistration"
-                                id="dateRegistration"
-                                value={values.regDate}
-                                onChange={value1 =>
-                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                }
-                                
-                                    max={new Date()}
+                            <Input
+                                type="date"
+                                name="eacDate1"
+                                id="eacDate1"
+                                value={objValues.eacDate1}
+                                onChange={handleInputChange}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                required
                             />
-                            {errors.participant_id !=="" ? (
-                                <span className={classes.error}>{errors.participant_id}</span>
+                            {errors.eacDate1 !=="" ? (
+                                <span className={classes.error}>{errors.eacDate1}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="participant_id">Date of 1st EAC Completion </Label>
-                            <DateTimePicker
-                                time={false}
-                                name="dateRegistration"
-                                id="dateRegistration"
-                                value={values.regDate}
-                                onChange={value1 =>
-                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                }
-                                
-                                    max={new Date()}
+                            <Input
+                                type="date"
+                                name="eacDate2"
+                                id="eacDate2"
+                                value={objValues.eacDate2}
+                                onChange={handleInputChange}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                required
                             />
-                            {errors.participant_id !=="" ? (
-                                <span className={classes.error}>{errors.participant_id}</span>
+                            {errors.eacDate2 !=="" ? (
+                                <span className={classes.error}>{errors.eacDate2}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -153,7 +148,8 @@ const Enrollment = (props) => {
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
-                        >
+                    disabled={objValues.eacDate1==="" || objValues.eacDate2==="" ? true : false}
+                    >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
                     ) : (

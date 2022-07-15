@@ -21,9 +21,10 @@ import "react-widgets/dist/css/react-widgets.css";
 import {Link, useHistory, useLocation} from "react-router-dom";
 import {TiArrowBack} from 'react-icons/ti'
 import {useForm} from "react-hook-form";
-import {token, url as baseUrl} from "./../../../api";
-import { DateTimePicker } from "react-widgets";
-// library.add(faCheckSquare, faCoffee, faEdit, faTrash);
+import {token, url as baseUrl } from "../../../api";
+
+
+library.add(faCheckSquare, faCoffee, faEdit, faTrash);
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -85,13 +86,11 @@ const schema = yup.object().shape({
 });
 
 const UserRegistration = (props) => {
-    const [femaleStatus, setfemaleStatus]= useState(false)
     const { register, setValue, getValues, setError, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
     const [today, setToday] = useState(new Date().toISOString().substr(0, 10).replace('T', ' '));
     const [contacts, setContacts] = useState([]);
-    const [patientDTO, setPatientDTO]= useState({"person":"", "hivEnrollment":""})
     const [saving, setSaving] = useState(false);
     const [ageDisabled, setAgeDisabled] = useState(true);
     const [showRelative, setShowRelative] = useState(false);
@@ -104,6 +103,7 @@ const UserRegistration = (props) => {
     const [topLevelUnitCountryOptions, settopLevelUnitCountryOptions]= useState([]);
     const [stateUnitOptions, setStateUnitOptions]= useState([]);
     const [districtUnitOptions, setDistrictUnitOptions]= useState([]);
+    const [patientDTO, setPatientDTO]= useState({"person":"", "hivEnrollment":""})
     const userDetail = props.location && props.location.state ? props.location.state.user : null;
     const classes = useStyles();
     const history = useHistory();
@@ -112,7 +112,7 @@ const UserRegistration = (props) => {
     const locationState = location.state;
     let patientId = null;
     patientId = locationState ? locationState.patientId : null;
-    ///console.log(patientId)
+
     const getNames = (relationship) => {
         const surname = relationship.surname;
         const firstName = relationship.firstname;
@@ -246,7 +246,7 @@ const UserRegistration = (props) => {
                 ],
                 contact: contacts,
                 contactPoint: [],
-                dateOfBirth: format(new Date(data.dob), 'yyyy-MM-dd'),
+                dateOfBirth: new Date(data.dob),
                 deceased: false,
                 deceasedDateTime: null,
                 firstName: data.firstName,
@@ -263,9 +263,8 @@ const UserRegistration = (props) => {
                 surname: data.lastName,
                 educationId: data.highestQualification,
                 employmentStatusId: data.employmentStatus,
-                dateOfRegistration: format(new Date(data.dateOfRegistration), 'yyyy-MM-dd'),
-                isDateOfBirthEstimated: data.dateOfBirth == "Actual" ? false : true,
-                //hivEnrollment:objValues,
+                dateOfRegistration: data.dateOfRegistration,
+                isDateOfBirthEstimated: data.dateOfBirth == "Actual" ? false : true
             };
             const phone = {
                 "type": "phone",
@@ -287,20 +286,23 @@ const UserRegistration = (props) => {
             }
             patientForm.contactPoint.push(phone);
             if (patientId) {
-                patientForm.id = patientId;
+                patientForm.id = null;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
-                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.put(`${baseUrl}hiv/patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             } else {
                 patientForm.id = patientId;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
                 const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             }
-            toast.success("Record save successful");
+            toast.success("Patient Register successful");
             history.push('/');
         } catch (e) {
             console.log(e);
+            toast.error("An error occured while registering a patient !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     };
     const onError = (errors) => {
@@ -330,7 +332,9 @@ const UserRegistration = (props) => {
             const response = await axios.get(`${baseUrl}application-codesets/v2/GENDER`, { headers: {"Authorization" : `Bearer ${token}`} });
             setGenders(response.data);
         } catch (e) {
-
+            toast.error("An error occured while fetching gender codesets !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     }, []);
     const loadMaritalStatus = useCallback(async () => {
@@ -338,7 +342,9 @@ const UserRegistration = (props) => {
             const response = await axios.get(`${baseUrl}application-codesets/v2/MARITAL_STATUS`, { headers: {"Authorization" : `Bearer ${token}`} });
             setMaritalStatusOptions(response.data);
         } catch (e) {
-
+            toast.error("An error occured while fetching marital codesets !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     }, []);
     const loadEducation = useCallback(async () => {
@@ -346,7 +352,9 @@ const UserRegistration = (props) => {
             const response = await axios.get(`${baseUrl}application-codesets/v2/EDUCATION`, { headers: {"Authorization" : `Bearer ${token}`} });
             setEducationOptions(response.data);
         } catch (e) {
-
+            toast.error("An error occured while fetching education codesets !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     }, []);
     const loadOccupation = useCallback(async () => {
@@ -354,7 +362,9 @@ const UserRegistration = (props) => {
             const response = await axios.get(`${baseUrl}application-codesets/v2/OCCUPATION`, { headers: {"Authorization" : `Bearer ${token}`} });
             setOccupationOptions(response.data);
         } catch (e) {
-
+            toast.error("An error occured while fetching occupation codesets !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     }, []);
     const loadRelationships = useCallback(async () => {
@@ -362,7 +372,9 @@ const UserRegistration = (props) => {
           const response = await axios.get(`${baseUrl}application-codesets/v2/RELATIONSHIP`, { headers: {"Authorization" : `Bearer ${token}`} });
           setRelationshipOptions(response.data);
       } catch (e) {
-          
+          toast.error("An error occured while fetching relationship codesets !", {
+              position: toast.POSITION.TOP_RIGHT
+          });
       }
     }, []);
     const loadTopLevelCountry = useCallback(async () => {
@@ -380,11 +392,6 @@ const UserRegistration = (props) => {
         } else {
             setStateUnitOptions([]);
         }
-    };
-    const onSexChange = async (e) => {
-        if (e.target.value=== "3" || e.target.value=== "4") {
-            setfemaleStatus(true)
-        } 
     };
     const onStateChange = async (e) => {
         if (e.target.value) {
@@ -404,12 +411,17 @@ const UserRegistration = (props) => {
             if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
                 age_now--;
             }
+            if(parseInt(age_now) < 11){            
+                setHideTargetGroup("true")
+            }else{
+                setHideTargetGroup("false")
+            }
             setValue('age', age_now);
         } else {
             setValue('age', null);
         }
     }
-    
+
     const handleDateOfBirthChange = (e) => {
         if (e.target.value == "Actual") {
             setAgeDisabled(true);
@@ -419,6 +431,7 @@ const UserRegistration = (props) => {
     }
 
     const handleAgeChange = (e) => {
+        const ageInputValue= e.target.value
         if (!ageDisabled && e.target.value) {
             const currentDate = new Date();
             currentDate.setDate(15);
@@ -426,6 +439,12 @@ const UserRegistration = (props) => {
             const estDob = moment(currentDate.toISOString());
             const dob = estDob.add((e.target.value * -1), 'years');
             setValue('dob', format(new Date(dob.toDate()), 'yyyy-MM-dd'));
+        }
+        //Handle all other input field if age is less 14
+        if(parseInt(ageInputValue) < 14){            
+            setHideTargetGroup("true")
+        }else{
+            setHideTargetGroup("false")
         }
     }
 
@@ -491,177 +510,162 @@ const UserRegistration = (props) => {
     const handleCancel = () => {
         history.push('/');
     };
-
-    //HIV INFORMATION
-    const patientObj = props.patientObj;
-    const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:"",targetGroup:"" });
-    //const [saving, setSaving] = useState(false);
-    //const [errors, setErrors] = useState({});
-    const [mHSobjValues, setMHSobjValues] = useState({mhs1:"", mhs2: "", mhs3: "", mhs4: "", mhs5: ""})
-    const [carePoints, setCarePoints] = useState([]);
-    const [sourceReferral, setSourceReferral] = useState([]);
-    const [hivStatus, setHivStatus] = useState([]);
-    const [enrollSetting, setEnrollSetting] = useState([]);
-    const [tbStatus, setTbStatus] = useState([]);
-    const [kP, setKP] = useState([]);
-    const [pregnancyStatus, setPregnancyStatus] = useState([]);
-    //set ro show the facility name field if is transfer in 
-    const [transferIn, setTransferIn] = useState(false);
-    // display the OVC number if patient is enrolled into OVC 
-    const [ovcEnrolled, setOvcEnrolled] = useState(false);
-    const [showKP, setShowKP]=useState(false)
-
-    useEffect(() => {         
-        CareEntryPoint();
-        SourceReferral();
-        HivStatus();
-        EnrollmentSetting();
-        TBStatus();
-        KP();
-        PregnancyStatus();
-      }, []);
-
-      //Get list of CareEntryPoint
-      const CareEntryPoint =()=>{
-             axios
-                .get(`${baseUrl}application-codesets/v2/POINT_ENTRY`,
+        //HIV INFORMATION
+        const [femaleStatus, setfemaleStatus]= useState(false)
+        const [values, setValues] = useState([]);
+        const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
+        //const [saving, setSaving] = useState(false);
+        //const [errors, setErrors] = useState({});
+        const [carePoints, setCarePoints] = useState([]);
+        const [sourceReferral, setSourceReferral] = useState([]);
+        const [hivStatus, setHivStatus] = useState([]);
+        const [enrollSetting, setEnrollSetting] = useState([]);
+        const [tbStatus, setTbStatus] = useState([]);
+        const [kP, setKP] = useState([]);
+        const [pregnancyStatus, setPregnancyStatus] = useState([]);
+        //set ro show the facility name field if is transfer in 
+        const [transferIn, setTransferIn] = useState(false);
+        // display the OVC number if patient is enrolled into OVC 
+        const [ovcEnrolled, setOvcEnrolled] = useState(false);
+        //Input fields to hidden base on some conditions
+        const [hideTargetGroup, setHideTargetGroup]= useState("false");
+    
+        useEffect(() => {         
+            CareEntryPoint();
+            SourceReferral();
+            HivStatus();
+            EnrollmentSetting();
+            TBStatus();
+            KP();
+            PregnancyStatus();
+          }, []);
+    
+          //Get list of CareEntryPoint
+          const CareEntryPoint =()=>{
+                 axios
+                    .get(`${baseUrl}application-codesets/v2/POINT_ENTRY`,
+                        { headers: {"Authorization" : `Bearer ${token}`} }
+                    )
+                    .then((response) => {
+                        //console.log(response.data);
+                        setCarePoints(response.data);
+                    })
+                    .catch((error) => {
+                    //console.log(error);
+                    });
+                
+          }
+        //Get list of Source of Referral
+        const SourceReferral =()=>{
+                axios
+                .get(`${baseUrl}application-codesets/v2/SOURCE_REFERRAL`,
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
                     //console.log(response.data);
-                    setCarePoints(response.data);
+                    setSourceReferral(response.data);
                 })
                 .catch((error) => {
                 //console.log(error);
                 });
             
-      }
-    //Get list of Source of Referral
-    const SourceReferral =()=>{
+        }
+         //Get list of HIV STATUS ENROLLMENT
+         const HivStatus =()=>{
             axios
-            .get(`${baseUrl}application-codesets/v2/SOURCE_REFERRAL`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                //console.log(response.data);
-                setSourceReferral(response.data);
-            })
-            .catch((error) => {
-            //console.log(error);
-            });
-        
-    }
-     //Get list of HIV STATUS ENROLLMENT
-     const HivStatus =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/HIV_STATUS_ENROL`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setHivStatus(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-     }
-      //Get list of HIV STATUS ENROLLMENT
-      const EnrollmentSetting =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/ENROLLMENT_SETTING`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setEnrollSetting(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-     }
-      //Get list of HIV STATUS ENROLLMENT
-      const TBStatus =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setTbStatus(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-     }
-      //Get list of KP
-      const KP =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/KP_TYPE`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               console.log(response.data);
-               setKP(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-     }
-      //Get list of KP
-      const PregnancyStatus =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setPregnancyStatus(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-     }
-    const handleInputChange = e => {
-        
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        if(e.target.name ==="entryPointId" ){
-            if(e.target.value==="21"){
-                setTransferIn(true)
+               .get(`${baseUrl}application-codesets/v2/HIV_STATUS_ENROL`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   //console.log(response.data);
+                   setHivStatus(response.data);
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+         }
+          //Get list of HIV STATUS ENROLLMENT
+          const EnrollmentSetting =()=>{
+            axios
+               .get(`${baseUrl}application-codesets/v2/ENROLLMENT_SETTING`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   //console.log(response.data);
+                   setEnrollSetting(response.data);
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+         }
+          //Get list of HIV STATUS ENROLLMENT
+          const TBStatus =()=>{
+            axios
+               .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   //console.log(response.data);
+                   setTbStatus(response.data);
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+         }
+          //Get list of KP
+          const KP =()=>{
+            axios
+               .get(`${baseUrl}application-codesets/v2/KP_TYPE`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   //console.log(response.data);
+                   setKP(response.data);
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+         }
+          //Get list of KP
+          const PregnancyStatus =()=>{
+            axios
+               .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   //console.log(response.data);
+                   setPregnancyStatus(response.data);
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+         }
+        const handleInputChange = e => {
+            
+            setObjValues ({...objValues,  [e.target.name]: e.target.value});
+            if(e.target.name ==="entryPointId" ){
+                if(e.target.value==="21"){
+                    setTransferIn(true)
+                }else{
+                    setTransferIn(false)
+                }
+            }
+            
+        }
+              
+        //Handle CheckBox 
+        const handleCheckBox =e =>{
+            if(e.target.checked){
+                setOvcEnrolled(true)
             }else{
-                setTransferIn(false)
+                setOvcEnrolled(false)
             }
         }
-        
-    }
-    const handleInputChangeKP = e => {
-        setMHSobjValues ({...mHSobjValues,  [e.target.name]: e.target.value});
-    }
-    const handleInputChangeTargetGroup = (e)=>{
-        if (e.target.value == "KP") {
-            setShowKP(true);
-            setObjValues({...objValues, targetGroup:"KP" })
-        } else if(e.target.value == "Gen Pop"){
-            setShowKP(false);
-            setObjValues({...objValues, targetGroup:"Gen Pop" })
-        }else{
-            setShowKP(false);
-        }
-    }      
-    //Handle CheckBox 
-    const handleCheckBox =e =>{
-        if(e.target.checked){
-            setOvcEnrolled(true)
-        }else{
-            setOvcEnrolled(false)
-        }
-    }  
-
 
     return (
         <>
@@ -676,7 +680,7 @@ const UserRegistration = (props) => {
                         <Button
                             variant="contained"
                             color="primary"
-                            className=" float-end"
+                            className=" float-end ms-1"
                             startIcon={<TiArrowBack />}
                         >
                             <span style={{ textTransform: "capitalize" }}>Back </span>
@@ -687,7 +691,7 @@ const UserRegistration = (props) => {
                     <div className="col-xl-12 col-lg-12">
                         <Form onSubmit={handleSubmit(onSubmit, onError)}>
                             <div className="card">
-                                <div className="card-header">
+                                <div className="card-header" style={{backgroudColor:"#04C4D9"}}>
                                     <h5 className="card-title">{userDetail===null ? "Basic Information" : "Edit User Information"}</h5>
                                 </div>
 
@@ -777,9 +781,8 @@ const UserRegistration = (props) => {
                                                         name="sex"
                                                         id="sex"
                                                         {...register("sex")}
-                                                        onChange={(e) => onSexChange(e)}
                                                     >
-                                                        <option value={""}></option>
+                                                        <option value={""}>Select</option>
                                                         {genderRows}
                                                     </select>
                                                     {errors.sex && <p>{errors.sex.message}</p>}
@@ -795,7 +798,7 @@ const UserRegistration = (props) => {
                                                         id="employmentStatus"
                                                         {...register("employmentStatus")}
                                                     >
-                                                        <option value={""}></option>
+                                                        <option value={""}>Select</option>
                                                         {occupationRows}
                                                     </select>
                                                     {errors.lastName && <p>{errors.lastName.message}</p>}
@@ -811,7 +814,7 @@ const UserRegistration = (props) => {
                                                         id="highestQualification"
                                                         {...register("highestQualification")}
                                                     >
-                                                        <option value={""}></option>
+                                                        <option value={""}>Select</option>
                                                         {educationRows}
                                                     </select>
                                                     {errors.highestQualification && <p>{errors.highestQualification.message}</p>}
@@ -829,7 +832,7 @@ const UserRegistration = (props) => {
                                                         id="maritalStatus"
                                                         {...register("maritalStatus")}
                                                     >
-                                                        <option value={""}></option>
+                                                        <option value={""}>Select</option>
                                                         {maritalStatusRows}
                                                     </select>
                                                     {errors.maritalStatus && <p>{errors.maritalStatus.message}</p>}
@@ -961,9 +964,9 @@ const UserRegistration = (props) => {
                                                     type="text"
                                                     name="country"
                                                     id="country"
-                                                    {...register("countryId")}                                               
+                                                    {...register("countryId")}
                                                     onChange={(e) => onCountryChange(e)}>
-                                                    <option value={""}></option>
+                                                    <option value={""}>Select</option>
                                                     {topLevelUnitCountryRows}
                                                 </select>
                                                 {errors.country && <p>{errors.country.message}</p>}
@@ -980,7 +983,7 @@ const UserRegistration = (props) => {
                                                     id="stateId"
                                                     {...register("stateId")}
                                                     onChange={(e) => onStateChange(e)}>
-                                                    <option value={""}></option>
+                                                    <option value={""}>Select</option>
                                                     {stateRows}
                                                 </select>
                                             </FormGroup>
@@ -995,7 +998,7 @@ const UserRegistration = (props) => {
                                                     name="district"
                                                     id="district"
                                                     {...register("district")}>
-                                                    <option value={""}></option>
+                                                    <option value={""}>Select</option>
                                                     {districtRows}
                                                 </select>
                                             </FormGroup>
@@ -1222,7 +1225,6 @@ const UserRegistration = (props) => {
                                             }
                                         </div>
                                     </div>
-
                                     <div className="row"></div>
                                         <MatButton
                                             type="button"
@@ -1257,26 +1259,20 @@ const UserRegistration = (props) => {
                                         value={objValues.uniqueId}
                                         required
                                     />
-                                    {errors.uniqueId !=="" ? (
-                                        <span className={classes.error}>{errors.uniqueId}</span>
-                                    ) : "" }
                                     </FormGroup>
                                 </div>
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label for="dateOfRegistration">Date of Enrollment * </Label>
                                     <Input
-                                    type="date"
-                                    name="dateOfRegistration"
-                                    id="dateOfRegistration"
-                                    onChange={handleInputChange}
-                                    value={objValues.dateOfRegistration}
-                                    required
+                                        type="date"
+                                        name="dateOfRegistration"
+                                        id="dateOfRegistration"
+                                        max={today}
+                                        onChange={handleInputChange}
+                                        value={objValues.dateOfRegistration}
+                                        required
                                     />
-                                   
-                                    {errors.dateOfRegistration !=="" ? (
-                                        <span className={classes.error}>{errors.dateOfRegistration}</span>
-                                    ) : "" }
                                     </FormGroup>
                                 </div>
                             </div>
@@ -1292,16 +1288,12 @@ const UserRegistration = (props) => {
                                     value={objValues.entryPointId}
                                     required
                                 >
-                                <option value=""> </option>
-                  
+                                <option value=""> </option>                  
                                 {carePoints.map((value) => (
                                     <option key={value.id} value={value.id}>
                                         {value.display}
                                     </option>
                                 ))}
-                                {errors.entryPointId !=="" ? (
-                                        <span className={classes.error}>{errors.entryPointId}</span>
-                                    ) : "" }
                                 </Input>
                                 </FormGroup>
                                 
@@ -1316,14 +1308,10 @@ const UserRegistration = (props) => {
                                             name="facilityName"
                                             id="facilityName"
                                             onChange={handleInputChange}
-                                            value={objValues.facilityName}
-                                            required
+                                            value={objValues.facilityName}                                           
                                         />
                                         </FormGroup>
-                                    )
-                                    :
-                                    ""
-                                    }
+                                    ):""}
                                 </div>
                                 
                                 <div className="form-group mb-3 col-md-6">
@@ -1337,35 +1325,28 @@ const UserRegistration = (props) => {
                                     value={objValues.statusAtRegistrationId}
                                     required
                                 >
-                                <option value=""> </option>
-                  
+                                <option value=""> Select</option>                  
                                 {hivStatus.map((value) => (
                                     <option key={value.id} value={value.id}>
                                         {value.display}
                                     </option>
                                 ))}
-                                {errors.statusAtRegistrationId !=="" ? (
-                                        <span className={classes.error}>{errors.statusAtRegistrationId}</span>
-                                    ) : "" }
                                 </Input>
                                 </FormGroup>
                                 </div>
-                            
+
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label >Date of Confirmed HIV Test *</Label>
-                                    <DateTimePicker
-                                        time={false}
+                                    <Input
+                                        type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
-                                        value={objValues.regDate}
-                                        onChange={value1 =>
-                                            setObjValues({ ...objValues, dateConfirmedHiv: moment(value1).format("YYYY-MM-DD") })
-                                        }
-                                        
-                                            max={new Date()}
-                                    />
-                                       
+                                        max={today}
+                                        onChange={handleInputChange}
+                                        value={objValues.dateConfirmedHiv}
+                                        required
+                                    />  
                                     </FormGroup>
                                 </div>
                                 <div className="form-group mb-3 col-md-6">
@@ -1378,18 +1359,14 @@ const UserRegistration = (props) => {
                                         value={objValues.sourceOfReferrer}
                                         onChange={handleInputChange}
                                         required
-                                        >
-                                         <option value=""> </option>
-                  
+                                    >
+                                        <option value="">Select </option>                 
                                             {sourceReferral.map((value) => (
                                                 <option key={value.id} value={value.id}>
                                                     {value.display}
                                                 </option>
                                             ))}
                                     </Input>
-                                    {errors.sourceOfReferrer !=="" ? (
-                                        <span className={classes.error}>{errors.sourceOfReferrer}</span>
-                                    ) : "" }
                                     </FormGroup>
                                 </div>
                                 
@@ -1404,17 +1381,14 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         required
                                         >
-                                         <option value=""> </option>
-                  
+                                        <option value=""> Select</option>
+
                                             {enrollSetting.map((value) => (
                                                 <option key={value.id} value={value.id}>
                                                     {value.display}
                                                 </option>
                                             ))}
                                     </Input>
-                                    {errors.enrollmentSettingId !=="" ? (
-                                        <span className={classes.error}>{errors.enrollmentSettingId}</span>
-                                    ) : "" }
                                     </FormGroup>
                                 </div>
                                 {femaleStatus===true ? (
@@ -1427,41 +1401,32 @@ const UserRegistration = (props) => {
                                         name = "pregnancyStatusId"
                                         id = "pregnancyStatusId"
                                         value = {objValues.pregnancyStatusId}
-                                        onChange = {handleInputChange}
-                                        required
-                                        >
-                                        < option
-                                        value = "" > </option>
-
+                                        onChange = {handleInputChange}                                        
+                                    >
+                                    < option value = "" >Select </option>
                                         {
                                             pregnancyStatus.map((value) => (
-                                                < option
-                                            key = {value.id}
-                                            value = {value.id} >
+                                            < option key = {value.id} value = {value.id} >
                                                 {value.display}
-                                                </option>
+                                            </option>
                                         ))
                                         }
-                                    </Input>
-                                    
-                                      
-                                  </FormGroup>  
+                                    </Input>                                                                        
+                                </FormGroup>  
                                 </div>
-                            
+
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label >Date of LMP </Label>
-                                    <DateTimePicker
-                                        time={false}
+                                    <Label >Date of LMP </Label>                                    
+                                    <Input
+                                        type="date"
                                         name="dateOfLpm"
                                         id="dateOfLpm"
-                                        value={values.regDate}
-                                        onChange={value1 =>
-                                            setObjValues({ ...objValues, dateOfLpm: moment(value1).format("YYYY-MM-DD") })
-                                        }
-
-                                            max={new Date()}
-                                    />
+                                        max={today}
+                                        onChange={handleInputChange}
+                                        value={objValues.dateOfLpm}
+                                        required
+                                    />  
                                         
                                     </FormGroup>
                                 </div>
@@ -1481,17 +1446,15 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         required
                                         >
-                                         <option value=""> </option>
-                  
+                                        <option value=""> </option>
+
                                             {tbStatus.map((value) => (
                                                 <option key={value.id} value={value.id}>
                                                     {value.display}
                                                 </option>
                                             ))}
                                     </Input>
-                                    {errors.tbStatusId !=="" ? (
-                                        <span className={classes.error}>{errors.tbStatusId}</span>
-                                    ) : "" }
+                                
                                     </FormGroup>
                                 </div>
                                 <div className="form-group mb-3 col-md-3">
@@ -1523,7 +1486,7 @@ const UserRegistration = (props) => {
                                             id="ovcNumber"
                                             onChange={handleInputChange}
                                             value={objValues.ovcNumber}
-                                            required
+                                            
                                         />
                                         </FormGroup>
                                         )
@@ -1531,6 +1494,7 @@ const UserRegistration = (props) => {
                                         ""
                                     }
                                 </div>
+                                {hideTargetGroup==="false" ? (
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label >Target Group</Label>
@@ -1541,7 +1505,7 @@ const UserRegistration = (props) => {
                                         value={objValues.targetGroupId}
                                         onChange={handleInputChange}
                                         >
-                                         <option value=""> Select</option>                    
+                                        <option value=""> Select</option>                    
                                                 {kP.map((value) => (
                                                     <option key={value.id} value={value.id}>
                                                         {value.display}
@@ -1551,7 +1515,8 @@ const UserRegistration = (props) => {
                                     
                                     </FormGroup>
                                 </div>
-                               
+                                ) : ""}
+                            
                             </div>
                                 </div>
                             </div>
