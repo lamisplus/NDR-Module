@@ -1,26 +1,61 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 // BS
-import { Dropdown, Nav, Tab } from "react-bootstrap";
+import { Dropdown,} from "react-bootstrap";
 /// Scroll
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Link } from "react-router-dom";
-// images
-
-import ActiveUser from "./Ventic/WidgetBasic/ActiveUser";
-
-import FeeCollection from "./Ventic/WidgetBasic/FeeCollection";
-
-import NewStudent from "./Ventic/WidgetBasic/NewStudent";
-
-import TotalCourse from "./Ventic/WidgetBasic/TotalCourse";
-import TotalStudent from "./Ventic/WidgetBasic/TotalStudent";
-
-import VisitorActivity from "./Ventic/WidgetBasic/VisitorActivity";
-;
-// Page titie
+import axios from "axios";
+import { url as baseUrl, token } from "../../../api";
+import {Badge, Alert } from "react-bootstrap";
 
 
-const Widget = () => {
+
+const RecentHistory = (props) => {
+  const [vitaLoad, setViralLoad]=useState([])
+
+  useEffect(() => {
+    LaboratoryHistory();
+  }, []);
+
+  //Get list of LaboratoryHistory
+  const LaboratoryHistory =()=>{
+    axios
+       .get(`${baseUrl}laboratory/orders/patients/${props.patientObj.id}`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {
+           console.log(response.data);
+           const latestOrders= response.data.map((tests)=>(
+            setViralLoad([...tests.labOrder.tests])
+           ))
+           //setViralLoad(response.data);
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+    }
+    console.log(vitaLoad);
+    const labStatus =(status)=> {
+      console.log(status)
+        if(status===0){
+          return "timeline-badge info"
+        }else if(status===1){
+          return "timeline-badge warning"
+        }else if(status===2){
+          return "timeline-badge success"
+        }else if(status===3){
+          return "timeline-badge danger"
+        }else if(status===4){
+          return "timeline-badge primary"
+        }else if(status===5){
+          return "timeline-badge info"
+        }else {
+          return "timeline-badge secondary"
+        }
+    }
+    
+
   return (
     <Fragment>
       {/* <Ext /> */}
@@ -313,132 +348,44 @@ const Widget = () => {
                 className="widget-timeline dz-scroll height370 ps ps--active-y"
               >
                 <ul className="timeline">
-                  <li>
-                    <div className="timeline-badge primary"></div>
-                    <Link
-                      className="timeline-panel text-muted"
-                      to="/widget-basic"
+                  {vitaLoad.length >0 ? (
+                    <>
+                     {vitaLoad.map((test,index) => ( 
+                      <>
+                        <li key={index}>
+                        <div className={labStatus(test.labTestOrderStatus)}></div>
+                        <Link
+                          className="timeline-panel text-muted"
+                          to="/widget-basic"
+                        >
+                          {/* <h6 className="mb-0">
+                            Test Order Date{" "}<br/>
+                            <strong className="text-primary">{""}</strong>
+                          </h6> */}
+                          <h6 className="mb-0">
+                            Test Order{" "}<br/>
+                            <strong className="text-primary">{test.labTestGroupName + " - " + test.labTestName}</strong>.
+                          </h6>
+                          <h6 className="mb-0">
+                            Status{" "}<br/>
+                            <strong className="text-primary">{test.labTestOrderStatusName}</strong>.
+                          </h6>
+                        </Link>
+                        </li>
+                      </>
+
+                     ))}
+                    
+                    </>
+                    ) 
+                    :
+                    <Alert
+                      variant="info"
+                      className="alert-dismissible solid fade show"
                     >
-                      <span>10 Days ago</span>
-                      <h6 className="mb-0">
-                        Date Sample Collected{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Assay{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Result Received{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                    </Link>
-                  </li>
-                  <li>
-                    <div className="timeline-badge info"></div>
-                    <Link
-                      className="timeline-panel text-muted"
-                      to="/widget-basic"
-                    >
-                      <span>10 Days ago</span>
-                      <h6 className="mb-0">
-                        Date Sample Collected{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Assay{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Result Received{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                    </Link>
-                  </li>
-                  <li>
-                    <div className="timeline-badge danger"></div>
-                    <Link
-                      className="timeline-panel text-muted"
-                      to="/widget-basic"
-                    >
-                       <span>10 Days ago</span>
-                      <h6 className="mb-0">
-                        Date Sample Collected{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Assay{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Result Received{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                    </Link>
-                  </li>
-                  <li>
-                    <div className="timeline-badge success"></div>
-                    <Link
-                      className="timeline-panel text-muted"
-                      to="/widget-basic"
-                    >
-                       <span>10 Days ago</span>
-                      <h6 className="mb-0">
-                        Date Sample Collected{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Assay{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Result Received{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                    </Link>
-                  </li>
-                  <li>
-                    <div className="timeline-badge warning"></div>
-                    <Link
-                      className="timeline-panel text-muted"
-                      to="/widget-basic"
-                    >
-                       <span>10 Days ago</span>
-                      <h6 className="mb-0">
-                        Date Sample Collected{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Assay{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Result Received{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                    </Link>
-                  </li>
-                  <li>
-                    <div className="timeline-badge dark"></div>
-                    <Link
-                      className="timeline-panel text-muted"
-                      to="/widget-basic"
-                    >
-                       <span>10 Days ago</span>
-                      <h6 className="mb-0">
-                        Date Sample Collected{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Assay{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                      <h6 className="mb-0">
-                        Date Result Received{" "}<br/>
-                        <strong className="text-primary">04 Nov, 2021</strong>.
-                      </h6>
-                    </Link>
-                  </li>
+                      <p>No Laboratory Test Order Yet</p>
+                    </Alert>
+                  }
                 </ul>
               </PerfectScrollbar>
             </div>
@@ -715,4 +662,4 @@ const Widget = () => {
   );
 };
 
-export default Widget;
+export default RecentHistory;

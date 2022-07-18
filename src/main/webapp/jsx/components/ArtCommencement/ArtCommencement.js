@@ -58,12 +58,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ArtCommencement = (props) => {
-    const patientObj = props.patientObj;
+    //const patientObj = props.patientObj;
     //let history = useHistory();
     const classes = useStyles()
     const [clinicalStage, setClinicalStage] = useState([])
     const [values, setValues] = useState([]);
     const [saving, setSaving] = useState(false);
+    const [viraLoadStart, setViraLoadStart] = useState(false);
     const [errors, setErrors] = useState({});
     let temp = { ...errors }
     const [tbStatus, setTbStatus] = useState([]);
@@ -252,6 +253,15 @@ const ArtCommencement = (props) => {
             setVitalClinicalSupport({...vitalClinicalSupport, diastolic:""})
             }
         }
+        const handleInputChangeVitalStart =(e)=>{
+            if(e.target.value==="YES" ){
+                setViraLoadStart(true)
+                setObjValues({...objValues, viralLoad:e.target.value})
+            }else{
+                setObjValues({...objValues, viralLoad:e.target.value})
+                setViraLoadStart(false)
+            }
+        }
 
         //FORM VALIDATION
         const validate = () => {
@@ -428,16 +438,38 @@ const ArtCommencement = (props) => {
                                         <FormGroup>
                                         <Label >Viral Load at Start of ART </Label>
                                         <Input
-                                            type="number"
+                                            type="select"
                                             name="viralLoad"
                                             id="viralLoad"
-                                            onChange={handleInputChange}
+                                            onChange={handleInputChangeVitalStart}                                            
                                             value={objValues.viralLoad}
+                                            required
+                                        >
+                                            <option value=""> Select</option>
+                                            <option value="YES"> YES</option>
+                                            <option value="NO"> NO</option>
+                                        </Input>
+                                        
+                                        </FormGroup>
+                                    </div>
+                                    {viraLoadStart && (
+                                    <>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Viral Load at Start of ART Result</Label>
+                                        <Input
+                                            type="text"
+                                            name="viralLoad"
+                                            id="viralLoad"
+                                            //onChange={handleInputChange}
+                                            //value={objValues.viralLoad}
                                             required
                                         />
                                         
                                         </FormGroup>
                                     </div>
+                                    </>
+                                    )}
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >WHO Staging</Label>
@@ -553,7 +585,7 @@ const ArtCommencement = (props) => {
                                                 onKeyUp={handleInputValueCheckHeight} 
                                             />
                                             <InputGroupText>
-                                               m
+                                               cm
                                             </InputGroupText>
                                         </InputGroup>
                                         {vitalClinicalSupport.height !=="" ? (

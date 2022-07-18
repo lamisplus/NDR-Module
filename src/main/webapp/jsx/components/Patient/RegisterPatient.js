@@ -65,9 +65,9 @@ const useStyles = makeStyles((theme) => ({
 const schema = yup.object().shape({
     dateOfRegistration: yup.date().required(),
     hospitalNumber: yup.string().required(),
-    firstName: yup.string().required(),
-    middleName: yup.string().nullable(),
-    lastName: yup.string().required(),
+    firstName: yup.string().required().matches(/^[aA-zZ\s]+$/, " "),
+    middleName: yup.string().nullable().matches(/^[aA-zZ\s]+$/, ""),
+    lastName: yup.string().required().matches(/^[aA-zZ\s]+$/, ""),
     sex: yup.number().required(),
     employmentStatus: yup.number().required(),
     highestQualification: yup.number().required(),
@@ -103,6 +103,7 @@ const UserRegistration = (props) => {
     const [topLevelUnitCountryOptions, settopLevelUnitCountryOptions]= useState([]);
     const [stateUnitOptions, setStateUnitOptions]= useState([]);
     const [districtUnitOptions, setDistrictUnitOptions]= useState([]);
+    const [checkPhoneNumberLength, setcheckPhoneNumberLength]=useState("")
     const [patientDTO, setPatientDTO]= useState({"person":"", "hivEnrollment":""})
     const userDetail = props.location && props.location.state ? props.location.state.user : null;
     const classes = useStyles();
@@ -512,7 +513,7 @@ const UserRegistration = (props) => {
     };
         //HIV INFORMATION
         const [femaleStatus, setfemaleStatus]= useState(false)
-        const [values, setValues] = useState([]);
+        //const [values, setValues] = useState([]);
         const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
         //const [saving, setSaving] = useState(false);
         //const [errors, setErrors] = useState({});
@@ -666,6 +667,21 @@ const UserRegistration = (props) => {
                 setOvcEnrolled(false)
             }
         }
+    const checkPhoneNumber=(e)=>{
+            const limit=11;
+            setValue('pnumber', e.target.value.slice(0, limit) );
+    }
+    const checkAltPhoneNumber=(e)=>{
+        const limit=11;
+        setValue('altPhonenumber', e.target.value.slice(0, limit) );
+
+    }
+    // const LastNameAlphalbetOnly=(e)=>{
+    //     console.log(e.target.value)
+    //     const result = e.target.value.replace(/(\w.+\s).+/gi, '');
+    //     console.log(result)
+    //     setValue('firstName',result );
+    // }
 
     return (
         <>
@@ -765,7 +781,9 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="lastName"
                                                         id="lastName"
+                                                        onChange={(e)=>console.log(e.target.value)}
                                                         {...register("lastName")}
+                                                        
                                                     />
                                                     {errors.lastName && <p>{errors.lastName.message}</p>}
                                                 </FormGroup>
@@ -915,13 +933,16 @@ const UserRegistration = (props) => {
                                                 <Label>Phone Number *</Label>
                                                 <input
                                                     className="form-control"
-                                                    type="tel"
+                                                    type="number"
                                                     name="pnumber"
                                                     id="pnumber"
                                                     {...register("pnumber")}
-                                                    placeholder="(234)7099999999"
+                                                    onChange={checkPhoneNumber}
+                                                    placeholder="08077665688"                                                   
+
                                                 />
                                                 {errors.pnumber && <p>{errors.pnumber.message}</p>}
+                                                
                                             </FormGroup>
                                         </div>
 
@@ -930,11 +951,12 @@ const UserRegistration = (props) => {
                                                 <Label>Alt. Phone Number</Label>
                                                 <input
                                                     className="form-control"
-                                                    type="tel"
+                                                    type="number"
+                                                    placeholder="08077665688"
                                                     name="altPhoneNumber"
                                                     id="altPhoneNumber"
+                                                    onChange={checkAltPhoneNumber}
                                                     {...register("altPhonenumber")}
-                                                    placeholder="(234)7099999999"
                                                 />
                                                 {errors.altPhonenumber && <p>{errors.altPhonenumber.message}</p>}
                                             </FormGroup>
@@ -1156,7 +1178,10 @@ const UserRegistration = (props) => {
                                                                         <Label for="contactPhoneNumber">Phone Number</Label>
                                                                         <input
                                                                             className="form-control"
-                                                                            type="text"
+                                                                            type="number"
+                                                                            min="11"
+                                                                            max="11"
+                                                                            placeholder="08077665688"
                                                                             name="contactPhoneNumber"
                                                                             id="contactPhoneNumber"
                                                                             {...register("contactPhoneNumber")}
@@ -1170,7 +1195,7 @@ const UserRegistration = (props) => {
                                                                         <Label for="contactEmail">Email</Label>
                                                                         <input
                                                                             className="form-control"
-                                                                            type="text"
+                                                                            type="email"
                                                                             name="contactEmail"
                                                                             id="contactEmail"
                                                                             {...register("contactEmail")}
@@ -1484,6 +1509,7 @@ const UserRegistration = (props) => {
                                             type="text"
                                             name="ovcNumber"
                                             id="ovcNumber"
+                                            required={ovcEnrolled}
                                             onChange={handleInputChange}
                                             value={objValues.ovcNumber}
                                             

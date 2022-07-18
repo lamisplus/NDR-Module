@@ -214,11 +214,8 @@ const Pharmacy = (props) => {
         })
         .catch(error => {
             setSaving(false);
-            if(error.apierror){
-                toast.error(error.apierror.apierror.message);
-            }else{
-                toast.error("Something went wrong. Please try again...");
-            }                    
+            let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+            toast.error(errorMessage);             
         }); 
     }
 
@@ -455,7 +452,7 @@ const Pharmacy = (props) => {
                         <h4>Drugs Information </h4>
                         <div className="row">
                             <div className="form-group mb-3 col-md-9"  >Regimen Name selected </div>
-                            <div className="form-group mb-3 col-md-4"  >Quantity Dispsend</div>
+                            <div className="form-group mb-3 col-md-4"  >Quantity Dispense</div>
                         </div>
                         {regimenList.map((input, index) => (
                             <>

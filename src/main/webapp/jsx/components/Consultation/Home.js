@@ -18,6 +18,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 
 
+
 let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
   card: {
@@ -67,6 +68,7 @@ const ClinicVisit = (props) => {
   const [errors, setErrors] = useState({});
   let temp = { ...errors }
   const classes = useStyles()
+  const [getPatientObj, setGetPatientObj] = useState({});
   const [saving, setSaving] = useState(false);
   const [clinicalStage, setClinicalStage] = useState([]);
   const [functionalStatus, setFunctionalStatus] = useState([]);
@@ -101,14 +103,14 @@ const ClinicVisit = (props) => {
     adheres: {},
     adrScreened: "",
     adverseDrugReactions: {},
-    artStatusId: patientObj.artCommence.id,
+    artStatusId: "" ,
     cd4: "",
     cd4Percentage: 0,
     clinicalNote: "",
     clinicalStageId: 0,
     facilityId: 0,
     functionalStatusId: 0,
-    hivEnrollmentId: patientObj.enrollment.id,
+    hivEnrollmentId: "",
     nextAppointment: "",
     lmpDate: "",
     oiScreened: "",
@@ -133,7 +135,7 @@ const ClinicVisit = (props) => {
   })
   const [tbObj, setTbObj] = useState({
     currentOnIpt: "",
-    couching: "",
+    coughing: "",
     antiTBDrug: "",
     nightSweat: "",
     fever: "",
@@ -148,6 +150,7 @@ const ClinicVisit = (props) => {
     AdherenceLevel();
     TBStatus();
     VitalSigns()
+    GetPatientObj()
   }, []);
   //Check for the last Vital Signs
   const VitalSigns = () => {
@@ -159,6 +162,7 @@ const ClinicVisit = (props) => {
 
         const lastVitalSigns = response.data[response.data.length - 1]
         if (lastVitalSigns.encounterDate === moment(new Date()).format("YYYY-MM-DD") === true) {
+          console.log(lastVitalSigns)
           setcurrentVitalSigns(lastVitalSigns)
           setShowCurrentVitalSigns(true)
         }
@@ -167,6 +171,22 @@ const ClinicVisit = (props) => {
         //console.log(error);
       });
   }
+    //Get The updated patient objeect
+    const GetPatientObj = () => {
+      axios
+        .get(`${baseUrl}hiv/patients`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
+          const patObJ= response.data.filter((x)=> x.id===props.patientObj.id)
+
+          setGetPatientObj(patObJ[0])
+        })
+        .catch((error) => {
+          //console.log(error);
+        });
+    }
+
   //Get list of WhoStaging
   const WhoStaging = () => {
     axios
@@ -254,13 +274,15 @@ const ClinicVisit = (props) => {
   //Handle CheckBox 
   const handleCheckBox = e => {
     if (e.target.checked) {
+      //currentVitalSigns.personId === null ? props.patientObj.id : currentVitalSigns.personId
+      console.log(currentVitalSigns)
       setVitalSignDto({ ...currentVitalSigns })
     } else {
       setVitalSignDto({
         bodyWeight: "",
         diastolic: "",
         encounterDate: "",
-        facilityId: 1,
+        facilityId: "",
         height: "",
         personId: props.patientObj.id,
         serviceTypeId: 1,
@@ -316,10 +338,13 @@ const ClinicVisit = (props) => {
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(getPatientObj)
     if(validate()){
     setSaving(true)
     objValues.visitDate = vital.encounterDate
     objValues.adverseDrugReactions = adrList
+    objValues.artStatusId = getPatientObj.artCommence.id
+    objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
     objValues['vitalSignDto'] = vital
@@ -334,11 +359,9 @@ const ClinicVisit = (props) => {
       })
       .catch(error => {
         setSaving(false);
-        if (error.apierror) {
-          toast.error(error.apierror.message);
-        } else {
-          toast.error("Something went wrong. Please try again...");
-        }
+        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+        toast.error(errorMessage);
+       
       });
     }
   }
@@ -656,11 +679,27 @@ const ClinicVisit = (props) => {
             {/* TB Screening Form */}
             <TBScreening tbObj={tbObj} setTbObj={setTbObj} />
             <br />
+            <Label as='a' color='blue' ribbon>
+              Next Clinical Appointment Date
+            </Label>
+            <br /><br />
+            {/* TB Screening Form */}
+            <Input
+                    type="date"
+                    name="nextAppointment"
+                    id="nextAppointment"
+                    value={vital.nextAppointment}
+                    onChange={handleInputChange}
+                    max={moment(new Date()).format("YYYY-MM-DD")}
+                    required
+                  />
+            <br />
             <MatButton
               type="submit"
               variant="contained"
               color="primary"
               className={classes.button}
+              disabled={saving}
               startIcon={<SaveIcon />}
               onClick={handleSubmit}
             >
@@ -687,12 +726,12 @@ const ClinicVisit = (props) => {
                         View History
                     </Button>
                   </List.Item> */}
-              <List.Item>
+              {/* <List.Item>
                 <Button icon labelPosition='right' color='blue' fluid>
                   <Icon name='calendar alternate' />
                   Appointment
                 </Button>
-              </List.Item>
+              </List.Item> */}
             </List>
             <Card>
               <Card.Content>

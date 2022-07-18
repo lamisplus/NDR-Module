@@ -87,12 +87,12 @@ const TBScreeningForm = (props) => {
               </div>
               <div className="form-group mb-3 col-md-4">
               <FormGroup>
-                <Label >Couching?</Label>
+                <Label >coughing?</Label>
                 <Input
                     type="select"
-                    name="couching"
-                    id="couching"
-                    value={props.tbObj.couching}
+                    name="coughing"
+                    id="coughing"
+                    value={props.tbObj.coughing}
                     onChange={handleInputChange}
                     required
                     >
