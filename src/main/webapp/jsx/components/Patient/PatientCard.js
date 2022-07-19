@@ -154,12 +154,7 @@ function PatientCard(props) {
               }
               return age_now + " year(s)";
     };
-    const loadAdultEvaluation =(row)=> {
-      props.setActiveContent('adult-evaluation')
-    }
-    const loadMentalHealthScreening = ()=>{
-      props.setActiveContent('mhs')
-    }
+
     const loadChildEvaluation =(row)=> {
       props.setActiveContent('child-evaluation')
     }
@@ -331,10 +326,10 @@ function PatientCard(props) {
                         }}
                       /> */}
                                
-                <div className={classes.column}>
+                {/* <div className={classes.column}>
                   <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }><span style={{fontSize:"11px"}}>Initial Clinic Evaluation</span></Button>
-                </div>
-                {patientCurrentStatus !==true && props.patientObj.enrollment.targetGroupId !=="456" ?                   
+                </div> */}
+                {/* {patientCurrentStatus !==true && props.patientObj.enrollment.targetGroupId !=="456" ?                   
                   (
                     <>
                       <div className={classes.column}>
@@ -342,10 +337,10 @@ function PatientCard(props) {
                       </div>
                     </>
                   ) :""           
-              }
+                } */}
                {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
-                {" "}<Button secondary onClick={() => loadArt(patientObj)} ><span style={{fontSize:"11px"}}>ART Commencement </span></Button>
+                {" "}<Button primary onClick={() => loadArt(patientObj)} ><span style={{fontSize:"11px"}}>ART Commencement </span></Button>
                 </div>
                 )
                }

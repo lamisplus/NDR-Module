@@ -10,14 +10,9 @@ import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
-import { useHistory } from "react-router-dom";
-import {  Modal, Button } from "react-bootstrap";
-import "react-widgets/dist/css/react-widgets.css";
-import { DateTimePicker } from "react-widgets";
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
-import moment from "moment";
 import { Spinner } from "reactstrap";
+import { Alert } from "react-bootstrap";
+import { Icon,Button, } from 'semantic-ui-react'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -57,10 +52,11 @@ const useStyles = makeStyles(theme => ({
 const MentalHealthScreening = (props) => {
 
     const patientObj = props.patientObj;
-    let history = useHistory();
+    //let history = useHistory();
     const classes = useStyles()
     const [objValues, setObjValues] = useState({patient_id: "",mhs1:"",mhs2:"" ,mhs3:"" ,mhs4:"",mhs5:""});
     const [saving, setSaving] = useState(false);
+    const [referrer, setReferrer] = useState(false);
     const [errors, setErrors] = useState({});
  
     const handleInputChangeKP = e => {
@@ -78,10 +74,16 @@ const MentalHealthScreening = (props) => {
               .then(response => {
                   setSaving(false);
                   toast.success("Mental health screening save successful");
+                  if(objValues.mhs1==="YES" || objValues.mhs2==="YES" || objValues.mhs4==="YES" || objValues.mhs4==="YES" || objValues.mhs5==="YES" ){
+                    setReferrer(true)
+                  }else{
+                    setReferrer(false)
+                  }
                   //history.push("/")
               })
               .catch(error => {
                   setSaving(false);
+                  setReferrer(false)
                   toast.success("Mental health screening save successful");
               });
           
@@ -93,8 +95,24 @@ const MentalHealthScreening = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                    <h2>Mental Health Screening Form</h2>
+                    <div className="col-md-6">
+                        <h2>Mental Health Screening Form </h2>
+                    </div>
+                    <div className="col-md-6">
+                        <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+                    </div>
                     <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    {referrer && (
+                        <Alert
+                        variant="info"
+                        className="alert-dismissible solid fade show"
+                        >
+                        <p>Please refer patient to psychiatric hospital</p>
+                        </Alert>
+                    )}
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself?</Label>
@@ -208,7 +226,7 @@ const MentalHealthScreening = (props) => {
                         onClick={props.toggle}
                     >
                     <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
+                    </MatButton>
                 
                     </form>
                 </CardBody>

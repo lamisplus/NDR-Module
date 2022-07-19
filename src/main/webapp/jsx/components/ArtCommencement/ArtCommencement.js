@@ -468,6 +468,20 @@ const ArtCommencement = (props) => {
                                         
                                         </FormGroup>
                                     </div>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Date of Viral Load at Start of ART</Label>
+                                        <Input
+                                            type="date"
+                                            name="viralLoad"
+                                            id="viralLoad"
+                                            //onChange={handleInputChange}
+                                            //value={objValues.viralLoad}
+                                            required
+                                        />
+                                        
+                                        </FormGroup>
+                                    </div>
                                     </>
                                     )}
                                     <div className="form-group mb-3 col-md-4">
@@ -479,6 +493,7 @@ const ArtCommencement = (props) => {
                                             id="whoStagingId"
                                             value={objValues.whoStagingId}
                                             onChange={handleInputChange}
+                                            max= {moment(new Date()).format("YYYY-MM-DD") }
                                             required
                                             >
                                              <option value=""> Select</option>

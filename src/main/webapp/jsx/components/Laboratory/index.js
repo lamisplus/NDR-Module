@@ -10,11 +10,12 @@ import "react-widgets/dist/css/react-widgets.css";
 import { Spinner } from "reactstrap";
 import { url as baseUrl, token } from "../../../api";
 import moment from "moment";
-import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
+import { List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { toast} from "react-toastify";
 import {Alert } from "react-bootstrap";
+import { Icon,Button, } from 'semantic-ui-react'
 
 
 const useStyles = makeStyles(theme => ({ 
@@ -225,8 +226,18 @@ const Laboratory = (props) => {
 
   return (      
       <div >
+
+        <div className="row">
+        <div className="col-md-6">
         <h2>Laboratory Test Order</h2>
-                   
+        </div>
+        <div className="col-md-6">
+            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <Card >
             <CardBody>
             {moduleStatus==="1" && (
@@ -431,7 +442,7 @@ const Laboratory = (props) => {
             )} 
             </CardBody>
         </Card> 
-                   
+        </div>             
     </div>
   );
 }

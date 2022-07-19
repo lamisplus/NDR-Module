@@ -6,7 +6,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { url as baseUrl, token } from "../../../api";
-import {Badge, Alert } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 
 
 

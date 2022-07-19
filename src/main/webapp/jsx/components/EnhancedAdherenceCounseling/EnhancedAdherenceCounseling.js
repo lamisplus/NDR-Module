@@ -11,13 +11,10 @@ import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
 import { useHistory } from "react-router-dom";
-import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-import { DateTimePicker } from "react-widgets";
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
 import { Spinner } from "reactstrap";
+import { Icon,Button, } from 'semantic-ui-react'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -100,7 +97,17 @@ const Enrollment = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
+                    
+                    <div className="col-md-6">
                     <h2>Enhanced Adherence Counselling </h2>
+                        </div>
+                        <div className="col-md-6">
+                            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+                        </div>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="participant_id">Date of 1st EAC Session </Label>

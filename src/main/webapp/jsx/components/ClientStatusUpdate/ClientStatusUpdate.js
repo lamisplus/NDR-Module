@@ -6,12 +6,11 @@ import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
-import { useHistory } from "react-router-dom";
 import "react-widgets/dist/css/react-widgets.css";
-import { DateTimePicker } from "react-widgets";
 import moment from "moment";
 import { Spinner } from "reactstrap";
 import { url as baseUrl, token } from "../../../api";
+import { Icon,Button, } from 'semantic-ui-react'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -170,7 +169,17 @@ const ClientStatusUpdate = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                        <h2> Client Status Update </h2>
+
+                    <div className="col-md-6">
+                    <h2> Client Status Update </h2>
+                    </div>
+                    <div className="col-md-6">
+                        <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >New Status</Label>
@@ -344,7 +353,7 @@ const ClientStatusUpdate = (props) => {
                     >
                     <span style={{ textTransform: "capitalize" }}>Cancel</span>
                 </MatButton>
-                
+               
                 </form>
                 </CardBody>
             </Card>                  

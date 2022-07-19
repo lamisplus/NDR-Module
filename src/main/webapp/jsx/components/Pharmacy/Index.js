@@ -11,6 +11,7 @@ import { Spinner } from "reactstrap";
 import Select from "react-select";
 import { url as baseUrl, token } from "../../../api";
 import { toast} from "react-toastify";
+import { Icon,Button, } from 'semantic-ui-react'
 
 
 const useStyles = makeStyles(theme => ({ 
@@ -222,8 +223,19 @@ const Pharmacy = (props) => {
 
 
   return (      
-      <div >
-        <h2>Pharmacy Drug Refill</h2>        
+      <div>
+ 
+        <div className="row">
+        <div className="col-md-6">
+        <h2>Pharmacy Drug Refill</h2> 
+        </div>
+        <div className="col-md-6">
+            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <Card >
             <CardBody>
             <form >
@@ -533,6 +545,7 @@ const Pharmacy = (props) => {
                 </form>
             </CardBody>
         </Card> 
+    </div>
     </div>
   );
 }

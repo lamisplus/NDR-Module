@@ -369,19 +369,7 @@ const ClinicVisit = (props) => {
 
   return (
     <div>
-    <div className="row">
-
-      <div className="col-md-6">
-        <h2>Clinic Follow-up Visit</h2>
-        </div>
-        <div className="col-md-6">
-            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous Clinic Visit</Button>
-        </div>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-      </div>
+      <h2>Clinic Follow-up Visit</h2>
       <Grid columns='equal'>
         {/* <Grid.Column>
           {showCurrentVitalSigns && (
@@ -436,7 +424,7 @@ const ClinicVisit = (props) => {
 
           </Segment>
         </Grid.Column> */}
-        <Grid.Column >
+        <Grid.Column width={12}>
           <Segment>
             <Label as='a' color='blue' ribbon>
               <b>Vital Signs</b>
@@ -721,6 +709,57 @@ const ClinicVisit = (props) => {
                 <span style={{ textTransform: "capitalize" }}>Saving...</span>
               )}
             </MatButton>
+          </Segment>
+        </Grid.Column>
+        <Grid.Column>
+          <Segment>
+            <List>
+              <List.Item>
+                {/* <Button icon labelPosition='right' color='teal' fluid onClick={() => PostPatientService()}>
+                  <Icon name='external alternate' />
+                  Post Patient
+                </Button> */}
+              </List.Item>
+              {/* <List.Item>
+                  <Button icon labelPosition='right' color='green' fluid>
+                      <Icon name='eye' />
+                        View History
+                    </Button>
+                  </List.Item> */}
+              {/* <List.Item>
+                <Button icon labelPosition='right' color='blue' fluid>
+                  <Icon name='calendar alternate' />
+                  Appointment
+                </Button>
+              </List.Item> */}
+            </List>
+            <Card>
+              <Card.Content>
+                <b>Previous Clinical Notes</b>
+              </Card.Content>
+              <Card.Content>
+                {/* <Feed>
+                <Feed.Event>
+                  <Feed.Content>
+                    <Feed.Date content='20-03-2022' />
+                    <Feed.Summary>
+                      The malaria is plus 3 and and need more attention
+                    </Feed.Summary>
+                  </Feed.Content>
+                </Feed.Event>
+                <hr/>
+                <Feed.Event>
+                  <Feed.Content>
+                    <Feed.Date content='20-05-2022' />
+                    <Feed.Summary>
+                      Blood presure is too high
+                    </Feed.Summary>
+                  </Feed.Content>
+                </Feed.Event>
+              </Feed> */}
+              </Card.Content>
+            </Card>
+
           </Segment>
         </Grid.Column>
       </Grid>
