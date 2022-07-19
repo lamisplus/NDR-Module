@@ -28,12 +28,12 @@ public class Observation extends HivAuditEntity  implements Persistable<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfObservation;
     @ManyToOne
-    @JoinColumn(name = "person_uuid", referencedColumnName ="uuid" )
+    @JoinColumn(name = "person_uuid", referencedColumnName ="uuid", updatable = false)
     private Person person;
     @Column(name = "type", unique = true)
     private String type;
 
-    @Column(name = "uuid", unique = true)
+    @Column(name = "uuid", unique = true, updatable = false)
     private String uuid;
 
     @Type(type = "jsonb")

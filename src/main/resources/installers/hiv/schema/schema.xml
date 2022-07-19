@@ -189,10 +189,12 @@
 
     <changeSet id="20222005-007" author="amos-data-fi">
         <sql>
-            CREATE TABLE hiv_regimen_resolver(
-                regimensys character varying(100),
-                regimen    character varying(100)
-             );
+                CREATE TABLE hiv_regimen_resolver
+                    (
+                    id      VARCHAR(255) NOT NULL,
+                    regimen VARCHAR(255),
+                    CONSTRAINT pk_hiv_regimen_resolver PRIMARY KEY (id)
+                    );
         </sql>
     </changeSet>
     <changeSet id="20222005-008" author="amos-data-fi">

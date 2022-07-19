@@ -66,4 +66,6 @@ public class HIVStatusTracker extends HivAuditEntity implements Persistable<Long
     public boolean isNew() {
         return id == null;
     }
+
+
 }
