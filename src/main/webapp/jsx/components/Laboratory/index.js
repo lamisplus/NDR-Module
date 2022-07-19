@@ -200,6 +200,10 @@ const Laboratory = (props) => {
         })
         return Object.values(temp).every(x => x == "")
     }
+    const labHistory =()=>{
+        props.setActiveContent('lab-history')
+        
+    }
 
     const handleSubmit = (e) => {        
         e.preventDefault();   
@@ -232,7 +236,7 @@ const Laboratory = (props) => {
         <h2>Laboratory Test Order</h2>
         </div>
         <div className="col-md-6">
-            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+            <Button icon color='teal' className='float-end' onClick={()=>labHistory()}><Icon name='eye'  /> Previous History</Button>
         </div>
         <br/>
         <br/>

@@ -339,7 +339,7 @@ const RecentHistory = (props) => {
         <div className="col-xl-4 col-xxl-4 col-lg-4">
           <div className="card">
             <div className="card-header border-0 pb-0">
-              <h4 className="card-title">Viral Load Detail</h4>
+              <h4 className="card-title">Laboratory Orders</h4>
             </div>
             <div className="card-body">
               <PerfectScrollbar
