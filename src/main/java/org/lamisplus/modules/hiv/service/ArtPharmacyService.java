@@ -17,13 +17,10 @@ import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
-import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenRepository;
-import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
-import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -38,17 +35,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ArtPharmacyService {
     private final ArtPharmacyRepository artPharmacyRepository;
-    private final PersonService personService;
     private final PersonRepository personRepository;
     private final RegimenRepository regimenRepository;
-
-    private final HivEnrollmentRepository enrollmentRepository;
-
-
     private final CurrentUserOrganizationService organizationUtil;
 
+    private final ArtCommenceService artCommenceService;
+
     public RegisterArtPharmacyDto registerArtPharmacy(RegisterArtPharmacyDto dto) throws IOException {
-        getVisitIdIfVisitIsActive (dto);
+        Visit visit = artCommenceService.processAndCreateVisit (dto.getPersonId ());
+        dto.setVisitId (visit.getId ());
         if (dto.getVisitId () == null)
             throw new IllegalTypeException (Visit.class, "visit date", "kindly create a clinic visit for this patient");
         ArtPharmacy artPharmacy = convertRegisterDtoToEntity (dto);
@@ -94,8 +89,9 @@ public class ArtPharmacyService {
         BeanUtils.copyProperties (entity, dto);
         log.info (" dto 1st:  {}", dto);
         JsonNode extra = entity.getExtra ();
-        if(extra.hasNonNull ("regimens")){
-            JsonNode regimens = extra.get ("regimens");
+        String name = "regimens";
+        if(extra.hasNonNull (name)){
+            JsonNode regimens = extra.get (name);
             ObjectMapper mapper = new ObjectMapper ();
             ObjectReader reader = mapper.readerFor(new TypeReference<Set<RegimenRequestDto>> () {});
             Set<RegimenRequestDto>  result = reader.readValue (regimens);
@@ -126,14 +122,5 @@ public class ArtPharmacyService {
         return new EntityNotFoundException (Person.class, "id ", "" + personId);
     }
 
-    private void getVisitIdIfVisitIsActive(RegisterArtPharmacyDto registerArtPharmacyDto) {
-        PersonResponseDto person = personService.getPersonById (registerArtPharmacyDto.getPersonId ());
-        if (person != null) {
-            Long visitId = person.getVisitId ();
-            if (visitId != null) {
-                registerArtPharmacyDto.setVisitId (visitId);
-            }
-        }
-    }
 
 }
