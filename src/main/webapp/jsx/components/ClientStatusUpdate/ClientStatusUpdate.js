@@ -4,19 +4,13 @@ import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
-// import { Alert } from 'reactstrap';
-// import { Spinner } from 'reactstrap';
 import axios from "axios";
 import { toast} from "react-toastify";
-import { url as baseUrl } from "./../../../api";
-import { token as token } from "./../../../api";
-import { useHistory } from "react-router-dom";
-import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-import { DateTimePicker } from "react-widgets";
-
 import moment from "moment";
 import { Spinner } from "reactstrap";
+import { url as baseUrl, token } from "../../../api";
+import { Icon,Button, } from 'semantic-ui-react'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -56,42 +50,117 @@ const useStyles = makeStyles(theme => ({
 const ClientStatusUpdate = (props) => {
 
     const patientObj = props.patientObj;
-    let history = useHistory();
     const classes = useStyles()
-    const [transferStatus, setTransferStatus] = useState([])
+    const [trackingOutCome, setTrankingOutCome] = useState([])
+    const [hivStatus, setHivStatus] = useState([]);
+    const [reasonForInteruption, setReasonForInteruption] = useState([]);
+    const [causeDeath, setCauseDeath] = useState([]);
     const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({patient_id: "",current_status:""});
+    const [objValues, setObjValues] = useState({ agreedDate: null,
+                                                causeOfDeath: null,
+                                                facilityId: "",
+                                                hivStatus: "",
+                                                personId: "",
+                                                reasonForInterruption: "",
+                                                statusDate: null,
+                                                trackDate:null,
+                                                trackOutcome: "",
+                                                visitId: null
+                                            });
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
- 
+    useEffect(() => {
+        CauseDeath();
+        ReasonForInteruption();
+        HIVStatus();
+        TrackingOutcome();
+      }, []);
+
+    //Get list of HIV_STATUS
+    const HIVStatus =()=>{
+        axios
+           .get(`${baseUrl}application-codesets/v2/HIV_STATUS`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setHivStatus(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    //Tracking Outcome HIV_STATUS_TXML
+    const TrackingOutcome =()=>{
+        axios
+           .get(`${baseUrl}application-codesets/v2/HIV_STATUS_TXML`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setTrankingOutCome(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    // REASON_INTERRUPTION
+    const ReasonForInteruption =()=>{
+        axios
+           .get(`${baseUrl}application-codesets/v2/REASON_INTERRUPTION`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setReasonForInteruption(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    // CAUSE_DEATH
+    const CauseDeath =()=>{
+        axios
+           .get(`${baseUrl}application-codesets/v2/CAUSE_DEATH`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setCauseDeath(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
           
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
-        e.preventDefault();
-        
-          objValues.patient_id= patientObj.id
+        e.preventDefault();        
+          objValues.personId= patientObj.id
 
           setSaving(true);
-          axios.post(`${baseUrl}covid/patientstatus`,objValues,
+          axios.post(`${baseUrl}hiv/status/`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  toast.success("Transfer successful");
-                  props.toggle()
-                  props.loadPatients()
-                  //history.push("/")
+                  toast.success("Client Status Update Successfully!");
+                  props.setActiveContent('recent-history')
 
               })
               .catch(error => {
                   setSaving(false);
                   toast.error("Something went wrong");
-              });
-          
+              });          
     }
 
   return (      
@@ -100,43 +169,54 @@ const ClientStatusUpdate = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                        <h2> Client Status Update </h2>
+
+                    <div className="col-md-6">
+                    <h2> Client Status Update </h2>
+                    </div>
+                    <div className="col-md-6">
+                        <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >New Status</Label>
                             <Input
                                 type="select"
-                                name="gender"
-                                id="gender"
-                                value={values.gender}
+                                name="hivStatus"
+                                id="hivStatus"
+                                value={values.hivStatus}
                                 onChange={handleInputChange}
                                 required
                                 >
-                                <option value=""> Please Select</option>
-                                <option value="1"> Male</option>
-                                <option value="2"> Female</option>
+                                <option value="">Select</option>
+                                {hivStatus.map((value) => (
+                                <option key={value.id} value={value.display}>
+                                    {value.display}
+                                </option>
+                                ))}
                             </Input>
-                            {errors.gender !=="" ? (
-                                <span className={classes.error}>{errors.gender}</span>
+                            {errors.hivStatus !=="" ? (
+                                <span className={classes.error}>{errors.hivStatus}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of New Status </Label>
-                            <DateTimePicker
-                                time={false}
-                                name="dateRegistration"
-                                id="dateRegistration"
-                                value={values.regDate}
-                                onChange={value1 =>
-                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                }
-                                
-                                    max={new Date()}
-                            />
-                            {errors.participant_id !=="" ? (
-                                <span className={classes.error}>{errors.participant_id}</span>
+                            <Label for="participant_id">Date of New Status </Label>                           
+                             <Input
+                                type="date"
+                                name="statusDate"
+                                id="statusDate"
+                                value={objValues.statusDate}
+                                onChange={handleInputChange}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                required
+                            /> 
+                            {errors.statusDate !=="" ? (
+                                <span className={classes.error}>{errors.statusDate}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -145,41 +225,106 @@ const ClientStatusUpdate = (props) => {
                             <Label >Tracking Outcome</Label>
                             <Input
                                 type="select"
-                                name="gender"
-                                id="gender"
-                                value={values.gender}
+                                name="trackOutcome"
+                                id="trackOutcome"
+                                value={objValues.trackOutcome}
                                 onChange={handleInputChange}
                                 required
                                 >
-                                <option value=""> Please Select</option>
-                                <option value="1"> Male</option>
-                                <option value="2"> Female</option>
+                                <option value=""> Select</option>
+                                {trackingOutCome.map((value) => (
+                                <option key={value.id} value={value.display}>
+                                    {value.display}
+                                </option>
+                                ))}
                             </Input>
-                            {errors.gender !=="" ? (
-                                <span className={classes.error}>{errors.gender}</span>
+                            {errors.trackOutcome !=="" ? (
+                                <span className={classes.error}>{errors.trackOutcome}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="participant_id">Date of Tracked</Label>
-                            <DateTimePicker
-                                time={false}
-                                name="dateRegistration"
-                                id="dateRegistration"
-                                value={values.regDate}
-                                onChange={value1 =>
-                                    setValues({ ...values, dob: moment(value1).format("YYYY-MM-DD") })
-                                }
-                                
-                                    max={new Date()}
-                            />
-                            {errors.participant_id !=="" ? (
-                                <span className={classes.error}>{errors.participant_id}</span>
+                           
+                            <Input
+                                type="date"
+                                name="trackDate"
+                                id="trackDate"
+                                value={objValues.trackDate}
+                                onChange={handleInputChange}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                required
+                            /> 
+                            {errors.trackDate !=="" ? (
+                                <span className={classes.error}>{errors.trackDate}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
-                        
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="participant_id">Date Agreed to Return</Label>
+                            
+                            <Input
+                                type="date"
+                                name="agreedDate"
+                                id="agreedDate"
+                                value={objValues.agreedDate}
+                                onChange={handleInputChange}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                required
+                            /> 
+                            {errors.agreedDate !=="" ? (
+                                <span className={classes.error}>{errors.agreedDate}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Reason for Interruption</Label>
+                            <Input
+                                type="select"
+                                name="reasonForInterruption"
+                                id="reasonForInterruption"
+                                value={objValues.reasonForInterruption}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                <option value=""> Select</option>
+                                {reasonForInteruption.map((value) => (
+                                <option key={value.id} value={value.display}>
+                                    {value.display}
+                                </option>
+                                ))}
+                            </Input>
+                            {errors.reasonForInterruption !=="" ? (
+                                <span className={classes.error}>{errors.reasonForInterruption}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Cause of Death</Label>
+                            <Input
+                                type="select"
+                                name="causeOfDeath"
+                                id="causeOfDeath"
+                                value={objValues.causeOfDeath}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                <option value=""> Select</option>
+                                {causeDeath.map((value) => (
+                                <option key={value.id} value={value.display}>
+                                    {value.display}
+                                </option>
+                                ))}
+                            </Input>
+                            {errors.trackOutcome !=="" ? (
+                                <span className={classes.error}>{errors.trackOutcome}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
                     </div>
                     
                     {saving ? <Spinner /> : ""}
@@ -208,7 +353,7 @@ const ClientStatusUpdate = (props) => {
                     >
                     <span style={{ textTransform: "capitalize" }}>Cancel</span>
                 </MatButton>
-                
+               
                 </form>
                 </CardBody>
             </Card>                  
