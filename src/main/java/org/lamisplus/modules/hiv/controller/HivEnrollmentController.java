@@ -38,14 +38,14 @@ public class HivEnrollmentController {
     }
 
     @PostMapping(value = "patient", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivPatientDto> RegisterHivPatient(@RequestBody HivPatientEnrollmentDto hivPatientEnrollmentDto) {
+    public ResponseEntity<HivPatientDto> registerHivPatient(@RequestBody HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         return ResponseEntity.ok (patientService.registerAndEnrollHivPatient(hivPatientEnrollmentDto));
     }
     @GetMapping(value = "patient/checked-in", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<HivPatientDto>> getHivCheckInPatients() {
         return ResponseEntity.ok (patientService.getHivCheckedInPatients ());
     }
-    @GetMapping(value = "patient/id", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "patient/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HivPatientDto> getHivPatientById(@PathVariable("id") Long id) {
         return ResponseEntity.ok (patientService.getHivPatientById (id));
     }

@@ -9,13 +9,8 @@ import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
-import org.lamisplus.modules.patient.domain.dto.EncounterRequestDto;
-import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
-import org.lamisplus.modules.patient.domain.dto.VisitDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
-import org.lamisplus.modules.patient.service.EncounterService;
-import org.lamisplus.modules.patient.service.PersonService;
-import org.lamisplus.modules.patient.service.VisitService;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
@@ -24,7 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,13 +35,7 @@ public class ArtClinicVisitService {
 
     private final CurrentUserOrganizationService organizationUtil;
 
-    private  final VisitService visitService;
-
-    private final EncounterService encounterService;
-
-    private final  ArtCommenceService artCommenceService;
-
-    private  final PersonService personService;
+    private final ArtCommenceService artCommenceService;
 
     private  final VitalSignRepository vitalSignRepository;
 
@@ -57,9 +46,14 @@ public class ArtClinicVisitService {
         HivEnrollment hivEnrollment = hivEnrollmentRepository
                 .findById (hivEnrollmentId)
                 .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", ""+ hivEnrollmentId));
-        if (!hivEnrollment.getPerson ().getId ().equals (artClinicVisitDto.getPersonId ()))
-            throw new EntityNotFoundException (Person.class, "personId", "" + artClinicVisitDto.getPersonId ());
-        getVisitIdIfVisitIsActive (artClinicVisitDto, hivEnrollment.getPerson ().getId ());
+        Long personId = artClinicVisitDto.getPersonId ();
+        if (! Objects.equals (hivEnrollment.getPerson ().getId (), personId))
+            throw new EntityNotFoundException (Person.class, "personId", "" + personId);
+        Visit visit = artCommenceService.processAndCreateVisit (personId);
+        if(visit != null){
+            artClinicVisitDto.setVisitId (visit.getId ());
+            artClinicVisitDto.getVitalSignDto ().setVisitId (visit.getId ());
+        }
         Long vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
@@ -71,16 +65,6 @@ public class ArtClinicVisitService {
     }
 
 
-
-    private void getVisitIdIfVisitIsActive(ARTClinicVisitDto artClinicVisitDto, Long personId) {
-        PersonResponseDto person = personService.getPersonById (personId);
-        if(person != null){
-            Long visitId = person.getVisitId ();
-            if(visitId != null){
-                artClinicVisitDto.setVisitId (visitId);
-            }
-        }
-    }
 
 
     public ARTClinicVisitDto updateClinicVisit(Long id, ARTClinicVisitDto artClinicVisitDto) {
@@ -134,9 +118,6 @@ public class ArtClinicVisitService {
     @NotNull
     public ARTClinical convertDtoToART(ARTClinicVisitDto artClinicVisitDto, Long vitalSignId) {
         ARTClinical artClinical = new ARTClinical ();
-        if(artClinicVisitDto.getVisitId () == null){
-            processAndCreatePatientVisitAndEncounter (artClinicVisitDto, artClinical);
-        }
         log.info ("converted Dto 1 {}", artClinicVisitDto);
         BeanUtils.copyProperties (artClinicVisitDto, artClinical);
         VitalSign vitalSign = getVitalSign (vitalSignId);
@@ -148,23 +129,6 @@ public class ArtClinicVisitService {
 
 
 
-    private void processAndCreatePatientVisitAndEncounter(ARTClinicVisitDto artClinicVisitDto, ARTClinical artClinical) {
-        VisitDto visitDto = new VisitDto ();
-        visitDto.setVisitStartDate (artClinicVisitDto.getVisitDate ());
-        visitDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
-        visitDto.setPersonId (artClinicVisitDto.getPersonId ());
-        VisitDto visit = visitService.createVisit (visitDto);
-        EncounterRequestDto encounterRequestDto = new EncounterRequestDto ();
-        encounterRequestDto.setVisitId (visit.getId ());
-        Set<String> hivServiceCodes = artCommenceService.getHivServiceCodes ();
-        encounterRequestDto.setServiceCode (hivServiceCodes);
-        encounterRequestDto.setFacilityId (organizationUtil.getCurrentUserOrganization ());
-        encounterRequestDto.setEncounterDate (artClinicVisitDto.getVisitDate ());
-        encounterRequestDto.setStatus ("PENDING");
-        encounterRequestDto.setPersonId (artClinicVisitDto.getPersonId ());
-        encounterService.registerEncounter (encounterRequestDto);
-        artClinical.setVisitId (visit.getId ());
-    }
 
     private VitalSign getVitalSign(Long vitalSignId){
        return vitalSignRepository.findById (vitalSignId).orElseThrow (() -> new EntityNotFoundException (VitalSign.class, "id", String.valueOf (vitalSignId)));
