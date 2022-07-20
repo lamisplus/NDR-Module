@@ -64,6 +64,7 @@ const styles = theme => ({
 
 function PatientCard(props) {
   const { classes } = props;
+  const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
   const patientObjs = props.patientObj ? props.patientObj : {}
   const permissions= props.permissions ? props.permissions : [];
   const [patientObj, setpatientObj] = useState(patientObjs)
@@ -82,34 +83,34 @@ function PatientCard(props) {
     CheckBiometric();
   }, [props.patientObj]);
 
- //Get list of KP
- const CheckBiometric =()=>{
-    axios
-       .get(`${baseUrl}modules/check?moduleName=biometric`,
-           { headers: {"Authorization" : `Bearer ${token}`} }
-       )
-       .then((response) => {
-           setBiometricStatus(response.data);
-           if(response.data===true){
-            axios
-                .get(`${baseUrl}biometrics/devices`,
-                    { headers: {"Authorization" : `Bearer ${token}`} }
-                )
-                .then((response) => {
-                    setDevices(response.data);
-                    
-                })
-                .catch((error) => {
-                    console.log(error)
-                });
-           
-            }
-       })
-       .catch((error) => {
-       //console.log(error);
-       });
-   
-    }
+  //Get list of KP
+  const CheckBiometric =()=>{
+      axios
+        .get(`${baseUrl}modules/check?moduleName=biometric`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            setBiometricStatus(response.data);
+            if(response.data===true){
+              axios
+                  .get(`${baseUrl}biometrics/devices`,
+                      { headers: {"Authorization" : `Bearer ${token}`} }
+                  )
+                  .then((response) => {
+                      setDevices(response.data);
+                      
+                  })
+                  .catch((error) => {
+                      console.log(error)
+                  });
+            
+              }
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+  }
     ///GET LIST OF Patients
     async function PatientCurrentStatus() {
         axios
@@ -153,9 +154,7 @@ function PatientCard(props) {
               }
               return age_now + " year(s)";
     };
-    const loadAdultEvaluation =(row)=> {
-      props.setActiveContent('adult-evaluation')
-    }
+
     const loadChildEvaluation =(row)=> {
       props.setActiveContent('child-evaluation')
     }
@@ -294,14 +293,13 @@ function PatientCard(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.details}>
                 
-                    <Button
+                    {/* <Button
                       color='red'
                       content='BloodType'
                       //icon='heart'
                       label={{ basic: true, color: 'red', pointing: 'left', content: 'AB+' }}
-                    />
-                                  
-                    <Button
+                    /> */}                                  
+                    {/* <Button
                         basic
                         color='blue'
                         content='Height'
@@ -313,8 +311,8 @@ function PatientCard(props) {
                             pointing: 'left',
                             content: '74.5 in',
                         }}
-                      />              
-                      <Button
+                      />               */}
+                      {/* <Button
                         basic
                         color='blue'
                         content='Weight'
@@ -326,28 +324,27 @@ function PatientCard(props) {
                             pointing: 'left',
                             content: '74.5 in',
                         }}
-                        />
+                      /> */}
                                
-                <div className={classes.column}>
-                  <Button primary  floated='right' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }>Initial Clinic Evaluation</Button>
-                </div>
+                {/* <div className={classes.column}>
+                  <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }><span style={{fontSize:"11px"}}>Initial Clinic Evaluation</span></Button>
+                </div> */}
+                {/* {patientCurrentStatus !==true && props.patientObj.enrollment.targetGroupId !=="456" ?                   
+                  (
+                    <>
+                      <div className={classes.column}>
+                        <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }><span style={{fontSize:"11px"}}>Mental Health Screening</span></Button>
+                      </div>
+                    </>
+                  ) :""           
+                } */}
                {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
-                {" "}<Button secondary onClick={() => loadArt(patientObj)} >ART Commencement </Button>
+                {" "}<Button primary onClick={() => loadArt(patientObj)} ><span style={{fontSize:"11px"}}>ART Commencement </span></Button>
                 </div>
                 )
                }
                     
-                {/* <div className={classes.column}>
-                   
-                    <div>
-                     
-                    </div>
-                    <div>
-                      
-                    </div>    
-                   
-                </div> */}
                 </ExpansionPanelDetails>
                 <Divider />
                 <ExpansionPanelActions expandIcon={<ExpandMoreIcon />}>
@@ -355,7 +352,7 @@ function PatientCard(props) {
                 </ExpansionPanelActions>
             </ExpansionPanel>
      
-      <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus}/>
+      <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus} setArt={props.setArt}/>
       <CaptureBiometric modalstatus={biometricModal} togglestatus={BiometricModalToggle} patientId={patientObj.id} biometricDevices={devices} setPatientBiometricStatus={setPatientBiometricStatus} />
     </div>
   );

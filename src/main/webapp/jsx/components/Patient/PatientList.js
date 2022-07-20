@@ -35,6 +35,7 @@ import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
 import { FaUserPlus } from "react-icons/fa";
 import {TiArrowForward} from 'react-icons/ti'
+
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -102,27 +103,28 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-const patientObjList=[{"id":1,"visitId":1,"active":true,"surname":"Adegbite","firstName":"Elijah","otherName":"","gender":{"id":3,"display":"Transgender(Female to male)"},"deceased":false,"maritalStatus":{"id":6,"display":"Married"},"employmentStatus":{"id":89,"display":"Employed"},"education":{"id":11,"display":"Senior Secondary"},"organization":null,"dateOfBirth":"1978-06-14","deceasedDateTime":null,"identifier":{"identifier":[{"type":"HospitalNumber","value":"445t","assignerId":1}]},"contact":null,"contactPoint":{"contactPoint":[{"type":"email","value":"mathewadegbite@gmail.com"},{"type":"phone","value":"09077772883"}]},"address":{"address":[{"city":"1 Governor Road Ikotun Lagos","line":[""],"stateId":26,"district":"557","countryId":1,"postalCode":"","organisationUnitId":0}]},"dateOfRegistration":"2022-06-04","isDateOfBirthEstimated":true}]
-const Patients = (props) => {
-    
+
+const Patients = (props) => {    
     const [patientList, setPatientList] = useState([])
-    const [patientObj, setpatientObj] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         patients()
       }, []);
         ///GET LIST OF Patients
         async function patients() {
+            setLoading(true)
             axios
                 .get(`${baseUrl}hiv/patients`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                    //console.log(response.data)
+                    setLoading(false)
                     setPatientList(response.data);
                    
                 })
-                .catch((error) => {    
+                .catch((error) => {  
+                    setLoading(false)  
                 });        
         }
     const calculate_age = dob => {
@@ -146,11 +148,10 @@ const Patients = (props) => {
         const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
         return hospitalNumber ? hospitalNumber.value : '';
     };
-    let p =[{id: 1, name : "ade"}, {id: 2, name:"ade55"}];
-    console.log(p[p.length - 1])
 
   return (
     <div>
+
        <Card>
          <CardBody>
          <Link to={"register-patient"}>
@@ -180,9 +181,10 @@ const Patients = (props) => {
                 { title: "Age", field: "age", filtering: false },
                 //{ title: "Enrollment Status", field: "v_status", filtering: false },
                 //{ title: "ART Number", field: "v_status", filtering: false },
-                { title: "Current Status", field: "status", filtering: false },
+                { title: "ART Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
+              isLoading={loading}
               data={ patientList.map((row) => ({
                   //Id: manager.id,
                     name:row.firstName + " " + row.surname,
@@ -207,7 +209,7 @@ const Patients = (props) => {
                           Actions <span aria-hidden>▾</span>
                         </MenuButton>
                             <MenuList style={{ color:"#000000 !important"}} >
-                                {row.currentStatus!== "NOT ENROLLED" ?
+                                {row.currentStatus!== "Not Enrolled" ?
                                     (
                                         <>
                                             <MenuItem style={{ color:"#000 !important"}}>

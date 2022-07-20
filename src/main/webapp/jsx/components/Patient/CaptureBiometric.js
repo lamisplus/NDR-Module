@@ -81,9 +81,7 @@ const CaptureBiometric = (props) => {
     const [tryAgain, setTryAgain] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
     const [errors, setErrors] = useState({});
-   // const [responseImage, setResponseImage] = useState("")
     const [capturedFingered, setCapturedFingered]= useState([])
-     console.log(biometricDevices)
     const buttonSx = {
       ...(success && {
         bgcolor: green[500],
@@ -120,7 +118,6 @@ const CaptureBiometric = (props) => {
         const deviceName =e.target.value;
         const selectedDevice=biometricDevices.find((x)=> x.name ===deviceName )
         checkUrl= selectedDevice.url===null? baseUrl : selectedDevice.url
-        console.log(checkUrl)
         setObjValues({...objValues, device:deviceName})
         axios
            .get(`${checkUrl}biometrics/secugen/boot?reader=${deviceName}`,
@@ -210,8 +207,7 @@ const CaptureBiometric = (props) => {
             toast.error("You can't save less than 2 finger");
         }
   }  
-    
- // console.log(capturedFingered)
+
 
     return (
         <div >

@@ -1,18 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import { Input, Label, FormGroup, InputGroupText, InputGroup,Row, Col , CardBody, Card } from "reactstrap";
+import axios from "axios";
+import { Input, Label, FormGroup, CardBody, Card } from "reactstrap";
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
-//import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-//import { DateTimePicker } from "react-widgets";
-// import Moment from "moment";
-// import momentLocalizer from "react-widgets-moment";
-//import moment from "moment";
+import moment from "moment";
 import { Spinner } from "reactstrap";
 import Select from "react-select";
-import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
+import { url as baseUrl, token } from "../../../api";
+import { toast} from "react-toastify";
+import { Icon,Button, } from 'semantic-ui-react'
+
 
 const useStyles = makeStyles(theme => ({ 
     button: {
@@ -27,20 +27,215 @@ const useStyles = makeStyles(theme => ({
       fontSize: "11px",
   },
 }))
+let refillPeriodValue=null
 
 const Pharmacy = (props) => {
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
-    const [regimenDrugs, setRegimenDrug] = useState([])
-    const [objValues, setObjValues] = useState({ visitDate: "",whoStagingId: 0});
+    const [selectedOption, setSelectedOption] = useState([]);
+    const [selectedOptionAdr, setSelectedOptionAdr] = useState([]);
+    const [prepSideEffect, setPrepSideEffect] = useState([]);
+    const [mmdType, setmmdType]=useState();
+    const [showmmdType, setShowmmdType]=useState(false);
+    const [showDsdModel, setShowDsdModel] = useState(false);
+    const [showAdr, setShowAdr] = useState(false);
+    const [showRegimen, setShowRegimen] = useState(false);
+    const [regimen, setRegimen] = useState([]);
+    const [regimenList, setRegimenList] = useState([]);
+    const [regimenType, setRegimenType] = useState([]);
+    const [objValues, setObjValues] = useState({
+                                                adherence: "",
+                                                adrScreened: "",
+                                                adverseDrugReactions: {},
+                                                dsdModel:"",
+                                                isDevolve:"",
+                                                extra: {},
+                                                facilityId: 2,
+                                                mmdType:null,
+                                                nextAppointment: null,
+                                                personId: props.patientObj.id,
+                                                refillPeriod:"",
+                                                prescriptionError: null,
+                                                regimenId: [],
+                                                visitDate: null,
+                                                visitId: 0
+                                            });
+    useEffect(() => {
+        RegimenLine();
+        PrepSideEffect();
+        }, []);
+    //Get list of RegimenLine
+    const RegimenLine =()=>{
+    axios
+        .get(`${baseUrl}hiv/regimen/types`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            
+            setRegimen(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    //Get list of PrepSideEffect
+    const PrepSideEffect =()=>{
+        axios
+           .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setPrepSideEffect(Object.entries(response.data).map(([key, value]) => ({
+                label: value.display,
+                value: value.id,
+              })));
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    function RegimenType(id) {
+        async function getCharacters() {
+            const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            setRegimenType(
+                Object.entries(response.data).map(([key, value]) => ({
+                  label: value.description,
+                  value: value.id,
+                })))
+        }
+        getCharacters();
+    }
+    const handleInputChange = e => {
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+       
+    }
+    const handleSelectedRegimen = e => {
+        const regimenId= e.target.value
+        if(regimenId!==""){
+            RegimenType(regimenId)
+            setShowRegimen(true)
+        }else{
+            setRegimenType([])
+            setShowRegimen(false)
+        }
+    }
+    const handleCheckBox =e =>{
+        if(e.target.checked){
+            setShowDsdModel(true)
+            setObjValues ({...objValues,  isDevolve: true});
+        }else{
+            setShowDsdModel(false)
+            setObjValues ({...objValues,  isDevolve: false});
+        }
+    } 
+    const handlePrescriptionErrorCheckBox =e =>{
+        if(e.target.checked){
+            setObjValues ({...objValues,  prescriptionError: true});
+        }else{
+            setObjValues ({...objValues,  prescriptionError: false});
+        }
+    } 
+    const handleCheckBoxAdverseDrugReactions =e =>{
+        if(e.target.checked){
+            setShowAdr(true)
+            setObjValues ({...objValues,  adrScreened:true});
+        }else{
+            setShowAdr(false)
+            setObjValues ({...objValues,  adrScreened:false});
+        }
+    } 
+    const handlRefillPeriod = e =>{
+        const refillcount= e.target.value
+        refillPeriodValue=refillcount
+        const visitDate = objValues.visitDate
+        const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
+        const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
+        setObjValues ({...objValues,  refillPeriod: refillcount}) 
+        setObjValues ({...objValues,  nextAppointment: nextDate})
+        if(refillcount==="90"){
+            setShowmmdType(true)
+            setmmdType("MMD-3")
+        }else if(refillcount==="120"){
+            setShowmmdType(true)
+            setmmdType("MMD-4")
+        }else if(refillcount==="150"){
+            setShowmmdType(true)
+            setmmdType("MMD-5")
+        }else if(refillcount==="180"){
+            setShowmmdType(true)
+            setmmdType("MMD-6")
+        }else{
+            setShowmmdType(false)
+            setmmdType("")
+        }
+
+    }
+    const handleFormChange = (index, event) => {
+        let data = [...regimenList];
+        data[index][event.target.name] = event.target.value;
+        setRegimenList(data);
+     }
+     const setSelectedOptionAdrChange = (e)=>{
+        const value = e.value
+        setSelectedOptionAdr(value)
+     }
+     const setSelectedOptionChange = (e) =>{
+        const value = e.value
+        setSelectedOption(value)
+        let currentId=null
+        let currentRegimenName=null
+        if(e.length===1){
+            currentId=e[0].value
+            currentRegimenName=e[0].label
+        }else{
+            currentId=e[e.length-1].value
+            currentRegimenName=e[e.length-1].label
+        }
+        setRegimenList([...regimenList, {id:currentId, dispenseQuantity:refillPeriodValue, name:currentRegimenName}])
+
+     }
     const handleSubmit = (e) => {        
-        e.preventDefault();         
-        console.log(objValues)
+        e.preventDefault();
+        setSaving(true);
+        objValues.adverseDrugReactions=selectedOptionAdr
+        objValues.personId=props.patientObj.id
+        objValues.mmdType=mmdType
+        delete regimenList['name']
+        objValues.regimen=regimenList
+        axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
+        { headers: {"Authorization" : `Bearer ${token}`}},)
+        .then(response => {
+            setSaving(false);
+            toast.success("Pharmacy drug refill successful");
+            props.setActiveContent('recent-history')
+        })
+        .catch(error => {
+            setSaving(false);
+            let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+            toast.error(errorMessage);             
+        }); 
     }
 
+
+
   return (      
-      <div >
-        <h2>Pharmacy Drug Refill</h2>        
+      <div>
+ 
+        <div className="row">
+        <div className="col-md-6">
+        <h2>Pharmacy Drug Refill</h2> 
+        </div>
+        <div className="col-md-6">
+            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <Card >
             <CardBody>
             <form >
@@ -50,12 +245,10 @@ const Pharmacy = (props) => {
                     <div className="form-check custom-checkbox ml-1 ">
                         <input
                         type="checkbox"
-                        className="form-check-input"
-                        
-                        name="ovc_enrolled"
-                        id="ovc_enrolled"
-                        //onChange={handleCheckBox}
-                        //value={values.ovc_enrolled}
+                        className="form-check-input"                       
+                        name="devolvePatient"
+                        id="devolvePatient"
+                        onChange={handleCheckBox}
                         />
                         <label
                         className="form-check-label"
@@ -69,31 +262,34 @@ const Pharmacy = (props) => {
                 <FormGroup>
                 <Label for="artDate">Encounter Date * </Label>
                 <Input
-                    type="datetime-local"
+                    type="date"
                     name="visitDate"
                     id="visitDate"
-                    // onChange={handleInputChange}
-                    // value={objValues.visitDate}
+                    onChange={handleInputChange}
+                    value={objValues.visitDate}
+                    max= {moment(new Date()).format("YYYY-MM-DD") }
                     required
                 />
                 </FormGroup>
             </div>
             <div className="form-group mb-3 col-md-4">
             <FormGroup>
-                <Label >Refill Period *</Label>
+                <Label >Refill Period(days) *</Label>
                 <Input
                     type="select"
-                    name="drugName"
-                    id="drugName"
-                    // value={objValues.drugName}
-                    // onChange={handleSelectedRegimen}
-                    
+                    name="refillPeriod"
+                    id="refillPeriod"
+                    disabled={objValues.visitDate!==null? false : true}
+                    onChange={handlRefillPeriod}                    
                     >
                     <option value="">Select </option>
+                    <option value="15">15</option>
                     <option value="30">30 </option>
                     <option value="60">60 </option>
                     <option value="90">90 </option>
-                    <option value="90">120 </option>
+                    <option value="120">120 </option>
+                    <option value="150">150 </option>
+                    <option value="180">180 </option>
                 </Input>
                 
                 </FormGroup>
@@ -103,11 +299,12 @@ const Pharmacy = (props) => {
             <FormGroup>
                 <Label for="artDate"> Date of Next Appointment* </Label>
                 <Input
-                    type="datetime-local"
-                    name="visitDate"
-                    id="visitDate"
-                    // onChange={handleInputChange}
-                    // value={objValues.visitDate}
+                    type="date"
+                    name="nextAppointment"
+                    id="nextAppointment"
+                    disabled={objValues.refillPeriod!==null? false : true}
+                    onChange={handleInputChange}
+                    value={objValues.nextAppointment}
                     required
                 />
                 </FormGroup>
@@ -117,38 +314,55 @@ const Pharmacy = (props) => {
                 <Label >Service Delivery Point *</Label>
                 <Input
                     type="select"
-                    name="drugName"
-                    id="drugName"
-                    // value={objValues.drugName}
-                    // onChange={handleSelectedRegimen}
-                    
+                    name="deliveryPoint"
+                    id="deliveryPoint"
+                    value={objValues.deliveryPoint}
+                    onChange={handleInputChange}                    
                     >
                     <option value="">Select </option>
+                    <option value="Facility">Facility </option>
+                    <option value="Community">Community </option>
                     
                 </Input>
                 
                 </FormGroup>
             </div>
+            {showmmdType &&(
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >MMD Type</Label>
+                    <Input
+                        type="text"
+                        name="mmdType"
+                        id="mmdType"
+                        disabled="true"
+                        value={mmdType}
+                        onChange={handleInputChange}
+                    />
+                     
+                    </FormGroup>
+                </div>
+            )}
+            {showDsdModel && (
             <div className="form-group mb-3 col-md-6">
-            <FormGroup>
+                <FormGroup>
                 <Label >DSD Models*</Label>
                 <Input
                     type="select"
-                    name="drugName"
-                    id="drugName"
-                    // value={objValues.drugName}
-                    // onChange={handleSelectedRegimen}
-                    
+                    name="dsdModel"
+                    id="dsdModel"
+                    value={objValues.dsdModel}
+                    onChange={handleInputChange}
                     >
                     <option value="">Select </option>
-                    <option value="30">30 </option>
-                    <option value="60">60 </option>
-                    <option value="90">90 </option>
-                    <option value="90">120 </option>
+                    <option value="CPARP">CPARP </option>
+                    <option value="Home Delivery">Home Delivery </option>
+                    <option value="One Stop Shop">One Stop Shop </option>
                 </Input>
                 
                 </FormGroup>
             </div>
+            )}
             <div className="form-group mb-3 col-md-6">
                     
                     <div className="form-check custom-checkbox ml-1 ">
@@ -156,9 +370,9 @@ const Pharmacy = (props) => {
                         type="checkbox"
                         className="form-check-input"
                         
-                        name="ovc_enrolled"
-                        id="ovc_enrolled"
-                        //onChange={handleCheckBox}
+                        name="prescriptionError"
+                        id="prescriptionError"
+                        onChange={handlePrescriptionErrorCheckBox}
                         //value={values.ovc_enrolled}
                         />
                         <label
@@ -174,9 +388,9 @@ const Pharmacy = (props) => {
                         type="checkbox"
                         className="form-check-input"
                         
-                        name="ovc_enrolled"
-                        id="ovc_enrolled"
-                        //onChange={handleCheckBox}
+                        name="adverseDrugReactions"
+                        id="adverseDrugReactions"
+                        onChange={handleCheckBoxAdverseDrugReactions}
                         //value={values.ovc_enrolled}
                         />
                         <label
@@ -187,195 +401,117 @@ const Pharmacy = (props) => {
                         </label>
                     </div>
                 </div>
+                {showAdr && (
                 <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                    <Label >ADR</Label>
-                    <Input
-                        type="select"
-                        name="drugName"
-                        id="drugName"
-                        // value={objValues.drugName}
-                        // onChange={handleSelectedRegimen}
+                    <FormGroup>
+                        <Label >ADR</Label>
+                        <Select
+                            onChange={setSelectedOptionAdrChange}
+                            value={selectedOptionAdr}
+                            options={prepSideEffect}
+                            isMulti="true"
+                            noOptionsMessage="true"
+
+                        />
                         
-                        >
-                        <option value="">Select </option>
-                        
-                    </Input>
-                    
-                </FormGroup>
-            </div>
+                    </FormGroup>
+                </div>
+            )}
             <hr/>
             <div className="form-group mb-3 col-md-12">
                 <FormGroup>
-                <Label >Select Regimen *</Label>
+                <Label >Select Regimen Type *</Label>
                 <Input
                     type="select"
-                    name="drugName"
-                    id="drugName"
-                    // value={objValues.drugName}
-                    // onChange={handleSelectedRegimen}
-                    
+                    name="regimen"
+                    id="regimen"
+                    value={objValues.drugName}
+                    onChange={handleSelectedRegimen}  
+                    disabled={objValues.refillPeriod!==null? false : true}                 
                     >
-                    <option value="Select"> </option>
-                    {/*                 
-                        {regimens.map((value) => (
+                    <option value="">Select </option>
+                                    
+                        {regimen.map((value) => (
                             <option key={value.id} value={value.id}>
-                                {value.name}
+                                {value.description}
                             </option>
-                        ))} */}
+                        ))}
                 </Input>
                 
                 </FormGroup>
             </div>
-            {regimenDrugs.length >0 ? 
+            {showRegimen && (
+            <div className="form-group mb-3 col-md-12">
+                <FormGroup>
+                <Label >Regimen *</Label>
+                <Select
+                    onChange={setSelectedOptionChange}
+                    value={selectedOption}
+                    options={regimenType}
+                    isMulti="true"
+                    noOptionsMessage="true"
+
+                />
+                </FormGroup>
+            </div>
+            )}
+            {regimenList.length >0 ? 
+
                 (
                     <>
                         <Card>
                         <CardBody>
-                        <h4>Enter Drugs Information </h4>
+                        <h4>Drugs Information </h4>
                         <div className="row">
-                        {regimenDrugs.map((drugsInfo) => (
+                            <div className="form-group mb-3 col-md-9"  >Regimen Name selected </div>
+                            <div className="form-group mb-3 col-md-4"  >Quantity Dispense</div>
+                        </div>
+                        {regimenList.map((input, index) => (
                             <>
-                        <div className="form-group mb-3 col-md-4">
-                        <FormGroup>
-                        <Label >Drug </Label>
-                        <Input
-                                type="text"
-                                // name={drugsInfo.name}
-                                // id={drugsInfo.name}
-                                // value={drugsInfo.name}
-                                // onChange={handleInputChangeOtherDetails}
-                                // required
-                                ></Input>
-                        </FormGroup>
-                        </div>
-                        
-                        <div className="form-group mb-3 col-md-4">
-                        <FormGroup>
-                        <Label >	Dosage Strength - {drugsInfo.abbrev}</Label>
-                        <Input
-                                type="number"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // value=""
-                                // onChange={handleInputChangeOtherDetails}
-                                required
-                                >
+                                <div className="row">
+                                <div className="form-group mb-3 col-md-9"  >
+                                    <FormGroup>
+                                    <Label ><b>{input.name}</b></Label>
+                                    <Input
+                                        type="hidden"
+                                        name="id"
+                                        id="id"
+                                        value={input.id}  
+                                        onChange={event => handleFormChange(index, event)}                                    
+                                        required
+                                        >                                       
+                                    </Input>
+                                    </FormGroup>
+                                </div>
+
+                                <div className="form-group mb-3 col-md-3">
+                                    <FormGroup>
+                                    <Input
+                                        type="number"
+                                        name="dispenseQuantity"
+                                        id="dispenseQuantity"
+                                        value={input.dispenseQuantity}
+                                        onChange={event => handleFormChange(index, event)}
+                                        required
+                                        >
+                                        
+                                    </Input>
                                 
-                            </Input>
-                        
-                        </FormGroup>
-                        </div>
-                    
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Dosage Unit *</Label>
-                            <Input
-                                type="select"
-                                // name={drugsInfo.code}
-                                // id={drugsInfo.code}
-                                // onChange={handleInputChangeOtherDetails}
-                                // value=""
-                                required
-                            >
-                                <option value="Select"> </option>
-        
-                                    {/* {dosageUnit.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))} */}
-                            </Input>
-                            
-                            </FormGroup>
-                        </div>
-                        </>
-                        ))
-                        }
-                        </div>
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-3"></div>
+                                </div>
+                            </>
+                        ))}
+                       
                         </CardBody>
                         </Card>
                         <br/>
-                    </>
-                )
-                :
-                ""
-            }
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Dose Frequency</Label>
-                <Input
-                    type="number"
-                    name="dosageFrequency"
-                    id="dosageFrequency"
-                    // value={objValues.dosageFrequency}
-                    // onChange={handleInputChange}
-                    required
-                    >
-                    
-                </Input>
-                {/* {errors.dosageFrequency !=="" ? (
-                    <span className={classes.error}>{errors.dosageFrequency}</span>
-                ) : "" } */}
-                </FormGroup>
-            </div>
-            
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Start Date </Label>
-                <Input
-                    type="date"
-                    name="startDate"
-                    id="startDate"
-                    // value={objValues.startDate}
-                    // onChange={handleInputChange}
-                    required
-                    >
-                        
-                </Input>
-                </FormGroup>
-            </div>
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Duration </Label>
-                <Input
-                    type="number"
-                    name="duration"
-                    id="duration"
-                    // value={objValues.duration}
-                    // onChange={handleInputChange}
-                    required
-                    >
-                    
-                </Input>
-                </FormGroup>
-            </div>
-            <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                <Label >Duration Unit </Label>
-                <InputGroup> 
-                    <Input 
-                        type="number"
-                        name="durationUnit"
-                        id="durationUnit"
-                        // onChange={handleInputChange}
-                        // value={objValues.durationUnit} 
-                    />
-                    
-                    
-                </InputGroup>
-                {/* {objValues.bodyWeight > 200 ? (
-                        <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
-                    ) : "" } */}
-                </FormGroup>
-            </div>
-            <Col md={12}>                  
-                    <LabelSui as='a' color='black'  className="float-end" size='tiny' style={{ marginTop:20}}>
-                    <Icon name='plus' /> Add Drug
-                </LabelSui>
-                    
-            </Col>
-
+                    </>                  
+                    )
+                    :
+                    ""
+                }
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />
@@ -387,6 +523,7 @@ const Pharmacy = (props) => {
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
+                    disabled={objValues.visitDate===null || saving ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -408,6 +545,7 @@ const Pharmacy = (props) => {
                 </form>
             </CardBody>
         </Card> 
+    </div>
     </div>
   );
 }

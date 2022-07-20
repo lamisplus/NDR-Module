@@ -1,87 +1,47 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, {useState, useEffect } from "react";
 // import { Link } from 'react-router-dom';
-import { Row } from "react-bootstrap";
-import {  Modal, Button, Table  } from "react-bootstrap";
-import { Input, Label, FormGroup, InputGroupText, InputGroup, Col , CardBody, Card } from "reactstrap";
-import { Tab, Grid,} from 'semantic-ui-react'
-import MatButton from '@material-ui/core/Button'
+import { Table  } from "react-bootstrap";
+import { Input, Label, FormGroup, } from "reactstrap";
 import { makeStyles } from '@material-ui/core/styles'
-
 import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete'
-
-const useStyles = makeStyles(theme => ({ 
-    button: {
-      margin: theme.spacing(1)
-    },
-    error: {
-      color: "#f85032",
-      fontSize: "11px",
-  },
-  success: {
-      color: "#4BB543 ",
-      fontSize: "11px",
-  },
-}))
-let adherenceLevelObj= []
+import DeleteIcon from '@material-ui/icons/Delete';
+import { url as baseUrl,token } from "./../../../../api";
+import axios from "axios";
+import moment from "moment";
 
 const ADR = (props) => {
-  const patientObj = props.patientObj;
-  const classes = useStyles();
 
   const [prepSideEffect, setPrepSideEffect] = useState([]);
-  const [adrObj, setAdrObj] = useState({adr:"", adrOnsetDate:""});
-  const [adrList, setAdrList] = useState([]);
   
-  const [objValues, setObjValues] = useState({
-                                                adherenceLevel: "",
-                                                adheres: {},
-                                                adrScreened: "",
-                                                adverseDrugReactions: {},
-                                                artStatusId: 0,
-                                                cd4: "",
-                                                cd4Percentage: 0,
-                                                clinicalNote: "",
-                                                clinicalStageId: 0,
-                                                facilityId: 0,
-                                                functionalStatusId: 0,
-                                                hivEnrollmentId: 0,
-                                                nextAppointment: "",
-                                                lmpDate:"",
-                                                oiScreened: "",
-                                                opportunisticInfections: {},
-                                                personId: 0,
-                                                stiIds: "",
-                                                stiTreated: "",
-                                                uuid: "",
-                                                visitDate: "",
-                                                
-                                                whoStagingId: 0
-                                              });
-  const [vital, setVitalSignDto]= useState({
-                                            bodyWeight: "",
-                                            diastolic:"",
-                                            encounterDate: "",
-                                            facilityId: 1,
-                                            height: "",
-                                            personId: "",
-                                            serviceTypeId: 1,
-                                            systolic:"" 
-                                            })
-
- 
-
+  useEffect(() => {
+    PrepSideEffect();
+  }, []);
+       //Get list of PrepSideEffect
+       const PrepSideEffect =()=>{
+        axios
+           .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               //console.log(response.data);
+               setPrepSideEffect(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+        }
   const handAdrleInputChange = e => {
-    setAdrObj ({...adrObj,  [e.target.name]: e.target.value});
+    props.setAdrObj ({...props.adrObj,  [e.target.name]: e.target.value});
   }
   const addADR = e => { 
-    setAdrList([...adrList, adrObj])
+    props.setAdrList([...props.adrList, props.adrObj])
   }
   /* Remove ADR  function **/
   const removeRelativeLocation = index => {       
-      adrList.splice(index, 1);
-      setAdrList([...adrList]);
+      props.adrList.splice(index, 1);
+      props.setAdrList([...props.adrList]);
      
   };
 
@@ -96,12 +56,11 @@ const ADR = (props) => {
                 type="select"
                 name="adr"
                 id="adr"
-                value={adrObj.adr}
+                value={props.adrObj.adr}
                 onChange={handAdrleInputChange}
                 required
                 >
-                  <option value=""> </option>
-
+                  <option value=""> Select</option>
                     {prepSideEffect.map((value) => (
                         <option key={value.id} value={value.display}>
                             {value.display}
@@ -118,8 +77,9 @@ const ADR = (props) => {
                 type="date"
                 name="adrOnsetDate"
                 id="adrOnsetDate"
-                value={adrObj.adrOnsetDate}
+                value={props.adrObj.adrOnsetDate}
                 onChange={handAdrleInputChange}
+                max= {moment(new Date()).format("YYYY-MM-DD") }
                 required
                 > 
             </Input>
@@ -133,7 +93,7 @@ const ADR = (props) => {
         </LabelSui>
         </div>
 
-        {adrList.length >0 
+        {props.adrList.length >0 
           ?
             <List>
             <Table  striped responsive>
@@ -145,7 +105,7 @@ const ADR = (props) => {
                       </tr>
                   </thead>
                   <tbody>
-                {adrList.map((relative, index) => (
+                {props.adrList.map((relative, index) => (
 
                   <RelativeList
                       key={index}
@@ -156,10 +116,10 @@ const ADR = (props) => {
                   ))}
                   </tbody>
                   </Table>
-                </List>
-                :
-                ""
-            }       
+            </List>
+            :
+            ""
+        }       
     </div>
     </div>
      

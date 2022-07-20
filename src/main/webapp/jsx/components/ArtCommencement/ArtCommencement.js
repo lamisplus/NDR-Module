@@ -1,17 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import { Form,Row, Card,CardBody, FormGroup, Label, Input, InputGroup,InputGroupText} from 'reactstrap';
+import { Card,CardBody, FormGroup, Label, Input, InputGroup,InputGroupText} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
-import { url as baseUrl } from "../../../api";
-import { token as token } from "../../../api";
-import { useHistory } from "react-router-dom";
+import { url as baseUrl, token } from "../../../api";
+//import { useHistory } from "react-router-dom";
 import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-
+import moment from "moment";
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import { Spinner } from "reactstrap";
 
@@ -59,34 +58,36 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ArtCommencement = (props) => {
-    const patientObj = props.patientObj;
-    let history = useHistory();
+    //const patientObj = props.patientObj;
+    //let history = useHistory();
     const classes = useStyles()
     const [clinicalStage, setClinicalStage] = useState([])
     const [values, setValues] = useState([]);
     const [saving, setSaving] = useState(false);
+    const [viraLoadStart, setViraLoadStart] = useState(false);
     const [errors, setErrors] = useState({});
+    let temp = { ...errors }
     const [tbStatus, setTbStatus] = useState([]);
     const [regimenLine, setRegimenLine] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
     const [pregancyStatus, setPregancyStatus] = useState([]);
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
-                                                    personId:props.patientObj.id,
-                                                    visitDate: "",
-                                                    viralLoad: "",
-                                                    whoStagingId:"",
-                                                    clinicalStageId:"",
-                                                    cd4: "",
-                                                    cd4Percentage: "",
-                                                    isCommencement: true,
-                                                    functionalStatusId: "",
-                                                    clinicalNote: "",
-                                                    hivEnrollmentId: "",
-                                                    vitalSignDto:"",
-                                                    facilityId:1,
-                                                    regimenTypeId: 0,
-                                                    regimenId:0                                                   
+                                                personId:props.patientObj.id,
+                                                visitDate: "",
+                                                viralLoad: "",
+                                                whoStagingId:"",
+                                                clinicalStageId:"",
+                                                cd4: "",
+                                                cd4Percentage: "",
+                                                isCommencement: true,
+                                                functionalStatusId: "",
+                                                clinicalNote: "",
+                                                hivEnrollmentId: "",
+                                                vitalSignDto:"",
+                                                facilityId:1,
+                                                regimenTypeId: 0,
+                                                regimenId:0                                                   
 
                                                 });
 
@@ -100,6 +101,13 @@ const ArtCommencement = (props) => {
                                                 serviceTypeId: 1,
                                                 systolic:"" 
                                             })
+      //Vital signs clinical decision support 
+    const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
+                                                                        bodyWeight: "",
+                                                                        diastolic: "",
+                                                                        height: "",
+                                                                        systolic: ""
+                                                                    })
 
     useEffect(() => {
         FunctionalStatus();
@@ -199,35 +207,74 @@ const ArtCommencement = (props) => {
          }
 
         const handleInputChange = e => {
+            setErrors({...temp, [e.target.name]:""})
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
-        const handleInputChangeVitalSignDto = e => {            
+        const handleInputChangeVitalSignDto = e => { 
+            setErrors({...temp, [e.target.name]:""})           
             setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
             setObjValues ({...objValues, regimenId:regimenID});
             RegimenType(regimenID)           
-            //setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            setErrors({...temp, [e.target.name]:""})
         }
-        
-        const handleInputChange2 = e => {
-        let temp = { ...errors }
-        if(e.target.name === objValues.bodyWeight && e.target.value >3){
-            temp.name = objValues.bodyWeight ? "" : "Body Weight cannot be greater than 200."
-            setErrors({
-                ...temp
-                })    
-            return Object.values(temp).every(x => x == "")
+        //to check the input value for clinical decision 
+        const handleInputValueCheckHeight =(e)=>{
+            if(e.target.name==="height" && (e.target.value < 48.26 || e.target.value>216.408)){
+            const message ="Height cannot be greater than 216.408 and less than 48.26"
+            setVitalClinicalSupport({...vitalClinicalSupport, height:message})
+            }else{
+            setVitalClinicalSupport({...vitalClinicalSupport, height:""})
+            }
         }
-        //temp.name = details.name ? "" : "This field is required"
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        const handleInputValueCheckBodyWeight =(e)=>{
+            if(e.target.name==="bodyWeight" && (e.target.value < 3 || e.target.value>150)){      
+            const message ="Body weight must not be greater than 150 and less than 3"
+            setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:message})
+            }else{
+            setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:""})
+            }
         }
+        const handleInputValueCheckSystolic =(e)=>{
+            if(e.target.name==="systolic" && (e.target.value < 90 || e.target.value>240)){      
+            const message ="Blood Pressure systolic must not be greater than 240 and less than 90"
+            setVitalClinicalSupport({...vitalClinicalSupport, systolic:message})
+            }else{
+            setVitalClinicalSupport({...vitalClinicalSupport, systolic:""})
+            }
+        }
+        const handleInputValueCheckDiastolic =(e)=>{
+            if(e.target.name==="diastolic" && (e.target.value < 60 || e.target.value>140)){      
+            const message ="Blood Pressure diastolic must not be greater than 140 and less than 60"
+            setVitalClinicalSupport({...vitalClinicalSupport, diastolic:message})
+            }else{
+            setVitalClinicalSupport({...vitalClinicalSupport, diastolic:""})
+            }
+        }
+        const handleInputChangeVitalStart =(e)=>{
+            if(e.target.value==="YES" ){
+                setViraLoadStart(true)
+                setObjValues({...objValues, viralLoad:e.target.value})
+            }else{
+                setObjValues({...objValues, viralLoad:e.target.value})
+                setViraLoadStart(false)
+            }
+        }
+
         //FORM VALIDATION
         const validate = () => {
-            let temp = { ...errors }
-            //temp.name = details.name ? "" : "This field is required"
-            //temp.description = details.description ? "" : "This field is required"
+            temp.visitDate = objValues.visitDate ? "" : "This field is required"
+            temp.regimenId = objValues.regimenId ? "" : "This field is required"
+            temp.regimenTypeId = objValues.regimenTypeId ? "" : "This field is required"
+            temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
+            temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
+            temp.tbStatusId = objValues.tbStatusId ? "" : "This field is required"
+            temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+            temp.height = vital.height ? "" : "This field is required"
+            temp.systolic = vital.systolic ? "" : "This field is required"
+            temp.diastolic = vital.diastolic ? "" : "This field is required"
             setErrors({
                 ...temp
                 })    
@@ -236,7 +283,8 @@ const ArtCommencement = (props) => {
           
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {                  
-            e.preventDefault();                     
+            e.preventDefault(); 
+            if(validate()){                    
             objValues.personId = props.patientObj.id
             vital.encounterDate = objValues.visitDate
             vital.personId=props.patientObj.id
@@ -250,6 +298,7 @@ const ArtCommencement = (props) => {
             )
               .then(response => {
                   setSaving(false);
+                  props.setArt(true)
                   props.patientObj.commenced=true
                   toast.success("Record save successful");
                   props.toggle()
@@ -258,6 +307,7 @@ const ArtCommencement = (props) => {
               })
               .catch(error => {
                   setSaving(false);
+                  console.log(error.apierror)
                   if(error.apierror){
                     toast.error(error.apierror.message);
                   }else{
@@ -266,6 +316,7 @@ const ArtCommencement = (props) => {
                   
                  
               });
+            }
           
         }
 
@@ -296,22 +347,26 @@ const ArtCommencement = (props) => {
                                             id="visitDate"
                                             onChange={handleInputChange}
                                             value={objValues.visitDate}
+                                            max= {moment(new Date()).format("YYYY-MM-DD") }
                                             required
                                         />
+                                         {errors.visitDate !=="" ? (
+                                            <span className={classes.error}>{errors.visitDate}</span>
+                                            ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label for="cd4">CD4 at start of ART </Label>
                                         <Input
-                                            type="text"
+                                            type="number"
                                             name="cd4"
                                             id="cd4"
                                             onChange={handleInputChange}
                                             value={objValues.cd4}
-                                            required
+                                            
                                         />
-                                        
+                                       
                                         </FormGroup>
                                     </div>
                               
@@ -324,9 +379,9 @@ const ArtCommencement = (props) => {
                                         id="cd4Percentage"
                                         onChange={handleInputChange}
                                         value={objValues.cd4Percentage}
-                                        required
+                                        
                                     />
-                                    
+                                   
                                     </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
@@ -336,11 +391,11 @@ const ArtCommencement = (props) => {
                                             type="select"
                                             name="regimenId"
                                             id="regimenId"
-                                            //value={objValues.regimenId}
+                                            value={objValues.regimenId}
                                             onChange={handleSelecteRegimen}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {regimenLine.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -348,6 +403,9 @@ const ArtCommencement = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
+                                        {errors.regimenId !=="" ? (
+                                            <span className={classes.error}>{errors.regimenId}</span>
+                                            ) : "" }
                                     </FormGroup>
                                     </div>
                                     
@@ -362,7 +420,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {regimenType.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -370,31 +428,62 @@ const ArtCommencement = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
-                                    {/* {errors.last_name !=="" ? (
-                                            <span className={classes.error}>{errors.last_name}</span>
-                                        ) : "" } */}
+                                        {errors.regimenTypeId !=="" ? (
+                                            <span className={classes.error}>{errors.regimenTypeId}</span>
+                                            ) : "" }
                                     </FormGroup>
                                     </div>
                                 
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
-                                        <Label >Viral Load at Start of ART *</Label>
+                                        <Label >Viral Load at Start of ART </Label>
+                                        <Input
+                                            type="select"
+                                            name="viralLoad"
+                                            id="viralLoad"
+                                            onChange={handleInputChangeVitalStart}                                            
+                                            value={objValues.viralLoad}
+                                            required
+                                        >
+                                            <option value=""> Select</option>
+                                            <option value="YES"> YES</option>
+                                            <option value="NO"> NO</option>
+                                        </Input>
+                                        
+                                        </FormGroup>
+                                    </div>
+                                    {viraLoadStart && (
+                                    <>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Viral Load at Start of ART Result</Label>
+                                        <Input
+                                            type="text"
+                                            name="viralLoad"
+                                            id="viralLoad"
+                                            //onChange={handleInputChange}
+                                            //value={objValues.viralLoad}
+                                            required
+                                        />
+                                        
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Date of Viral Load at Start of ART</Label>
                                         <Input
                                             type="date"
                                             name="viralLoad"
                                             id="viralLoad"
-                                            onChange={handleInputChange2}
-                                            value={objValues.viralLoad}
+                                            //onChange={handleInputChange}
+                                            //value={objValues.viralLoad}
                                             required
                                         />
-                                            {values.viralLoad ==="Invalid date" ? (
-                                                <span className={classes.error}>{"This field is required"}</span>
-                                            ) : "" }
-                                            {errors.viralLoad !=="" ? (
-                                            <span className={classes.error}>{errors.viralLoad}</span>
-                                        ) : "" }
+                                        
                                         </FormGroup>
                                     </div>
+                                    </>
+                                    )}
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >WHO Staging</Label>
@@ -404,9 +493,10 @@ const ArtCommencement = (props) => {
                                             id="whoStagingId"
                                             value={objValues.whoStagingId}
                                             onChange={handleInputChange}
+                                            max= {moment(new Date()).format("YYYY-MM-DD") }
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {clinicalStage.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -414,7 +504,9 @@ const ArtCommencement = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
-                                        
+                                        {errors.whoStagingId !=="" ? (
+                                            <span className={classes.error}>{errors.whoStagingId}</span>
+                                            ) : "" }
                                         </FormGroup>
                                     </div>
                                     
@@ -429,7 +521,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {functionalStatus.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -437,6 +529,9 @@ const ArtCommencement = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
+                                        {errors.functionalStatusId !=="" ? (
+                                            <span className={classes.error}>{errors.functionalStatusId}</span>
+                                            ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
@@ -450,7 +545,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             required
                                             >
-                                             <option value="Select"> </option>
+                                             <option value=""> Select</option>
                       
                                                 {tbStatus.map((value) => (
                                                     <option key={value.id} value={value.id}>
@@ -458,6 +553,9 @@ const ArtCommencement = (props) => {
                                                     </option>
                                                 ))}
                                         </Input>
+                                        {errors.tbStatusId !=="" ? (
+                                            <span className={classes.error}>{errors.tbStatusId}</span>
+                                            ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
@@ -469,17 +567,21 @@ const ArtCommencement = (props) => {
                                                 name="bodyWeight"
                                                 id="bodyWeight"
                                                 onChange={handleInputChangeVitalSignDto}
-                                                value={vital.bodyWeight} 
+                                                min="3"
+                                                max="150"
+                                                value={vital.bodyWeight}
+                                                onKeyUp={handleInputValueCheckBodyWeight} 
                                             />
-                                           
                                             <InputGroupText>
                                                kg
                                             </InputGroupText>
                                         </InputGroup>
-                                        {vital.bodyWeight > 200 ? (
-                                                <span className={classes.error}>{"Body Weight cannot be greater than 200."}</span>
-                                            ) : "" 
-                                        }
+                                        {vitalClinicalSupport.bodyWeight !=="" ? (
+                                                <span className={classes.error}>{vitalClinicalSupport.bodyWeight}</span>
+                                        ) : ""}
+                                        {errors.bodyWeight !=="" ? (
+                                            <span className={classes.error}>{errors.bodyWeight}</span>
+                                        ) : "" }
                                         </FormGroup>
                                     </div>
                                    
@@ -492,14 +594,20 @@ const ArtCommencement = (props) => {
                                                 name="height"
                                                 id="height"
                                                 onChange={handleInputChangeVitalSignDto}
-                                                value={vital.height} 
+                                                value={vital.height}
+                                                min="48.26"
+                                                max="216.408"
+                                                onKeyUp={handleInputValueCheckHeight} 
                                             />
                                             <InputGroupText>
-                                               m
+                                               cm
                                             </InputGroupText>
                                         </InputGroup>
-                                        {vital.height > 3 ? (
-                                            <span className={classes.error}>{"Height cannot be greater than 3."}</span>
+                                        {vitalClinicalSupport.height !=="" ? (
+                                            <span className={classes.error}>{vitalClinicalSupport.height}</span>
+                                        ) : ""}
+                                        {errors.height !=="" ? (
+                                            <span className={classes.error}>{errors.height}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
@@ -511,16 +619,22 @@ const ArtCommencement = (props) => {
                                                 type="number"
                                                 name="systolic"
                                                 id="systolic"
+                                                min="90"
+                                                max="2240"
                                                 onChange={handleInputChangeVitalSignDto}
-                                                value={vital.systolic} 
+                                                value={vital.systolic}
+                                                onKeyUp={handleInputValueCheckSystolic} 
                                             />
                                             <InputGroupText>
                                                 systolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
-                                        {vital.systolic > 200 ? (
-                                                <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
-                                            ) : "" }
+                                        {vitalClinicalSupport.systolic !=="" ? (
+                                            <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                                        ) : ""}
+                                        {errors.systolic !=="" ? (
+                                            <span className={classes.error}>{errors.systolic}</span>
+                                        ) : "" }
                                         </FormGroup>
                                     </div>
                                     <div className="form-group mb-3 col-md-4">
@@ -533,52 +647,62 @@ const ArtCommencement = (props) => {
                                                 name="diastolic"
                                                 id="diastolic"
                                                 onChange={handleInputChangeVitalSignDto}
-                                                value={vital.diastolic} 
+                                                value={vital.diastolic}
+                                                onKeyUp={handleInputValueCheckDiastolic} 
                                             />
                                             <InputGroupText>
                                                 diastolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
-                                        {vital.diastolic > 200 ? (
-                                            <span className={classes.error}>{"Blood Pressure cannot be greater than 200."}</span>
+                                        {vitalClinicalSupport.diastolic !=="" ? (
+                                            <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
+                                        ) : ""}
+                                        {errors.diastolic !=="" ? (
+                                            <span className={classes.error}>{errors.diastolic}</span>
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-                                    <div className="form-group mb-3 col-md-4">
-                                        <FormGroup>
-                                        <Label >Pregnancy Status</Label>
-                                        <Input
-                                            type="select"
-                                            name="address"
-                                            id="address"
-                                            onChange={handleInputChange}
-                                            value={objValues.address}
-                                            required
-                                        >
-                                            <option value="Select"> </option>
-                      
-                                            {pregancyStatus.map((value) => (
-                                                <option key={value.id} value={value.id}>
-                                                    {value.display}
-                                                </option>
-                                            ))}
-                                        </Input>
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-4">
-                                        <FormGroup>
-                                        <Label >LMP</Label>
-                                        <Input
-                                            type="date"
-                                            name="LMPDate"
-                                            id="LMPDate"
-                                            onChange={handleInputChange}
-                                            value={values.address}
-                                            required
-                                        />
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-8">
+                                    {props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)"? (
+                                        <>
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >Pregnancy Status</Label>
+                                            <Input
+                                                type="select"
+                                                name="address"
+                                                id="address"
+                                                onChange={handleInputChange}
+                                                value={objValues.address}
+                                                required
+                                            >
+                                                <option value=""> Select</option>
+                        
+                                                {pregancyStatus.map((value) => (
+                                                    <option key={value.id} value={value.id}>
+                                                        {value.display}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                            </FormGroup>
+                                        </div>
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >LMP</Label>
+                                            <Input
+                                                type="date"
+                                                name="LMPDate"
+                                                id="LMPDate"
+                                                onChange={handleInputChange}
+                                                value={values.address}
+                                                required
+                                            />
+                                            </FormGroup>
+                                        </div>
+                                        </>
+                                    ) :
+                                    ""
+                                    }
+                                    <div className="form-group mb-3 col-md-12">
                                         <FormGroup>
                                         <Label >Clinical Notes</Label>
                                         <Input
@@ -604,24 +728,23 @@ const ArtCommencement = (props) => {
                                 className={classes.button}
                                 startIcon={<SaveIcon />}
                                 onClick={handleSubmit}
-                            >
-                                {!saving ? (
-                                <span style={{ textTransform: "capitalize" }}>Save</span>
-                                ) : (
-                                <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                )}
-                            </MatButton>
+                                >
+                                    {!saving ? (
+                                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                                    ) : (
+                                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                                    )}
+                                </MatButton>
                           
-                            <MatButton
-                                variant="contained"
-                                className={classes.button}
-                                startIcon={<CancelIcon />}
-                                
-                            >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton>
+                                <MatButton
+                                    variant="contained"
+                                    className={classes.button}
+                                    startIcon={<CancelIcon />}                                
+                                >
+                                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                                </MatButton>
                           
-                                </form>
+                            </form>
                             </CardBody>
                         </Card> 
                     </Modal.Body>
