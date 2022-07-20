@@ -1,6 +1,7 @@
 package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
+import org.audit4j.core.util.Log;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
@@ -8,7 +9,9 @@ import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
+import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
+import org.lamisplus.modules.hiv.repositories.ObservationRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
@@ -32,7 +35,6 @@ public class HivPatientService {
     private final HIVStatusTrackerService statusTrackerService;
 
 
-
     private final PersonService personService;
 
     private final PersonRepository personRepository;
@@ -42,6 +44,8 @@ public class HivPatientService {
     private final ApplicationCodesetRepository applicationCodesetRepository;
 
     private final CurrentUserOrganizationService currentUserOrganizationService;
+
+    private final ObservationRepository observationRepository;
 
     public HivPatientDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
@@ -90,6 +94,7 @@ public class HivPatientService {
             List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
+            processAndSetObservationStatus(person, hivPatientDto);
             addEnrollmentInfo (enrollment, hivPatientDto);
             addArtCommencementInfo (person.getId (), artCommencement, hivPatientDto);
             addArtClinicalInfo (artClinics, hivPatientDto);
@@ -129,6 +134,22 @@ public class HivPatientService {
     public Person getPerson(Long personId) {
         return personRepository.findById (personId)
                 .orElseThrow (() -> new EntityNotFoundException (Person.class, "id", String.valueOf (personId)));
+    }
+
+    private void processAndSetObservationStatus(Person person, HivPatientDto hivPatientDto) {
+        Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
+        Log.info ("orgId {}", orgId);
+        List<Observation> observationList = observationRepository.getAllByPersonAndFacilityId (person, orgId);
+        if (! observationList.isEmpty ()) {
+            observationList.forEach (observation -> {
+                if (observation.getType ().contains ("Clinical")) {
+                    hivPatientDto.setClinicalEvaluation (true);
+                }
+                if (observation.getType ().contains ("Mental")) {
+                    hivPatientDto.setMentalHealth (true);
+                }
+            });
+        }
     }
 
 }

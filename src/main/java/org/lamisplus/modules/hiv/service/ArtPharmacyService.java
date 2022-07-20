@@ -22,9 +22,14 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -61,13 +66,32 @@ public class ArtPharmacyService {
     }
 
 
+    public  List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize){
+        Person person = getPerson (personId);
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("visitDate").descending());
+        Page<ArtPharmacy> artPharmaciesByPerson = artPharmacyRepository.getArtPharmaciesByPerson (person, paging);
+        if(artPharmaciesByPerson.hasContent ()){
+           return artPharmaciesByPerson.getContent ()
+                    .stream ()
+                    .map (artPharmacy -> {
+                        try {
+                            return convertEntityToRegisterDto (artPharmacy);
+                        } catch (IOException e) {
+                            e.printStackTrace ();
+                        }
+                    }).collect(Collectors.toList());
+        }
+     return new ArrayList<> ();
+    }
+
+
     private ArtPharmacy convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {
         ArtPharmacy artPharmacy = new ArtPharmacy ();
         BeanUtils.copyProperties (dto, artPharmacy);
         log.info (" entity 1st:  {}", artPharmacy);
         Long personId = dto.getPersonId ();
         Set<RegimenRequestDto> regimen = dto.getRegimen ();
-        Person person = personRepository.findById (personId).orElseThrow (() -> getPersonEntityNotFoundException (personId));
+        Person person = getPerson (personId);
         List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitIdAndPerson (artPharmacy.getVisitId (), person);
         log.info ("existDrugRefills:  {}", existDrugRefills+" "+dto.getId ());
         if(!existDrugRefills.isEmpty () && dto.getId () == null){
@@ -82,6 +106,10 @@ public class ArtPharmacyService {
         artPharmacy.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         log.info (" entity 2nd:  {}", artPharmacy);
         return artPharmacy;
+    }
+
+    private Person getPerson(Long personId) {
+        return personRepository.findById (personId).orElseThrow (() -> getPersonEntityNotFoundException (personId));
     }
 
     private RegisterArtPharmacyDto convertEntityToRegisterDto(ArtPharmacy  entity) throws IOException {

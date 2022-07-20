@@ -36,6 +36,8 @@ public class HivPatientDto implements Serializable {
     private Boolean IsDateOfBirthEstimated;
     private boolean isEnrolled;
     private boolean isCommenced;
+    private boolean isClinicalEvaluation;
+    private boolean isMentalHealth;
     private String currentStatus;
     private HivEnrollmentDto enrollment;
     private ARTClinicalCommenceDto artCommence;
