@@ -79,6 +79,7 @@ public class ArtPharmacyService {
                         } catch (IOException e) {
                             e.printStackTrace ();
                         }
+                        return null;
                     }).collect(Collectors.toList());
         }
      return new ArrayList<> ();
