@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import { Form,Row, Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
+import { Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
-// import { Alert } from 'reactstrap';
-// import { Spinner } from 'reactstrap';
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
@@ -54,13 +52,18 @@ const useStyles = makeStyles(theme => ({
 const Enrollment = (props) => {
 
     const patientObj = props.patientObj;
-    let history = useHistory();
     const classes = useStyles()
-    const [transferStatus, setTransferStatus] = useState([])
-    const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({patient_id: "", eacDate1:"", eacDate2:""});
+    const [objValues, setObjValues] = useState({eacDate1:"", eacDate2:""});
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const [observation, setObservation]=useState({
+                                                    data: {},
+                                                    dateOfObservation: "yyyy-MM-dd",
+                                                    facilityId: null,
+                                                    personId: 0,
+                                                    type: "enhanced adherence counselling",
+                                                    visitId: null
+                                                })
  
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -69,7 +72,9 @@ const Enrollment = (props) => {
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
-          objValues.patient_id= patientObj.id
+        observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+        observation.personId =patientObj.id
+        observation.data=objValues
           setSaving(true);
           axios.post(`${baseUrl}covid/patientstatus`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
@@ -78,15 +83,12 @@ const Enrollment = (props) => {
               .then(response => {
                   setSaving(false);
                   toast.success("Record save successful");
-                  props.toggle()
-                  props.loadPatients()
-                  //history.push("/")
 
               })
               .catch(error => {
-                  setSaving(false);
-                  toast.success("Record save successful");
-                  //toast.error("Something went wrong");
+                setSaving(false);
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage);
               });
           
     }

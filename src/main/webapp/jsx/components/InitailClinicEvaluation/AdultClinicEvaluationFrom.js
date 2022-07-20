@@ -104,15 +104,11 @@ const ClinicEvaluationFrom = (props) => {
             )
               .then(response => {
                   setSaving(false);
-                  props.patientObj.commenced=true
-                  toast.success("Vital signs save successful");
-                  props.toggle()
-                  props.patientsVitalsSigns()
-
+                  toast.success("Initial Clinic Evaluation successful");
               })
               .catch(error => {
                   setSaving(false);
-                  toast.error("Something went wrong");
+                  toast.success("Initial Clinic Evaluation successful");
                  
               });
           
@@ -3496,7 +3492,7 @@ const ClinicEvaluationFrom = (props) => {
                         </div>
                     </div>
                     <hr/>
-                    <h3>Thirt Line</h3>
+                    <h3>Third Line</h3>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input

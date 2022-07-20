@@ -307,14 +307,8 @@ const ArtCommencement = (props) => {
               })
               .catch(error => {
                   setSaving(false);
-                  console.log(error.apierror)
-                  if(error.apierror){
-                    toast.error(error.apierror.message);
-                  }else{
-                    toast.error("Something went wrong. Please try again...");
-                  }
-                  
-                 
+                  let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                  toast.error(errorMessage);
               });
             }
           

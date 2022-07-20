@@ -374,9 +374,9 @@ const ClinicVisit = (props) => {
       <div className="col-md-6">
         <h2>Clinic Follow-up Visit</h2>
         </div>
-        <div className="col-md-6">
+        {/* <div className="col-md-6">
             <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous Clinic Visit</Button>
-        </div>
+        </div> */}
         <br/>
         <br/>
         <br/>
@@ -535,6 +535,24 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
+              {vital.bodyWeight!=="" && vital.height!=="" && (
+              <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >BMI</FormLabelName>
+                  
+                  <InputGroup> 
+                  <InputGroupText>
+                      BMI
+                    </InputGroupText>                   
+                    <Input
+                      type="number"
+                      disabled
+                      value={Math.round(vital.bodyWeight/(vital.height/100))}
+                    />
+                  </InputGroup>                
+                </FormGroup>
+              </div>
+              )}
               <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Blood Pressure</FormLabelName>

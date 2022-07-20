@@ -110,7 +110,7 @@ const LabHistory = (props) => {
 
     useEffect(() => {
         LabOrders()
-      }, []);
+      }, [props.patientObj.id]);
     //GET LIST OF Patients
     async function LabOrders() {
         setLoading(true)
@@ -136,7 +136,7 @@ const LabHistory = (props) => {
             });        
     }
 
-    const labOrder =()=>{
+    const CreatelabOrder =()=>{
         props.setActiveContent('laboratory')
         
     }
@@ -162,19 +162,17 @@ const LabHistory = (props) => {
 
   return (
     <div>
-         <Link to={"register-patient"}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    className=" float-end"
-                    //startIcon={<FaUserPlus size="10"/>}
-                    //onClick={labOrder()}
-                >
-                    <span style={{ textTransform: "capitalize" }}>New Lab Order</span>
-                </Button>
-                </Link>
-                <br/><br/>
-                <br/>
+            <Button
+                variant="contained"
+                color="primary"
+                className=" float-end"
+                //startIcon={<FaUserPlus size="10"/>}
+                onClick={()=>CreatelabOrder()}
+            >
+                <span style={{ textTransform: "capitalize" }}>New Lab Order</span>
+            </Button>
+            <br/><br/>
+            <br/>
         
             <MaterialTable
             icons={tableIcons}
@@ -196,7 +194,7 @@ const LabHistory = (props) => {
                   //Id: manager.id,
                   testGroup:row.labTestGroupName,
                   testName: row.labTestName,
-                  orderPriority: row.orderPriority,
+                  orderPriority: row.orderPriorityName,
                   orderDate: row.orderDate,                    
                   status: (<Label color={labStatus(row.labTestOrderStatus)} size="mini">{row.labTestOrderStatusName}</Label>), 
                   

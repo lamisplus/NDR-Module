@@ -159,7 +159,8 @@ const ClientStatusUpdate = (props) => {
               })
               .catch(error => {
                   setSaving(false);
-                  toast.error("Something went wrong");
+                  let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                  toast.error(errorMessage);
               });          
     }
 
@@ -173,9 +174,7 @@ const ClientStatusUpdate = (props) => {
                     <div className="col-md-6">
                     <h2> Client Status Update </h2>
                     </div>
-                    <div className="col-md-6">
-                        <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
-                    </div>
+                    
                     <br/>
                     <br/>
                     <br/>

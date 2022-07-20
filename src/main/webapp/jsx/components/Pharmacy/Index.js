@@ -229,9 +229,9 @@ const Pharmacy = (props) => {
         <div className="col-md-6">
         <h2>Pharmacy Drug Refill</h2> 
         </div>
-        <div className="col-md-6">
+        {/* <div className="col-md-6">
             <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
-        </div>
+        </div> */}
         <br/>
         <br/>
         <br/>
@@ -420,7 +420,7 @@ const Pharmacy = (props) => {
             <hr/>
             <div className="form-group mb-3 col-md-12">
                 <FormGroup>
-                <Label >Select Regimen Type *</Label>
+                <Label >Select Regimen Line *</Label>
                 <Input
                     type="select"
                     name="regimen"

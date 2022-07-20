@@ -4,8 +4,6 @@ import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
-// import { Alert } from 'reactstrap';
-// import { Spinner } from 'reactstrap';
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
@@ -13,6 +11,8 @@ import { token as token } from "./../../../api";
 import { Spinner } from "reactstrap";
 import { Alert } from "react-bootstrap";
 import { Icon,Button, } from 'semantic-ui-react'
+import moment from "moment";
+
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -54,10 +54,18 @@ const MentalHealthScreening = (props) => {
     const patientObj = props.patientObj;
     //let history = useHistory();
     const classes = useStyles()
-    const [objValues, setObjValues] = useState({patient_id: "",mhs1:"",mhs2:"" ,mhs3:"" ,mhs4:"",mhs5:""});
+    const [objValues, setObjValues] = useState({mhs1:"",mhs2:"" ,mhs3:"" ,mhs4:"",mhs5:""});
     const [saving, setSaving] = useState(false);
     const [referrer, setReferrer] = useState(false);
     const [errors, setErrors] = useState({});
+    const [observation, setObservation]=useState({
+                                                    data: {},
+                                                    dateOfObservation: "yyyy-MM-dd",
+                                                    facilityId: null,
+                                                    personId: 0,
+                                                    type: "mental health",
+                                                    visitId: null
+                                                })
  
     const handleInputChangeKP = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -65,10 +73,12 @@ const MentalHealthScreening = (props) => {
           
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
-        e.preventDefault();        
-          objValues.patient_id= patientObj.id
+        e.preventDefault(); 
+          observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+          observation.personId =patientObj.id
+          observation.data=objValues
           setSaving(true);
-          axios.post(`${baseUrl}covid/patientstatus`,objValues,
+          axios.post(`${baseUrl}observation`,observation,
            { headers: {"Authorization" : `Bearer ${token}`}},          
           )
               .then(response => {
@@ -82,9 +92,9 @@ const MentalHealthScreening = (props) => {
                   //history.push("/")
               })
               .catch(error => {
-                  setSaving(false);
-                  setReferrer(false)
-                  toast.success("Mental health screening save successful");
+                setSaving(false);
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage);
               });
           
     }
@@ -98,21 +108,25 @@ const MentalHealthScreening = (props) => {
                     <div className="col-md-6">
                         <h2>Mental Health Screening Form </h2>
                     </div>
-                    <div className="col-md-6">
+                    {/* <div className="col-md-6">
                         <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
-                    </div>
+                    </div> */}
                     <br/>
                     <br/>
                     <br/>
                     <br/>
                     {referrer && (
+                        <>
                         <Alert
-                        variant="info"
+                        variant="warning"
                         className="alert-dismissible solid fade show"
                         >
                         <p>Please refer patient to psychiatric hospital</p>
                         </Alert>
+                        
+                        </>
                     )}
+                    <div className="m-3 col-md-12"></div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself?</Label>

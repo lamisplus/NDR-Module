@@ -24,11 +24,16 @@ const RecentHistory = (props) => {
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
-           console.log(response.data);
-           const latestOrders= response.data.map((tests)=>(
-            setViralLoad([...tests.labOrder.tests])
-           ))
-           //setViralLoad(response.data);
+           let LabObject= []
+                response.data.forEach(function(value, index, array) {
+                    const dataOrders = value.labOrder.tests                    
+                    if(dataOrders[index]) {
+                        dataOrders.forEach(function(value, index, array) {
+                            LabObject.push(value)
+                        })                       
+                    }                   
+                });
+              setViralLoad(LabObject)
        })
        .catch((error) => {
        //console.log(error);
@@ -358,18 +363,26 @@ const RecentHistory = (props) => {
                           className="timeline-panel text-muted"
                           to="/widget-basic"
                         >
-                          {/* <h6 className="mb-0">
-                            Test Order Date{" "}<br/>
-                            <strong className="text-primary">{""}</strong>
-                          </h6> */}
                           <h6 className="mb-0">
+                            Test Order Date{" "}<br/>
+                            <strong className="text-primary">{test.orderDate}</strong>
+                          </h6>
+                          {test.labTestGroupName!=='others' &&(<h6 className="mb-0">
                             Test Order{" "}<br/>
                             <strong className="text-primary">{test.labTestGroupName + " - " + test.labTestName}</strong>.
                           </h6>
+                           )}
+                           {test.labTestGroupName==='others' &&(<h6 className="mb-0">
+                            Test Order{" "}<br/>
+                            <strong className="text-primary">{test.labTestName + " - " + test.viralLoadIndicationName}</strong>.
+                          </h6>
+                           )}
+                          
                           <h6 className="mb-0">
                             Status{" "}<br/>
                             <strong className="text-primary">{test.labTestOrderStatusName}</strong>.
                           </h6>
+                          
                         </Link>
                         </li>
                       </>

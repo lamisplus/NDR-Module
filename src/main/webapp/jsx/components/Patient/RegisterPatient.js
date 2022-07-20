@@ -22,6 +22,8 @@ import {Link, useHistory, useLocation} from "react-router-dom";
 import {TiArrowBack} from 'react-icons/ti'
 import {useForm} from "react-hook-form";
 import {token, url as baseUrl } from "../../../api";
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 
 library.add(faCheckSquare, faCoffee, faEdit, faTrash);
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(20),
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "center"
     },
     form: {
         width: "100%", // Fix IE 11 issue.
@@ -65,9 +67,9 @@ const useStyles = makeStyles((theme) => ({
 const schema = yup.object().shape({
     dateOfRegistration: yup.date().required(),
     hospitalNumber: yup.string().required(),
-    firstName: yup.string().required().matches(/^[aA-zZ\s]+$/, " "),
-    middleName: yup.string().nullable().matches(/^[aA-zZ\s]+$/, ""),
-    lastName: yup.string().required().matches(/^[aA-zZ\s]+$/, ""),
+    firstName: yup.string().required(),
+    middleName: yup.string().nullable(),
+    lastName: yup.string().required(),
     sex: yup.number().required(),
     employmentStatus: yup.number().required(),
     highestQualification: yup.number().required(),
@@ -86,9 +88,13 @@ const schema = yup.object().shape({
 });
 
 const UserRegistration = (props) => {
-    const { register, setValue, getValues, setError, handleSubmit, formState: { errors } } = useForm({
+    const { register, watch, setValue, getValues, setError, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
+    const watchPnumber= watch("pnumber", false);
+    const watchAltPhonenumber= watch("altPhonenumber", false);
+    const watchContactPhoneNumber= watch("contactPhoneNumber", false);
+    const watchShowAge = watch("age", false);
     const [today, setToday] = useState(new Date().toISOString().substr(0, 10).replace('T', ' '));
     const [contacts, setContacts] = useState([]);
     const [saving, setSaving] = useState(false);
@@ -103,8 +109,6 @@ const UserRegistration = (props) => {
     const [topLevelUnitCountryOptions, settopLevelUnitCountryOptions]= useState([]);
     const [stateUnitOptions, setStateUnitOptions]= useState([]);
     const [districtUnitOptions, setDistrictUnitOptions]= useState([]);
-    const [checkPhoneNumberLength, setcheckPhoneNumberLength]=useState("")
-    const [patientDTO, setPatientDTO]= useState({"person":"", "hivEnrollment":""})
     const userDetail = props.location && props.location.state ? props.location.state.user : null;
     const classes = useStyles();
     const history = useHistory();
@@ -116,7 +120,7 @@ const UserRegistration = (props) => {
 
     const getNames = (relationship) => {
         const surname = relationship.surname;
-        const firstName = relationship.firstname;
+        const firstName = relationship.firstName;
         const otherName = relationship.otherName ? relationship.otherName : '';
         return surname + ', ' + firstName + ' ' + otherName;
     }
@@ -155,9 +159,6 @@ const UserRegistration = (props) => {
             setValue('hospitalNumber', hospitalNumber ? hospitalNumber.value : '');
             setValue('maritalStatus', maritalStatus.id);
             setValue('employmentStatus', employmentStatus.id);
-            if(gender.id==="3" || gender.id==="4"){
-                setfemaleStatus(true)
-            }
             setValue('sex', gender.id);
             setValue('highestQualification', education.id);
             setValue('dob', format(new Date(patient.dateOfBirth), 'yyyy-MM-dd'));
@@ -217,11 +218,17 @@ const UserRegistration = (props) => {
             "surname": clastName,
             "otherName": cmiddleName
         };
+
         if (editRelative != null) {
             contacts.splice(editRelative, 1);
             setContacts(contacts.concat(contact));
         } else {
-            setContacts(contacts.concat(contact));
+            if(contacts === undefined){
+                setContacts([].concat(contact));
+            }else{
+                setContacts(contacts.concat(contact));
+            }
+
         }
         setShowRelative(false);
     };
@@ -288,14 +295,9 @@ const UserRegistration = (props) => {
             patientForm.contactPoint.push(phone);
             if (patientId) {
                 patientForm.id = null;
-                patientDTO.person=patientForm;
-                patientDTO.hivEnrollment=objValues;
-                const response = await axios.put(`${baseUrl}hiv/patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.put(`${baseUrl}patient/${patientId}`, patientForm, { headers: {"Authorization" : `Bearer ${token}`} });
             } else {
-                patientForm.id = patientId;
-                patientDTO.person=patientForm;
-                patientDTO.hivEnrollment=objValues;
-                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.post(`${baseUrl}patient`, patientForm, { headers: {"Authorization" : `Bearer ${token}`} });
             }
             toast.success("Patient Register successful");
             history.push('/');
@@ -311,7 +313,7 @@ const UserRegistration = (props) => {
     }
     const handleEditRelative = (relative, index) => {
         setValue("relationshipType", relative.relationshipId);
-        setValue("cfirstName", relative.firstname);
+        setValue("cfirstName", relative.firstName);
         setValue("cmiddleName", relative.otherName);
         setValue("clastName", relative.surname);
         setValue("contactPhoneNumber", relative.contactPoint ? relative.contactPoint.value : '');
@@ -412,11 +414,6 @@ const UserRegistration = (props) => {
             if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
                 age_now--;
             }
-            if(parseInt(age_now) < 11){            
-                setHideTargetGroup("true")
-            }else{
-                setHideTargetGroup("false")
-            }
             setValue('age', age_now);
         } else {
             setValue('age', null);
@@ -432,20 +429,14 @@ const UserRegistration = (props) => {
     }
 
     const handleAgeChange = (e) => {
-        const ageInputValue= e.target.value
         if (!ageDisabled && e.target.value) {
+            setValue('age', e.target.value);
             const currentDate = new Date();
             currentDate.setDate(15);
             currentDate.setMonth(5);
             const estDob = moment(currentDate.toISOString());
             const dob = estDob.add((e.target.value * -1), 'years');
             setValue('dob', format(new Date(dob.toDate()), 'yyyy-MM-dd'));
-        }
-        //Handle all other input field if age is less 14
-        if(parseInt(ageInputValue) < 14){            
-            setHideTargetGroup("true")
-        }else{
-            setHideTargetGroup("false")
         }
     }
 
@@ -511,177 +502,172 @@ const UserRegistration = (props) => {
     const handleCancel = () => {
         history.push('/');
     };
-        //HIV INFORMATION
-        const [femaleStatus, setfemaleStatus]= useState(false)
-        //const [values, setValues] = useState([]);
-        const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
-        //const [saving, setSaving] = useState(false);
-        //const [errors, setErrors] = useState({});
-        const [carePoints, setCarePoints] = useState([]);
-        const [sourceReferral, setSourceReferral] = useState([]);
-        const [hivStatus, setHivStatus] = useState([]);
-        const [enrollSetting, setEnrollSetting] = useState([]);
-        const [tbStatus, setTbStatus] = useState([]);
-        const [kP, setKP] = useState([]);
-        const [pregnancyStatus, setPregnancyStatus] = useState([]);
-        //set ro show the facility name field if is transfer in 
-        const [transferIn, setTransferIn] = useState(false);
-        // display the OVC number if patient is enrolled into OVC 
-        const [ovcEnrolled, setOvcEnrolled] = useState(false);
-        //Input fields to hidden base on some conditions
-        const [hideTargetGroup, setHideTargetGroup]= useState("false");
-    
-        useEffect(() => {         
-            CareEntryPoint();
-            SourceReferral();
-            HivStatus();
-            EnrollmentSetting();
-            TBStatus();
-            KP();
-            PregnancyStatus();
-          }, []);
-    
-          //Get list of CareEntryPoint
-          const CareEntryPoint =()=>{
-                 axios
-                    .get(`${baseUrl}application-codesets/v2/POINT_ENTRY`,
-                        { headers: {"Authorization" : `Bearer ${token}`} }
-                    )
-                    .then((response) => {
-                        //console.log(response.data);
-                        setCarePoints(response.data);
-                    })
-                    .catch((error) => {
-                    //console.log(error);
-                    });
-                
-          }
-        //Get list of Source of Referral
-        const SourceReferral =()=>{
-                axios
-                .get(`${baseUrl}application-codesets/v2/SOURCE_REFERRAL`,
+
+    const checkPhoneNumber=(e, inputName)=>{
+        setValue(inputName,e);
+    }
+
+     const alphabetOnly=(e, inputName)=>{
+         const result = e.target.value.replace(/[^a-z]/gi, '');
+         setValue(inputName,result);
+     }
+    //HIV INFORMATION
+    const [femaleStatus, setfemaleStatus]= useState(false)
+    //const [values, setValues] = useState([]);
+    const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
+    //const [saving, setSaving] = useState(false);
+    //const [errors, setErrors] = useState({});
+    const [carePoints, setCarePoints] = useState([]);
+    const [sourceReferral, setSourceReferral] = useState([]);
+    const [hivStatus, setHivStatus] = useState([]);
+    const [enrollSetting, setEnrollSetting] = useState([]);
+    const [tbStatus, setTbStatus] = useState([]);
+    const [kP, setKP] = useState([]);
+    const [pregnancyStatus, setPregnancyStatus] = useState([]);
+    //set ro show the facility name field if is transfer in 
+    const [transferIn, setTransferIn] = useState(false);
+    // display the OVC number if patient is enrolled into OVC 
+    const [ovcEnrolled, setOvcEnrolled] = useState(false);
+    //Input fields to hidden base on some conditions
+    const [hideTargetGroup, setHideTargetGroup]= useState("false");
+
+    useEffect(() => {         
+        CareEntryPoint();
+        SourceReferral();
+        HivStatus();
+        EnrollmentSetting();
+        TBStatus();
+        KP();
+        PregnancyStatus();
+    }, []);
+
+    //Get list of CareEntryPoint
+    const CareEntryPoint =()=>{
+            axios
+                .get(`${baseUrl}application-codesets/v2/POINT_ENTRY`,
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
                     //console.log(response.data);
-                    setSourceReferral(response.data);
+                    setCarePoints(response.data);
                 })
                 .catch((error) => {
                 //console.log(error);
                 });
             
-        }
-         //Get list of HIV STATUS ENROLLMENT
-         const HivStatus =()=>{
+    }
+    //Get list of Source of Referral
+    const SourceReferral =()=>{
             axios
-               .get(`${baseUrl}application-codesets/v2/HIV_STATUS_ENROL`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setHivStatus(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-         }
-          //Get list of HIV STATUS ENROLLMENT
-          const EnrollmentSetting =()=>{
-            axios
-               .get(`${baseUrl}application-codesets/v2/ENROLLMENT_SETTING`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setEnrollSetting(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-         }
-          //Get list of HIV STATUS ENROLLMENT
-          const TBStatus =()=>{
-            axios
-               .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setTbStatus(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-         }
-          //Get list of KP
-          const KP =()=>{
-            axios
-               .get(`${baseUrl}application-codesets/v2/KP_TYPE`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setKP(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-         }
-          //Get list of KP
-          const PregnancyStatus =()=>{
-            axios
-               .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setPregnancyStatus(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-         }
-        const handleInputChange = e => {
-            
-            setObjValues ({...objValues,  [e.target.name]: e.target.value});
-            if(e.target.name ==="entryPointId" ){
-                if(e.target.value==="21"){
-                    setTransferIn(true)
-                }else{
-                    setTransferIn(false)
-                }
-            }
-            
-        }
-              
-        //Handle CheckBox 
-        const handleCheckBox =e =>{
-            if(e.target.checked){
-                setOvcEnrolled(true)
+            .get(`${baseUrl}application-codesets/v2/SOURCE_REFERRAL`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setSourceReferral(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    //Get list of HIV STATUS ENROLLMENT
+    const HivStatus =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/HIV_STATUS_ENROL`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setHivStatus(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    //Get list of HIV STATUS ENROLLMENT
+    const EnrollmentSetting =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/ENROLLMENT_SETTING`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setEnrollSetting(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    //Get list of HIV STATUS ENROLLMENT
+    const TBStatus =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setTbStatus(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    //Get list of KP
+    const KP =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/KP_TYPE`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setKP(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    //Get list of KP
+    const PregnancyStatus =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setPregnancyStatus(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    const handleInputChange = e => {
+        
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        if(e.target.name ==="entryPointId" ){
+            if(e.target.value==="21"){
+                setTransferIn(true)
             }else{
-                setOvcEnrolled(false)
+                setTransferIn(false)
             }
         }
-    const checkPhoneNumber=(e)=>{
-            const limit=11;
-            setValue('pnumber', e.target.value.slice(0, limit) );
+        
     }
-    const checkAltPhoneNumber=(e)=>{
-        const limit=11;
-        setValue('altPhonenumber', e.target.value.slice(0, limit) );
+        
+    //Handle CheckBox 
+    const handleCheckBox =e =>{
+        if(e.target.checked){
+            setOvcEnrolled(true)
+        }else{
+            setOvcEnrolled(false)
+        }
+    }
 
-    }
-    // const LastNameAlphalbetOnly=(e)=>{
-    //     console.log(e.target.value)
-    //     const result = e.target.value.replace(/(\w.+\s).+/gi, '');
-    //     console.log(result)
-    //     setValue('firstName',result );
-    // }
 
     return (
         <>
@@ -697,6 +683,7 @@ const UserRegistration = (props) => {
                             variant="contained"
                             color="primary"
                             className=" float-end ms-1"
+                            style={{backgroundColor:'#04C4D9',fontWeight:"bolder"}}
                             startIcon={<TiArrowBack />}
                         >
                             <span style={{ textTransform: "capitalize" }}>Back </span>
@@ -707,7 +694,7 @@ const UserRegistration = (props) => {
                     <div className="col-xl-12 col-lg-12">
                         <Form onSubmit={handleSubmit(onSubmit, onError)}>
                             <div className="card">
-                                <div className="card-header" style={{backgroudColor:"#04C4D9"}}>
+                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
                                     <h5 className="card-title">{userDetail===null ? "Basic Information" : "Edit User Information"}</h5>
                                 </div>
 
@@ -716,7 +703,7 @@ const UserRegistration = (props) => {
                                         <div className="row">
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="dateOfRegistration">Date of Registration*</Label>
+                                                    <Label for="dateOfRegistration">Date of Registration* </Label>
                                                     <input
                                                         className="form-control"
                                                         type="date"
@@ -724,6 +711,7 @@ const UserRegistration = (props) => {
                                                         id="dateOfRegistration"
                                                         max={today}
                                                         {...register("dateOfRegistration")}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
                                                     {errors.dateOfRegistration && <p>{errors.dateOfRegistration.message}</p>}
                                                 </FormGroup>
@@ -738,6 +726,7 @@ const UserRegistration = (props) => {
                                                         name="hospitalNumber"
                                                         id="hospitalNumber"
                                                         {...register("hospitalNumber")}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
                                                     {errors.hospitalNumber && <p>{errors.hospitalNumber.message}</p>}
                                                 </FormGroup>
@@ -747,13 +736,16 @@ const UserRegistration = (props) => {
                                         <div className="row">
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="firstName">First Name *</Label>
+                                                    <Label for="firstName">First Names *</Label>
                                                     <input
                                                         className="form-control"
                                                         type="text"
                                                         name="firstName"
                                                         id="firstName"
-                                                        {...register("firstName")}
+                                                        {...register("firstName",{
+                                                            onChange:(e)=>{alphabetOnly(e,'firstName')}
+                                                        })}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
                                                     {errors.firstName && <p>{errors.firstName.message}</p>}
                                                 </FormGroup>
@@ -767,7 +759,10 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="middleName"
                                                         id="middleName"
-                                                        {...register("middleName")}
+                                                        {...register("middleName",{
+                                                            onChange:(e)=>{alphabetOnly(e,'middleName')}
+                                                        })}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
                                                     {errors.middleName && <p>{errors.middleName.message}</p>}
                                                 </FormGroup>
@@ -781,9 +776,10 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="lastName"
                                                         id="lastName"
-                                                        onChange={(e)=>console.log(e.target.value)}
-                                                        {...register("lastName")}
-                                                        
+                                                        {...register("lastName",{
+                                                            onChange:(e)=>{alphabetOnly(e,'lastName')}
+                                                        })}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
                                                     {errors.lastName && <p>{errors.lastName.message}</p>}
                                                 </FormGroup>
@@ -799,64 +795,14 @@ const UserRegistration = (props) => {
                                                         name="sex"
                                                         id="sex"
                                                         {...register("sex")}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     >
-                                                        <option value={""}>Select</option>
+                                                        <option value={""}></option>
                                                         {genderRows}
                                                     </select>
                                                     {errors.sex && <p>{errors.sex.message}</p>}
                                                 </FormGroup>
                                             </div>
-
-                                            <div className="form-group  col-md-4">
-                                                <FormGroup>
-                                                    <Label>Employment Status *</Label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="employmentStatus"
-                                                        id="employmentStatus"
-                                                        {...register("employmentStatus")}
-                                                    >
-                                                        <option value={""}>Select</option>
-                                                        {occupationRows}
-                                                    </select>
-                                                    {errors.lastName && <p>{errors.lastName.message}</p>}
-                                                </FormGroup>
-                                            </div>
-
-                                            <div className="form-group  col-md-4">
-                                                <FormGroup>
-                                                    <Label>Highest Qualification *</Label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="highestQualification"
-                                                        id="highestQualification"
-                                                        {...register("highestQualification")}
-                                                    >
-                                                        <option value={""}>Select</option>
-                                                        {educationRows}
-                                                    </select>
-                                                    {errors.highestQualification && <p>{errors.highestQualification.message}</p>}
-                                                </FormGroup>
-                                            </div>
-                                        </div>
-
-                                        <div className={"row"}>
-                                            <div className="form-group mb-3 col-md-3">
-                                                <FormGroup>
-                                                    <Label>Marital Status</Label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="maritalStatus"
-                                                        id="maritalStatus"
-                                                        {...register("maritalStatus")}
-                                                    >
-                                                        <option value={""}>Select</option>
-                                                        {maritalStatusRows}
-                                                    </select>
-                                                    {errors.maritalStatus && <p>{errors.maritalStatus.message}</p>}
-                                                </FormGroup>
-                                            </div>
-
                                             <div className="form-group mb-2 col-md-2">
                                                 <FormGroup>
                                                     <Label>Date Of Birth</Label>
@@ -869,6 +815,7 @@ const UserRegistration = (props) => {
                                                                 defaultChecked
                                                                 {...register("dateOfBirth")}
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
+                                                                style={{border: "1px solid #04C4D9"}}
                                                             /> Actual
                                                         </label>
                                                     </div>
@@ -880,6 +827,7 @@ const UserRegistration = (props) => {
                                                                 name="dateOfBirth"
                                                                 {...register("dateOfBirth")}
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
+                                                                style={{border: "1px solid #04C4D9"}}
                                                             /> Estimated
                                                         </label>
                                                     </div>
@@ -897,6 +845,7 @@ const UserRegistration = (props) => {
                                                         max={today}
                                                         {...register("dob")}
                                                         onChange={(e) => handleDobChange(e)}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
                                                     {errors.dob && <p>{errors.dob.message}</p>}
                                                 </FormGroup>
@@ -913,7 +862,68 @@ const UserRegistration = (props) => {
                                                         {...register("age")}
                                                         disabled={ageDisabled}
                                                         onChange={(e) => handleAgeChange(e)}
+                                                        style={{border: "1px solid #04C4D9"}}
                                                     />
+                                                </FormGroup>
+                                            </div>
+                                        </div>
+
+                                        <div className={"row"}>
+{/*                                            {watchShowAge >=0 &&
+                                            <>*/}
+                                                <div className="form-group mb-3 col-md-3">
+                                                    <FormGroup>
+                                                        <Label>Marital Status</Label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="maritalStatus"
+                                                            id="maritalStatus"
+                                                            {...register("maritalStatus")}
+                                                            style={{border: "1px solid #04C4D9"}}
+                                                        >
+                                                            <option value={""}></option>
+                                                            {maritalStatusRows}
+                                                        </select>
+                                                        {errors.maritalStatus && <p>{errors.maritalStatus.message}</p>}
+                                                    </FormGroup>
+                                                </div>
+
+                                                <div className="form-group  col-md-4">
+                                                    <FormGroup>
+                                                        <Label>Employment Status *</Label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="employmentStatus"
+                                                            id="employmentStatus"
+                                                            {...register("employmentStatus")}
+                                                            style={{border: "1px solid #04C4D9"}}
+                                                        >
+                                                            <option value={""}></option>
+                                                            {occupationRows}
+                                                        </select>
+                                                        {errors.lastName && <p>{errors.lastName.message}</p>}
+                                                    </FormGroup>
+                                                </div>
+{/*
+                                            </>
+                                            }
+*/}
+
+
+                                            <div className="form-group  col-md-4">
+                                                <FormGroup>
+                                                    <Label>Education Level *</Label>
+                                                    <select
+                                                        className="form-control"
+                                                        name="highestQualification"
+                                                        id="highestQualification"
+                                                        {...register("highestQualification")}
+                                                        style={{border: "1px solid #04C4D9"}}
+                                                    >
+                                                        <option value={""}></option>
+                                                        {educationRows}
+                                                    </select>
+                                                    {errors.highestQualification && <p>{errors.highestQualification.message}</p>}
                                                 </FormGroup>
                                             </div>
                                         </div>
@@ -922,7 +932,7 @@ const UserRegistration = (props) => {
                             </div>
 
                             <div className="card">
-                                <div className="card-header">
+                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
                                     <h5 className="card-title">Contact Details</h5>
                                 </div>
 
@@ -931,33 +941,52 @@ const UserRegistration = (props) => {
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
                                                 <Label>Phone Number *</Label>
-                                                <input
+                                                <PhoneInput
+                                                    containerStyle={{width:'100%',border: "1px solid #04C4D9"}}
+                                                    inputStyle={{width:'100%',borderRadius:'0px'}}
+                                                    country={'ng'}
+                                                    placeholder="(234)7099999999"
+                                                    value={getValues('pnumber')}
+                                                    onChange={(e)=>{checkPhoneNumber(e,'pnumber')}}
+                                                />
+
+{/*                                                <input
                                                     className="form-control"
-                                                    type="number"
+                                                    type="tel"
                                                     name="pnumber"
                                                     id="pnumber"
-                                                    {...register("pnumber")}
-                                                    onChange={checkPhoneNumber}
-                                                    placeholder="08077665688"                                                   
-
-                                                />
+                                                    {...register("pnumber",{
+                                                        onChange:(e)=>{checkPhoneNumber(e,'pnumber')}
+                                                    })}
+                                                    placeholder="(234)7099999999"
+                                                    style={{border: "1px solid #04C4D9"}}
+                                                />*/}
                                                 {errors.pnumber && <p>{errors.pnumber.message}</p>}
-                                                
                                             </FormGroup>
                                         </div>
 
                                         <div className="form-group col-md-4">
                                             <FormGroup>
                                                 <Label>Alt. Phone Number</Label>
-                                                <input
+                                                <PhoneInput
+                                                    containerStyle={{width:'100%',border: "1px solid #04C4D9"}}
+                                                    inputStyle={{width:'100%',borderRadius:'0px'}}
+                                                    country={'ng'}
+                                                    placeholder="(234)7099999999"
+                                                    value={getValues('altPhonenumber')}
+                                                    onChange={(e)=>{checkPhoneNumber(e,'altPhonenumber')}}
+                                                />
+{/*                                                <input
                                                     className="form-control"
-                                                    type="number"
-                                                    placeholder="08077665688"
+                                                    type="tel"
                                                     name="altPhoneNumber"
                                                     id="altPhoneNumber"
-                                                    onChange={checkAltPhoneNumber}
-                                                    {...register("altPhonenumber")}
-                                                />
+                                                    {...register("altPhonenumber",{
+                                                        onChange:(e)=>{checkPhoneNumber(e,'altPhonenumber')}
+                                                    })}
+                                                    placeholder="(234)7099999999"
+                                                    style={{border: "1px solid #04C4D9"}}
+                                                />*/}
                                                 {errors.altPhonenumber && <p>{errors.altPhonenumber.message}</p>}
                                             </FormGroup>
                                         </div>
@@ -971,6 +1000,7 @@ const UserRegistration = (props) => {
                                                     name="email"
                                                     id="email"
                                                     {...register("email")}
+                                                    style={{border: "1px solid #04C4D9"}}
                                                 />
                                                 {errors.email && <p>{errors.email.message}</p>}
                                             </FormGroup>
@@ -980,15 +1010,16 @@ const UserRegistration = (props) => {
                                     <div className="row">
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>Country</Label>
+                                                <Label>Country *</Label>
                                                 <select
                                                     className="form-control"
                                                     type="text"
                                                     name="country"
                                                     id="country"
+                                                    style={{border: "1px solid #04C4D9"}}
                                                     {...register("countryId")}
                                                     onChange={(e) => onCountryChange(e)}>
-                                                    <option value={""}>Select</option>
+                                                    <option value={""}></option>
                                                     {topLevelUnitCountryRows}
                                                 </select>
                                                 {errors.country && <p>{errors.country.message}</p>}
@@ -997,15 +1028,16 @@ const UserRegistration = (props) => {
 
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>State</Label>
+                                                <Label>State *</Label>
                                                 <select
                                                     className="form-control"
                                                     type="text"
                                                     name="stateId"
                                                     id="stateId"
+                                                    style={{border: "1px solid #04C4D9"}}
                                                     {...register("stateId")}
                                                     onChange={(e) => onStateChange(e)}>
-                                                    <option value={""}>Select</option>
+                                                    <option value={""}></option>
                                                     {stateRows}
                                                 </select>
                                             </FormGroup>
@@ -1013,14 +1045,15 @@ const UserRegistration = (props) => {
 
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>Province/District/LGA</Label>
+                                                <Label>Province/District/LGA *</Label>
                                                 <select
                                                     className="form-control"
                                                     type="text"
                                                     name="district"
                                                     id="district"
+                                                    style={{border: "1px solid #04C4D9"}}
                                                     {...register("district")}>
-                                                    <option value={""}>Select</option>
+                                                    <option value={""}></option>
                                                     {districtRows}
                                                 </select>
                                             </FormGroup>
@@ -1036,6 +1069,7 @@ const UserRegistration = (props) => {
                                                     type="text"
                                                     name="address"
                                                     id="address"
+                                                    style={{border: "1px solid #04C4D9"}}
                                                     {...register("address")}
                                                 />
                                                 {errors.address && <p>{errors.address.message}</p>}
@@ -1050,6 +1084,7 @@ const UserRegistration = (props) => {
                                                     type="text"
                                                     name="landmark"
                                                     id="landmark"
+                                                    style={{border: "1px solid #04C4D9"}}
                                                     {...register("landmark")}
                                                 />
                                                 {errors.landmark && <p>{errors.landmark.message}</p>}
@@ -1060,7 +1095,7 @@ const UserRegistration = (props) => {
                             </div>
 
                             <div className="card">
-                                <div className="card-header">
+                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
                                     <h5 className="card-title">Relationship / Next Of Kin</h5>
                                 </div>
                                 <div className="card-body">
@@ -1121,6 +1156,7 @@ const UserRegistration = (props) => {
                                                                             className="form-control"
                                                                             name="relationshipType"
                                                                             id="relationshipType"
+                                                                            style={{border: "1px solid #04C4D9"}}
                                                                             {...register("relationshipType")}>
                                                                             <option value={""}></option>
                                                                             {relationshipRows}
@@ -1137,7 +1173,10 @@ const UserRegistration = (props) => {
                                                                             type="text"
                                                                             name="cfirstName"
                                                                             id="cfirstName"
-                                                                            {...register("cfirstName")}
+                                                                            style={{border: "1px solid #04C4D9"}}
+                                                                            {...register("cfirstName",{
+                                                                                onChange:(e)=>{alphabetOnly(e,'cfirstName')}
+                                                                            })}
                                                                         />
                                                                         {errors.cfirstName && <p>{errors.cfirstName.message}</p>}
                                                                     </FormGroup>
@@ -1151,7 +1190,10 @@ const UserRegistration = (props) => {
                                                                             type="text"
                                                                             name="cmiddleName"
                                                                             id="cmiddleName"
-                                                                            {...register("cmiddleName")}
+                                                                            style={{border: "1px solid #04C4D9"}}
+                                                                            {...register("cmiddleName",{
+                                                                                onChange:(e)=>{alphabetOnly(e,'cmiddleName')}
+                                                                            })}
                                                                         />
                                                                         {errors.cmiddleName && <p>{errors.cmiddleName.message}</p>}
                                                                     </FormGroup>
@@ -1165,7 +1207,10 @@ const UserRegistration = (props) => {
                                                                             type="text"
                                                                             name="clastName"
                                                                             id="clastName"
-                                                                            {...register("clastName")}
+                                                                            style={{border: "1px solid #04C4D9"}}
+                                                                            {...register("clastName",{
+                                                                                onChange:(e)=>{alphabetOnly(e,'clastName')}
+                                                                            })}
                                                                         />
                                                                         {errors.clastName && <p>{errors.clastName.message}</p>}
                                                                     </FormGroup>
@@ -1176,16 +1221,24 @@ const UserRegistration = (props) => {
                                                                 <div className="form-group mb-3 col-md-3">
                                                                     <FormGroup>
                                                                         <Label for="contactPhoneNumber">Phone Number</Label>
-                                                                        <input
+                                                                        <PhoneInput
+                                                                            containerStyle={{width:'100%',border: "1px solid #04C4D9"}}
+                                                                            inputStyle={{width:'100%',borderRadius:'0px'}}
+                                                                            country={'ng'}
+                                                                            placeholder="(234)7099999999"
+                                                                            value={getValues('contactPhoneNumber')}
+                                                                            onChange={(e)=>{checkPhoneNumber(e,'contactPhoneNumber')}}
+                                                                        />
+{/*                                                                        <input
                                                                             className="form-control"
-                                                                            type="number"
-                                                                            min="11"
-                                                                            max="11"
-                                                                            placeholder="08077665688"
+                                                                            type="text"
                                                                             name="contactPhoneNumber"
                                                                             id="contactPhoneNumber"
-                                                                            {...register("contactPhoneNumber")}
-                                                                        />
+                                                                            style={{border: "1px solid #04C4D9"}}
+                                                                            {...register("contactPhoneNumber",{
+                                                                                onChange:(e)=>{checkPhoneNumber(e,'contactPhoneNumber')}
+                                                                            })}
+                                                                        />*/}
                                                                         {errors.contactPhoneNumber && <p>{errors.contactPhoneNumber.message}</p>}
                                                                     </FormGroup>
                                                                 </div>
@@ -1195,10 +1248,13 @@ const UserRegistration = (props) => {
                                                                         <Label for="contactEmail">Email</Label>
                                                                         <input
                                                                             className="form-control"
-                                                                            type="email"
+                                                                            type="text"
                                                                             name="contactEmail"
                                                                             id="contactEmail"
-                                                                            {...register("contactEmail")}
+                                                                            style={{border: "1px solid #04C4D9"}}
+                                                                            {...register("contactEmail",{
+                                                                                onChange:(e)=>{checkPhoneNumber(e,'contactEmail')}
+                                                                            })}
                                                                         />
                                                                         {errors.contactEmail && <p>{errors.contactEmail.message}</p>}
                                                                     </FormGroup>
@@ -1212,6 +1268,7 @@ const UserRegistration = (props) => {
                                                                             type="text"
                                                                             name="contactAddress"
                                                                             id="contactAddress"
+                                                                            style={{border: "1px solid #04C4D9"}}
                                                                             {...register("contactAddress")}
                                                                         />
                                                                         {errors.contactAddress && <p>{errors.contactAddress.message}</p>}
@@ -1250,6 +1307,7 @@ const UserRegistration = (props) => {
                                             }
                                         </div>
                                     </div>
+
                                     <div className="row"></div>
                                         <MatButton
                                             type="button"
@@ -1258,6 +1316,7 @@ const UserRegistration = (props) => {
                                             className={classes.button}
                                             startIcon={<AddIcon />}
                                             onClick={handleAddRelative}
+                                            style={{backgroundColor:'#04C4D9',fontWeight:"bolder"}}
                                         >
                                             Add a Relative/Next Of Kin
                                         </MatButton>
@@ -1266,7 +1325,7 @@ const UserRegistration = (props) => {
                             </div>
                             {/* Adding HIV ENROLLEMENT FORM HERE */}
                             <div className="card">
-                                <div className="card-header">
+                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
                                     <h5 className="card-title">HIV Enrollment</h5>
                                 </div>
 
@@ -1547,7 +1606,6 @@ const UserRegistration = (props) => {
                                 </div>
                             </div>
                             {/* END OF HIV ENROLLEMENT FORM */}
-
                             {saving ? <Spinner /> : ""}
 
                             <br />
