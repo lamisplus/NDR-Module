@@ -11,6 +11,7 @@ import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
+import org.lamisplus.modules.hiv.repositories.ObservationRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
@@ -34,9 +35,10 @@ public class HivEnrollmentService {
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
 
-    private  final PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
-    private final CurrentUserOrganizationService organizationUtil;
+    private final CurrentUserOrganizationService currentUserOrganizationService;
+
 
 
 
@@ -51,7 +53,6 @@ public class HivEnrollmentService {
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
         return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
     }
-
 
 
     public HivPatientDto updateHivEnrollment(Long id, HivEnrollmentDto hivEnrollmentDto) {
@@ -92,7 +93,7 @@ public class HivEnrollmentService {
         HivEnrollment hivEnrollment = new HivEnrollment ();
         BeanUtils.copyProperties (dto, hivEnrollment);
         log.info ("entity converted {} ", hivEnrollment);
-        hivEnrollment.setFacilityId (organizationUtil.getCurrentUserOrganization ());
+        hivEnrollment.setFacilityId (currentUserOrganizationService.getCurrentUserOrganization ());
         return hivEnrollment;
     }
 
@@ -106,12 +107,13 @@ public class HivEnrollmentService {
 
 
     private HivPatientDto convertHivEnrollmentToHivPatientDto(HivEnrollment entity) {
-        Person person = entity.getPerson();
+        Person person = entity.getPerson ();
         PersonResponseDto bioData = personService.getPersonById (person.getId ());
         HivEnrollmentDto hivEnrollmentDto = convertToDto (entity);
         HivPatientDto hivPatientDto = new HivPatientDto ();
         BeanUtils.copyProperties (bioData, hivPatientDto);
         hivPatientDto.setEnrolled (true);
+
         Long statusAtRegistrationId = entity.getStatusAtRegistrationId ();
         Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (statusAtRegistrationId);
         if (status.isPresent ()) {
@@ -122,10 +124,13 @@ public class HivEnrollmentService {
     }
 
 
+
+
+
     public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId) {
         Person person = getPerson (personId);
         Optional<HivEnrollment> hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0);
-        if(hivEnrollment.isPresent ()) {
+        if (hivEnrollment.isPresent ()) {
             return Optional.of (convertToDto (hivEnrollment.get ()));
         }
         return Optional.empty ();

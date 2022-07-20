@@ -62,7 +62,7 @@ public class ObservationService {
     public List<ObservationDto> getAllObservationByPerson(Long personId) {
         Person person = getPerson (personId);
         Long currentUserOrganization = currentUserOrganizationService.getCurrentUserOrganization ();
-        List<Observation> observations = observationRepository.getAllByAndPersonAndFacilityId (person, currentUserOrganization);
+        List<Observation> observations = observationRepository.getAllByPersonAndFacilityId (person, currentUserOrganization);
         return observations.stream ().map (this::convertObservationToDto).collect (Collectors.toList ());
 
 

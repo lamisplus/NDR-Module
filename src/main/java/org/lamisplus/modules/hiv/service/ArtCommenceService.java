@@ -28,7 +28,6 @@ import org.lamisplus.modules.patient.service.EncounterService;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
-import org.lamisplus.modules.triage.domain.entity.TriagePostService;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.TriagePostServiceRepository;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
@@ -39,7 +38,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -160,16 +158,9 @@ public class ArtCommenceService {
         encounter.setEncounterDate (visit.getVisitStartDate ());
         encounter.setServiceCode ("hiv-code");
         personOptional.ifPresent (encounter::setPerson);
+        encounter.setStatus ("PENDING");
         encounter.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         encounterRepository.save (encounter);
-    }
-
-    @NotNull
-    public Set<String> getHivServiceCodes() {
-        return postServiceRepository.findAll ()
-                .stream ().filter (triagePostService -> triagePostService.getModuleServiceCode ().contains ("hiv"))
-                .map (TriagePostService::getModuleServiceCode)
-                .collect (Collectors.toSet ());
     }
 
 
