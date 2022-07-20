@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface ObservationRepository extends JpaRepository<Observation, Long> {
     Optional<Observation> getAllByTypeAndPersonAndFacilityId(String type, Person person, Long facilityId);
-    List<Observation> getAllByAndPersonAndFacilityId(Person person, Long facilityId);
+    List<Observation> getAllByPersonAndFacilityId(Person person, Long facilityId);
 }
