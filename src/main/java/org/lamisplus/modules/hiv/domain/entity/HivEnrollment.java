@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -67,6 +68,10 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
     @OneToOne
     @JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
     private Person person;
+
+    @ManyToOne
+    @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
+    private Visit visit;
 
     @Column(name = "uuid", nullable = false, unique = true, updatable = false)
     private String uuid;

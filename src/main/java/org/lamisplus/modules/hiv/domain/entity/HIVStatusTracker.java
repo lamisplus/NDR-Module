@@ -1,6 +1,8 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
 import lombok.*;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -31,10 +33,12 @@ public class HIVStatusTracker extends HivAuditEntity implements Persistable<Long
     @Column(name = "status_date", nullable = false)
     @NotNull
     private LocalDate statusDate;
-
-    @Column(name = "person_id", nullable = false)
-    @NotNull
-    private String personId;
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "uuid", nullable = false)
+    private Person person;
+    @ManyToOne
+    @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
+    private Visit visit;
 
     @Column(name = "tracking_outcome")
     private String trackOutcome;

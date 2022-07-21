@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -30,6 +31,9 @@ public class Observation extends HivAuditEntity  implements Persistable<Long> {
     @ManyToOne
     @JoinColumn(name = "person_uuid", referencedColumnName ="uuid", updatable = false)
     private Person person;
+    @ManyToOne
+    @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
+    private Visit visit;
     @Column(name = "type", unique = true)
     private String type;
 

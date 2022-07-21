@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.springframework.data.domain.Persistable;
 
@@ -65,6 +66,9 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @ManyToOne
     @JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
     private Person person;
+    @ManyToOne
+    @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
+    private Visit visit;
     @Size(max = 5)
     @Column(name = "oi_screened")
     private String oiScreened;

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 
-    List<HIVEac> getAllByPersonArchived(Person person, Integer archived);
+    List<HIVEac> getAllByPersonAndArchived(Person person, Integer archived);
 }

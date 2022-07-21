@@ -50,8 +50,6 @@ public class HivAuditEntity {
 
     private Long facilityId;
 
-    private Long visitId;
-
     @PrePersist
     @PreUpdate
     public void update() {

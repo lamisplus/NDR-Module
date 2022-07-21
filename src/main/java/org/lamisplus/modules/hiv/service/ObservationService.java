@@ -85,7 +85,7 @@ public class ObservationService {
                 .personId (observation.getPerson ().getId ())
                 .facilityId (observation.getFacilityId ())
                 .type (observation.getType ())
-                .visitId (observation.getVisitId ())
+                .visitId (observation.getVisit ().getId ())
                 .id (observation.getId ())
                 .build ();
     }

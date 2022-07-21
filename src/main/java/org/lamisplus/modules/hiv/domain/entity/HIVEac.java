@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -25,6 +26,9 @@ public class HIVEac extends HivAuditEntity implements Serializable, Persistable<
     @ManyToOne
     @JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
     private Person person;
+    @ManyToOne
+    @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
+    private Visit visit;
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfEac1;
@@ -41,6 +45,7 @@ public class HIVEac extends HivAuditEntity implements Serializable, Persistable<
     private String uuid;
     private String note;
     private String status;
+    private int archived;
     @Override
     public boolean isNew() {
         return id == null;
