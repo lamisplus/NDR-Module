@@ -3,6 +3,7 @@ package org.lamisplus.modules.hiv.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
+import org.lamisplus.modules.hiv.domain.dto.HIVEacResponseDto;
 import org.lamisplus.modules.hiv.domain.dto.ObservationDto;
 import org.lamisplus.modules.hiv.service.HIVEacService;
 import org.lamisplus.modules.hiv.service.ObservationService;
@@ -39,11 +40,11 @@ public class ObservationController {
     }
 
     @PostMapping("/eac")
-    public ResponseEntity<HIVEacDto> handleEac(@RequestBody HIVEacDto dto) {
+    public ResponseEntity<HIVEacResponseDto> handleEac(@RequestBody HIVEacDto dto) {
         return ResponseEntity.ok (hivEacService.handleEac (dto));
     }
     @GetMapping("/eac/person/{id}")
-    public ResponseEntity<List<HIVEacDto>> getEac(@PathVariable("id") Long id) {
+    public ResponseEntity<List<HIVEacResponseDto>> getEac(@PathVariable("id") Long id) {
         return ResponseEntity.ok (hivEacService.getEacByPersonId (id));
     }
 

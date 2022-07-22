@@ -78,7 +78,7 @@ public class ArtPharmacyService {
                             String regimens = "regimens";
                             if (extra.hasNonNull (regimens)) {
                                 JsonNode jsonNode = extra.get (regimens);
-                                Iterator<JsonNode> iterator = jsonNode.withArray (regimens).elements ();
+                                Iterator<JsonNode> iterator = jsonNode.iterator ();
                                 while (iterator.hasNext ()){
                                     JsonNode regimen = iterator.next ();
                                     if(regimen.hasNonNull ("id")){
