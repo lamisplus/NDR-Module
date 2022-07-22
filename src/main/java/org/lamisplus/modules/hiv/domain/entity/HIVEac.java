@@ -21,6 +21,7 @@ import java.time.LocalDate;
 public class HIVEac extends HivAuditEntity implements Serializable, Persistable<Long> {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
