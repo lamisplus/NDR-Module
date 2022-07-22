@@ -24,6 +24,7 @@ import {useForm} from "react-hook-form";
 import {token, url as baseUrl } from "../../../api";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { getValue } from "@syncfusion/ej2-base";
 
 
 library.add(faCheckSquare, faCoffee, faEdit, faTrash);
@@ -109,6 +110,7 @@ const UserRegistration = (props) => {
     const [topLevelUnitCountryOptions, settopLevelUnitCountryOptions]= useState([]);
     const [stateUnitOptions, setStateUnitOptions]= useState([]);
     const [districtUnitOptions, setDistrictUnitOptions]= useState([]);
+    const [patientDTO, setPatientDTO]= useState({"person":"", "hivEnrollment":""})
     const userDetail = props.location && props.location.state ? props.location.state.user : null;
     const classes = useStyles();
     const history = useHistory();
@@ -295,17 +297,22 @@ const UserRegistration = (props) => {
             patientForm.contactPoint.push(phone);
             if (patientId) {
                 patientForm.id = null;
-                const response = await axios.put(`${baseUrl}patient/${patientId}`, patientForm, { headers: {"Authorization" : `Bearer ${token}`} });
+                patientDTO.person=patientForm;
+                patientDTO.hivEnrollment=objValues;
+                const response = await axios.put(`${baseUrl}patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             } else {
-                const response = await axios.post(`${baseUrl}patient`, patientForm, { headers: {"Authorization" : `Bearer ${token}`} });
+                patientDTO.person=patientForm;
+                patientDTO.hivEnrollment=objValues;
+                const response = await axios.post(`${baseUrl}patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             }
             toast.success("Patient Register successful");
             history.push('/');
-        } catch (e) {
-            console.log(e);
-            toast.error("An error occured while registering a patient !", {
-                position: toast.POSITION.TOP_RIGHT
-            });
+        } catch (error) {
+            
+            let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "An error occured while registering a patient !";
+                toast.error(errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT
+                });
         }
     };
     const onError = (errors) => {
@@ -506,6 +513,13 @@ const UserRegistration = (props) => {
     const checkPhoneNumber=(e, inputName)=>{
         setValue(inputName,e);
     }
+    const checkSex=(e, inputName)=>{
+        setValue(inputName,e);
+        const value = e.target.value;
+        if(value==="3" || value==="4"){
+            setfemaleStatus(true)
+        }
+    }
 
      const alphabetOnly=(e, inputName)=>{
          const result = e.target.value.replace(/[^a-z]/gi, '');
@@ -539,8 +553,8 @@ const UserRegistration = (props) => {
         TBStatus();
         KP();
         PregnancyStatus();
+        
     }, []);
-
     //Get list of CareEntryPoint
     const CareEntryPoint =()=>{
             axios
@@ -656,6 +670,7 @@ const UserRegistration = (props) => {
                 setTransferIn(false)
             }
         }
+        
         
     }
         
@@ -1475,7 +1490,7 @@ const UserRegistration = (props) => {
                                     </Input>
                                     </FormGroup>
                                 </div>
-                                {femaleStatus===true ? (
+                                {getValues('sex')==='3' || getValues('sex')==='4' ? (
                                     <>
                                     <div className = "form-group mb-3 col-md-6" >
                                     <FormGroup>

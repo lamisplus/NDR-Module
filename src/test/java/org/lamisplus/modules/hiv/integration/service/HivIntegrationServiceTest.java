@@ -38,10 +38,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 class HivIntegrationServiceTest {
 
 
-    @Test
-    void shouldCreateHivEnrollment() {
-
-    }
+//    @Test
+//    void shouldCreateHivEnrollment() {
+//
+//    }
 
 
     @Configuration

@@ -58,7 +58,7 @@ const Enrollment = (props) => {
     const [errors, setErrors] = useState({});
     const [observation, setObservation]=useState({
                                                     data: {},
-                                                    dateOfObservation: "yyyy-MM-dd",
+                                                    dateOfObservation: null,
                                                     facilityId: null,
                                                     personId: 0,
                                                     type: "enhanced adherence counselling",
@@ -76,13 +76,13 @@ const Enrollment = (props) => {
         observation.personId =patientObj.id
         observation.data=objValues
           setSaving(true);
-          axios.post(`${baseUrl}covid/patientstatus`,objValues,
+          axios.post(`${baseUrl}observation`,observation,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  toast.success("Record save successful");
+                  toast.success(" save successful");
 
               })
               .catch(error => {

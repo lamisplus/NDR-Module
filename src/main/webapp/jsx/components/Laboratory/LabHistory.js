@@ -162,16 +162,6 @@ const LabHistory = (props) => {
 
   return (
     <div>
-            <Button
-                variant="contained"
-                color="primary"
-                className=" float-end"
-                //startIcon={<FaUserPlus size="10"/>}
-                onClick={()=>CreatelabOrder()}
-            >
-                <span style={{ textTransform: "capitalize" }}>New Lab Order</span>
-            </Button>
-            <br/><br/>
             <br/>
         
             <MaterialTable
