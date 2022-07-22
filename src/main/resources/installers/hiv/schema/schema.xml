@@ -235,7 +235,7 @@
                 last_modified_date     TIMESTAMP WITHOUT TIME ZONE,
                 last_modified_by       VARCHAR(255),
                 facility_id            BIGINT,
-                visit_id               BIGINT,
+                visit_id               VARCHAR(255),
                 person_uuid            VARCHAR(255),
                 visit_date             date                                    NOT NULL,
                 ard_screened           BOOLEAN,

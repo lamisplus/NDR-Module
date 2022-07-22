@@ -54,13 +54,13 @@ public class ArtClinicVisitService {
             throw new EntityNotFoundException (Person.class, "personId", "" + personId);
         Visit visit = artCommenceService.processAndCreateVisit (personId);
         if (visit != null) {
-            artClinicVisitDto.setVisitId (visit.getId ());
             artClinicVisitDto.getVitalSignDto ().setVisitId (visit.getId ());
         }
         Optional<VitalSign> vitalSignOptional = vitalSignRepository.getVitalSignByVisitAndArchived (visit, 0);
         Long vitalSignId = null;
         if (vitalSignOptional.isPresent ()) {
             vitalSignId = vitalSignOptional.get ().getId ();
+            vitalSignService.updateVitalSign (vitalSignId, artClinicVisitDto.getVitalSignDto ());
         } else {
             vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
         }
@@ -68,6 +68,7 @@ public class ArtClinicVisitService {
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setArchived (0);
         artClinical.setHivEnrollment (hivEnrollment);
+        artClinical.setVisit (visit);
         artClinical.setPerson (hivEnrollment.getPerson ());
         artClinical.setIsCommencement (false);
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));

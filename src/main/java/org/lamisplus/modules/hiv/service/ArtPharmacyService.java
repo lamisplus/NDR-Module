@@ -50,6 +50,7 @@ public class ArtPharmacyService {
             throw new IllegalTypeException (Visit.class, "visit date", "kindly create a clinic visit for this patient");
         ArtPharmacy artPharmacy = convertRegisterDtoToEntity (dto);
         artPharmacy.setUuid (UUID.randomUUID ().toString ());
+        artPharmacy.setVisit (visit);
         return convertEntityToRegisterDto (artPharmacyRepository.save (artPharmacy));
     }
 
@@ -111,7 +112,7 @@ public class ArtPharmacyService {
         Long personId = dto.getPersonId ();
         Set<RegimenRequestDto> regimen = dto.getRegimen ();
         Person person = getPerson (personId);
-        List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitIdAndPerson (artPharmacy.getVisit ().getId (), person);
+        List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitAndPerson (artPharmacy.getVisit (), person);
         log.info ("existDrugRefills:  {}", existDrugRefills + " " + dto.getId ());
         if (! existDrugRefills.isEmpty () && dto.getId () == null) {
             throw new IllegalTypeException (ArtPharmacy.class, "visitId", "Regimen is already dispense for this visit " + dto.getVisitId ());
