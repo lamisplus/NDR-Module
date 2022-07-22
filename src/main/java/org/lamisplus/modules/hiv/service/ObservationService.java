@@ -3,6 +3,7 @@ package org.lamisplus.modules.hiv.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.controller.apierror.RecordExistException;
 import org.lamisplus.modules.hiv.domain.dto.ObservationDto;
 import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ObservationRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,9 @@ public class ObservationService {
         Long personId = observationDto.getPersonId ();
         Person person = getPerson (personId);
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
+        if (getAnExistingObservationType (observationDto, person, orgId).isPresent ()) {
+            throw new RecordExistException (Observation.class, "type", observationDto.getType ());
+        }
         observationDto.setFacilityId (orgId);
         Visit visit = artCommenceService.processAndCreateVisit (personId);
         if (visit != null) {
@@ -44,6 +49,10 @@ public class ObservationService {
         Observation saveObservation = observationRepository.save (observation);
         observationDto.setId (saveObservation.getId ());
         return observationDto;
+    }
+
+    private Optional<Observation> getAnExistingObservationType(ObservationDto observationDto, Person person, Long orgId) {
+        return observationRepository.getAllByTypeAndPersonAndFacilityId (observationDto.getType (), person, orgId);
     }
 
 
@@ -76,7 +85,7 @@ public class ObservationService {
                 .personId (observation.getPerson ().getId ())
                 .facilityId (observation.getFacilityId ())
                 .type (observation.getType ())
-                .visitId (observation.getVisitId ())
+                .visitId (observation.getVisit ().getId ())
                 .id (observation.getId ())
                 .build ();
     }

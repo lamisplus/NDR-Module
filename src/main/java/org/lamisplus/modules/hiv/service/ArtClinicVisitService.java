@@ -11,6 +11,7 @@ import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
+import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,24 +39,31 @@ public class ArtClinicVisitService {
 
     private final ArtCommenceService artCommenceService;
 
-    private  final VitalSignRepository vitalSignRepository;
+    private final VitalSignRepository vitalSignRepository;
 
+    private  final PersonRepository personRepository;
 
 
     public ARTClinicVisitDto createArtClinicVisit(ARTClinicVisitDto artClinicVisitDto) {
         Long hivEnrollmentId = artClinicVisitDto.getHivEnrollmentId ();
         HivEnrollment hivEnrollment = hivEnrollmentRepository
                 .findById (hivEnrollmentId)
-                .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", ""+ hivEnrollmentId));
+                .orElseThrow (() -> new EntityNotFoundException (HivEnrollment.class, "id", "" + hivEnrollmentId));
         Long personId = artClinicVisitDto.getPersonId ();
         if (! Objects.equals (hivEnrollment.getPerson ().getId (), personId))
             throw new EntityNotFoundException (Person.class, "personId", "" + personId);
         Visit visit = artCommenceService.processAndCreateVisit (personId);
-        if(visit != null){
+        if (visit != null) {
             artClinicVisitDto.setVisitId (visit.getId ());
             artClinicVisitDto.getVitalSignDto ().setVisitId (visit.getId ());
         }
-        Long vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
+        Optional<VitalSign> vitalSignOptional = vitalSignRepository.getVitalSignByVisitAndArchived (visit, 0);
+        Long vitalSignId = null;
+        if (vitalSignOptional.isPresent ()) {
+            vitalSignId = vitalSignOptional.get ().getId ();
+        } else {
+            vitalSignId = vitalSignService.registerVitalSign (artClinicVisitDto.getVitalSignDto ()).getId ();
+        }
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setArchived (0);
@@ -65,14 +74,12 @@ public class ArtClinicVisitService {
     }
 
 
-
-
     public ARTClinicVisitDto updateClinicVisit(Long id, ARTClinicVisitDto artClinicVisitDto) {
         ARTClinical existArtClinical = getExistClinicVisit (id);
         VitalSignDto vitalSignDto = artClinicVisitDto.getVitalSignDto ();
         vitalSignService.updateVitalSign (existArtClinical.getVitalSign ().getId (), vitalSignDto);
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, existArtClinical.getVitalSign ().getId ());
-       artClinical.setId (existArtClinical.getId ());
+        artClinical.setId (existArtClinical.getId ());
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));
     }
 
@@ -93,6 +100,18 @@ public class ArtClinicVisitService {
                 .stream ()
                 .map (this::convertToClinicVisitDto)
                 .collect (Collectors.toList ());
+    }
+    public List<ARTClinical> getAllArtClinicVisitByPersonId(Long personId) {
+        Person person = getPerson (personId);
+        return artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0)
+                .stream ()
+                .sorted ()
+                .collect(Collectors.toList());
+    }
+
+
+    private Person getPerson(Long personId) {
+        return personRepository.findById (personId).orElseThrow (() -> new EntityNotFoundException (Person.class, "id", String.valueOf (personId)));
     }
 
 
@@ -128,10 +147,8 @@ public class ArtClinicVisitService {
     }
 
 
-
-
-    private VitalSign getVitalSign(Long vitalSignId){
-       return vitalSignRepository.findById (vitalSignId).orElseThrow (() -> new EntityNotFoundException (VitalSign.class, "id", String.valueOf (vitalSignId)));
+    private VitalSign getVitalSign(Long vitalSignId) {
+        return vitalSignRepository.findById (vitalSignId).orElseThrow (() -> new EntityNotFoundException (VitalSign.class, "id", String.valueOf (vitalSignId)));
 
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.audit4j.core.util.Log;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.controller.apierror.IllegalTypeException;
 import org.lamisplus.modules.base.controller.apierror.RecordExistException;
@@ -24,18 +25,15 @@ import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.EncounterRepository;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.repository.VisitRepository;
-import org.lamisplus.modules.patient.service.EncounterService;
 import org.lamisplus.modules.patient.service.PersonService;
-import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
-import org.lamisplus.modules.triage.repository.TriagePostServiceRepository;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
 import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,11 +58,6 @@ public class ArtCommenceService {
 
     private final ApplicationCodesetRepository applicationCodesetRepository;
     private final CurrentUserOrganizationService organizationUtil;
-    private final VisitService visitService;
-
-    private final EncounterService encounterService;
-
-    private final TriagePostServiceRepository postServiceRepository;
 
     private final PersonRepository personRepository;
 
@@ -99,9 +92,7 @@ public class ArtCommenceService {
             artClinicalCommenceDto.getVitalSignDto ().setVisitId (visit.getId ());
         }
         Long vitalSignId = artClinicalCommenceDto.getVitalSignId ();
-        if (vitalSignId == null) {
-            vitalSignId = processAndSaveVitalSign (artClinicalCommenceDto);
-        }
+        vitalSignId = getVitalSignId (artClinicalCommenceDto, visit, vitalSignId);
         ARTClinical artClinical = convertDtoToART (artClinicalCommenceDto, vitalSignId);
         artClinical.setUuid (UUID.randomUUID ().toString ());
         artClinical.setIsCommencement (true);
@@ -112,9 +103,23 @@ public class ArtCommenceService {
         artClinical.setArchived (0);
         artClinical.setHivEnrollment (hivEnrollment);
         artClinical.setPerson (person);
+        artClinical.setVisit (visit);
         ARTClinical saveArtClinical = artClinicalRepository.save (artClinical);
         processAndSaveHIVStatus (saveArtClinical, statusDisplay.toString ());
         return convertArtCommenceToHivPatientDto (saveArtClinical);
+    }
+
+    @Nullable
+    private Long getVitalSignId(ARTClinicalCommenceDto artClinicalCommenceDto, Visit visit, Long vitalSignId) {
+        if (vitalSignId == null) {
+            Optional<VitalSign> existingVitalSign = vitalSignRepository.getVitalSignByVisitAndArchived (visit, 0);
+            if(!existingVitalSign.isPresent ()){
+                vitalSignId = processAndSaveVitalSign (artClinicalCommenceDto);
+            }else {
+                vitalSignId = existingVitalSign.get ().getId ();
+            }
+        }
+        return vitalSignId;
     }
 
 
@@ -138,7 +143,7 @@ public class ArtCommenceService {
             Visit visit = new Visit ();
             personOptional.ifPresent (visit::setPerson);
             visit.setFacilityId (organizationUtil.getCurrentUserOrganization ());
-            visit.setVisitStartDate (LocalDate.now ());
+            visit.setVisitStartDate (LocalDateTime.now ());
             visit.setArchived (0);
             visit.setUuid (UUID.randomUUID ().toString ());
             Visit currentVisit = visitRepository.save (visit);
@@ -154,6 +159,7 @@ public class ArtCommenceService {
         Encounter encounter = new Encounter ();
         encounter.setVisit (visit);
         encounter.setArchived (0);
+        encounter.setPerson (visit.getPerson ());
         encounter.setUuid (UUID.randomUUID ().toString ());
         encounter.setEncounterDate (visit.getVisitStartDate ());
         encounter.setServiceCode ("hiv-code");
@@ -189,7 +195,7 @@ public class ArtCommenceService {
     public void archivedArtCommenceClinical(Long id) {
         ARTClinical artClinical = getExistArt (id);
         HIVStatusTracker hivStatusTracker = hivStatusTrackerService
-                .findDistinctFirstByPersonIdAndStatusDate (artClinical.getPerson ().getUuid (), artClinical.getVisitDate ());
+                .findDistinctFirstByPersonAndStatusDate (artClinical.getPerson (), artClinical.getVisitDate ());
         if (hivStatusTracker != null) {
             hivStatusTrackerService.archivedHIVStatusTracker (hivStatusTracker.getId ());
         }
@@ -220,7 +226,7 @@ public class ArtCommenceService {
         HIVStatusTrackerDto statusTracker = new HIVStatusTrackerDto ();
         statusTracker.setHivStatus (hivStatus);
         statusTracker.setStatusDate (artClinical.getVisitDate ());
-        statusTracker.setVisitId (artClinical.getVisitId ());
+        statusTracker.setVisitId (artClinical.getVisit ().getId ());
         statusTracker.setPersonId (artClinical.getPerson ().getId ());
         hivStatusTrackerService.registerHIVStatusTracker (statusTracker);
     }

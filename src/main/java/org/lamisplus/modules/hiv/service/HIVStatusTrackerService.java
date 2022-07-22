@@ -8,7 +8,6 @@ import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
 import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.repositories.HIVStatusTrackerRepository;
 import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
-import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
@@ -35,13 +34,14 @@ public class HIVStatusTrackerService {
     private final PersonRepository personRepository;
 
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
-        PersonResponseDto existPerson = personService.getPersonById (hivStatusTrackerDto.getPersonId ());
+        Long personId = hivStatusTrackerDto.getPersonId ();
+        Person existPerson = getPerson (personId);
         log.info ("person   from status status {}", existPerson.getSurname ());
         HIVStatusTracker hivStatusTracker = convertDtoToEntity (hivStatusTrackerDto);
         hivStatusTracker.setArchived (0);
         hivStatusTracker.setUuid (UUID.randomUUID ().toString ());
         hivStatusTracker.setAuto (false);
-        hivStatusTracker.setPersonId (getPersonUuid (existPerson.getId ()));
+        hivStatusTracker.setPerson (existPerson);
         return convertEntityToDto (hivStatusTrackerRepository.save (hivStatusTracker));
     }
 
@@ -63,9 +63,9 @@ public class HIVStatusTrackerService {
     }
 
     public String getPersonCurrentHIVStatusByPersonId(Long personId) {
-        String personUuid = getPersonUuid (personId);
+        Person person = getPerson (personId);
         Comparator<HIVStatusTracker> personStatusDateComparator = Comparator.comparing (HIVStatusTracker::getStatusDate);
-        Optional<HIVStatusTracker> currentStatus = hivStatusTrackerRepository.findAllByPersonIdAndArchived (personUuid, 0)
+        Optional<HIVStatusTracker> currentStatus = hivStatusTrackerRepository.findAllByPersonAndArchived (person, 0)
                 .stream ()
                 .max (personStatusDateComparator);
         if (currentStatus.isPresent ())
@@ -74,8 +74,8 @@ public class HIVStatusTrackerService {
     }
 
     public List<HIVStatusTrackerDto> getPersonHIVStatusByPersonId(Long personId) {
-        String personUuid = getPersonUuid (personId);
-        return hivStatusTrackerRepository.findAllByPersonIdAndArchived (personUuid, 0)
+        Person person = getPerson (personId);
+        return hivStatusTrackerRepository.findAllByPersonAndArchived (person, 0)
                 .stream ()
                 .map (this::convertEntityToDto)
                 .collect (Collectors.toList ());
@@ -117,12 +117,12 @@ public class HIVStatusTrackerService {
     }
 
 
-    public HIVStatusTracker findDistinctFirstByPersonIdAndStatusDate(String personId, LocalDate visitDate) {
-        return hivStatusTrackerRepository.findDistinctFirstByPersonIdAndStatusDate (personId, visitDate);
+    public HIVStatusTracker findDistinctFirstByPersonAndStatusDate(Person person, LocalDate visitDate) {
+        return hivStatusTrackerRepository.findDistinctFirstByPersonAndStatusDate (person, visitDate);
     }
 
-    private String getPersonUuid(Long personId){
-       return personRepository.findById (personId).orElseThrow (() -> new EntityNotFoundException (Person.class, "id",String.valueOf (personId))).getUuid ();
+    private Person getPerson(Long personId) {
+        return personRepository.findById (personId).orElseThrow (() -> new EntityNotFoundException (Person.class, "id", String.valueOf (personId)));
 
     }
 }

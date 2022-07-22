@@ -29,10 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,24 +63,45 @@ public class ArtPharmacyService {
     }
 
 
-    public  List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize){
+    public List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize) {
         Person person = getPerson (personId);
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("visitDate").descending());
+        Pageable paging = PageRequest.of (pageNo, pageSize, Sort.by ("visitDate").descending ());
         Page<ArtPharmacy> artPharmaciesByPerson = artPharmacyRepository.getArtPharmaciesByPerson (person, paging);
-        if(artPharmaciesByPerson.hasContent ()){
-           return artPharmaciesByPerson.getContent ()
+        if (artPharmaciesByPerson.hasContent ()) {
+            return artPharmaciesByPerson.getContent ()
                     .stream ()
                     .map (artPharmacy -> {
                         try {
-                            return convertEntityToRegisterDto (artPharmacy);
-                        } catch (IOException e) {
-                            e.printStackTrace ();
+                            RegisterArtPharmacyDto responseDto = convertEntityToRegisterDto (artPharmacy);
+                            JsonNode extra = responseDto.getExtra ();
+                            String regimens = "regimens";
+                            if (extra.hasNonNull (regimens)) {
+                                JsonNode jsonNode = extra.get (regimens);
+                                Iterator<JsonNode> iterator = jsonNode.withArray (regimens).elements ();
+                                while (iterator.hasNext ()){
+                                    JsonNode regimen = iterator.next ();
+                                    if(regimen.hasNonNull ("id")){
+                                        JsonNode regimenId = regimen.get ("id");
+                                        long id = regimenId.asLong ();
+                                        Optional<Regimen> optionalRegimen = regimenRepository.findById (id);
+                                        optionalRegimen.ifPresent (regimen1 -> {
+                                            String description = regimen1.getDescription ();
+                                            ((ObjectNode)regimen).put("name", description );
+                                            responseDto.setExtra (extra);
+                                        });
+                                    }
+
+                                }
                         }
-                        return null;
-                    }).collect(Collectors.toList());
-        }
-     return new ArrayList<> ();
+                        return responseDto;
+                    } catch(IOException e){
+                e.printStackTrace ();
+            }
+            return null;
+        }).collect (Collectors.toList ());
     }
+     return new ArrayList<>();
+}
 
 
     private ArtPharmacy convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {
@@ -93,10 +111,10 @@ public class ArtPharmacyService {
         Long personId = dto.getPersonId ();
         Set<RegimenRequestDto> regimen = dto.getRegimen ();
         Person person = getPerson (personId);
-        List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitIdAndPerson (artPharmacy.getVisitId (), person);
-        log.info ("existDrugRefills:  {}", existDrugRefills+" "+dto.getId ());
-        if(!existDrugRefills.isEmpty () && dto.getId () == null){
-                throw new IllegalTypeException (ArtPharmacy.class, "visitId", "Regimen is already dispense for this visit "+ dto.getVisitId ());
+        List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitIdAndPerson (artPharmacy.getVisit ().getId (), person);
+        log.info ("existDrugRefills:  {}", existDrugRefills + " " + dto.getId ());
+        if (! existDrugRefills.isEmpty () && dto.getId () == null) {
+            throw new IllegalTypeException (ArtPharmacy.class, "visitId", "Regimen is already dispense for this visit " + dto.getVisitId ());
         }
         Set<Regimen> regimenList = regimen.stream ()
                 .map (regimenId -> regimenRepository.findById (regimenId.getId ()).orElse (null))
@@ -113,17 +131,18 @@ public class ArtPharmacyService {
         return personRepository.findById (personId).orElseThrow (() -> getPersonEntityNotFoundException (personId));
     }
 
-    private RegisterArtPharmacyDto convertEntityToRegisterDto(ArtPharmacy  entity) throws IOException {
+    private RegisterArtPharmacyDto convertEntityToRegisterDto(ArtPharmacy entity) throws IOException {
         RegisterArtPharmacyDto dto = new RegisterArtPharmacyDto ();
         BeanUtils.copyProperties (entity, dto);
         log.info (" dto 1st:  {}", dto);
         JsonNode extra = entity.getExtra ();
         String name = "regimens";
-        if(extra.hasNonNull (name)){
+        if (extra.hasNonNull (name)) {
             JsonNode regimens = extra.get (name);
             ObjectMapper mapper = new ObjectMapper ();
-            ObjectReader reader = mapper.readerFor(new TypeReference<Set<RegimenRequestDto>> () {});
-            Set<RegimenRequestDto>  result = reader.readValue (regimens);
+            ObjectReader reader = mapper.readerFor (new TypeReference<Set<RegimenRequestDto>> () {
+            });
+            Set<RegimenRequestDto> result = reader.readValue (regimens);
             dto.setRegimen (result);
         }
         log.info (" dto 1st:  {}", dto);
