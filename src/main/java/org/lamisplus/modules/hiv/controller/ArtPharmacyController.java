@@ -31,8 +31,8 @@ public class ArtPharmacyController {
         return ResponseEntity.ok (artPharmacyService.updateArtPharmacy (id, registerArtPharmacyDto));
     }
 
-    @GetMapping
-    public ResponseEntity<List<RegisterArtPharmacyDto>> getAllEmployees(
+    @GetMapping("/patient")
+    public ResponseEntity<List<RegisterArtPharmacyDto>> getAllPharmacyByPatientId(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam Long personId) {

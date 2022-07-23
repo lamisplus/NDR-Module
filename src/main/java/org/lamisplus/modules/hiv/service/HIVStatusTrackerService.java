@@ -9,7 +9,9 @@ import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.repositories.HIVStatusTrackerRepository;
 import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
+import org.lamisplus.modules.patient.repository.VisitRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,16 +35,25 @@ public class HIVStatusTrackerService {
 
     private final PersonRepository personRepository;
 
+    private final VisitRepository visitRepository;
+
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         Long personId = hivStatusTrackerDto.getPersonId ();
         Person existPerson = getPerson (personId);
         log.info ("person   from status status {}", existPerson.getSurname ());
+        Long visitId = hivStatusTrackerDto.getVisitId ();
+        Visit visit = getVisit (visitId);
         HIVStatusTracker hivStatusTracker = convertDtoToEntity (hivStatusTrackerDto);
         hivStatusTracker.setArchived (0);
         hivStatusTracker.setUuid (UUID.randomUUID ().toString ());
         hivStatusTracker.setAuto (false);
+        hivStatusTracker.setVisit (visit);
         hivStatusTracker.setPerson (existPerson);
         return convertEntityToDto (hivStatusTrackerRepository.save (hivStatusTracker));
+    }
+
+    private Visit getVisit(Long visitId) {
+        return visitRepository.findById (visitId).orElseThrow (() -> new EntityNotFoundException (Visit.class, "id", String.valueOf (visitId)));
     }
 
     public HIVStatusTrackerDto updateHIVStatusTracker(Long id, HIVStatusTrackerDto hivStatusTrackerDto) {
