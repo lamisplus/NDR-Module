@@ -3,7 +3,7 @@ package org.lamisplus.modules.hiv.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.domain.dto.ARTClinicVisitDto;
-import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
+import org.lamisplus.modules.hiv.domain.dto.ARTClinicalVisitDisplayDto;
 import org.lamisplus.modules.hiv.service.ArtClinicVisitService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +36,12 @@ public class ARTClinicVisitController {
         return ResponseEntity.ok (artClinicVisitService.getArtClinicVisitById (id));
     }
 
-    @GetMapping(value = "person/{person_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ARTClinical>> getArtClinicVisitByPersonId(@PathVariable("person_id") Long id) {
-        return ResponseEntity.ok (artClinicVisitService.getAllArtClinicVisitByPersonId (id));
+    @GetMapping(value = "person", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ARTClinicalVisitDisplayDto>> getArtClinicVisitByPersonId(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam Long personId) {
+        return ResponseEntity.ok (artClinicVisitService.getAllArtClinicVisitByPersonId (personId, pageNo, pageSize));
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
