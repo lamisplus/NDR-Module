@@ -10,7 +10,7 @@ import PatientCardDetail from './PatientCard'
 import { useHistory } from "react-router-dom";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
-import Consultation from './../Consultation/Home'
+import AdultConsultation from './../Consultation/index'
 import Pharmacy from './../Pharmacy/Index';
 import Laboratory from './../Laboratory/index';
 import AncPnc from './../PmtctServices/AncPnc';
@@ -93,7 +93,7 @@ function PatientCard(props) {
           </Link>
           <br/><br/>
           {activeContent==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent==='consultation' &&( <Consultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='consultation' &&( <AdultConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent}/>)}

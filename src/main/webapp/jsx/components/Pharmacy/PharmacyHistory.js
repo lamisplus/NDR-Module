@@ -166,7 +166,7 @@ const LabHistory = (props) => {
         
             <MaterialTable
             icons={tableIcons}
-              title="Laboratory Order History"
+              title="Pharmacy History"
               columns={[
               // { title: " ID", field: "Id" },
                 {
