@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.service.ApplicationCodesetService;
 import org.lamisplus.modules.hiv.domain.dto.ARTClinicVisitDto;
+import org.lamisplus.modules.hiv.domain.dto.ARTClinicalVisitDisplayDto;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
@@ -17,12 +19,13 @@ import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
 import org.lamisplus.modules.triage.service.VitalSignService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -42,6 +45,9 @@ public class ArtClinicVisitService {
     private final VitalSignRepository vitalSignRepository;
 
     private  final PersonRepository personRepository;
+    private  final HIVStatusTrackerService hivStatusTrackerService;
+
+    private  final ApplicationCodesetService applicationCodesetService;
 
 
     public ARTClinicVisitDto createArtClinicVisit(ARTClinicVisitDto artClinicVisitDto) {
@@ -102,12 +108,38 @@ public class ArtClinicVisitService {
                 .map (this::convertToClinicVisitDto)
                 .collect (Collectors.toList ());
     }
-    public List<ARTClinical> getAllArtClinicVisitByPersonId(Long personId) {
+    public List<ARTClinicalVisitDisplayDto> getAllArtClinicVisitByPersonId(Long personId, int pageNo, int pageSize ) {
         Person person = getPerson (personId);
-        return artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0)
-                .stream ()
-                .sorted ()
-                .collect(Collectors.toList());
+        Pageable paging = PageRequest.of (pageNo, pageSize, Sort.by ("visitDate").descending ());
+        Page<ARTClinical> clinicVisits = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0, paging);
+        if(clinicVisits.hasContent ()){
+           return clinicVisits.getContent ().stream ().map (this::getArtClinicalVisitDisplayDto).collect(Collectors.toList());
+        }
+        return new ArrayList<> ();
+    }
+
+
+    private ARTClinicalVisitDisplayDto getArtClinicalVisitDisplayDto(ARTClinical visit) {
+        return ARTClinicalVisitDisplayDto.builder ()
+                .id (visit.getId ())
+                .visitDate (visit.getVisitDate ())
+                .nextAppointment (visit.getNextAppointment ())
+                .artStatus (hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId (visit.getPerson ().getId ()))
+                .personId (visit.getPerson ().getId ())
+                .hivEnrollmentId (visit.getHivEnrollment ().getId ())
+                .adherenceLevel (visit.getAdherenceLevel ())
+                .adheres (visit.getAdheres ())
+                .clinicalNote (visit.getClinicalNote ())
+                .facilityId (visit.getFacilityId ())
+                .cd4 (visit.getCd4 ())
+                .cd4Percentage (visit.getCd4Percentage ())
+                .adrScreened (visit.getAdrScreened ())
+                .visitId (visit.getVisit ().getId ())
+                .vitalSignDto (vitalSignService.getVitalSignById (visit.getVitalSign ().getId ()))
+                .tbScreen (visit.getTbScreen ())
+                .whoStaging (applicationCodesetService.getApplicationCodeset (visit.getWhoStagingId ()).getDisplay ())
+                .opportunisticInfections (visit.getOpportunisticInfections ())
+                .build ();
     }
 
 

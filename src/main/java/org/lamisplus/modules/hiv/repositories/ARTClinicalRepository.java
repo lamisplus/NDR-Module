@@ -3,6 +3,8 @@ package org.lamisplus.modules.hiv.repositories;
 import com.foreach.across.modules.hibernate.jpa.repositories.CommonJpaRepository;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,5 +19,6 @@ public interface ARTClinicalRepository extends CommonJpaRepository<ARTClinical, 
     Optional<ARTClinical> findByPersonAndIsCommencementIsTrue(Person person);
 
     List<ARTClinical> findAllByPersonAndIsCommencementIsFalseAndArchived(Person person, Integer archived);
+    Page<ARTClinical> findAllByPersonAndIsCommencementIsFalseAndArchived(Person person, Integer archived, Pageable pageable);
 
 }
