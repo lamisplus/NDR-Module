@@ -104,60 +104,38 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-const LabHistory = (props) => {    
-    const [orderList, setOrderList] = useState([])
+const PharmacyHistory = (props) => {    
+    const [refillList, setRefillList] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        LabOrders()
+        PharmacyList()
       }, [props.patientObj.id]);
-    //GET LIST OF Patients
-    async function LabOrders() {
+    //GET LIST Drug Refill
+    async function PharmacyList() {
         setLoading(true)
         axios
-            .get(`${baseUrl}laboratory/orders/patients/${props.patientObj.id}`,
+            .get(`${baseUrl}hiv/art/pharmacy/patient?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
             { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
                 setLoading(false)
-                let LabObject= []
-                response.data.forEach(function(value, index, array) {
-                    const dataOrders = value.labOrder.tests                    
-                    if(dataOrders[index]) {
-                        dataOrders.forEach(function(value, index, array) {
-                            LabObject.push(value)
-                        })                       
-                    }                   
-                });
-                setOrderList(LabObject);                
+                setRefillList(response.data);                
             })
             .catch((error) => {  
                 setLoading(false)  
             });        
     }
 
-    const CreatelabOrder =()=>{
-        props.setActiveContent('laboratory')
-        
-    }
 
-    const labStatus =(status)=> {
-        console.log(status)
-          if(status===0){
-            return "blue"
-          }else if(status===1){
-            return "teal"
-          }else if(status===2){
-            return "green"
-          }else if(status===3){
-            return "red"
-          }else if(status===4){
-            return "orange"
-          }else if(status===5){
-            return "dark"
-          }else {
-            return "grey"
-          }
+
+    const regimenName =(regimenObj)=> {
+      let regimenArr = []
+      regimenObj.forEach(function (value, index, array) {
+        console.log(value)
+          regimenArr.push(value['name'])
+      })
+      return regimenArr.toString();
       }
 
   return (
@@ -170,23 +148,33 @@ const LabHistory = (props) => {
               columns={[
               // { title: " ID", field: "Id" },
                 {
-                  title: "Test Group",
-                  field: "testGroup",
+                  title: "Visit Date",
+                  field: "visitDate",
                 },
-                { title: "Test Name", field: "testName", filtering: false },
-                { title: "Order Priority", field: "orderPriority", filtering: false },
-                { title: "Order Date", field: "orderDate", filtering: false },
-                { title: "Status", field: "status", filtering: false },
+                { title: "Refill Period", field: "refillPeriod", filtering: false },
+                { title: "Next Appointment", field: "nextAppointment", filtering: false },
+                { title: "Regimen Name", field: "regimenName", filtering: false },
+               // { title: "Quantity", field: "regimenQuantity", filtering: false },
+                { title: "isDevolve", field: "isDevolve", filtering: false },
+                //{ title: "DSDModel", field: "dsdModel", filtering: false },
+                { title: "MMD Type", field: "mmdType", filtering: false },
+                { title: "Prescription Error", field: "prescriptionError", filtering: false },
+                { title: "ADR Screened", field: "adverseDrugReactions", filtering: false },
 
               ]}
               isLoading={loading}
-              data={ orderList.map((row) => ({
+              data={ refillList.map((row) => ({
                   //Id: manager.id,
-                  testGroup:row.labTestGroupName,
-                  testName: row.labTestName,
-                  orderPriority: row.orderPriorityName,
-                  orderDate: row.orderDate,                    
-                  status: (<Label color={labStatus(row.labTestOrderStatus)} size="mini">{row.labTestOrderStatusName}</Label>), 
+                  visitDate:row.visitDate,
+                  refillPeriod: row.refillPeriod,
+                  nextAppointment: row.nextAppointment,
+                  regimenName: regimenName(row.extra.regimens),  
+                 // regimenQuantity: "", 
+                  isDevolve: row.isDevolve, 
+                  mmdType: row.mmdType, 
+                  prescriptionError: row.prescriptionError, 
+                  adverseDrugReactions: row.adrScreened,                   
+                  //status: (<Label color={labStatus(row.labTestOrderStatus)} size="mini">{row.labTestOrderStatusName}</Label>), 
                   
                   }))}
             
@@ -212,6 +200,6 @@ const LabHistory = (props) => {
   );
 }
 
-export default LabHistory;
+export default PharmacyHistory;
 
 

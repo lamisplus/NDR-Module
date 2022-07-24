@@ -1,14 +1,14 @@
 import React, {useState, Fragment } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
-import AdultConsultation from './Home';
-import ClinicHistory from "./ClinicHistory";
+import ConsultationPage from './Home';
+import ClinicHistoryPage from "./ClinicHistory";
 
 const divStyle = {
   borderRadius: "2px",
   fontSize: 14,
 };
 
-const Consultation = (props) => {
+const ClinicVisitPage = (props) => {
     const [key, setKey] = useState('home');
     const patientObj = props.patientObj
 
@@ -28,10 +28,10 @@ const Consultation = (props) => {
                 >
 
                   <Tab eventKey="home" title="Clinic Visit">                   
-                    <AdultConsultation patientObj={patientObj}/>
+                    <ConsultationPage patientObj={patientObj}/>
                   </Tab>  
                   <Tab eventKey="history" title=" History">                   
-                    <ClinicHistory patientObj={patientObj}/>
+                    <ClinicHistoryPage patientObj={patientObj}/>
                   </Tab>                   
                 </Tabs>
               </div>
@@ -44,4 +44,4 @@ const Consultation = (props) => {
   );
 };
 
-export default AdultConsultation;
+export default ClinicVisitPage;

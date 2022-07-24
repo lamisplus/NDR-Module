@@ -299,11 +299,11 @@ const UserRegistration = (props) => {
                 patientForm.id = null;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
-                const response = await axios.put(`${baseUrl}patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.put(`${baseUrl}hiv/patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             } else {
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
-                const response = await axios.post(`${baseUrl}patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
             }
             toast.success("Patient Register successful");
             history.push('/');

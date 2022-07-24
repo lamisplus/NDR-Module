@@ -33,7 +33,7 @@ const Pharmacy = (props) => {
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
-    const [selectedOptionAdr, setSelectedOptionAdr] = useState([]);
+    const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
     const [mmdType, setmmdType]=useState();
     const [showmmdType, setShowmmdType]=useState(false);
@@ -54,7 +54,7 @@ const Pharmacy = (props) => {
                                                 mmdType:null,
                                                 nextAppointment: null,
                                                 personId: props.patientObj.id,
-                                                refillPeriod:"",
+                                                refillPeriod:null,
                                                 prescriptionError: null,
                                                 regimenId: [],
                                                 visitDate: null,
@@ -154,8 +154,9 @@ const Pharmacy = (props) => {
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
-        setObjValues ({...objValues,  refillPeriod: refillcount}) 
+        objValues.refillPeriod= e.target.value
         setObjValues ({...objValues,  nextAppointment: nextDate})
+
         if(refillcount==="90"){
             setShowmmdType(true)
             setmmdType("MMD-3")
@@ -179,10 +180,9 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenList(data);
      }
-     const setSelectedOptionAdrChange = (e)=>{
-        const value = e.value
-        setSelectedOptionAdr(value)
-     }
+    //  const setSelectedOptionAdrChange = (e)=>{
+    //     setSelectedOptionAdr(e)
+    //  }
      const setSelectedOptionChange = (e) =>{
         const value = e.value
         setSelectedOption(value)
@@ -206,6 +206,7 @@ const Pharmacy = (props) => {
         objValues.mmdType=mmdType
         delete regimenList['name']
         objValues.regimen=regimenList
+
         axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
@@ -219,7 +220,6 @@ const Pharmacy = (props) => {
             toast.error(errorMessage);             
         }); 
     }
-
 
 
   return (      
@@ -400,7 +400,7 @@ const Pharmacy = (props) => {
                     <FormGroup>
                         <Label >ADR</Label>
                         <Select
-                            onChange={setSelectedOptionAdrChange}
+                            onChange={setSelectedOptionAdr}
                             value={selectedOptionAdr}
                             options={prepSideEffect}
                             isMulti="true"

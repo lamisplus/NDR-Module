@@ -402,6 +402,7 @@ const ClinicEvaluationFrom = (props) => {
         )
           .then(response => {
               setSaving(false);
+              props.patientObj.clinicalEvaluation=true
               toast.success("Initial Clinic Evaluation successful");
           })
           .catch(error => {

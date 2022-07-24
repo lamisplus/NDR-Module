@@ -83,6 +83,7 @@ const MentalHealthScreening = (props) => {
           )
               .then(response => {
                   setSaving(false);
+                  props.patientObj.mentalHealth=true
                   toast.success("Mental health screening save successful");
                   if(objValues.mhs1==="YES" || objValues.mhs2==="YES" || objValues.mhs4==="YES" || objValues.mhs4==="YES" || objValues.mhs5==="YES" ){
                     setReferrer(true)

@@ -8,11 +8,12 @@ import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
-import { useHistory } from "react-router-dom";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
 import { Icon,Button, } from 'semantic-ui-react'
+import FirstEAC from './EnhancedAdherenceCounseling';
+import ContinueEAC from './EacContinue';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -49,40 +50,35 @@ const useStyles = makeStyles(theme => ({
     } 
 }))
 
-const Enrollment = (props) => {
-
-    const patientObj = props.patientObj;
+const EAC = (props) => {
+    //const patientObj = props.patientObj;
     const classes = useStyles()
-    const [objValues, setObjValues] = useState({eacDate1:"", eacDate2:""});
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
-    const [observation, setObservation]=useState({
-                                                    data: {},
-                                                    dateOfObservation: null,
-                                                    facilityId: null,
-                                                    personId: 0,
-                                                    type: "enhanced adherence counselling",
-                                                    visitId: null
-                                                })
+    const [objValues, setObjValues]=useState({
+                                                dateOfEac: "",
+                                                dateOfLastViralLoad: "",
+                                                lastViralLoad:"",
+                                                note: "",
+                                                personId: props.patientObj.id,
+                                                status: "First",
+                                                visitId:""
+                                            })
  
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        }
-          
+    }          
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
-        observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
-        observation.personId =patientObj.id
-        observation.data=objValues
           setSaving(true);
-          axios.post(`${baseUrl}observation`,observation,
+          axios.post(`${baseUrl}observation/eac`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  toast.success(" save successful");
+                  toast.success(" Save successful");
 
               })
               .catch(error => {
@@ -99,49 +95,67 @@ const Enrollment = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                    
-                    <div className="col-md-6">
                     <h2>Enhanced Adherence Counselling </h2>
-                        </div>
-                        <div className="col-md-6">
-                            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
-                        </div>
                         <br/>
                         <br/>
                         <br/>
                         <br/>
-                    <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of 1st EAC Session </Label>
+                            <Label for="">Date of EAC </Label>
                             <Input
                                 type="date"
-                                name="eacDate1"
-                                id="eacDate1"
-                                value={objValues.eacDate1}
+                                name="dateOfEac"
+                                id="dateOfEac"
+                                value={objValues.dateOfEac}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 required
                             />
-                            {errors.eacDate1 !=="" ? (
-                                <span className={classes.error}>{errors.eacDate1}</span>
+                            {errors.dateOfEac !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of 1st EAC Completion </Label>
+                            <Label for="">Date Of Last Viral Load</Label>
                             <Input
                                 type="date"
-                                name="eacDate2"
-                                id="eacDate2"
-                                value={objValues.eacDate2}
+                                name="dateOfLastViralLoad"
+                                id="dateOfLastViralLoad"
+                                value={objValues.dateOfLastViralLoad}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 required
                             />
-                            {errors.eacDate2 !=="" ? (
-                                <span className={classes.error}>{errors.eacDate2}</span>
-                            ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">lastViralLoad</Label>
+                            <Input
+                                type="number"
+                                name="lastViralLoad"
+                                id="lastViralLoad"
+                                value={objValues.lastViralLoad}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">note</Label>
+                            <Input
+                                type="textarea"
+                                name="note"
+                                id="note"
+                                value={objValues.note}
+                                onChange={handleInputChange}
+                            />
                             </FormGroup>
                         </div>
                         
@@ -157,7 +171,7 @@ const Enrollment = (props) => {
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
-                    disabled={objValues.eacDate1==="" || objValues.eacDate2==="" ? true : false}
+                    disabled={objValues.dateOfEac==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -182,4 +196,4 @@ const Enrollment = (props) => {
   );
 }
 
-export default Enrollment;
+export default EAC;

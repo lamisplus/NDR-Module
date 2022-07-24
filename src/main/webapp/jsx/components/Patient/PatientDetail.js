@@ -10,19 +10,19 @@ import PatientCardDetail from './PatientCard'
 import { useHistory } from "react-router-dom";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
-import AdultConsultation from './../Consultation/index'
+import ClinicVisit from '../Consultation/Index'
 import Pharmacy from './../Pharmacy/Index';
 import Laboratory from './../Laboratory/index';
 import AncPnc from './../PmtctServices/AncPnc';
 import AncEnrollement from './../PmtctServices/AncEnrollement';
-import ChildConsultation from './../ChildConsultation/Home';
+//import ChildConsultation from './../ChildConsultation/Home';
 import LabourDelivery from './../PmtctServices/LabourDelivery';
 import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
 import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
 import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
 import PrEPVisit from './../PrepServices/PrEPVisit';
 import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
-import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling';
+import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom'
@@ -93,8 +93,8 @@ function PatientCard(props) {
           </Link>
           <br/><br/>
           {activeContent==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent==='consultation' &&( <AdultConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {/* {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)} */}
           {activeContent==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent}/>)}
