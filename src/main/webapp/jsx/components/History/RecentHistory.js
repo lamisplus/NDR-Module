@@ -8,12 +8,13 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { url as baseUrl, token } from "../../../api";
 import { Alert } from "react-bootstrap";
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import Accordion from '@mui/material/Accordion';
+// import AccordionSummary from '@mui/material/AccordionSummary';
+// import AccordionDetails from '@mui/material/AccordionDetails';
+// import Typography from '@mui/material/Typography';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {  Label,  List, } from 'semantic-ui-react';
+import { Row, Col, Card,Accordion } from "react-bootstrap";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,6 +32,10 @@ const RecentHistory = (props) => {
   const [refillList, setRefillList] = useState([])
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [
+    activeAccordionHeaderShadow,
+    setActiveAccordionHeaderShadow,
+  ] = useState(0);
 
   useEffect(() => {
     LaboratoryHistory();
@@ -80,12 +85,13 @@ const RecentHistory = (props) => {
    async function ClinicVisitList() {
     setLoading(true)
     axios
-        .get(`${baseUrl}hiv/art/clinic-visit/${props.patientObj.id}`,
+        .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
         { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
+          console.log(response.data)
             setLoading(false)
-            //setClinicVisitList(response.data.visit);                
+            setClinicVisitList(response.data);                
         })
         .catch((error) => {  
             setLoading(false)  
@@ -112,12 +118,35 @@ const RecentHistory = (props) => {
   const regimenName =(regimenObj)=> {
     let regimenArr = []
     regimenObj.forEach(function (value, index, array) {
-      console.log(value)
+      //console.log(value)
         regimenArr.push(value['name'])
     })
     return regimenArr.toString();
     }
 
+    const defaultAccordion = [
+      {
+        title: "Accordion Header One",
+        text:
+          "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.",
+        bg: "primary",
+      },
+      {
+        title: "Accordion Header Two",
+        text:
+          "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.",
+  
+        bg: "info",
+      },
+      {
+        title: "Accordion Header Three",
+        text:
+          "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.",
+  
+        bg: "success",
+      },
+    ];
+  
   return (
     <Fragment>
       {/* <Ext /> */}
@@ -136,38 +165,62 @@ const RecentHistory = (props) => {
               >
                 <ul className="timeline">
                 { clinicVisitList.length > 0 ?(
-                      <Accordion style={{minHeight:'45px',padding:'0px 0px 0px 0px'}} defaultExpanded={true}>
-                      <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
-                          style={{padding:'0px 0px 0px 2px',borderBottom:'2px solid #eee'}}
-                      >
-                          <Label as='a' color='blue'  style={{width:'100%'}}>
-                              <Typography className={classes.heading}>Visit Date - {clinicVisitList.visitDate}</Typography>
-                          </Label>
-              
-                      </AccordionSummary>
-                      <AccordionDetails style={{padding:'8px'}}>
-                          <List celled style={{width:'100%'}}>
-                              {clinicVisitList.vitalSignDto.pulse!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px',borderTop:'1px solid #fff', marginTop:'-5px' }}>Pulse <span style={{color:'rgb(153, 46, 98)'}} className="float-end"><b>{clinicVisitList.vitalSignDto.pulse} bpm</b></span></List.Item>)}
-                              {clinicVisitList.vitalSignDto.respiratoryRate!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Respiratory Rate <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{clinicVisitList.vitalSignDto.respiratoryRate} bpm</b></span></List.Item>)}
-                              {clinicVisitList.vitalSignDto.temperature!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Temperature <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{clinicVisitList.vitalSignDto.temperature} <sup>0</sup>C</b></span></List.Item>)}
-                              {clinicVisitList.vitalSignDto.systolic!=="" || clinicVisitList.vitalSignDto.diastolic!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Blood Pressure <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{clinicVisitList.vitalSignDto.systolic}/{clinicVisitList.vitalSignDto.diastolic}</b></span></List.Item>)}
-                              {clinicVisitList.vitalSignDto.height!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Height <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{clinicVisitList.vitalSignDto.height} cm</b></span></List.Item>)}
-                              {clinicVisitList.vitalSignDto.bodyWeight!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{clinicVisitList.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
-                              {clinicVisitList.vitalSignDto.bodyWeight!=="" || clinicVisitList.vitalSignDto.height!=="" && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{Math.round(clinicVisitList.vitalSignDto.bodyWeight/(clinicVisitList.vitalSignDto.height/100))} kg</b></span></List.Item>)}
-                          </List>
-                      </AccordionDetails>
-                  </Accordion>
-                ):
-                <Alert
-                      variant="info"
-                      className="alert-dismissible solid fade show"
+                  
+                <Accordion
+                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
+                    defaultActiveKey="0"
+                  >
+                    <>
+                    {clinicVisitList.map((visit, i)=>
+                  <div className="accordion-item" key={i}>
+                    <Accordion.Toggle
+                      as={Card.Text}
+                      eventKey={`${i}`}
+                      className={`accordion-header ${
+                        activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                      } accordion-header-info`}
+                      onClick={() =>
+                        setActiveAccordionHeaderShadow(
+                          activeAccordionHeaderShadow === 1 ? -1 : i
+                        )
+                      }
                     >
-                      <p>No clinic visit</p>
-                    </Alert>
-              }
+                      <span className="accordion-header-icon"></span>
+                      <span className="accordion-header-text">Visit Date : {visit.visitDate}</span>
+                      <span className="accordion-header-indicator "></span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse
+                      eventKey={`${i}`}
+                      className="accordion__body"
+                    >
+                      <div className="accordion-body-text">
+                    
+                          <List celled style={{width:'100%'}}>
+                              {visit.vitalSignDto && visit.vitalSignDto.pulse!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px',borderTop:'1px solid #fff', marginTop:'-5px' }}>Pulse <span style={{color:'rgb(153, 46, 98)'}} className="float-end"><b>{visit.vitalSignDto.pulse} bpm</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.respiratoryRate!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Respiratory Rate <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.respiratoryRate} bpm</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.temperature!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Temperature <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.temperature} <sup>0</sup>C</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.systolic!==null && visit.vitalSignDto.diastolic!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Blood Pressure <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.systolic}/{visit.vitalSignDto.diastolic}</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Height <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.height} cm</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{Math.round(visit.vitalSignDto.bodyWeight/(visit.vitalSignDto.height/100))} kg</b></span></List.Item>)}
+                          </List>
+                          <p><strong>Clinic Notes : </strong>{visit.clinicalNote}</p>
+                      </div>
+                    </Accordion.Collapse>
+                  </div>
+                )}
+                </>
+              </Accordion>             
+
+            ):
+            (
+            <Alert
+                  variant="info"
+                  className="alert-dismissible solid fade show"
+                >
+                  <p>No clinic visit</p>
+                </Alert>
+            )}
                 </ul>
               </PerfectScrollbar>
             </div>

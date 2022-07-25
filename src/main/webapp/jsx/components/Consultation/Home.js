@@ -338,7 +338,6 @@ const ClinicVisit = (props) => {
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(getPatientObj)
     if(validate()){
     setSaving(true)
     objValues.visitDate = vital.encounterDate
@@ -355,9 +354,10 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         toast.success("Clinic Visit save successful");
-        props.setActiveContent('recent-history')
+        //props.setActiveContent('recent-history')
       })
       .catch(error => {
+        console.log(error)
         setSaving(false);
         let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
         toast.error(errorMessage);

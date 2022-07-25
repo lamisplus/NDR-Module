@@ -6,7 +6,8 @@ import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
 import "react-widgets/dist/css/react-widgets.css";
 import FirstEAC from './EnhancedAdherenceCounseling';
-import ContinueEAC from './EacContinue';
+import SecondEac from './SecondEac';
+import ThirdEac from './ThirdEac';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -47,7 +48,11 @@ const EAC = (props) => {
     const patientObj = props.patientObj;
     const classes = useStyles()
     const [eacList, setEacList] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [eacObj, setEacObj] = useState([])
+    const [hideFirst, setHideFirst] = useState(false)
+    const [hideSecond, setHideSecond] = useState(false)
+    const [hideThird, setHideThird] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         EAC()
@@ -61,7 +66,26 @@ const EAC = (props) => {
             )
             .then((response) => {
                 setLoading(false)
-                setEacList(response.data);                
+                setEacList(response.data); 
+                setEacObj(response.data) 
+                console.log(response.data) 
+                if(response.data.length<1) {
+                    setHideFirst(false)
+                    setHideSecond(false)
+                    setHideThird(false)
+                }else if(response.data[0].status==='First'){
+                    setHideFirst(true)
+                    setHideSecond(true)
+                    setHideThird(false)
+                }else if(response.data[0].status==='Second'){
+                    setHideFirst(true)
+                    setHideSecond(true)
+                    setHideThird(false)
+                } else if(response.data[0].status==='Third'){
+                    setHideFirst(true)
+                    setHideSecond(false)
+                    setHideThird(false)
+                }            
             })
             .catch((error) => {  
                 setLoading(false)  
@@ -70,15 +94,11 @@ const EAC = (props) => {
 
   return (      
         <div> 
-            {eacList.length < 1 ? (
-                <>
-                    <FirstEAC patientObj={patientObj}/> 
-                </>
-            ) :
-                <>
-                    <ContinueEAC patientObj={patientObj}/> 
-                </>
-            }                  
+
+                    {!hideFirst && (<FirstEAC patientObj={patientObj} setEacObj={setEacObj} setHideFirst={setHideFirst} setHideSecond={setHideSecond}/>)} 
+               
+                    {hideSecond && (<SecondEac patientObj={patientObj} setEacObj={setEacObj} setHideSecond={setHideSecond} setHideThird={setHideThird}/> )} 
+                    {hideThird && (<ThirdEac patientObj={patientObj} setEacObj={setEacObj} setHideFirst={setHideFirst} setHideThird={setHideThird} /> )}                  
                           
         </div>
   );

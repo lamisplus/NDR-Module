@@ -51,6 +51,8 @@ const ClientStatusUpdate = (props) => {
 
     const patientObj = props.patientObj;
     const classes = useStyles()
+    const [hideConfirmDeath, setHideConfirmDeath] = useState(true);
+    const [hideReturn, setHideReturn] = useState(true);
     const [trackingOutCome, setTrankingOutCome] = useState([])
     const [hivStatus, setHivStatus] = useState([]);
     const [reasonForInteruption, setReasonForInteruption] = useState([]);
@@ -138,6 +140,14 @@ const ClientStatusUpdate = (props) => {
     }
     
     const handleInputChange = e => {
+        console.log(e.target.value)
+        if(e.target.value==='Died (Confirmed)'){
+            setHideConfirmDeath(false)
+            setHideReturn(false)
+        }else{
+            setHideConfirmDeath(true)
+            setHideReturn(true)
+        }
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
           
@@ -179,6 +189,7 @@ const ClientStatusUpdate = (props) => {
                     <br/>
                     <br/>
                     <br/>
+                    <div className="form-group mb-3 col-md-6"></div>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >New Status</Label>
@@ -260,6 +271,8 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        {hideReturn && (
+                        <>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="participant_id">Date Agreed to Return</Label>
@@ -301,6 +314,9 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        </>
+                        )}
+                        {!hideConfirmDeath && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Cause of Death</Label>
@@ -324,8 +340,9 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        )}
                     </div>
-                    
+                   
                     {saving ? <Spinner /> : ""}
                     <br />
                 

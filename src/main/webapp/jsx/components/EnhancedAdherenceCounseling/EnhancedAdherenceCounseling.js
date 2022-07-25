@@ -13,7 +13,7 @@ import moment from "moment";
 import { Spinner } from "reactstrap";
 import { Icon,Button, } from 'semantic-ui-react'
 import FirstEAC from './EnhancedAdherenceCounseling';
-import ContinueEAC from './EacContinue';
+import ContinueEAC from './SecondEac';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -51,9 +51,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const EAC = (props) => {
-    //const patientObj = props.patientObj;
+    const patientObj = props.patientObj;
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
+    const [eacObj, setEacObj] = useState([]);
     const [errors, setErrors] = useState({});
     const [objValues, setObjValues]=useState({
                                                 dateOfEac: "",
@@ -64,6 +65,26 @@ const EAC = (props) => {
                                                 status: "First",
                                                 visitId:""
                                             })
+    useEffect(() => {
+        EACStatus();
+        }, []);
+    
+        ///GET LIST OF FUNCTIONAL%20_STATUS
+        // TB STATUS
+        const EACStatus =()=>{
+        axios
+            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setEacObj(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
  
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -78,6 +99,10 @@ const EAC = (props) => {
           )
               .then(response => {
                   setSaving(false);
+                  props.setEacObj(response.data)
+                  props.setHideFirst(true)
+                  props.setHideFirst(true)
+                  props.setHideSecond(true)
                   toast.success(" Save successful");
 
               })
