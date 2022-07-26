@@ -11,6 +11,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 
     List<HIVEac> getAllByPersonAndArchived(Person person, Integer archived);
     Optional<HIVEac> getByPersonAndDateOfEac2IsNullAndDateOfEac3IsNull(Person person);
+    Optional<HIVEac> getByPersonAndDateOfEac3IsNull(Person person);
     Optional<HIVEac> getByPersonAndDateOfEac1IsNotNullAndDateOfEac2IsNotNullAndDateOfEac3IsNull(Person person);
 
 

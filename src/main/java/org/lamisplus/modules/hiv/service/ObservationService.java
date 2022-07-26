@@ -46,6 +46,7 @@ public class ObservationService {
         BeanUtils.copyProperties (observationDto, observation);
         observation.setPerson (person);
         observation.setUuid (UUID.randomUUID ().toString ());
+        observation.setVisit (visit);
         Observation saveObservation = observationRepository.save (observation);
         observationDto.setId (saveObservation.getId ());
         return observationDto;
