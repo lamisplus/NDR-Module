@@ -123,29 +123,7 @@ const RecentHistory = (props) => {
     return regimenArr.toString();
     }
 
-    const defaultAccordion = [
-      {
-        title: "Accordion Header One",
-        text:
-          "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.",
-        bg: "primary",
-      },
-      {
-        title: "Accordion Header Two",
-        text:
-          "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.",
-  
-        bg: "info",
-      },
-      {
-        title: "Accordion Header Three",
-        text:
-          "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.",
-  
-        bg: "success",
-      },
-    ];
-  
+
   return (
     <Fragment>
       {/* <Ext /> */}
@@ -185,7 +163,7 @@ const RecentHistory = (props) => {
                       }
                     >
                       <span className="accordion-header-icon"></span>
-                      <span className="accordion-header-text">Visit Date : <span className="float-end">{visit.visitDate}</span> </span>
+                      <span className="accordion-header-text">Visit Date : <span className="">{visit.visitDate}</span> </span>
                       <span className="accordion-header-indicator "></span>
                     </Accordion.Toggle>
                     <Accordion.Collapse

@@ -28,9 +28,9 @@ const ClinicEvaluation = (props) => {
   return (  
         <div>
             { age > 10 ?
-                <AdultClinicEvaluationFrom />
+                <AdultClinicEvaluationFrom patientObj={patientObj}/>
                 :
-                <ChildClinicEvaluationForm />
+                <ChildClinicEvaluationForm patientObj={patientObj}/>
             }
 
         </div>

@@ -180,8 +180,8 @@ const PharmacyHistory = (props) => {
             
                         options={{
                           headerStyle: {
-                              //backgroundColor: "#9F9FA5",
-                              color: "#000",
+                            backgroundColor: "#014d88",
+                              color: "#fff",
                           },
                           searchFieldStyle: {
                               width : '200%',

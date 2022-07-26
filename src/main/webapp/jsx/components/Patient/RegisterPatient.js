@@ -296,9 +296,17 @@ const UserRegistration = (props) => {
             }
             patientForm.contactPoint.push(phone);
   
+            if (patientId) {
+                patientForm.id = patientId;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
                 const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+            } else {
+                patientForm.id = patientId;
+                patientDTO.person=patientForm;
+                patientDTO.hivEnrollment=objValues;
+                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+            }
             
             toast.success("Patient Register successful");
             history.push('/');
@@ -693,10 +701,10 @@ const UserRegistration = (props) => {
                             variant="contained"
                             color="primary"
                             className=" float-end ms-1"
-                            style={{backgroundColor:'#04C4D9',fontWeight:"bolder"}}
+                            style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
                             startIcon={<TiArrowBack />}
                         >
-                            <span style={{ textTransform: "capitalize" }}>Back </span>
+                            <span style={{ textTransform: "capitalize", color:'#fff' }}>Back </span>
                         </Button>
                     </Link>
                     <br />
@@ -704,8 +712,8 @@ const UserRegistration = (props) => {
                     <div className="col-xl-12 col-lg-12">
                         <Form onSubmit={handleSubmit(onSubmit, onError)}>
                             <div className="card">
-                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
-                                    <h5 className="card-title">{userDetail===null ? "Basic Information" : "Edit User Information"}</h5>
+                                <div className="card-header" style={{backgroundColor:"#014d88",color:'#fff',fontWeight:'bolder'}}>
+                                    <h5 className="card-title" style={{color:'#fff'}}>{userDetail===null ? "Basic Information" : "Edit User Information"}</h5>
                                 </div>
 
                                 <div className="card-body">
@@ -942,8 +950,8 @@ const UserRegistration = (props) => {
                             </div>
 
                             <div className="card">
-                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
-                                    <h5 className="card-title">Contact Details</h5>
+                                <div className="card-header" style={{backgroundColor:"#014d88",color:'#fff',fontWeight:'bolder'}}>
+                                    <h5 className="card-title" style={{color:'#fff'}}>Contact Details</h5>
                                 </div>
 
                                 <div className="card-body">
@@ -1105,8 +1113,8 @@ const UserRegistration = (props) => {
                             </div>
 
                             <div className="card">
-                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
-                                    <h5 className="card-title">Relationship / Next Of Kin</h5>
+                                <div className="card-header" style={{backgroundColor:"#014d88",color:'#fff',fontWeight:'bolder'}}>
+                                    <h5 className="card-title" style={{color:'#fff'}}>Relationship / Next Of Kin</h5>
                                 </div>
                                 <div className="card-body">
                                     <div className="row">
@@ -1326,7 +1334,7 @@ const UserRegistration = (props) => {
                                             className={classes.button}
                                             startIcon={<AddIcon />}
                                             onClick={handleAddRelative}
-                                            style={{backgroundColor:'#04C4D9',fontWeight:"bolder"}}
+                                            style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
                                         >
                                             Add a Relative/Next Of Kin
                                         </MatButton>
@@ -1335,8 +1343,8 @@ const UserRegistration = (props) => {
                             </div>
                             {/* Adding HIV ENROLLEMENT FORM HERE */}
                             <div className="card">
-                                <div className="card-header" style={{backgroundColor:"#04C4D9",color:'#fff',fontWeight:'bolder'}}>
-                                    <h5 className="card-title">HIV Enrollment</h5>
+                                <div className="card-header" style={{backgroundColor:"#014d88",color:'#fff',fontWeight:'bolder'}}>
+                                    <h5 className="card-title"  style={{color:'#fff'}}>HIV Enrollment</h5>
                                 </div>
 
                                 <div className="card-body">

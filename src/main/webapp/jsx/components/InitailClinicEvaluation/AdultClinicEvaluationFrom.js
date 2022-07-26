@@ -172,7 +172,7 @@ const ClinicEvaluationFrom = (props) => {
         dateOfObservation: null,
         facilityId: null,
         personId: 0,
-        type: "initial clinic evaluation adult",
+        type: "Clinical evaluation",
         visitId: null
     })
 
@@ -373,6 +373,7 @@ const ClinicEvaluationFrom = (props) => {
 
      /**** Submit Button Processing  */
      const handleSubmit = (e) => { 
+        e.preventDefault(); 
         observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
         observation.personId =patientObj.id
         observation.data.medicalHistory=medicalHistory
@@ -417,7 +418,7 @@ const ClinicEvaluationFrom = (props) => {
       
     }
 
-
+console.log(props.patientObj)
   return (      
       <div >
                    

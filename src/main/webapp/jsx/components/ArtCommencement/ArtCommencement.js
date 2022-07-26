@@ -323,8 +323,8 @@ const ArtCommencement = (props) => {
       <div >
          
               <Modal show={props.showModal} toggle={props.toggle} className="fade" size="xl">
-             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#eeeeee"}}>
-                 ART Commencement 
+             <Modal.Header toggle={props.toggle} style={{backgroundColor:"#014d88"}}>
+                <span  style={{color:"#fff"}}> ART Commencement </span>
                  <Button
                     variant=""
                     className="btn-close"

@@ -95,10 +95,10 @@ const EAC = (props) => {
   return (      
         <div> 
 
-                    {!hideFirst && (<FirstEAC patientObj={patientObj} setEacObj={setEacObj} setHideFirst={setHideFirst} setHideSecond={setHideSecond}/>)} 
+                    {!hideFirst && (<FirstEAC patientObj={patientObj} setEacObj={setEacObj} setHideFirst={setHideFirst} setHideSecond={setHideSecond} setActiveContent={props.setActiveContent}/>)} 
                
-                    {hideSecond && (<SecondEac patientObj={patientObj} setEacObj={setEacObj} setHideSecond={setHideSecond} setHideThird={setHideThird}/> )} 
-                    {hideThird && (<ThirdEac patientObj={patientObj} setEacObj={setEacObj} setHideFirst={setHideFirst} setHideThird={setHideThird} /> )}                  
+                    {hideSecond && (<SecondEac patientObj={patientObj} setEacObj={setEacObj} setHideSecond={setHideSecond} setHideThird={setHideThird} setActiveContent={props.setActiveContent}/> )} 
+                    {hideThird && (<ThirdEac patientObj={patientObj} setEacObj={setEacObj} setHideFirst={setHideFirst} setHideThird={setHideThird} setActiveContent={props.setActiveContent}/> )}                  
                           
         </div>
   );

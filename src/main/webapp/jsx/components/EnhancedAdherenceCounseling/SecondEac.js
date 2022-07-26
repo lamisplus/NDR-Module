@@ -82,13 +82,18 @@ const EAC = (props) => {
                   props.setHideThird(true)
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
-                  props.setActiveContent('recent-history')
+                  //props.setActiveContent('recent-history')
 
               })
               .catch(error => {
                 setSaving(false);
-                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                toast.error(errorMessage);
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
               });
           
     }

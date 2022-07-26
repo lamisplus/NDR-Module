@@ -85,8 +85,8 @@ const ClientStatusUpdate = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
-               //console.log(response.data);
-               setHivStatus(response.data);
+               
+               setHivStatus(response.data.filter((x)=> x.display!=='Lost to Follow Up' && x.display!=='ART Transfer In'));
            })
            .catch((error) => {
            //console.log(error);
@@ -172,8 +172,13 @@ const ClientStatusUpdate = (props) => {
               })
               .catch(error => {
                   setSaving(false);
-                  let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                  toast.error(errorMessage);
+                  if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
               });          
     }
 

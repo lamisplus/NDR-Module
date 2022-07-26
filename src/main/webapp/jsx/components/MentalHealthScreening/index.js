@@ -63,7 +63,7 @@ const MentalHealthScreening = (props) => {
                                                     dateOfObservation: "yyyy-MM-dd",
                                                     facilityId: null,
                                                     personId: 0,
-                                                    type: "mental health",
+                                                    type: "Mental health",
                                                     visitId: null
                                                 })
  

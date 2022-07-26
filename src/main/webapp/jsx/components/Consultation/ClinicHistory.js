@@ -188,7 +188,7 @@ const LabHistory = (props) => {
             
                         options={{
                           headerStyle: {
-                              //backgroundColor: "#9F9FA5",
+                              backgroundColor: "#014d88",
                               color: "#000",
                           },
                           searchFieldStyle: {

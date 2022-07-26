@@ -357,10 +357,14 @@ const ClinicVisit = (props) => {
         props.setActiveContent('recent-history')
       })
       .catch(error => {
-        console.log(error)
         setSaving(false);
-        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-        toast.error(errorMessage);
+        if(error.response && error.response.data){
+          let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+          toast.error(errorMessage);
+        }
+        else{
+          toast.error("Something went wrong. Please try again...");
+        }
        
       });
     }
@@ -445,7 +449,7 @@ const ClinicVisit = (props) => {
             <div className="row">
               <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Date of Visit </FormLabelName>
+                  <FormLabelName >Date of Visit *</FormLabelName>
                   <Input
                     type="date"
                     name="encounterDate"
@@ -625,7 +629,7 @@ const ClinicVisit = (props) => {
 
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >WHO Staging</FormLabelName>
+                  <FormLabelName >WHO Staging 8</FormLabelName>
                   <Input
                     type="select"
                     name="whoStagingId"
@@ -647,7 +651,7 @@ const ClinicVisit = (props) => {
               </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Functional Status</FormLabelName>
+                  <FormLabelName >Functional Status *</FormLabelName>
                   <Input
                     type="select"
                     name="functionalStatusId"
@@ -668,7 +672,7 @@ const ClinicVisit = (props) => {
               </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Level of Adherence</FormLabelName>
+                  <FormLabelName >Level of Adherence *</FormLabelName>
                   <Input
                     type="select"
                     name="adherenceLevel"
