@@ -136,10 +136,6 @@ const LabHistory = (props) => {
             });        
     }
 
-    const CreatelabOrder =()=>{
-        props.setActiveContent('laboratory')
-        
-    }
 
     const labStatus =(status)=> {
         console.log(status)

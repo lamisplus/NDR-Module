@@ -89,7 +89,6 @@ const RecentHistory = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
-          console.log(response.data)
             setLoading(false)
             setClinicVisitList(response.data);                
         })
@@ -186,7 +185,7 @@ const RecentHistory = (props) => {
                       }
                     >
                       <span className="accordion-header-icon"></span>
-                      <span className="accordion-header-text">Visit Date : {visit.visitDate}</span>
+                      <span className="accordion-header-text">Visit Date : <span className="float-end">{visit.visitDate}</span> </span>
                       <span className="accordion-header-indicator "></span>
                     </Accordion.Toggle>
                     <Accordion.Collapse

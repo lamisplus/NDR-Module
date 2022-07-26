@@ -104,6 +104,7 @@ const EAC = (props) => {
                   props.setHideFirst(true)
                   props.setHideSecond(true)
                   toast.success(" Save successful");
+                  props.setActiveContent('recent-history')
 
               })
               .catch(error => {

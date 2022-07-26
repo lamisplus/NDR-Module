@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const MentalHealthScreening = (props) => {
-
+    
     const patientObj = props.patientObj;
     //let history = useHistory();
     const classes = useStyles()
@@ -84,12 +84,13 @@ const MentalHealthScreening = (props) => {
               .then(response => {
                   setSaving(false);
                   props.patientObj.mentalHealth=true
-                  toast.success("Mental health screening save successful");
+                  toast.success("Mental health screening save successful.\nPlease refer patient to psychiatric hospital");
                   if(objValues.mhs1==="YES" || objValues.mhs2==="YES" || objValues.mhs4==="YES" || objValues.mhs4==="YES" || objValues.mhs5==="YES" ){
                     setReferrer(true)
                   }else{
                     setReferrer(false)
                   }
+                  props.setActiveContent("recent-history")
                   //history.push("/")
               })
               .catch(error => {

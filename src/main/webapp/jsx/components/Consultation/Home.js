@@ -720,7 +720,7 @@ const ClinicVisit = (props) => {
                     id="nextAppointment"
                     value={vital.nextAppointment}
                     onChange={handleInputChange}
-                    max={moment(new Date()).format("YYYY-MM-DD")}
+                    min={moment(new Date()).format("YYYY-MM-DD")}
                     required
                   />
             <br />

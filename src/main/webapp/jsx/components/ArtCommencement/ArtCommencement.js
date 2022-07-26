@@ -307,8 +307,13 @@ const ArtCommencement = (props) => {
               })
               .catch(error => {
                   setSaving(false);
-                  let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                  toast.error(errorMessage);
+                  if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
               });
             }
           
@@ -469,6 +474,7 @@ const ArtCommencement = (props) => {
                                             type="date"
                                             name="viralLoad"
                                             id="viralLoad"
+                                            max= {moment(new Date()).format("YYYY-MM-DD") }
                                             //onChange={handleInputChange}
                                             //value={objValues.viralLoad}
                                             required
@@ -631,6 +637,24 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
+                                    {vital.bodyWeight!=="" && vital.height!=="" && (
+                                        <div className="form-group mb-3 col-md-6">
+                                            <FormGroup>
+                                            <Label >BMI</Label>
+                                            
+                                            <InputGroup> 
+                                            <InputGroupText>
+                                                BMI
+                                                </InputGroupText>                   
+                                                <Input
+                                                type="number"
+                                                disabled
+                                                value={Math.round(vital.bodyWeight/(vital.height/100))}
+                                                />
+                                            </InputGroup>                
+                                            </FormGroup>
+                                        </div>
+                                        )}
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >Blood Pressure</Label>

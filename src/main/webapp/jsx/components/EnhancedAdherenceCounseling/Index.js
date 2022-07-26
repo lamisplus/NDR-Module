@@ -68,20 +68,20 @@ const EAC = (props) => {
                 setLoading(false)
                 setEacList(response.data); 
                 setEacObj(response.data) 
-                console.log(response.data) 
-                if(response.data.length<1) {
+                const responseObj = response.data.filter((x)=> x.status !=='Completed') 
+                if(responseObj<1) {
                     setHideFirst(false)
                     setHideSecond(false)
                     setHideThird(false)
-                }else if(response.data[0].status==='First'){
+                }else if(responseObj[0].status==='First'){
                     setHideFirst(true)
                     setHideSecond(true)
                     setHideThird(false)
-                }else if(response.data[0].status==='Second'){
+                }else if(responseObj[0].status==='Second'){
                     setHideFirst(true)
                     setHideSecond(true)
                     setHideThird(false)
-                } else if(response.data[0].status==='Third'){
+                } else if(responseObj[0].status==='Completed'){
                     setHideFirst(true)
                     setHideSecond(false)
                     setHideThird(false)

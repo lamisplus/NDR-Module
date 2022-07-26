@@ -212,12 +212,14 @@ const Pharmacy = (props) => {
         .then(response => {
             setSaving(false);
             toast.success("Pharmacy drug refill successful");
-            props.setActiveContent('recent-history')
         })
         .catch(error => {
             setSaving(false);
-            let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-            toast.error(errorMessage);             
+            if(error.response && error.response.data){
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage); 
+            }
+                       
         }); 
     }
 
@@ -457,13 +459,13 @@ const Pharmacy = (props) => {
                         <CardBody>
                         <h4>Drugs Information </h4>
                         <div className="row">
-                            <div className="form-group mb-3 col-md-9"  >Regimen Name selected </div>
-                            <div className="form-group mb-3 col-md-4"  >Quantity Dispense</div>
+                            <div className="form-group mb-3 col-md-8"  >Regimen Name selected </div>
+                            <div className="form-group mb-3 col-md-4"  >Quantity </div>
                         </div>
                         {regimenList.map((input, index) => (
                             <>
                                 <div className="row">
-                                <div className="form-group mb-3 col-md-9"  >
+                                <div className="form-group mb-3 col-md-8"  >
                                     <FormGroup>
                                     <Label ><b>{input.name}</b></Label>
                                     <Input

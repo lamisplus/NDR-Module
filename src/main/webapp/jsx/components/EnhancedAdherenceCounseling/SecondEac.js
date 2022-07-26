@@ -82,6 +82,7 @@ const EAC = (props) => {
                   props.setHideThird(true)
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
+                  props.setActiveContent('recent-history')
 
               })
               .catch(error => {

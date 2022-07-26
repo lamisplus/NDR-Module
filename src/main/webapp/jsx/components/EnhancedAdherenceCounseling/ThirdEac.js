@@ -78,10 +78,11 @@ const EAC = (props) => {
           )
               .then(response => {
                   setSaving(false);
-                  props.setHideFirst(false)
                   props.setHideThird(false)
+                  props.setHideFirst(false)                 
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
+                  props.setActiveContent('recent-history')
 
               })
               .catch(error => {

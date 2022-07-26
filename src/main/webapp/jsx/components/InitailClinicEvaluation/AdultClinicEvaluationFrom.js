@@ -284,7 +284,7 @@ const ClinicEvaluationFrom = (props) => {
             }
         }
         setRespiratory({...respiratory, [e.target.name]: e.target.value})
-        console.log(respiratory) 
+        
     }
     const handleGastrointestinal =e =>{
         if(e.target.name==='nsf'){
@@ -295,11 +295,11 @@ const ClinicEvaluationFrom = (props) => {
             }
         }
         setGastrointestinal({...gastrointestinal, [e.target.name]: e.target.value})
-        console.log(gastrointestinal)
+       
     }
     const handleAssessment =e =>{
         setAssesment({...assesment, [e.target.name]: e.target.value})
-        console.log(assesment)
+        
     }
     const handleWho =e =>{
         if(e.target.value==="stage 1"){
@@ -368,7 +368,7 @@ const ClinicEvaluationFrom = (props) => {
     }
     const handlePlanArt =e =>{
         setPlanArt({...planArt, [e.target.name]: e.target.value})
-        console.log(planArt)
+        
     }
 
      /**** Submit Button Processing  */
@@ -404,11 +404,14 @@ const ClinicEvaluationFrom = (props) => {
               setSaving(false);
               props.patientObj.clinicalEvaluation=true
               toast.success("Initial Clinic Evaluation successful");
+              props.setActiveContent('recent-history')
           })
           .catch(error => {
               setSaving(false);
-              let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                toast.error(errorMessage);
+              if(error.response && error.response.data){
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage); 
+            }
              
           });
       
@@ -2457,7 +2460,7 @@ const ClinicEvaluationFrom = (props) => {
                             Rate (breaths/min)
                             </label>
                             <input
-                            type="text"
+                            type="checkbox"
                             className="form-check-input"                           
                             name="rate"
                             id="rate"
@@ -3176,10 +3179,12 @@ const ClinicEvaluationFrom = (props) => {
                                     onChange={handleRegimen}  
                                 >
                                 <option value="">Select</option>
-                                <option value="TDF+3TC (or FTC) +DTG">TDF+3TC (or FTC) +DTG</option>
-                                <option value="TDF+3TC(or FTC) + EFV 400">TDF+3TC(or FTC) + EFV 400</option>
-                                <option value="ABC +3TC+DTG">ABC +3TC+DTG</option>
-                                <option value="TDF+3TC (or FTC) +EFV">TDF+3TC (or FTC) +EFV</option>                              
+                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
+                                <option value="TDF + FTC + DTG">TDF + FTC + DTG</option>
+                                <option value="TDF + 3TC + EFV400">TDF + 3TC + EFV400</option>
+                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option> 
+                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option> 
+                                <option value="AZT + 3TC + EFV400">AZT + 3TC + EFV400</option>                              
                             </Input>
                         </FormGroup>
                     </div>
@@ -3195,15 +3200,20 @@ const ClinicEvaluationFrom = (props) => {
                                     onChange={handleRegimen}  
                                 >
                                 <option value="">Select</option>
-                                <option value="AZT+ 3TC + ATV/r">AZT+ 3TC + ATV/r</option>
-                                <option value="TDF +3TC + ATV/r">TDF +3TC + ATV/r</option>
-                                <option value="ABC +3TC+DTG">TDF +3TC + LPV/r</option>
-                                <option value="TDF +3TC + LPV/r">TDF +3TC + LPV/r </option>  
-                                <option value="AZT + TDF + 3TC+ ATV/r">AZT + TDF + 3TC+ ATV/r </option>
-                                <option value="AZT + TDF + 3TC+ LPV/r">AZT + TDF + 3TC+ LPV/r </option>
-                                <option value="TDF+3TC +DTG">TDF+3TC +DTG</option>  
-                                <option value="DRV/r +DTG ± 1-2 NRTIs">DRV/r +DTG ± 1-2 NRTIs</option>
-                                <option value="DRV/r +2NRTIs ± ETV">DRV/r +2NRTIs ± ETV</option>                          
+                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
+                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
+                                <option value="AZT + FTC + ATV/r">AZT + FTC + ATV/r</option>
+                                <option value="AZT + FTC + LPV/r">AZT + FTC + LPV/r</option>  
+                                <option value="TDF + 3TC + ATV/r">TDF + 3TC + ATV/r </option>
+                                <option value="TDF + 3TC + LPV/r">TDF + 3TC + LPV/r </option>
+                                <option value="TDF +  FTC + ATV/r">TDF +  FTC + ATV/r</option>  
+                                <option value="TDF + FTC + LPV/r">TDF + FTC + LPV/r</option>
+                                <option value="AZT + 3TC + DRV/r">AZT + 3TC + DRV/r</option>   
+                                <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                       
+                                <option value="AZT + 3TC + DTG">AZT + 3TC + DTG</option>
+                                <option value="AZT +  FTC + DTG">AZT +  FTC + DTG</option>
+                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
+                                <option value="TDF +  FTC + DTG">TDF +  FTC + DTG</option>
                             </Input>
                         </FormGroup>
                     </div>
@@ -3219,15 +3229,18 @@ const ClinicEvaluationFrom = (props) => {
                                     onChange={handleRegimen}  
                                 >
                                 <option value="">Select</option>
-                                <option value="AZT+ 3TC + ATV/r">AZT+ 3TC + ATV/r</option>
-                                <option value="TDF +3TC + ATV/r">TDF +3TC + ATV/r</option>
-                                <option value="ABC +3TC+DTG">TDF +3TC + LPV/r</option>
-                                <option value="TDF +3TC + LPV/r">TDF +3TC + LPV/r </option>  
-                                <option value="AZT + TDF + 3TC+ ATV/r">AZT + TDF + 3TC+ ATV/r </option>
-                                <option value="AZT + TDF + 3TC+ LPV/r">AZT + TDF + 3TC+ LPV/r </option>
-                                <option value="TDF+3TC +DTG">TDF+3TC +DTG</option>  
-                                <option value="DRV/r +DTG ± 1-2 NRTIs">DRV/r +DTG ± 1-2 NRTIs</option>
-                                <option value="DRV/r +2NRTIs ± ETV">DRV/r +2NRTIs ± ETV</option>                          
+                                <option value="TDF + 3TC + DRV/r + DTG">TDF + 3TC + DRV/r + DTG</option>
+                                <option value="TDF + 3TC + DRV/r + DTG + ETV">TDF + 3TC + DRV/r + DTG + ETV</option>
+                                <option value="TDF + FTC + DRV/r + DTG">TDF + FTC + DRV/r + DTG</option>
+                                <option value="TDF + FTC + DRV/r + DTG + ETV">TDF + FTC + DRV/r + DTG + ETV</option>  
+                                <option value="AZT + 3TC + DRV/r + ETV + DTG">AZT + 3TC + DRV/r + ETV + DTG</option>
+                                <option value="AZT + FTC + DRV/r + ETV + DTG">AZT + FTC + DRV/r + ETV + DTG </option>
+                                <option value="AZT + 3TC + DRV/r + ETV">AZT + 3TC + DRV/r + ETV</option>  
+                                <option value="AZT + FTC + DRV/r + ETV">AZT + FTC + DRV/r + ETV</option>
+                                <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r + DTG</option>   
+                                <option value="AZT + 3TC + DRV/r + DTG">AZT + FTC + DRV/r + DTG</option> 
+                                <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r</option> 
+                                <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                        
                             </Input>
                         </FormGroup>
                     </div>

@@ -138,7 +138,10 @@ const ClientStatusUpdate = (props) => {
            });
        
     }
-    
+     const handleInputChangeOut = e => {
+
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        }
     const handleInputChange = e => {
         console.log(e.target.value)
         if(e.target.value==='Died (Confirmed)'){
@@ -162,7 +165,7 @@ const ClientStatusUpdate = (props) => {
           
           )
               .then(response => {
-                  setSaving(false);
+                  setSaving(false);                  
                   toast.success("Client Status Update Successfully!");
                   props.setActiveContent('recent-history')
 
@@ -238,7 +241,7 @@ const ClientStatusUpdate = (props) => {
                                 name="trackOutcome"
                                 id="trackOutcome"
                                 value={objValues.trackOutcome}
-                                onChange={handleInputChange}
+                                onChange={handleInputChangeOut}
                                 required
                                 >
                                 <option value=""> Select</option>
