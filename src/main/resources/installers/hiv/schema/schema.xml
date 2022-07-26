@@ -342,4 +342,5 @@
                 ADD CONSTRAINT FK_HIV_EAC_ON_VISIT FOREIGN KEY (visit_id) REFERENCES patient_visit (uuid);
         </sql>
     </changeSet>
+
 </databaseChangeLog>
