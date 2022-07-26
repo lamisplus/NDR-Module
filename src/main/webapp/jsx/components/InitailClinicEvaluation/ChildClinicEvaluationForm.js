@@ -273,7 +273,6 @@ const ClinicEvaluationFrom = (props) => {
             }
         }
         setGenitalia({...genitalia, [e.target.name]: e.target.value})
-        console.log(genitalia)
     }
     const handleRespiratory =e =>{
         if(e.target.name==='nsf'){

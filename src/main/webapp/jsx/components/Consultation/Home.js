@@ -354,7 +354,7 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         toast.success("Clinic Visit save successful");
-        //props.setActiveContent('recent-history')
+        props.setActiveContent('recent-history')
       })
       .catch(error => {
         console.log(error)

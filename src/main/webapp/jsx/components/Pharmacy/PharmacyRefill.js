@@ -212,6 +212,7 @@ const Pharmacy = (props) => {
         .then(response => {
             setSaving(false);
             toast.success("Pharmacy drug refill successful");
+            props.setActiveContent('recent-history')
         })
         .catch(error => {
             setSaving(false);
