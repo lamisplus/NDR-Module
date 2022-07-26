@@ -140,7 +140,7 @@ public class HivPatientService {
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
         Log.info ("orgId {}", orgId);
         List<Observation> observationList = observationRepository.getAllByPersonAndFacilityId (person, orgId);
-        if (! observationList.isEmpty ()) {
+        if (!observationList.isEmpty ()) {
             observationList.forEach (observation -> {
                 if (observation.getType ().contains ("Clinical")) {
                     hivPatientDto.setClinicalEvaluation (true);
