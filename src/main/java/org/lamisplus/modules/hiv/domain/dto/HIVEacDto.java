@@ -16,10 +16,11 @@ public class HIVEacDto implements Serializable {
     private Long id;
     private Long visitId;
     private Long personId;
-    private LocalDate dateOfEac;
+    private LocalDate dateOfEac1;
+    private LocalDate dateOfEac2;
+    private LocalDate dateOfEac3;
     private Double lastViralLoad;
     private LocalDate dateOfLastViralLoad;
     private String note;
     private String status;
-
 }
