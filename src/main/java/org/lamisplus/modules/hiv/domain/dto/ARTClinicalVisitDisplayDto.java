@@ -28,7 +28,7 @@ public class ARTClinicalVisitDisplayDto implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate visitDate;
-    private String cd4;
+    private Long cd4;
     private Long cd4Percentage;
     @JsonIgnore
     private Boolean isCommencement;

@@ -32,7 +32,7 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     private LocalDate visitDate;
 
     @Column(name = "cd_4")
-    private String cd4;
+    private Long cd4;
 
     @Column(name = "cd_4_percentage")
     private Long cd4Percentage;

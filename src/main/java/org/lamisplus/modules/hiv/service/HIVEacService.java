@@ -3,7 +3,6 @@ package org.lamisplus.modules.hiv.service;
 import lombok.RequiredArgsConstructor;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
-import org.lamisplus.modules.hiv.domain.dto.HIVEacResponseDto;
 import org.lamisplus.modules.hiv.domain.entity.HIVEac;
 import org.lamisplus.modules.hiv.repositories.HIVEacRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import reactor.util.UUIDUtils;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,53 +40,51 @@ public class HIVEacService {
         return hivEacRepository.save (hivEac);
     }
 
-
-    public HIVEacResponseDto handleEac(HIVEacDto dto) {
-        Person person = getPerson (dto.getPersonId ());
-        if (dto.getStatus ().contains ("First")) {
-            return convertHivEacToDto (createFirstEac (dto));
-        }
-
-        if (dto.getStatus ().contains ("Second")) {
-            Optional<HIVEac> second = hivEacRepository.getByPersonAndDateOfEac2IsNullAndDateOfEac3IsNull (person);
-            if (second.isPresent ()) {
-                HIVEac hivEac = second.get ();
-                hivEac.setDateOfEac2 (dto.getDateOfEac ());
-                hivEac.setStatus (dto.getStatus ());
-                hivEac.setNote (dto.getNote ());
+    public HIVEacDto handleEac(HIVEacDto dto) {
+        Long id = dto.getId ();
+        if (id != null) {
+            HIVEac hivEac = hivEacRepository.findById (id).orElse (null);
+            if (hivEac != null && hivEac.getDateOfEac2 () == null) {
+                hivEac.setDateOfEac2 (dto.getDateOfEac2 ());
+                hivEac.setStatus ("Second");
                 return convertHivEacToDto (hivEacRepository.save (hivEac));
             }
-
+            if (hivEac != null && hivEac.getDateOfEac3 () == null) {
+                hivEac.setDateOfEac3 (dto.getDateOfEac3 ());
+                hivEac.setStatus ("Completed");
+                return convertHivEacToDto (hivEacRepository.save (hivEac));
+            }
         }
-        Optional<HIVEac> third = hivEacRepository.getByPersonAndDateOfEac1IsNotNullAndDateOfEac2IsNotNullAndDateOfEac3IsNull (person);
-        if (third.isPresent ()) {
-            HIVEac hivEac = third.get ();
-            hivEac.setDateOfEac3 (dto.getDateOfEac ());
-            hivEac.setStatus ("Completed");
-            hivEac.setNote (dto.getNote ());
-            return convertHivEacToDto (hivEacRepository.save (hivEac));
-        }
-        return new HIVEacResponseDto ();
+        return convertHivEacToDto (createFirstEac (dto));
     }
 
     private HIVEac convertDtoToEntity(HIVEacDto dto) {
         HIVEac hivEac = new HIVEac ();
-        hivEac.setDateOfEac1 (dto.getDateOfEac ());
+        hivEac.setDateOfEac1 (dto.getDateOfEac1 ());
         hivEac.setDateOfLastViralLoad (dto.getDateOfLastViralLoad ());
         hivEac.setLastViralLoad (dto.getLastViralLoad ());
         return hivEac;
     }
 
 
-    public List<HIVEacResponseDto> getEacByPersonId(Long personId) {
+    public HIVEacDto getOpenEacByPersonId(Long personId) {
+        Person person = getPerson (personId);
+        HIVEac hivEac = hivEacRepository.getByPersonAndDateOfEac3IsNull (person).orElse (null);
+        if (hivEac != null) {
+            return convertHivEacToDto (hivEac);
+        }
+        return null;
+    }
+
+    public List<HIVEacDto> getEacByPersonId(Long personId) {
         Person person = getPerson (personId);
         List<HIVEac> hivEacList = hivEacRepository.getAllByPersonAndArchived (person, 0);
         return hivEacList.stream ().map (this::convertHivEacToDto).collect (Collectors.toList ());
 
     }
 
-    private HIVEacResponseDto convertHivEacToDto(HIVEac hivEac) {
-        return HIVEacResponseDto.builder ()
+    private HIVEacDto convertHivEacToDto(HIVEac hivEac) {
+        return HIVEacDto.builder ()
                 .dateOfEac1 (hivEac.getDateOfEac1 ())
                 .dateOfEac2 (hivEac.getDateOfEac2 ())
                 .dateOfEac3 (hivEac.getDateOfEac3 ())

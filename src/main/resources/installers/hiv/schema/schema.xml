@@ -64,7 +64,7 @@
                 last_modified_by         VARCHAR(255),
                 facility_id              BIGINT,
                 visit_date               date,
-                cd_4                     VARCHAR(255),
+                cd_4                     BIGINT,
                 cd_4_percentage          BIGINT,
                 is_commencement          BOOLEAN,
                 functional_status_id     BIGINT,
@@ -203,9 +203,8 @@
         <sql>
                 CREATE TABLE hiv_regimen_resolver
                     (
-                    id      VARCHAR(255) NOT NULL,
-                    regimen VARCHAR(255),
-                    CONSTRAINT pk_hiv_regimen_resolver PRIMARY KEY (id)
+                    regimensys  VARCHAR(255) NOT NULL,
+                    regimen VARCHAR(255)
                     );
         </sql>
     </changeSet>
