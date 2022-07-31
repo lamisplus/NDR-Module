@@ -140,6 +140,7 @@ const EAC = (props) => {
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
+                    style={{backgroundColor:"#014d88"}}
                     disabled={objValues.dateOfEac==="" ? true : false}
                     >
                     {!saving ? (
@@ -149,15 +150,7 @@ const EAC = (props) => {
                     )}
                     </MatButton>
                 
-                    <MatButton
-                        variant="contained"
-                        className={classes.button}
-                        startIcon={<CancelIcon />}
-                        onClick={props.toggle}
-                    >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
-                
+                   
                     </form>
                 </CardBody>
             </Card>                    

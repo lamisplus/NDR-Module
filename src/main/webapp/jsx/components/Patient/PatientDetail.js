@@ -29,6 +29,7 @@ import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index'
 import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
 import MentalHealthScreening from '../MentalHealthScreening/index'
 import LabHistory from './../Laboratory/LabHistory'
+import { TiArrowBack } from 'react-icons/ti'
 
 const styles = theme => ({
   root: {
@@ -86,6 +87,8 @@ function PatientCard(props) {
                 color="primary"
                 className=" float-end ms-2"
                 //startIcon={<FaUserPlus size="10"/>}
+                startIcon={<TiArrowBack  />}
+                style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
 
             >
                 <span style={{ textTransform: "capitalize" }}>Back</span>

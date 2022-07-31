@@ -25,7 +25,7 @@
     "@material-ui/pickers": "^3.2.10",
     "@material-ui/styles": "^4.9.0",
     "@mui/icons-material": "^5.8.4",
-    "@mui/material": "^5.5.0",
+    "@mui/material": "^5.9.2",
     "@reach/menu-button": "^0.10.1",
     "@svg-maps/usa": "^1.1.1",
     "@svg-maps/world": "^1.0.1",

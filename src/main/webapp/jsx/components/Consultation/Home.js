@@ -735,6 +735,7 @@ const ClinicVisit = (props) => {
               className={classes.button}
               disabled={saving}
               startIcon={<SaveIcon />}
+              style={{backgroundColor:"#014d88"}}
               onClick={handleSubmit}
             >
               {!saving ? (

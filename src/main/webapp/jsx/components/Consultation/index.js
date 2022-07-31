@@ -30,9 +30,9 @@ const ClinicVisitPage = (props) => {
                   <Tab eventKey="home" title="Clinic Visit">                   
                     <ConsultationPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>  
-                  <Tab eventKey="history" title=" History">                   
+                  {/* <Tab eventKey="history" title=" History">                   
                     <ClinicHistoryPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
-                  </Tab>                   
+                  </Tab>                    */}
                 </Tabs>
               </div>
             </Card.Body>

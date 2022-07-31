@@ -407,6 +407,7 @@ const Laboratory = (props) => {
                         className={classes.button}
                         startIcon={<SaveIcon />}
                         hidden={buttonHidden}
+                        style={{backgroundColor:"#014d88"}}
                         disabled={testOrderList.length >0 || !saving ? false : true}
                         onClick={handleSubmit}
                         >
@@ -416,16 +417,6 @@ const Laboratory = (props) => {
                         <span style={{ textTransform: "capitalize" }}>Saving...</span>
                         )}
                     </MatButton>
-                
-                <MatButton
-                    variant="contained"
-                    className={classes.button}
-                    startIcon={<CancelIcon />}
-                    onClick={props.toggle}
-                    
-                >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
                 
                 </form>
             )}

@@ -360,6 +360,7 @@ const ClientStatusUpdate = (props) => {
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
+                    style={{backgroundColor:"#014d88"}}
                     onClick={handleSubmit}
                         >
                     {!saving ? (
@@ -369,14 +370,6 @@ const ClientStatusUpdate = (props) => {
                     )}
                     </MatButton>
                 
-                    <MatButton
-                        variant="contained"
-                        className={classes.button}
-                        startIcon={<CancelIcon />}
-                        onClick={props.toggle}
-                    >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
                
                 </form>
                 </CardBody>

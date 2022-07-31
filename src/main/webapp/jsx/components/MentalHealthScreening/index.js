@@ -224,6 +224,7 @@ const MentalHealthScreening = (props) => {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    style={{backgroundColor:"#014d88"}}
                     startIcon={<SaveIcon />}
                     disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" ? true : false}
                     onClick={handleSubmit}
@@ -233,15 +234,6 @@ const MentalHealthScreening = (props) => {
                     ) : (
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
-                    </MatButton>
-                
-                    <MatButton
-                        variant="contained"
-                        className={classes.button}
-                        startIcon={<CancelIcon />}
-                        onClick={props.toggle}
-                    >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
                     </MatButton>
                 
                     </form>

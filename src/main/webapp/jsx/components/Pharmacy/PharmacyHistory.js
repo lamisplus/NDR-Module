@@ -103,7 +103,7 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-
+let regimenArr = []
 const PharmacyHistory = (props) => {    
     const [refillList, setRefillList] = useState([])
     const [loading, setLoading] = useState(true)
@@ -130,13 +130,17 @@ const PharmacyHistory = (props) => {
 
 
     const regimenName =(regimenObj)=> {
-      let regimenArr = []
+      
       regimenObj.forEach(function (value, index, array) {
-        console.log(value)
-          regimenArr.push(value['name'])
+        
+          regimenArr.push(<li key={index}>{value['name']}</li>)
+          //regimenArr.push(value['name'])
       })
-      return regimenArr.toString();
+      return regimenArr; 
+        //return regimenArr.toString(); 
       }
+
+      //console.log(regimenArr)   
 
   return (
     <div>
@@ -168,7 +172,14 @@ const PharmacyHistory = (props) => {
                   visitDate:row.visitDate,
                   refillPeriod: row.refillPeriod,
                   nextAppointment: row.nextAppointment,
-                  regimenName: regimenName(row.extra.regimens),  
+                  regimenName: (
+                                <ul>
+                                   {regimenName(row.extra.regimens)}
+                                       
+                                    
+                                </ul>
+                    
+                                ),  
                  // regimenQuantity: "", 
                   isDevolve: row.isDevolve, 
                   mmdType: row.mmdType, 

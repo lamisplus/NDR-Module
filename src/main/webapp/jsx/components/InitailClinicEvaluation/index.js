@@ -28,9 +28,9 @@ const ClinicEvaluation = (props) => {
   return (  
         <div>
             { age > 10 ?
-                <AdultClinicEvaluationFrom patientObj={patientObj}/>
+                <AdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                 :
-                <ChildClinicEvaluationForm patientObj={patientObj}/>
+                <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={props.setActiveContent}/>
             }
 
         </div>

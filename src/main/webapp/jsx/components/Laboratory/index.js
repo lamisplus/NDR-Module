@@ -30,10 +30,10 @@ const LaboratoryModule = (props) => {
                     <CheckedInPatients />
                   </Tab> */}
                   <Tab eventKey="home" title="Laboratory Test Order">                   
-                    <LabTestOrder patientObj={patientObj}/>
+                    <LabTestOrder patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>  
                   <Tab eventKey="history" title=" History">                   
-                    <LabHistory patientObj={patientObj}/>
+                    <LabHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>                   
                 </Tabs>
               </div>

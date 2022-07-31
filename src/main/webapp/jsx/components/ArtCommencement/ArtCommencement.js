@@ -1,5 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import { Card,CardBody, FormGroup, Label, Input, InputGroup,InputGroupText} from 'reactstrap';
+import { Card,CardBody, FormGroup, Label,InputGroup,
+        InputGroupText,
+        InputGroupButtonDropdown,
+        InputGroupAddon,
+        Input,
+        Dropdown,
+        DropdownToggle,
+        DropdownMenu,
+        DropdownItem} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
@@ -60,6 +68,11 @@ const useStyles = makeStyles(theme => ({
 const ArtCommencement = (props) => {
     //const patientObj = props.patientObj;
     //let history = useHistory();
+    const [dropdownOpen, setDropdownOpen] = React.useState(false);
+    const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
+    const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
+    const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
+    const [heightValue, setHeightValue]= useState("cm")
     const classes = useStyles()
     const [clinicalStage, setClinicalStage] = useState([])
     const [values, setValues] = useState([]);
@@ -280,7 +293,24 @@ const ArtCommencement = (props) => {
                 })    
             return Object.values(temp).every(x => x == "")
         }
-          
+
+        const  heightFunction =(e)=>{
+            if(e==='cm'){
+                setHeightValue('cm')
+                if(vital.height!==""){
+                    const newHeightValue= (vital.height * 100)
+                    setVitalSignDto ({...vital,  height: newHeightValue});
+                }
+            }else if(e==='m'){
+                setHeightValue('m')
+                if(vital.height!==""){
+                    const newHeightValue= (vital.height/100)
+                    setVitalSignDto ({...vital,  height: newHeightValue});
+                }
+                
+            }
+
+        }
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {                  
             e.preventDefault(); 
@@ -329,6 +359,7 @@ const ArtCommencement = (props) => {
                     variant=""
                     className="btn-close"
                     onClick={props.toggle}
+                    style={{color:'#fff', backgroundColor:'#fff'}}
                 ></Button>
             </Modal.Header>
                 <Modal.Body>                   
@@ -347,6 +378,7 @@ const ArtCommencement = (props) => {
                                             onChange={handleInputChange}
                                             value={objValues.visitDate}
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
                                          {errors.visitDate !=="" ? (
@@ -363,6 +395,7 @@ const ArtCommencement = (props) => {
                                             id="cd4"
                                             onChange={handleInputChange}
                                             value={objValues.cd4}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             
                                         />
                                        
@@ -378,6 +411,7 @@ const ArtCommencement = (props) => {
                                         id="cd4Percentage"
                                         onChange={handleInputChange}
                                         value={objValues.cd4Percentage}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         
                                     />
                                    
@@ -393,6 +427,7 @@ const ArtCommencement = (props) => {
                                             value={objValues.regimenId}
                                             onChange={handleSelecteRegimen}
                                             required
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             >
                                              <option value=""> Select</option>
                       
@@ -417,6 +452,7 @@ const ArtCommencement = (props) => {
                                             id="regimenTypeId"
                                             value={objValues.regimenTypeId}
                                             onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                             >
                                              <option value=""> Select</option>
@@ -442,6 +478,7 @@ const ArtCommencement = (props) => {
                                             id="viralLoad"
                                             onChange={handleInputChangeVitalStart}                                            
                                             value={objValues.viralLoad}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         >
                                             <option value=""> Select</option>
@@ -462,6 +499,7 @@ const ArtCommencement = (props) => {
                                             id="viralLoad"
                                             //onChange={handleInputChange}
                                             //value={objValues.viralLoad}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
                                         
@@ -477,6 +515,7 @@ const ArtCommencement = (props) => {
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
                                             //onChange={handleInputChange}
                                             //value={objValues.viralLoad}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
                                         
@@ -494,6 +533,7 @@ const ArtCommencement = (props) => {
                                             value={objValues.whoStagingId}
                                             onChange={handleInputChange}
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                             >
                                              <option value=""> Select</option>
@@ -519,6 +559,7 @@ const ArtCommencement = (props) => {
                                             id="functionalStatusId"
                                             value={objValues.functionalStatusId}
                                             onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                             >
                                              <option value=""> Select</option>
@@ -543,6 +584,7 @@ const ArtCommencement = (props) => {
                                             id="tbStatusId"
                                             value={objValues.tbStatusId}
                                             onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                             >
                                              <option value=""> Select</option>
@@ -558,7 +600,7 @@ const ArtCommencement = (props) => {
                                             ) : "" }
                                         </FormGroup>
                                     </div>
-                                    <div className="form-group mb-3 col-md-4">
+                                    <div className=" mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >Body Weight</Label>
                                         <InputGroup> 
@@ -571,8 +613,9 @@ const ArtCommencement = (props) => {
                                                 max="150"
                                                 value={vital.bodyWeight}
                                                 onKeyUp={handleInputValueCheckBodyWeight} 
+                                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                             />
-                                            <InputGroupText>
+                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                                kg
                                             </InputGroupText>
                                         </InputGroup>
@@ -598,10 +641,21 @@ const ArtCommencement = (props) => {
                                                 min="48.26"
                                                 max="216.408"
                                                 onKeyUp={handleInputValueCheckHeight} 
+                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             />
-                                            <InputGroupText>
-                                               cm
-                                            </InputGroupText>
+                                             <InputGroupButtonDropdown
+                                                addonType="append"
+                                                isOpen={dropdownOpen}
+                                                toggle={toggleDropDown}
+                                                style={{ backgroundColor:"#014D88"}}
+                                                >
+                                                <DropdownToggle caret style={{ backgroundColor:"#014D88"}}>{heightValue ==='cm'? 'cm' : 'm'}</DropdownToggle>
+                                                <DropdownMenu>
+                                              
+                                                    <DropdownItem onClick={()=>heightFunction(heightValue ==='cm'? 'm' : 'cm')}>{heightValue ==='cm'? 'm' : 'cm'}</DropdownItem>
+                                                       
+                                                </DropdownMenu>
+                                                </InputGroupButtonDropdown>
                                         </InputGroup>
                                         {vitalClinicalSupport.height !=="" ? (
                                             <span className={classes.error}>{vitalClinicalSupport.height}</span>
@@ -623,9 +677,10 @@ const ArtCommencement = (props) => {
                                                 max="2240"
                                                 onChange={handleInputChangeVitalSignDto}
                                                 value={vital.systolic}
-                                                onKeyUp={handleInputValueCheckSystolic} 
+                                                onKeyUp={handleInputValueCheckSystolic}
+                                                style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
                                             />
-                                            <InputGroupText>
+                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                                 systolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
@@ -643,14 +698,15 @@ const ArtCommencement = (props) => {
                                             <Label >BMI</Label>
                                             
                                             <InputGroup> 
-                                            <InputGroupText>
+                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                                 BMI
-                                                </InputGroupText>                   
-                                                <Input
-                                                type="number"
-                                                disabled
-                                                value={Math.round(vital.bodyWeight/(vital.height/100))}
-                                                />
+                                            </InputGroupText>                   
+                                            <Input
+                                            type="number"
+                                            disabled
+                                            value={Math.round(vital.bodyWeight/(vital.height/100))}
+                                            style={{border: "1px solid #014D88", borderRadius:"05rem"}}
+                                            />
                                             </InputGroup>                
                                             </FormGroup>
                                         </div>
@@ -667,8 +723,9 @@ const ArtCommencement = (props) => {
                                                 onChange={handleInputChangeVitalSignDto}
                                                 value={vital.diastolic}
                                                 onKeyUp={handleInputValueCheckDiastolic} 
+                                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                             />
-                                            <InputGroupText>
+                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                                 diastolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
@@ -691,7 +748,9 @@ const ArtCommencement = (props) => {
                                                 id="address"
                                                 onChange={handleInputChange}
                                                 value={objValues.address}
+                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                                 required
+
                                             >
                                                 <option value=""> Select</option>
                         
@@ -712,6 +771,7 @@ const ArtCommencement = (props) => {
                                                 id="LMPDate"
                                                 onChange={handleInputChange}
                                                 value={values.address}
+                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                                 required
                                             />
                                             </FormGroup>
@@ -726,10 +786,11 @@ const ArtCommencement = (props) => {
                                         <Input
                                             type="textarea"
                                             name="clinicalNote"
-                                            rows="40" cols="50"
+                                            rows="3" cols="50"
                                             id="clinicalNote"
                                             onChange={handleInputChange}
                                             value={objValues.clinicalNote}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
                                         </FormGroup>
@@ -746,6 +807,7 @@ const ArtCommencement = (props) => {
                                 className={classes.button}
                                 startIcon={<SaveIcon />}
                                 onClick={handleSubmit}
+                                style={{backgroundColor:"#014d88"}}
                                 >
                                     {!saving ? (
                                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -757,7 +819,8 @@ const ArtCommencement = (props) => {
                                 <MatButton
                                     variant="contained"
                                     className={classes.button}
-                                    startIcon={<CancelIcon />}                                
+                                    startIcon={<CancelIcon style={{color:'#fff'}}/>}  
+                                    style={{backgroundColor:'#992E62'}}                              
                                 >
                                     <span style={{ textTransform: "capitalize" }}>Cancel</span>
                                 </MatButton>
