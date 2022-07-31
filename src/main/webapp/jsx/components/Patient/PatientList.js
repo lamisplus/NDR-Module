@@ -215,7 +215,8 @@ const Patients = (props) => {
                                                 >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
-                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'auto'}}
+                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
+                                                    size="large"
                                                 >
                                                 <Button
                                                 color="primary"
@@ -229,7 +230,7 @@ const Patients = (props) => {
                                                 <Button 
                                                 style={{backgroundColor:'rgb(153, 46, 98)'}}
                                                 >
-                                                    <span style={{fontSize:'9px', color:'#fff', fontWeight:'bolder'}}>Patient Dashboard</span>
+                                                    <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Patient Dashboard</span>
                                                 </Button>
                                                 
                                                 </ButtonGroup>
@@ -247,7 +248,8 @@ const Patients = (props) => {
                                             >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
-                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'auto'}}
+                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'50px',width:'220px'}}
+                                                    size="large"
                                                 >
                                                 <Button
                                                 color="primary"
@@ -256,12 +258,12 @@ const Patients = (props) => {
                                                 aria-haspopup="menu"
                                                 style={{backgroundColor:"#014d88"}}
                                                 >
-                                                    <MdDashboard />
+                                                    <TiArrowForward />
                                                 </Button>
                                                 <Button 
                                                 style={{backgroundColor:'rgb(153, 46, 98)'}}
                                                 >
-                                                    <span style={{fontSize:'9px', color:'#fff', fontWeight:'bolder'}}>Enroll Patient</span>
+                                                    <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Enroll Patient</span>
                                                 </Button>
                                                 
                                                 </ButtonGroup>
