@@ -7,9 +7,10 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl, token } from "../../../api";
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import { Spinner } from "reactstrap";
+import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -54,69 +55,368 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const ChildClinicEvaluationForm = (props) => {
+const ClinicEvaluationFrom = (props) => {
     const patientObj = props.patientObj;
-    console.log(patientObj)
-    let history = useHistory();
+    //let history = useHistory();
     const classes = useStyles()
     //const [values, setValues] = useState([]);
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const [objValues, setobjValues] = useState({next_appointment:""});
+    const [generalApperance, setGeneralApperance] = useState({
+            nsf: "",
+            pallor: "",
+            febrile: "",
+            dehydrated: "",
+            peripheral: "",
+            other: ""
+    });
+    const [patientDisclosure, setPatientDisclosure] = useState(
+            {
+                no_one:"",
+                family_member: "",
+                friend: "",
+                spouse: "",
+                spiritual_leader: "",
+                others: ""
+            }
+    );
+    const [currentMedical, setCurentMedical] = useState({ none: "",
+            ART: "",
+            CTX: "",
+            ant_tb_drugs: "",
+            others: ""
+    });
+    const [pastArvMedical, setPastArvMedicalMedical] = useState({});
+    const [medicalHistory, setMedicalHistory] = useState({});
+    const [skin, setSkin] = useState({
+        nsf: "",
+        pruritic: "",
+        abscesses: "",
+        herpes: "",
+        kaposi: "",
+        suborrheic: "",
+        fungal: "",
+        other: ""
+    });
+    const [eye, setEye] = useState({
+        nsf: "",
+        icterus: "",
+        thrush: "",
+        oral: "",
+        abnormal: "",
+        other: ""
+    });
+    const [breast, setBreast] = useState({
+        nsf: "",
+        lumps: "",
+        discharge: "",
+        other: ""
+    });
+    const [cardiovascular, setCardiovascular] = useState({});
+    const [genitalia, setGenitalia] = useState({});
+    const [respiratory, setRespiratory] = useState({});
+    const [gastrointestinal, setGastrointestinal] = useState({});
+    const [assesment, setAssesment] = useState({});
+    const [who, setWho] = useState({stage:"", value:""});
+    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""});
+    const [plan, setPlan] = useState({});
+    const [enroll, setEnroll] = useState({});
+    const [planArt, setPlanArt] = useState({});
 
-    const [vital, setVitalSignDto]= useState({
+    //hide operations
+    const [hideOtherPatientDisclosure, setHideOtherPatientDisclosure]=useState(false)
+    const [hideOtherCurrentMedication, setHideOtherCurrentMedication]=useState(false)
+    const [hideOtherPastArv, setHideOtherPastArv]=useState(false)
+    const [hideStage1, setHideStage1] = useState(false);
+    const [hideStage2, setHideStage2] = useState(false);
+    const [hideStage3, setHideStage3] = useState(false);
+    const [hideStage4, setHideStage4] = useState(false);
+    const [hideFirstLine, setHideFirstLine] = useState(false);
+    const [hideSecondLine, setHideSecondLine] = useState(false);
+    const [hideThirdLine, setHideThirdLine] = useState(false);
+    const [hideGeneralApperance, setHideGeneralApperance]=useState(false)
+    const [hideSkin, setHideSkin] = useState(false)
+    const [hideEye, setHideEye] = useState(false)
+    const [hideBreast, setHideBreast] = useState(false)
+    const [hideCardiovascular, setHideCardiovascular] = useState(false)
+    const [hideGenitalia, setHideGenitalia] = useState(false);
+    const [hideRespiratory, setHideRespiratory] = useState(false);
+    const [hideGastrointestinal, setHideGastrointestinal] = useState(false);
 
-                                                bodyWeight: "",
-                                                diastolic: "",
-                                                encounterDate: "",
-                                                facilityId: 1,
-                                                height: "",
-                                                personId: "",
-                                                pulse: "",
-                                                respiratoryRate: "",
-                                                systolic:"",
-                                                temperature: "",
-                                                visitId:""
-                                            })
-    
-        const handleInputChangeVitalSignDto = e => {            
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+    const handleInputChangeobjValues = e => {            
+        setobjValues ({...objValues,  [e.target.name]: e.target.value});
+    }
+    const [observation, setObservation]=useState({
+        data: {
+                medicalHistory:"",
+                currentMedical:"",
+                patientDisclosure:"",
+                pastArvMedical:"",
+                generalApperance:"",
+                skin:"",
+                eye:"",
+                breast:"",
+                cardiovascular:"",
+                genitalia:"",
+                respiratory:"",
+                gastrointestinal:"",
+                assesment :"",
+                who:"",
+                plan:"",
+                regimen:"",
+                enroll:"",
+                planArt:"" ,
+                next_appointment:""           
+        },
+        dateOfObservation: null,
+        facilityId: null,
+        personId: 0,
+        type: "Clinical evaluation",
+        visitId: null
+    })
+
+    //Handle CheckBox 
+    const handleMedicalHistory =e =>{
+        setMedicalHistory({...medicalHistory, [e.target.name]: e.target.value})
+    }
+    const handleCurrentMedicalHistory =e =>{
+        if(e.target.name==='none'){
+            if(e.target.checked){
+                setHideOtherCurrentMedication(true)
+
+                }else{
+                    setHideOtherCurrentMedication(false)
+                }
         }
+        setCurentMedical({...currentMedical, [e.target.name]: e.target.value})
 
-        //FORM VALIDATION
-        const validate = () => {
-            let temp = { ...errors }
-            //temp.name = details.name ? "" : "This field is required"
-            //temp.description = details.description ? "" : "This field is required"
-            setErrors({
-                ...temp
-                })    
-            return Object.values(temp).every(x => x == "")
+    }
+    const handleDisclosure =e =>{
+        if(e.target.name==='no_one'){
+            if(e.target.checked){
+            setHideOtherPatientDisclosure(true)
+                }else{
+                    setHideOtherPatientDisclosure(false)
+                }
+        }        
+        setPatientDisclosure({...patientDisclosure, [e.target.name]: e.target.value})
+    }
+    const handlePastArv =e =>{
+        if(e.target.name==='none'){
+            if(e.target.checked){
+                setHideOtherPastArv(true)
+                }else{
+                    setHideOtherPastArv(false)
+                }
         }
-          
-        /**** Submit Button Processing  */
-        const handleSubmit = (e) => {        
-            e.preventDefault();        
-            
-            setSaving(true);
-            axios.post(`${baseUrl}patient/vital-sign/`, vital,
-            { headers: {"Authorization" : `Bearer ${token}`}},
-            
-            )
-              .then(response => {
-                  setSaving(false);
-                  props.patientObj.commenced=true
-                  toast.success("Vital signs save successful");
-                  props.toggle()
-                  props.patientsVitalsSigns()
+        setPastArvMedicalMedical({...pastArvMedical, [e.target.name]: e.target.value})
+    }
+    const handleGeneralApperance =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideGeneralApperance(true)
+                }else{
+                    setHideGeneralApperance(false)
+                }
+        }
+        setGeneralApperance({...generalApperance, [e.target.name]: e.target.value})
+    }
+    const handleSkin =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                    setHideSkin(true)
+            }else{
+                setHideSkin(false)
+            }
+        }
+        setSkin({...skin, [e.target.name]: e.target.value})
+    }
+    const handleEye =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideEye(true)
+            }else{
+                setHideEye(false)
+            }
+        }
+        setEye({...eye, [e.target.name]: e.target.value})
+    }
+    const handleBreast =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideBreast(true)
+            }else{
+                setHideBreast(false)
+            }
+        }
+        setBreast({...breast, [e.target.name]: e.target.value})
+        console.log(breast)
+    }
+    const handleCardiovascular =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideCardiovascular(true)
+            }else{
+                setHideCardiovascular(false)
+            }
+        }
+        setCardiovascular({...cardiovascular, [e.target.name]: e.target.value})
+        console.log(cardiovascular) 
+    }
+    const handleGenitalia =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideGenitalia(true)
+            }else{
+                setHideGenitalia(false)
+            }
+        }
+        setGenitalia({...genitalia, [e.target.name]: e.target.value})
+    }
+    const handleRespiratory =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideRespiratory(true)
+            }else{
+                setHideRespiratory(false)
+            }
+        }
+        setRespiratory({...respiratory, [e.target.name]: e.target.value})
+        
+    }
+    const handleGastrointestinal =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideGastrointestinal(true)
+            }else{
+                setHideGastrointestinal(false)
+            }
+        }
+        setGastrointestinal({...gastrointestinal, [e.target.name]: e.target.value})
+       
+    }
+    const handleAssessment =e =>{
+        setAssesment({...assesment, [e.target.name]: e.target.value})
+        
+    }
+    const handleWho =e =>{
+        if(e.target.value==="stage 1"){
+            setHideStage1(true)
+            setHideStage2(false)
+            setHideStage3(false)
+            setHideStage4(false)
+        }else if(e.target.value==="stage 2"){
+            setHideStage1(false)
+            setHideStage2(true)
+            setHideStage3(false)
+            setHideStage4(false)
 
-              })
-              .catch(error => {
-                  setSaving(false);
-                  toast.error("Something went wrong");
-                 
-              });
-          
+        }else if(e.target.value==="stage 3"){
+            setHideStage1(false)
+            setHideStage2(false)
+            setHideStage3(true)
+            setHideStage4(false)
+
+        }else if(e.target.value==="stage 4"){
+            setHideStage1(false)
+            setHideStage2(false)
+            setHideStage3(false)
+            setHideStage4(true)
+
+        }else{
+            setHideStage1(false)
+            setHideStage2(false)
+            setHideStage3(false)
+            setHideStage4(false)
         }
+        setWho({...who, [e.target.name]: e.target.value})
+    }
+
+    const handlePlan =e =>{
+        setPlan({...plan, [e.target.name]: e.target.value})
+        console.log(plan)
+    }
+    const handleRegimen =e =>{
+        if(e.target.value==='first line'){
+            setHideFirstLine(true)
+            setHideSecondLine(false)
+            setHideThirdLine(false)
+        }else if(e.target.value==='second line'){
+            setHideFirstLine(false)
+            setHideSecondLine(true)
+            setHideThirdLine(false)
+
+        }else if(e.target.value==='third line'){
+            setHideFirstLine(false)
+            setHideSecondLine(false)
+            setHideThirdLine(true)
+
+        }else{
+            setHideFirstLine(false)
+            setHideSecondLine(false)
+            setHideThirdLine(false)
+
+        }
+        setRegimen({...regimen, [e.target.name]: e.target.value})
+    }
+
+    const handleEnroll =e =>{
+        setEnroll({...enroll, [e.target.name]: e.target.value})
+        console.log(enroll)
+    }
+    const handlePlanArt =e =>{
+        setPlanArt({...planArt, [e.target.name]: e.target.value})
+        
+    }
+
+     /**** Submit Button Processing  */
+     const handleSubmit = (e) => { 
+        e.preventDefault(); 
+        observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+        observation.personId =patientObj.id
+        observation.data.medicalHistory=medicalHistory
+        observation.data.currentMedical=currentMedical
+        observation.data.patientDisclosure=patientDisclosure
+        observation.data.pastArvMedical=pastArvMedical
+        observation.data.generalApperance=generalApperance
+        observation.data.skin=skin
+        observation.data.eye=eye
+        observation.data.breast=breast
+        observation.data.cardiovascular= cardiovascular
+        observation.data.genitalia=genitalia
+        observation.data.respiratory=respiratory
+        observation.data.gastrointestinal = gastrointestinal
+        observation.data.assesment = assesment
+        observation.data.who=who
+        observation.data.plan=plan
+        observation.data.regimen=regimen
+        observation.data.enroll=enroll
+        observation.data.planArt= planArt
+        observation.data.next_appointment=objValues.next_appointment
+               
+        e.preventDefault();                    
+        setSaving(true);
+        axios.post(`${baseUrl}observation`, observation,
+        { headers: {"Authorization" : `Bearer ${token}`}},            
+        )
+          .then(response => {
+              setSaving(false);
+              props.patientObj.clinicalEvaluation=true
+              toast.success("Initial Clinic Evaluation successful");
+              props.setActiveContent('recent-history')
+          })
+          .catch(error => {
+              setSaving(false);
+              if(error.response && error.response.data){
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage); 
+            }
+             
+          });
+      
+    }
+
 
   return (      
       <div >
@@ -125,7 +425,7 @@ const ChildClinicEvaluationForm = (props) => {
             <CardBody>
             <form >
                 <div className="row">
-                    <h2>Pediatric - Initial Clinical Evaluation </h2>
+                    <h2>Pediatric- Initial Clinical Evaluation </h2>
                     <h3>Medical History</h3>
                     {/* Medical History form inputs */}
                         <div className="form-group mb-3 col-md-2"> 
@@ -139,8 +439,9 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="fever"
+                                id="fever"
+                                onChange={handleMedicalHistory}
                                 />
                                 
                             </div>
@@ -151,10 +452,10 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="fever_duration"
+                                    id="fever_duration"
+                                    onChange={handleMedicalHistory}
+                                    //value={objValues.encounterDate} 
                                 />
 
                             </InputGroup>
@@ -172,8 +473,9 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="Nausea"
+                                id="Nausea"
+                                onChange={handleMedicalHistory}
                                 />
                                 
                             </div>
@@ -184,10 +486,10 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="Nausea_fever"
+                                    id="Nausea_fever"
+                                    onChange={handleMedicalHistory}
+                                    //value={objValues.encounterDate} 
                                 />
 
                             </InputGroup>
@@ -205,8 +507,8 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="night_sweats"
+                                id="night_sweats"
                                 />
                                 
                             </div>
@@ -217,10 +519,10 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="night_duration"
+                                    id="night_duration"
+                                    onChange={handleMedicalHistory}
+                                    //value={objValues.encounterDate} 
                                 />
 
                             </InputGroup>
@@ -238,22 +540,23 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="recent"
+                                id="recent"
+                                onChange={handleMedicalHistory}
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="recent_duration"
+                                    id="recent_duration"
+                                    onChange={handleMedicalHistory}
+                                    //value={objValues.encounterDate} 
                                 />
 
                             </InputGroup>
@@ -271,22 +574,23 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="cough"
+                                id="cough"
+                                onChange={handleMedicalHistory}
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="cough_duration"
+                                    id="cough_duration"
+                                    onChange={handleMedicalHistory}
+                                   
                                 />
 
                             </InputGroup>
@@ -304,22 +608,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="headache"
+                                id="headache"
+                                onChange={handleMedicalHistory}
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="headache_duration"
+                                    id="headache_duration"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -337,22 +641,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="new_visual"
+                                id="new_visual"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="new_visual_duration"
+                                    id="new_visual_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -370,22 +674,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="pain"
+                                id="pain"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="pain_duration"
+                                    id="pain_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -403,22 +707,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="rash"
+                                id="rash"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="rash_duration"
+                                    id="rash_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -436,22 +740,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="itching"
+                                id="itching"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="itching_duration"
+                                    id="itching_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -469,22 +773,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="chronic"
+                                id="chronic"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="chronic_duration"
+                                    id="chronic_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -502,22 +806,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="genital"
+                                id="genital"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="genital_duration"
+                                    id="genital_duration"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -535,22 +839,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="genital_score"
+                                id="genital_score"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                           
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="genital_score_duration"
+                                    id="genital_score_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -568,22 +872,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="shortness_of_breath"
+                                id="shortness_of_breath"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="shortness_of_breath_duration"
+                                    id="shortness_of_breath_duration"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -601,22 +905,22 @@ const ChildClinicEvaluationForm = (props) => {
                                 <input
                                 type="checkbox"
                                 className="form-check-input"                                
-                                name="ovc_enrolled"
-                                id="ovc_enrolled"
+                                name="numbness"
+                                id="numbness"
+                                onChange={handleMedicalHistory} 
                                 />
                                 
                             </div>
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                          
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="numbness_duration"
+                                    id="numbness_duration"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -632,10 +936,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="select"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="screen_for_tb"
+                                    id="screen_for_tb"
+                                    onChange={handleMedicalHistory}  
                                 >
                                 <option value="">Select</option>
                                 <option value="Yes">Yes</option>
@@ -654,10 +957,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="past_medical_history"
+                                    id="past_medical_history"
+                                    onChange={handleMedicalHistory}   
                                 />
 
                             </InputGroup>
@@ -672,10 +974,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="relevant_family_history"
+                                    id="relevant_family_history"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -690,10 +991,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="hospitalization"
+                                    id="hospitalization"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -708,10 +1008,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="drug_allergies"
+                                    id="drug_allergies"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -725,10 +1024,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="select"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="current_pregnant"
+                                    id="current_pregnant"
+                                    onChange={handleMedicalHistory} 
                                 >
                                 <option value="">Select</option>
                                 <option value="Yes">Yes</option>
@@ -746,10 +1044,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="date"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="last_menstrual_period"
+                                    id="last_menstrual_period"
+                                    onChange={handleMedicalHistory}  
                                 />
 
                             </InputGroup>
@@ -762,10 +1059,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="gestational_age"
+                                    id="gestational_age"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -778,10 +1074,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="select"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="current_breastfeeding"
+                                    id="current_breastfeeding"
+                                    onChange={handleMedicalHistory}  
                                 >
                                 <option value="">Select</option>
                                 <option value="Yes">Yes</option>
@@ -795,14 +1090,13 @@ const ChildClinicEvaluationForm = (props) => {
                      </div>
                      <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >previous ARV exposure</Label>
+                            <Label >Previous ARV exposure</Label>
                             <InputGroup> 
                                 <Input 
                                     type="select"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="previous_arv_exposure"
+                                    id="previous_arv_exposure"
+                                    onChange={handleMedicalHistory}  
                                 >
                                 <option value="">Select</option>
                                 <option value="Yes">Yes</option>
@@ -814,6 +1108,7 @@ const ChildClinicEvaluationForm = (props) => {
                         
                             </FormGroup>
                      </div>
+                     <div className="form-group mb-3 col-md-6"></div>
                      <div className="form-group mb-3 col-md-4">
                                     
                         <div className="form-check custom-checkbox ml-1 ">
@@ -826,8 +1121,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="early_arv_but_not_transfer_in"
+                            id="early_arv_but_not_transfer_in"
+                            onChange={handleMedicalHistory} 
                             />
                             
                         </div>
@@ -844,8 +1140,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="pmtct_only"
+                            id="pmtct_only"
+                            onChange={handleMedicalHistory} 
                             />
                             
                         </div>
@@ -862,8 +1159,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="as_never_receive_arvs"
+                            id="as_never_receive_arvs"
+                            onChange={handleMedicalHistory} 
                             />
                             
                         </div>
@@ -874,10 +1172,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="date"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="name_of_the_facility"
+                                    id="name_of_the_facility"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -890,10 +1187,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="Date"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="duration_of_care_from"
+                                    id="duration_of_care_from"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -906,10 +1202,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="date"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="to"
+                                    id="to"
+                                    onChange={handleMedicalHistory} 
                                 />
 
                             </InputGroup>
@@ -929,12 +1224,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="none"
+                            id="none"
+                            
+                            onChange={handleCurrentMedicalHistory} 
                             />
                             
                         </div>
                     </div>
+                    {!hideOtherCurrentMedication && ( 
+                    <>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
                         <label
@@ -946,8 +1245,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="ART"
+                            id="ART"
+                            onChange={handleCurrentMedicalHistory} 
                             />
                             
                         </div>
@@ -963,8 +1263,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="CTX"
+                            id="CTX"
+                            onChange={handleCurrentMedicalHistory} 
                             />
                             
                         </div>
@@ -980,8 +1281,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="ant_tb_drugs"
+                            id="ant_tb_drugs"
+                            onChange={handleCurrentMedicalHistory} 
                             />
                             
                         </div>
@@ -992,16 +1294,17 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="others"
+                                    id="others"
+                                    onChange={handleCurrentMedicalHistory}  
                                 />
 
                             </InputGroup>
                         
                             </FormGroup>
                     </div>
+                    </>
+                    )}
                    <h3>Patient has disclosed status to:</h3>
                    <hr/>
                    <div className="form-group mb-3 col-md-2">
@@ -1015,12 +1318,15 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="no_one"
+                            id="no_one"
+                            onChange={handleDisclosure}
                             />
                             
                         </div>
                     </div>
+                    {!hideOtherPatientDisclosure && ( 
+                    <>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
                         <label
@@ -1032,8 +1338,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="family_member"
+                            id="family_member"
+                            onChange={handleDisclosure}
                             />
                             
                         </div>
@@ -1049,8 +1356,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="friend"
+                            id="friend"
+                            onChange={handleDisclosure}
                             />
                             
                         </div>
@@ -1066,8 +1374,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="spouse"
+                            id="spouse"
+                            onChange={handleDisclosure}
                             />
                             
                         </div>
@@ -1083,37 +1392,38 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="spiritual_leader"
+                            id="spiritual_leader"
+                            onChange={handleDisclosure}
                             />
                             
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Other</Label>
+                            <Label >Others</Label>
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="others"
+                                    id="others"
+                                    onChange={handleDisclosure} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
-                   
+                    </>
+                    )}
+                    <hr/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >HIV Status can be discussed with (Record reported person, if any):</Label>
                             <InputGroup> 
                                 <Input 
-                                    type="date"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    type="text"
+                                    name="HIV_status_can_be_discussed"
+                                    id="HIV_status_can_be_discussed"
+                                    onChange={handleDisclosure}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -1127,8 +1437,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="none"
+                            id="none"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1138,13 +1449,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideOtherPastArv && (
+                        <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="vomit"
+                            id="vomit"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1159,8 +1473,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="diarrhea"
+                            id="diarrhea"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1175,8 +1490,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="headache"
+                            id="headache"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1191,8 +1507,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="pain_in_abdomen"
+                            id="pain_in_abdomen"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1207,8 +1524,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="jaundice"
+                            id="jaundice"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1223,8 +1541,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="insomnia"
+                            id="insomnia"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1239,8 +1558,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="dizzy"
+                            id="dizzy"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1255,8 +1575,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="tingling"
+                            id="tingling"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1271,8 +1592,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="rash"
+                            id="rash"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1287,8 +1609,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="pancreatities"
+                            id="pancreatities"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1303,8 +1626,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="steven_johnson_syndrome"
+                            id="steven_johnson_syndrome"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1319,8 +1643,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="itching"
+                            id="itching"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1335,8 +1660,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="anemia"
+                            id="anemia"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1351,8 +1677,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="weekness"
+                            id="weekness"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1367,8 +1694,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="loss"
+                            id="loss"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1383,8 +1711,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="hyperglycemia"
+                            id="hyperglycemia"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1399,8 +1728,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="kidney_problem"
+                            id="kidney_problem"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1415,8 +1745,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                            
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="liver_problem"
+                            id="liver_problem"
+                            onChange={handlePastArv}
                             />
                             <label
                             className="form-check-label"
@@ -1433,10 +1764,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="others"
+                                    id="others"
+                                    onChange={handlePastArv} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -1447,14 +1777,15 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="if_yes_past_current_arv"
+                                    id="if_yes_past_current_arv"
+                                    onChange={handlePastArv}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
+                    </>
+                    )}
                     <hr/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -1462,10 +1793,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="physical_exam"
+                                    id="physical_exam"
+                                    onChange={handlePastArv} 
                                 />
                             </InputGroup> 
                             <span >(note: NSF = no significant findings)</span>                                       
@@ -1479,10 +1809,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="temperature"
+                                    id="temperature"
+                                    onChange={handlePastArv} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -1493,10 +1822,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="blood_presure"
+                                    id="blood_presure"
+                                    onChange={handlePastArv} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -1507,10 +1835,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="weight"
+                                    id="weight"
+                                    onChange={handlePastArv} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -1521,10 +1848,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="height"
+                                    id="height"
+                                    onChange={handlePastArv} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -1538,8 +1864,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleGeneralApperance}
                             />
                             <label
                             className="form-check-label"
@@ -1549,13 +1876,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideGeneralApperance && (
+                        <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="pallor"
+                            id="pallor"
+                            onChange={handleGeneralApperance}
                             />
                             <label
                             className="form-check-label"
@@ -1570,8 +1900,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="febrile"
+                            id="febrile"
+                            onChange={handleGeneralApperance}
                             />
                             <label
                             className="form-check-label"
@@ -1586,8 +1917,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="dehydrated"
+                            id="dehydrated"
+                            onChange={handleGeneralApperance}
                             />
                             <label
                             className="form-check-label"
@@ -1602,8 +1934,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="peripheral"
+                            id="peripheral"
+                            onChange={handleGeneralApperance}
                             />
                             <label
                             className="form-check-label"
@@ -1620,15 +1953,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleGeneralApperance} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <h3>Skin</h3>
                     <hr/>
@@ -1637,8 +1971,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1648,13 +1983,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideSkin && (
+                    <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="pruritic"
+                            id="pruritic"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1669,8 +2007,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="abscesses"
+                            id="abscesses"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1685,8 +2024,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="herpes"
+                            id="herpes"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1701,8 +2041,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="kaposi"
+                            id="kaposi"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1717,8 +2058,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="suborrheic"
+                            id="suborrheic"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1733,8 +2075,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="fungal"
+                            id="fungal"
+                            onChange={handleSkin}
                             />
                             <label
                             className="form-check-label"
@@ -1751,15 +2094,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleSkin}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <h3>Head/Eye/ENT</h3>
                     <hr/>
@@ -1768,8 +2112,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleEye}
                             />
                             <label
                             className="form-check-label"
@@ -1779,13 +2124,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideEye && (
+                        <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="icterus"
+                            id="icterus"
+                            onChange={handleEye}
                             />
                             <label
                             className="form-check-label"
@@ -1800,8 +2148,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="thrush"
+                            id="thrush"
+                            onChange={handleEye}
                             />
                             <label
                             className="form-check-label"
@@ -1816,8 +2165,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="oral"
+                            id="oral"
+                            onChange={handleEye}
                             />
                             <label
                             className="form-check-label"
@@ -1832,8 +2182,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="abnormal"
+                            id="abnormal"
+                            onChange={handleEye}
                             />
                             <label
                             className="form-check-label"
@@ -1850,15 +2201,17 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleEye}
+                                     
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <h3>Breasts</h3>
                     <hr/>
@@ -1867,8 +2220,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleBreast}
                             />
                             <label
                             className="form-check-label"
@@ -1878,13 +2232,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideBreast && (
+                        <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="lumps"
+                            id="lumps"
+                            onChange={handleBreast}
                             />
                             <label
                             className="form-check-label"
@@ -1899,8 +2256,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="discharge"
+                            id="discharge"
+                            onChange={handleBreast}
                             />
                             <label
                             className="form-check-label"
@@ -1916,15 +2274,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleBreast} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <h3>Cardiovascular</h3>
                     <hr/>
@@ -1933,8 +2292,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleCardiovascular}
                             />
                             <label
                             className="form-check-label"
@@ -1944,13 +2304,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideCardiovascular && (
+                    <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="abnormal_heart_rate"
+                            id="abnormal_heart_rate"
+                            onChange={handleCardiovascular}
                             />
                             <label
                             className="form-check-label"
@@ -1966,15 +2329,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleCardiovascular}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <h3>Genitalia</h3>
                     <hr/>
@@ -1983,8 +2347,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleGenitalia}
                             />
                             <label
                             className="form-check-label"
@@ -1994,13 +2359,17 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideGenitalia && (
+                    <>
+                   
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="genital_discharge"
+                            id="genital_discharge"
+                            onChange={handleGenitalia}
                             />
                             <label
                             className="form-check-label"
@@ -2015,8 +2384,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="genital_ulcer"
+                            id="genital_ulcer"
+                            onChange={handleGenitalia}
                             />
                             <label
                             className="form-check-label"
@@ -2031,8 +2401,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="inguinal"
+                            id="inguinal"
+                            onChange={handleGenitalia}
                             />
                             <label
                             className="form-check-label"
@@ -2048,15 +2419,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleGenitalia}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                     )}
                     <hr/>
                     <h3>Respiratory</h3>
                     <hr/>
@@ -2065,8 +2437,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleRespiratory}
                             />
                             <label
                             className="form-check-label"
@@ -2076,6 +2449,8 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideRespiratory && (
+                        <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <label
@@ -2085,10 +2460,11 @@ const ChildClinicEvaluationForm = (props) => {
                             Rate (breaths/min)
                             </label>
                             <input
-                            type="text"
+                            type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="rate"
+                            id="rate"
+                            onChange={handleRespiratory}
                             placeholder='breaths/min'
                             />
                             
@@ -2099,8 +2475,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="labored"
+                            id="labored"
+                            onChange={handleRespiratory}
                             />
                             <label
                             className="form-check-label"
@@ -2115,8 +2492,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="cyanosis"
+                            id="cyanosis"
+                            onChange={handleRespiratory}
                             />
                             <label
                             className="form-check-label"
@@ -2131,8 +2509,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="wheezing"
+                            id="wheezing"
+                            onChange={handleRespiratory}
                             />
                             <label
                             className="form-check-label"
@@ -2147,8 +2526,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="intercostal"
+                            id="intercostal"
+                            onChange={handleRespiratory}
                             />
                             <label
                             className="form-check-label"
@@ -2163,8 +2543,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="auscultation_finding"
+                            id="auscultation_finding"
+                            onChange={handleRespiratory}
                             />
                             <label
                             className="form-check-label"
@@ -2180,15 +2561,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleRespiratory}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <h3>Gastrointestinal</h3>
                     <hr/>
@@ -2197,8 +2579,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleGastrointestinal}
                             />
                             <label
                             className="form-check-label"
@@ -2208,13 +2591,16 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
+                    {!hideGastrointestinal && (
+                        <>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="distention"
+                            id="distention"
+                            onChange={handleGastrointestinal}
                             />
                             <label
                             className="form-check-label"
@@ -2229,8 +2615,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="hepatomegaly"
+                            id="hepatomegaly"
+                            onChange={handleGastrointestinal}
                             />
                             <label
                             className="form-check-label"
@@ -2245,8 +2632,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="spenomegaly"
+                            id="spenomegaly"
+                            onChange={handleGastrointestinal}
                             />
                             <label
                             className="form-check-label"
@@ -2261,8 +2649,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="tenderness"
+                            id="tenderness"
+                            onChange={handleGastrointestinal}
                             />
                             <label
                             className="form-check-label"
@@ -2279,15 +2668,16 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other"
+                                    id="other"
+                                    onChange={handleGastrointestinal}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
+                    </>
+                    )}
                     <hr/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -2295,10 +2685,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="additional_finiding"
+                                    id="additional_finiding"
+                                    onChange={handleGastrointestinal}
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -2306,594 +2695,159 @@ const ChildClinicEvaluationForm = (props) => {
                     <div className="form-group mb-3 col-md-6"></div>
                     <hr/>
                     <h3>Assessment</h3>
-                    <div className="form-group mb-3 col-md-3">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Asymptomatic
-                            </label>
-                        </div>
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                        <InputGroup> 
+                                <Input 
+                                    type="select"
+                                    name="previous_arv_exposure"
+                                    id="previous_arv_exposure"
+                                    onChange={handleMedicalHistory}  
+                                >
+                                <option value="">Select</option>
+                                <option value="Asymptomatic">Asymptomatic</option>
+                                <option value="Symptomatic">Symptomatic</option>
+                                <option value="AIDS defining illness">AIDS defining illness</option>
+
+                                
+                                </Input>
+
+                            </InputGroup>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-3">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            AIDS defining illness
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-3">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Symptomatic
-                            </label>
-                        </div>
-                    </div>
+                    <div className="form-group mb-3 col-md-6"> </div>
                     <hr/>
                     <h3>WHO staging criteria (History of any of the following)</h3>
-                    <h3>STAGE 1</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Asymptomatic
-                            </label>
-                        </div>
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                        <Label >WHO STAGE</Label>
+                        <InputGroup> 
+                                <Input 
+                                    type="select"
+                                    name="stage"
+                                    id="stage"
+                                    onChange={handleWho}  
+                                >
+                                <option value="">Select</option>
+                                <option value="stage 1">Stage 1</option>
+                                <option value="stage 2">Stage 2</option>
+                                <option value="stage 3">Stage 3</option>
+                                <option value="stage 4">Stage 4</option>
+                                
+                                </Input>
+
+                            </InputGroup>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-3">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Persistent generalized lymphadenopathy
-                            </label>
-                        </div>
+                    {hideStage1 && (
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                        <Label >Stage 1 options</Label>
+                        <InputGroup> 
+                                <Input 
+                                    type="select"
+                                    name="value"
+                                    id="value"
+                                    onChange={handleWho}  
+                                >
+                                <option value="">Select</option>
+                                <option value="Asymptomatic">Asymptomatic</option>
+                                <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
+                                <option value="Performance scale: 1 asymptomatic, normal activity">Performance scale: 1 asymptomatic, normal activity</option>
+                                
+                                </Input>
+
+                            </InputGroup>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-3">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Performance scale: 1 asymptomatic, normal activity
-                            </label>
-                        </div>
+                    )}
+                    {hideStage2 && (
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                        <Label >Stage 2 options</Label>
+                        <InputGroup> 
+                                <Input 
+                                    type="select"
+                                    name="value"
+                                    id="value"
+                                    onChange={handleWho}  
+                                >
+                                <option value="">Select</option>
+                                <option value="Weight loss less than 10% of body weight">Weight loss {"<"}10% of body weight</option>
+                                <option value="Minor Mucocutaneous Manifestations">Minor Mucocutaneous Manifestations</option>
+                                <option value="Herpes Zoster (within last 5 years)">Herpes Zoster (within last 5 years)</option>
+                                <option value=" Recurrent Upper Respiratory Tract Infections"> Recurrent Upper Respiratory Tract Infections</option>
+                                <option value="Performance scale: 2 symptomatic, normal activity">Performance scale: 2 symptomatic, normal activity</option>
+                                </Input>
+
+                            </InputGroup>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-4"> </div>
-                    <hr/>
-                    <h3>STAGE 2</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Weight loss {"<"}10% of body weight
-                            </label>
-                        </div>
+                    )}
+                    {hideStage3 && (
+                    <>
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                        <Label >Stage 3 options</Label>
+                        <InputGroup> 
+                                <Input 
+                                    type="select"
+                                    name="value"
+                                    id="value"
+                                    onChange={handleWho} 
+                                >
+                                <option value="">Select</option>
+                                <option value="Weight loss greater than 10% of body weight">Weight loss {">"}10% of body weight</option>
+                                <option value="Unexplained Chronic Diarrhea less than 1 month">Unexplained Chronic Diarrhea ({">"}1 month)</option>
+                                <option value="Unexplained Prolonged Fever">Unexplained Prolonged Fever</option>
+                                <option value="Oral Candidiasis">Oral Candidiasis</option>
+                                <option value="Oral Hairy Leukoplakia">Oral Hairy Leukoplakia</option>
+                                <option value="TB, Pulmonary (within previous year)">TB, Pulmonary (within previous year)</option>
+                                <option value="Severe Bacterial Infections">Severe Bacterial Infections</option>
+                                <option value="Performance scale: 3 bedridden  less than 50% of day in last month">Performance scale: 3 bedridden {"<"}50% of day in last month</option>
+                                </Input>
+
+                            </InputGroup>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Minor Mucocutaneous Manifestations
-                            </label>
-                        </div>
+                    </>
+                    )}
+                    {hideStage4 && (
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                        <Label >Stage 4 options</Label>
+                        <InputGroup> 
+                                <Input 
+                                    type="select"
+                                    name="value"
+                                    id="value"
+                                    onChange={handleWho}  
+                                >
+                                <option value="">Select</option>
+                                <option value="HIV Wasting syndrome">HIV Wasting syndrome</option>
+                                <option value="PCP">PCP</option>
+                                <option value="Toxoplasmosis, CNS">Toxoplasmosis, CNS</option>
+                                <option value="Cryptosporidiosis with Diarrhea greater than 1 month">Cryptosporidiosis with Diarrhea ({">"}1 month)</option>
+                                <option value="Cryptococcosis, Extrapulmonary">Cryptococcosis, Extrapulmonary</option>
+                                <option value="Cytomegalovirus disease">Cytomegalovirus disease</option>
+                                <option value="Herpes Simplex (mucotaneous greater than 1 month)">Herpes Simplex (mucotaneous {">"}1 month)</option>
+                                <option value="Progressive Multifocal Leukoencephalopathy">Progressive Multifocal Leukoencephalopathy</option>
+                                <option value="Mycosis, disseminated"> Mycosis, disseminated</option>
+                                <option value="Oesophageal Candidiasis">Oesophageal Candidiasis</option>
+                                <option value="Atypical Mycobacteriosis, disseminated">Atypical Mycobacteriosis, disseminated</option>
+                                <option value="Salmonella Septicemia, Non-typhoid">Salmonella Septicemia, Non-typhoid</option>
+                                <option value="TB, Extrapulmonary"> TB, Extrapulmonary</option>
+                                <option value="Lymphoma">Lymphoma</option>
+                                <option value="Kaposi's Sarcoma"> Kaposi's Sarcoma</option>
+                                <option value="HIV encephalopathy">  HIV encephalopathy</option>
+                                <option value="Performance scale: 4 bedridden greater than 50% of the day in last month"> Performance scale: 4 bedridden {">"}50% of the day in last month</option>
+                                </Input>
+
+                            </InputGroup>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Herpes Zoster (within last 5 years)
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Recurrent Upper Respiratory Tract Infections
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Performance scale: 2 symptomatic, normal activity
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2"></div>
-                    <hr/>
-                    <h3>STAGE 3</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Weight loss {">"}10% of body weight
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Unexplained Chronic Diarrhea ({">"}1 month)
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Unexplained Prolonged Fever
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Oral Candidiasis
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Oral Hairy Leukoplakia
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            TB, Pulmonary (within previous year)
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Severe Bacterial Infections
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Performance scale: 3 bedridden {"<"}50% of day in last month
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-8"></div>
-                    <hr/>
-                    <h3>STAGE 4</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            HIV Wasting syndrome
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            PCP
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Toxoplasmosis, CNS
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Cryptosporidiosis with Diarrhea ({">"}1 month)
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Cryptococcosis, Extrapulmonary
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Cytomegalovirus disease
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Herpes Simplex (mucotaneous {">"}1 month)
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Progressive Multifocal Leukoencephalopathy
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Mycosis, disseminated
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Oesophageal Candidiasis
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Atypical Mycobacteriosis, disseminated
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Salmonella Septicemia, Non-typhoid
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            TB, Extrapulmonary
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Lymphoma
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Kaposi's Sarcoma
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            HIV encephalopathy
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Performance scale: 4 bedridden {">"}50% of the day in last month
-                            </label>
-                        </div>
-                    </div>
+                   )}
+                  
                     <hr/>
                     <h3> Plan (specify orders on requisition)</h3>
                     <div className="form-group mb-3 col-md-6">
@@ -2902,26 +2856,31 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="lab_evaluation"
+                                    id="lab_evaluation"
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >CD4 count evaluation</Label>
+                            <Label >CD4 count evaluation</Label>                       
                             <InputGroup> 
                                 <Input 
-                                    type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
-                                />
-                            </InputGroup>                                        
+                                    type="select"
+                                    name="previous_arv_exposure"
+                                    id="previous_arv_exposure"
+                                    onChange={handleMedicalHistory}  
+                                >
+                                <option value="">Select</option>
+                                <option value="CD4 LFA">CD4 LFA</option>
+                                <option value="less than 200">{"<"}200</option>
+                                <option value="greater than and equal to 200">  ≥200</option>
+                               
+                                </Input>
+
+                            </InputGroup>                                      
                             </FormGroup>
                     </div>
                     <hr/>
@@ -2930,8 +2889,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="tb_investigation"
+                            id="tb_investigation"
+                            onChange={handlePlan} 
                             />
                             <label
                             className="form-check-label"
@@ -2946,8 +2906,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="expert"
+                            id="expert"
+                            onChange={handlePlan} 
                             />
                             <label
                             className="form-check-label"
@@ -2962,8 +2923,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="cxr"
+                            id="cxr"
+                            onChange={handlePlan} 
                             />
                             <label
                             className="form-check-label"
@@ -2978,8 +2940,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="lf_lam"
+                            id="lf_lam"
+                            onChange={handlePlan} 
                             />
                             <label
                             className="form-check-label"
@@ -2989,54 +2952,7 @@ const ChildClinicEvaluationForm = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            CD4 LFA
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            {"<"}200
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                                ≥200
-                            </label>
-                        </div>
-                    </div>
+                   
                     <hr/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -3044,10 +2960,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="oi_prophylaxis"
+                                    id="oi_prophylaxis"
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3058,10 +2973,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="oi_therapy"
+                                    id="oi_therapy" 
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3072,10 +2986,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="adherence"
+                                    id="adherence"
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3086,10 +2999,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="admission"
+                                    id="admission"
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3100,10 +3012,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="cervical"
+                                    id="cervical" 
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3114,10 +3025,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="symptomatic"
+                                    id="symptomatic" 
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3128,10 +3038,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="cryptococcal"
+                                    id="cryptococcal"
+                                    onChange={handlePlan} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3142,10 +3051,8 @@ const ChildClinicEvaluationForm = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="other_referrals"
+                                    id="other_referrals" 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3157,8 +3064,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="follow_up"
+                            id="follow_up"
+                            onChange={handleEnroll}
                             />
                             <label
                             className="form-check-label"
@@ -3173,8 +3081,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="arv_therapy"
+                            id="arv_therapy"
+                            onChange={handleEnroll}
                             />
                             <label
                             className="form-check-label"
@@ -3189,8 +3098,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="ahd_management"
+                            id="ahd_management"
+                            onChange={handleEnroll}
                             />
                             <label
                             className="form-check-label"
@@ -3205,8 +3115,9 @@ const ChildClinicEvaluationForm = (props) => {
                             <input
                             type="checkbox"
                             className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
+                            name="pending_lab"
+                            id="pending_lab"
+                            onChange={handleEnroll}
                             />
                             <label
                             className="form-check-label"
@@ -3218,342 +3129,123 @@ const ChildClinicEvaluationForm = (props) => {
                     </div>
                     <hr/>
                     <h3>Plan for Antiretroviral Therapy (ART)</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Ongoing monitoring: ARV Tx postponed for clinical reasons
-                            </label>
-                        </div>
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                            <Label>Ongoin Monitoring </Label>
+                            <Input 
+                                    type="select"
+                                    name="previous_arv_exposure"
+                                    id="previous_arv_exposure"
+                                    onChange={handlePlanArt}  
+                                >
+                                <option value="">Select</option>
+                                <option value="Restart treatment">Restart treatment</option>
+                                <option value="Start new treatment">Start new treatment</option>
+                                <option value="Stop treatment">Stop treatment </option>
+                                <option value="Change treatment">Change treatment </option>
+                                <option value="ARV TX postpond for clinical reason">ARV TX postpond for clinical reason</option>
+                                </Input>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Restart treatment
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Start new treatment
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Stop treatment 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Change treatment 
-                            </label>
-                        </div>
-                    </div>
+                    <div className="form-group mb-3 col-md-6"> </div>
+                    
                     <hr/>
                     <h3>Regimen</h3>
-                    <h3>First Line</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            TDF+3TC (or FTC) +DTG
-                            </label>
-                        </div>
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                            <Label>Regimen Line</Label>
+                            <Input 
+                                    type="select"
+                                    name="regimenLine"
+                                    id="regimenLine"
+                                    onChange={handleRegimen}  
+                                >
+                                <option value="">Select</option>
+                                <option value="first line">First Line</option>
+                                <option value="second line">Second Line</option>
+                                <option value="third line">Third Line </option>
+                               
+                                </Input>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            TDF+3TC(or FTC) + EFV 400
-                            </label>
-                        </div>
+                    {hideFirstLine && (
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                            <Label>First Line Regimen</Label>
+                            <Input 
+                                    type="select"
+                                    name="regimen"
+                                    id="regimen"
+                                    onChange={handleRegimen}  
+                                >
+                                <option value="">Select</option>
+                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option>
+                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
+                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option>
+                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option> 
+                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option> 
+                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL</option> 
+                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
+                                <option value="ABC + 3TC + EFV">ABC + 3TC + EFV</option>                             
+                                <option value="ABC + 3TC + NVP">ABC + 3TC + NVP</option>
+                                <option value="AZT + 3TC + EFV">AZT + 3TC + EFV</option>
+                                <option value="AZT + 3TC + NVP">AZT + 3TC + NVP</option>
+                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
+                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
+                            </Input>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            ABC +3TC+DTG 
-                            </label>
-                        </div>
+                    )}
+                    {hideSecondLine && (
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                            <Label>Second Line Regimen</Label>
+                            <Input 
+                                    type="select"
+                                    name="regimen"
+                                    id="regimen"
+                                    onChange={handleRegimen}  
+                                >
+                                <option value="">Select</option>
+                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
+                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
+                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option>
+                                <option value="ABC + 3TC +  ATV/r">ABC + 3TC +  ATV/r</option>  
+                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL </option>
+                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
+                            </Input>
+                        </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                             TDF+3TC (or FTC) +EFV
-                            </label>
-                        </div>
+                    )}
+                    {hideThirdLine && (
+                    <div className="form-group mb-3 col-md-6">                                    
+                        <FormGroup>
+                            <Label>Third Line Regimen</Label>
+                            <Input 
+                                    type="select"
+                                    name="regimen"
+                                    id="regimen"
+                                    onChange={handleRegimen}  
+                                >
+                                <option value="">Select</option>
+                                <option value="DTG + DRV/r + ABC + 3TC">DTG + DRV/r + ABC + 3TC</option>
+                                <option value="DTG + DRV/r + AZT + 3TC">DTG + DRV/r + AZT + 3TC</option>
+                                <option value="RAL + DRV/r + ABC + 3TC">RAL + DRV/r + ABC + 3TC</option>
+                                <option value="RAL + DRV/r + AZT + 3TC">RAL + DRV/r + AZT + 3TC</option>                         
+                            </Input>
+                        </FormGroup>
                     </div>
-                    <hr/>
-                    <h3>Second Line</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Change treatment 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                             AZT+ 3TC + ATV/r
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            TDF +3TC + ATV/r
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                             TDF +3TC + LPV/r 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            TDF +3TC + LPV/r 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            AZT + TDF + 3TC+ ATV/r 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            AZT + TDF + 3TC+ LPV/r 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                             TDF+3TC +DTG
-                            </label>
-                        </div>
-                    </div>
-                    <hr/>
-                    <h3>Thirt Line</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            DRV/r +DTG ± 1-2 NRTIs 
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ovc_enrolled"
-                            id="ovc_enrolled"
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                             DRV/r +2NRTIs ± ETV 
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Drugs in regimen</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
-                    </div>                  
+                    )}
+                    <br/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Next appointment</Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"
-                                    name="encounterDate"
-                                    id="encounterDate"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.encounterDate} 
+                                    name="next_appointment"
+                                    id="next_appointment"
+                                    onChange={handleInputChangeobjValues} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>
@@ -3595,4 +3287,4 @@ const ChildClinicEvaluationForm = (props) => {
   );
 }
 
-export default ChildClinicEvaluationForm;
+export default ClinicEvaluationFrom;

@@ -51,6 +51,8 @@ const ClientStatusUpdate = (props) => {
 
     const patientObj = props.patientObj;
     const classes = useStyles()
+    const [hideConfirmDeath, setHideConfirmDeath] = useState(true);
+    const [hideReturn, setHideReturn] = useState(true);
     const [trackingOutCome, setTrankingOutCome] = useState([])
     const [hivStatus, setHivStatus] = useState([]);
     const [reasonForInteruption, setReasonForInteruption] = useState([]);
@@ -83,8 +85,8 @@ const ClientStatusUpdate = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
-               //console.log(response.data);
-               setHivStatus(response.data);
+               
+               setHivStatus(response.data.filter((x)=> x.display!=='Lost to Follow Up' && x.display!=='ART Transfer In'));
            })
            .catch((error) => {
            //console.log(error);
@@ -136,8 +138,19 @@ const ClientStatusUpdate = (props) => {
            });
        
     }
-    
+     const handleInputChangeOut = e => {
+
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        }
     const handleInputChange = e => {
+        console.log(e.target.value)
+        if(e.target.value==='Died (Confirmed)'){
+            setHideConfirmDeath(false)
+            setHideReturn(false)
+        }else{
+            setHideConfirmDeath(true)
+            setHideReturn(true)
+        }
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
           
@@ -152,14 +165,20 @@ const ClientStatusUpdate = (props) => {
           
           )
               .then(response => {
-                  setSaving(false);
+                  setSaving(false);                  
                   toast.success("Client Status Update Successfully!");
                   props.setActiveContent('recent-history')
 
               })
               .catch(error => {
                   setSaving(false);
-                  toast.error("Something went wrong");
+                  if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
               });          
     }
 
@@ -173,13 +192,12 @@ const ClientStatusUpdate = (props) => {
                     <div className="col-md-6">
                     <h2> Client Status Update </h2>
                     </div>
-                    <div className="col-md-6">
-                        <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
-                    </div>
+                    
                     <br/>
                     <br/>
                     <br/>
                     <br/>
+                    <div className="form-group mb-3 col-md-6"></div>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >New Status</Label>
@@ -228,7 +246,7 @@ const ClientStatusUpdate = (props) => {
                                 name="trackOutcome"
                                 id="trackOutcome"
                                 value={objValues.trackOutcome}
-                                onChange={handleInputChange}
+                                onChange={handleInputChangeOut}
                                 required
                                 >
                                 <option value=""> Select</option>
@@ -261,6 +279,8 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        {hideReturn && (
+                        <>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="participant_id">Date Agreed to Return</Label>
@@ -302,6 +322,9 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        </>
+                        )}
+                        {!hideConfirmDeath && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Cause of Death</Label>
@@ -325,8 +348,9 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        )}
                     </div>
-                    
+                   
                     {saving ? <Spinner /> : ""}
                     <br />
                 
@@ -336,6 +360,7 @@ const ClientStatusUpdate = (props) => {
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
+                    style={{backgroundColor:"#014d88"}}
                     onClick={handleSubmit}
                         >
                     {!saving ? (
@@ -345,14 +370,6 @@ const ClientStatusUpdate = (props) => {
                     )}
                     </MatButton>
                 
-                    <MatButton
-                        variant="contained"
-                        className={classes.button}
-                        startIcon={<CancelIcon />}
-                        onClick={props.toggle}
-                    >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
                
                 </form>
                 </CardBody>

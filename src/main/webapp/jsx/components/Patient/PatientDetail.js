@@ -10,24 +10,26 @@ import PatientCardDetail from './PatientCard'
 import { useHistory } from "react-router-dom";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
-import Consultation from './../Consultation/Home'
+import ClinicVisit from '../Consultation/Index'
 import Pharmacy from './../Pharmacy/Index';
 import Laboratory from './../Laboratory/index';
 import AncPnc from './../PmtctServices/AncPnc';
 import AncEnrollement from './../PmtctServices/AncEnrollement';
-import ChildConsultation from './../ChildConsultation/Home';
+//import ChildConsultation from './../ChildConsultation/Home';
 import LabourDelivery from './../PmtctServices/LabourDelivery';
 import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
 import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
 import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
 import PrEPVisit from './../PrepServices/PrEPVisit';
 import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
-import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/EnhancedAdherenceCounseling';
+import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
-import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom'
+import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index'
 import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
 import MentalHealthScreening from '../MentalHealthScreening/index'
+import LabHistory from './../Laboratory/LabHistory'
+import { TiArrowBack } from 'react-icons/ti'
 
 const styles = theme => ({
   root: {
@@ -85,6 +87,8 @@ function PatientCard(props) {
                 color="primary"
                 className=" float-end ms-2"
                 //startIcon={<FaUserPlus size="10"/>}
+                startIcon={<TiArrowBack  />}
+                style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
 
             >
                 <span style={{ textTransform: "capitalize" }}>Back</span>
@@ -92,8 +96,8 @@ function PatientCard(props) {
           </Link>
           <br/><br/>
           {activeContent==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent==='consultation' &&( <Consultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {/* {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)} */}
           {activeContent==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent}/>)}
@@ -110,6 +114,7 @@ function PatientCard(props) {
           {activeContent==='adult-evaluation' &&( <AdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='mhs' &&( <MentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
          </CardContent>
       </Card>
     </div>

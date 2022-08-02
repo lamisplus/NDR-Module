@@ -1,20 +1,19 @@
 import React, {useState, useEffect} from 'react';
-import { Form,Row, Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
+import { Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
-// import { Alert } from 'reactstrap';
-// import { Spinner } from 'reactstrap';
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
-import { useHistory } from "react-router-dom";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
 import { Icon,Button, } from 'semantic-ui-react'
+import FirstEAC from './EnhancedAdherenceCounseling';
+import ContinueEAC from './SecondEac';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -51,42 +50,72 @@ const useStyles = makeStyles(theme => ({
     } 
 }))
 
-const Enrollment = (props) => {
-
+const EAC = (props) => {
     const patientObj = props.patientObj;
-    let history = useHistory();
     const classes = useStyles()
-    const [transferStatus, setTransferStatus] = useState([])
-    const [values, setValues] = useState([]);
-    const [objValues, setObjValues] = useState({patient_id: "", eacDate1:"", eacDate2:""});
     const [saving, setSaving] = useState(false);
+    const [eacObj, setEacObj] = useState([]);
     const [errors, setErrors] = useState({});
+    const [objValues, setObjValues]=useState({
+                                                dateOfEac: "",
+                                                dateOfLastViralLoad: "",
+                                                lastViralLoad:"",
+                                                note: "",
+                                                personId: props.patientObj.id,
+                                                status: "First",
+                                                visitId:""
+                                            })
+    useEffect(() => {
+        EACStatus();
+        }, []);
+    
+        ///GET LIST OF FUNCTIONAL%20_STATUS
+        // TB STATUS
+        const EACStatus =()=>{
+        axios
+            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setEacObj(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
  
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        }
-          
+    }          
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
-          objValues.patient_id= patientObj.id
           setSaving(true);
-          axios.post(`${baseUrl}covid/patientstatus`,objValues,
+          axios.post(`${baseUrl}observation/eac`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  toast.success("Record save successful");
-                  props.toggle()
-                  props.loadPatients()
-                  //history.push("/")
+                  props.setEacObj(response.data)
+                  props.setHideFirst(true)
+                  props.setHideFirst(true)
+                  props.setHideSecond(true)
+                  toast.success(" Save successful");
+                  //props.setActiveContent('recent-history')
 
               })
               .catch(error => {
-                  setSaving(false);
-                  toast.success("Record save successful");
-                  //toast.error("Something went wrong");
+                setSaving(false);
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
               });
           
     }
@@ -97,49 +126,67 @@ const Enrollment = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                    
-                    <div className="col-md-6">
                     <h2>Enhanced Adherence Counselling </h2>
-                        </div>
-                        <div className="col-md-6">
-                            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
-                        </div>
                         <br/>
                         <br/>
                         <br/>
                         <br/>
-                    <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of 1st EAC Session </Label>
+                            <Label for="">Date of EAC </Label>
                             <Input
                                 type="date"
-                                name="eacDate1"
-                                id="eacDate1"
-                                value={objValues.eacDate1}
+                                name="dateOfEac"
+                                id="dateOfEac"
+                                value={objValues.dateOfEac}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 required
                             />
-                            {errors.eacDate1 !=="" ? (
-                                <span className={classes.error}>{errors.eacDate1}</span>
+                            {errors.dateOfEac !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of 1st EAC Completion </Label>
+                            <Label for="">Date Of Last Viral Load</Label>
                             <Input
                                 type="date"
-                                name="eacDate2"
-                                id="eacDate2"
-                                value={objValues.eacDate2}
+                                name="dateOfLastViralLoad"
+                                id="dateOfLastViralLoad"
+                                value={objValues.dateOfLastViralLoad}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 required
                             />
-                            {errors.eacDate2 !=="" ? (
-                                <span className={classes.error}>{errors.eacDate2}</span>
-                            ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">lastViralLoad</Label>
+                            <Input
+                                type="number"
+                                name="lastViralLoad"
+                                id="lastViralLoad"
+                                value={objValues.lastViralLoad}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">note</Label>
+                            <Input
+                                type="textarea"
+                                name="note"
+                                id="note"
+                                value={objValues.note}
+                                onChange={handleInputChange}
+                            />
                             </FormGroup>
                         </div>
                         
@@ -155,7 +202,8 @@ const Enrollment = (props) => {
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
-                    disabled={objValues.eacDate1==="" || objValues.eacDate2==="" ? true : false}
+                    style={{backgroundColor:"#014d88"}}
+                    disabled={objValues.dateOfEac==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -164,15 +212,6 @@ const Enrollment = (props) => {
                     )}
                     </MatButton>
                 
-                    <MatButton
-                        variant="contained"
-                        className={classes.button}
-                        startIcon={<CancelIcon />}
-                        onClick={props.toggle}
-                    >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
-                
                     </form>
                 </CardBody>
             </Card>                    
@@ -180,4 +219,4 @@ const Enrollment = (props) => {
   );
 }
 
-export default Enrollment;
+export default EAC;

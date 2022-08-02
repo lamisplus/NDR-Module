@@ -338,7 +338,6 @@ const ClinicVisit = (props) => {
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(getPatientObj)
     if(validate()){
     setSaving(true)
     objValues.visitDate = vital.encounterDate
@@ -359,8 +358,13 @@ const ClinicVisit = (props) => {
       })
       .catch(error => {
         setSaving(false);
-        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-        toast.error(errorMessage);
+        if(error.response && error.response.data){
+          let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+          toast.error(errorMessage);
+        }
+        else{
+          toast.error("Something went wrong. Please try again...");
+        }
        
       });
     }
@@ -374,9 +378,9 @@ const ClinicVisit = (props) => {
       <div className="col-md-6">
         <h2>Clinic Follow-up Visit</h2>
         </div>
-        <div className="col-md-6">
+        {/* <div className="col-md-6">
             <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous Clinic Visit</Button>
-        </div>
+        </div> */}
         <br/>
         <br/>
         <br/>
@@ -445,7 +449,7 @@ const ClinicVisit = (props) => {
             <div className="row">
               <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Date of Visit </FormLabelName>
+                  <FormLabelName >Date of Visit *</FormLabelName>
                   <Input
                     type="date"
                     name="encounterDate"
@@ -535,6 +539,24 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
+              {vital.bodyWeight!=="" && vital.height!=="" && (
+              <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >BMI</FormLabelName>
+                  
+                  <InputGroup> 
+                  <InputGroupText>
+                      BMI
+                    </InputGroupText>                   
+                    <Input
+                      type="number"
+                      disabled
+                      value={Math.round(vital.bodyWeight/(vital.height/100))}
+                    />
+                  </InputGroup>                
+                </FormGroup>
+              </div>
+              )}
               <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Blood Pressure</FormLabelName>
@@ -607,7 +629,7 @@ const ClinicVisit = (props) => {
 
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >WHO Staging</FormLabelName>
+                  <FormLabelName >WHO Staging 8</FormLabelName>
                   <Input
                     type="select"
                     name="whoStagingId"
@@ -629,7 +651,7 @@ const ClinicVisit = (props) => {
               </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Functional Status</FormLabelName>
+                  <FormLabelName >Functional Status *</FormLabelName>
                   <Input
                     type="select"
                     name="functionalStatusId"
@@ -650,7 +672,7 @@ const ClinicVisit = (props) => {
               </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Level of Adherence</FormLabelName>
+                  <FormLabelName >Level of Adherence *</FormLabelName>
                   <Input
                     type="select"
                     name="adherenceLevel"
@@ -702,7 +724,7 @@ const ClinicVisit = (props) => {
                     id="nextAppointment"
                     value={vital.nextAppointment}
                     onChange={handleInputChange}
-                    max={moment(new Date()).format("YYYY-MM-DD")}
+                    min={moment(new Date()).format("YYYY-MM-DD")}
                     required
                   />
             <br />
@@ -713,6 +735,7 @@ const ClinicVisit = (props) => {
               className={classes.button}
               disabled={saving}
               startIcon={<SaveIcon />}
+              style={{backgroundColor:"#014d88"}}
               onClick={handleSubmit}
             >
               {!saving ? (

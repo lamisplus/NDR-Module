@@ -21,11 +21,11 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import {  Card,CardBody,} from 'reactstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
-import Button from "@material-ui/core/Button";
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { MdDashboard } from "react-icons/md";
 import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
@@ -35,6 +35,7 @@ import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
 import { FaUserPlus } from "react-icons/fa";
 import {TiArrowForward} from 'react-icons/ti'
+
 
 //Dtate Picker package
 Moment.locale("en");
@@ -107,7 +108,6 @@ const useStyles = makeStyles(theme => ({
 const Patients = (props) => {    
     const [patientList, setPatientList] = useState([])
     const [loading, setLoading] = useState(true)
-
     useEffect(() => {
         patients()
       }, []);
@@ -152,14 +152,13 @@ const Patients = (props) => {
   return (
     <div>
 
-       <Card>
-         <CardBody>
          <Link to={"register-patient"}>
                 <Button
                     variant="contained"
                     color="primary"
                     className=" float-end"
                     startIcon={<FaUserPlus size="10"/>}
+                    style={{backgroundColor:'#014d88'}}
                 >
                     <span style={{ textTransform: "capitalize" }}>New Patient</span>
                 </Button>
@@ -204,53 +203,83 @@ const Patients = (props) => {
                     actions:
             
                     <div>
-                    <Menu>
-                        <MenuButton style={{ backgroundColor:"#3F51B5", color:"#fff", border:"2px solid #3F51B5", borderRadius:"4px", }}>
-                          Actions <span aria-hidden>▾</span>
-                        </MenuButton>
-                            <MenuList style={{ color:"#000000 !important"}} >
+
                                 {row.currentStatus!== "Not Enrolled" ?
                                     (
                                         <>
-                                            <MenuItem style={{ color:"#000 !important"}}>
-                                                <Link
+                                            <Link
                                                     to={{
                                                         pathname: "/patient-history",
                                                         state: { patientObj: row  }
-                                                    }}>
-                                                <MdDashboard size="15" color="black" />{" "}<span style={{color: '#000'}}>Patient Dashboard</span>                   
-                                                </Link>
-                                            </MenuItem>
+                                                    }}
+                                                >
+                                                <ButtonGroup variant="contained" 
+                                                    aria-label="split button"
+                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
+                                                    size="large"
+                                                >
+                                                <Button
+                                                color="primary"
+                                                size="small"
+                                                aria-label="select merge strategy"
+                                                aria-haspopup="menu"
+                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
+                                                >
+                                                    <MdDashboard />
+                                                </Button>
+                                                <Button 
+                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
+                                                >
+                                                    <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Patient Dashboard</span>
+                                                </Button>
+                                                
+                                                </ButtonGroup>
+                                            </Link>
                                         </>
                                     )
                                     :
                                     (
                                         <>
-                                            <MenuItem style={{ color:"#000 !important"}}>
-                                                <Link
-                                                    to={{
-                                                        pathname: "/register-patient",
-                                                        state: { patientId : row.id }
-                                                    }}>
-                                                <TiArrowForward size="15" color="black" />{" "}<span style={{color: '#000'}}>Enroll Patient</span>                   
-                                                </Link>
-                                            </MenuItem>  
+                                            <Link
+                                                to={{
+                                                    pathname: "/register-patient",
+                                                    state: { patientId : row.id }
+                                                }}
+                                            >
+                                                <ButtonGroup variant="contained" 
+                                                    aria-label="split button"
+                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'50px',width:'220px'}}
+                                                    size="large"
+                                                >
+                                                <Button
+                                                color="primary"
+                                                size="small"
+                                                aria-label="select merge strategy"
+                                                aria-haspopup="menu"
+                                                style={{backgroundColor:"#014d88"}}
+                                                >
+                                                    <TiArrowForward />
+                                                </Button>
+                                                <Button 
+                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
+                                                >
+                                                    <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Enroll Patient</span>
+                                                </Button>
+                                                
+                                                </ButtonGroup>
+                                            </Link>
                                         </>
                                     )
 
                                 }
-                                                                    
-    
-                          </MenuList>
-                    </Menu>
                   </div>
                   
                   }))}
             
                         options={{
                           headerStyle: {
-                              //backgroundColor: "#9F9FA5",
-                              color: "#000",
+                              backgroundColor: "#014d88",
+                              color: "#fff",
                           },
                           searchFieldStyle: {
                               width : '200%',
@@ -264,11 +293,7 @@ const Patients = (props) => {
                           debounceInterval: 400
                       }}
             />
-           
-        </CardBody>
-       </Card>
-      
-      
+       
     </div>
   );
 }
