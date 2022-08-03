@@ -12,5 +12,6 @@ import java.util.List;
 public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> {
     List<ArtPharmacy> getArtPharmaciesByVisitAndPerson(Visit visit, Person person);
     Page<ArtPharmacy> getArtPharmaciesByPerson(Person person, Pageable pageable);
+    List<ArtPharmacy> getArtPharmaciesByPerson(Person person);
 }
 

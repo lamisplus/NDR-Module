@@ -8,6 +8,7 @@ import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetReposito
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientEnrollmentDto;
+import org.lamisplus.modules.hiv.domain.dto.PatientActivity;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
@@ -152,4 +153,8 @@ public class HivPatientService {
         }
     }
 
+    public List<PatientActivity> getHivPatientActivitiesById(Long id) {
+
+        return  null;
+    }
 }
