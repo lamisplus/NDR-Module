@@ -22,7 +22,7 @@ public class ClinicActivityProvider implements PatientActivityProvider {
             List<ARTClinical> clinicVisits = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0);
             String name = "Clinic visit follow up";
             return clinicVisits.stream ()
-                    .map (artPharmacy ->  new PatientActivity (artPharmacy.getId (), name, artPharmacy.getVisitDate (), null, "Clinic"))
+                    .map (artPharmacy ->  new PatientActivity (artPharmacy.getId (), name, artPharmacy.getVisitDate (), null, "clinic-visit"))
                     .collect(Collectors.toList());
         }
 }

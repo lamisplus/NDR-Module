@@ -27,7 +27,7 @@ public class HivEnrollmentActivityProvider implements PatientActivityProvider {
         List<PatientActivity> patientActivities = new ArrayList<> ();
         String name = "HIV Enrollment";
         PatientActivity patientActivity = hivEnrollmentOptional
-                .map (hivEnrollment -> new PatientActivity (hivEnrollment.getId (), name, hivEnrollment.getDateStarted (), null, "HIV-enrollment"))
+                .map (hivEnrollment -> new PatientActivity (hivEnrollment.getId (), name, hivEnrollment.getDateOfRegistration (), null, "hiv-enrollment"))
                 .orElse (null);
         patientActivities.add (patientActivity);
         return patientActivities;

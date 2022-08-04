@@ -19,7 +19,7 @@ private  final ArtPharmacyRepository pharmacyRepository;
     @Override
     public List<PatientActivity> getActivitiesFor(Person person) {
         List<ArtPharmacy> pharmacies = pharmacyRepository.getArtPharmaciesByPerson (person);
-        String name = "Pharmacy Refill";
+        String name = "Pharmacy refill";
        return pharmacies.stream ()
                 .map (artPharmacy ->  new PatientActivity (artPharmacy.getId (), name, artPharmacy.getVisitDate (), null, "Pharmcy"))
                 .collect(Collectors.toList());
