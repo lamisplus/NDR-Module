@@ -5,17 +5,44 @@ import { makeStyles } from '@material-ui/core/styles'
 import moment from "moment";
 import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteIcon from '@material-ui/icons/Delete';
+import { toast } from "react-toastify";
 
+const useStyles = makeStyles(theme => ({
+  error: {
+    color: "#f85032",
+    fontSize: "11px",
+  },
+  success: {
+    color: "#4BB543 ",
+    fontSize: "11px",
+  },
+}))
 
 const ADR = (props) => {
-
+  const [errors, setErrors] = useState({});
+  const classes = useStyles()
+  let temp = { ...errors }
   const handleInfectionInputChange = e => {
-    props.setInfection ({...props.infection,  [e.target.name]: e.target.value});
-    }
-    
+  props.setInfection ({...props.infection,  [e.target.name]: e.target.value});
+  }
+  //Validations of the forms
+  const validate = () => {        
+    temp.ondateInfection = props.infection.ondateInfection ? "" : "This field is required"
+    temp.illnessInfection = props.infection.illnessInfection ? "" : "This field is required"
+
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
+  }
     const addInfection = e => { 
-    props.setInfectionList([...props.infectionList, props.infection])
+      if(validate()){
+        props.setInfectionList([...props.infectionList, props.infection])
+      }else{
+        toast.error(" Field are required ");
+      }
+    
     }
     /* Remove ADR  function **/
     const removeInfection = index => {       
@@ -38,10 +65,13 @@ const ADR = (props) => {
                 value={props.infection.ondateInfection}
                 onChange={handleInfectionInputChange}
                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 required
                 > 
             </Input>
-          
+            {errors.ondateInfection !=="" ? (
+                <span className={classes.error}>{errors.ondateInfection}</span>
+            ) : "" }
             </FormGroup>
         </div>
         <div className="form-group mb-3 col-md-5">        
@@ -53,10 +83,13 @@ const ADR = (props) => {
                 id="illnessInfection"
                 value={props.infection.illnessInfection}
                 onChange={handleInfectionInputChange}
+                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 required
                 > 
             </Input>
-          
+            {errors.illnessInfection !=="" ? (
+                <span className={classes.error}>{errors.illnessInfection}</span>
+            ) : "" }
             </FormGroup>
         </div>
         <div className="form-group mb-3 col-md-2">

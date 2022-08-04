@@ -349,6 +349,8 @@ const ArtCommencement = (props) => {
           
         }
 
+        
+
   return (      
       <div >
          
@@ -705,7 +707,7 @@ const ArtCommencement = (props) => {
                                             type="number"
                                             disabled
                                             value={Math.round(vital.bodyWeight/(vital.height/100))}
-                                            style={{border: "1px solid #014D88", borderRadius:"05rem"}}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             />
                                             </InputGroup>                
                                             </FormGroup>

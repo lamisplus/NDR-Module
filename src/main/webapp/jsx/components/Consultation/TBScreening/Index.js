@@ -56,6 +56,7 @@ const TBScreeningForm = (props) => {
                   id="antiTBDrug"
                   value={props.tbObj.antiTBDrug}
                   onChange={handleInputChange}
+                  style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                   required
                   >
                     <option value="">Select </option>
@@ -77,6 +78,7 @@ const TBScreeningForm = (props) => {
                     id="currentOnIpt"
                     value={props.tbObj.currentOnIpt}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value=""> Select</option>
@@ -94,6 +96,7 @@ const TBScreeningForm = (props) => {
                     id="coughing"
                     value={props.tbObj.coughing}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value=""> Select</option>
@@ -111,6 +114,7 @@ const TBScreeningForm = (props) => {
                     id="nightSweat"
                     value={props.tbObj.nightSweat}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value=""> Select</option>
@@ -128,6 +132,7 @@ const TBScreeningForm = (props) => {
                     id="fever"
                     value={props.tbObj.fever}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value="">Select </option>
@@ -145,6 +150,7 @@ const TBScreeningForm = (props) => {
                     id="contactWithTBCase"
                     value={props.tbObj.contactWithTBCase}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value=""> Select</option>
@@ -162,6 +168,7 @@ const TBScreeningForm = (props) => {
                     id="lethergy"
                     value={props.tbObj.lethergy}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value="">Select </option>
@@ -179,6 +186,7 @@ const TBScreeningForm = (props) => {
                     id="tbStatusId"
                     value={props.tbObj.tbStatusId}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                     >
                       <option value="">Select </option>

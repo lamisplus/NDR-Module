@@ -11,7 +11,7 @@ import { Spinner } from "reactstrap";
 import Select from "react-select";
 import { url as baseUrl, token } from "../../../api";
 import { toast} from "react-toastify";
-import { Icon,Button, } from 'semantic-ui-react'
+//import { Icon,Button, } from 'semantic-ui-react'
 
 
 const useStyles = makeStyles(theme => ({ 
@@ -246,6 +246,7 @@ const Pharmacy = (props) => {
                         name="devolvePatient"
                         id="devolvePatient"
                         onChange={handleCheckBox}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         />
                         <label
                         className="form-check-label"
@@ -265,6 +266,7 @@ const Pharmacy = (props) => {
                     onChange={handleInputChange}
                     value={objValues.visitDate}
                     max= {moment(new Date()).format("YYYY-MM-DD") }
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                 />
                 </FormGroup>
@@ -277,7 +279,8 @@ const Pharmacy = (props) => {
                     name="refillPeriod"
                     id="refillPeriod"
                     disabled={objValues.visitDate!==null? false : true}
-                    onChange={handlRefillPeriod}                    
+                    onChange={handlRefillPeriod}   
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                     >
                     <option value="">Select </option>
                     <option value="15">15</option>
@@ -302,6 +305,7 @@ const Pharmacy = (props) => {
                     disabled={objValues.refillPeriod!==null? false : true}
                     onChange={handleInputChange}
                     value={objValues.nextAppointment}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                 />
                 </FormGroup>
@@ -314,7 +318,8 @@ const Pharmacy = (props) => {
                     name="deliveryPoint"
                     id="deliveryPoint"
                     value={objValues.deliveryPoint}
-                    onChange={handleInputChange}                    
+                    onChange={handleInputChange} 
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                     >
                     <option value="">Select </option>
                     <option value="Facility">Facility </option>
@@ -335,6 +340,7 @@ const Pharmacy = (props) => {
                         disabled="true"
                         value={mmdType}
                         onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     />
                      
                     </FormGroup>
@@ -350,6 +356,7 @@ const Pharmacy = (props) => {
                     id="dsdModel"
                     value={objValues.dsdModel}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     >
                     <option value="">Select </option>
                     <option value="CPARP">CPARP </option>
@@ -370,6 +377,7 @@ const Pharmacy = (props) => {
                         name="prescriptionError"
                         id="prescriptionError"
                         onChange={handlePrescriptionErrorCheckBox}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         //value={values.ovc_enrolled}
                         />
                         <label
@@ -388,6 +396,7 @@ const Pharmacy = (props) => {
                         name="adverseDrugReactions"
                         id="adverseDrugReactions"
                         onChange={handleCheckBoxAdverseDrugReactions}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         //value={values.ovc_enrolled}
                         />
                         <label
@@ -408,6 +417,7 @@ const Pharmacy = (props) => {
                             options={prepSideEffect}
                             isMulti="true"
                             noOptionsMessage="true"
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
 
                         />
                         
@@ -424,6 +434,7 @@ const Pharmacy = (props) => {
                     id="regimen"
                     value={objValues.drugName}
                     onChange={handleSelectedRegimen}  
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     disabled={objValues.refillPeriod!==null? false : true}                 
                     >
                     <option value="">Select </option>
@@ -445,6 +456,7 @@ const Pharmacy = (props) => {
                     onChange={setSelectedOptionChange}
                     value={selectedOption}
                     options={regimenType}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     isMulti="true"
                     noOptionsMessage="true"
 
@@ -488,6 +500,7 @@ const Pharmacy = (props) => {
                                         name="dispenseQuantity"
                                         id="dispenseQuantity"
                                         value={input.dispenseQuantity}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         required
                                         >

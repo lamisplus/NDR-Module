@@ -202,128 +202,128 @@ const RecentHistory = (props) => {
               </PerfectScrollbar>
             </div>
           </div>
-        </div>
-        <div className="col-xl-4 col-xxl-4 col-lg-4">
-          <div className="card">
-            <div className="card-header border-0 pb-0">
-              <h4 className="card-title">Laboratory Orders</h4>
-            </div>
-            <div className="card-body">
-              <PerfectScrollbar
-                style={{ height: "370px" }}
-                id="DZ_W_TimeLine"
-                className="widget-timeline dz-scroll height370 ps ps--active-y"
-              >
-                <ul className="timeline">
-                  {vitaLoad.length >0 ? (
+      </div>
+      <div className="col-xl-4 col-xxl-4 col-lg-4">
+        <div className="card">
+          <div className="card-header border-0 pb-0">
+            <h4 className="card-title">Laboratory Orders</h4>
+          </div>
+          <div className="card-body">
+            <PerfectScrollbar
+              style={{ height: "370px" }}
+              id="DZ_W_TimeLine"
+              className="widget-timeline dz-scroll height370 ps ps--active-y"
+            >
+              <ul className="timeline">
+                {vitaLoad.length >0 ? (
+                  <>
+                    {vitaLoad.map((test,index) => ( 
                     <>
-                     {vitaLoad.map((test,index) => ( 
-                      <>
-                        <li key={index}>
-                        <div className={labStatus(test.labTestOrderStatus)}></div>
+                      <li key={index}>
+                      <div className={labStatus(test.labTestOrderStatus)}></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <h6 className="mb-0">
+                          Test Order Date{" "}<br/>
+                          <strong className="text-primary">{test.orderDate}</strong>
+                        </h6>
+                        {test.labTestGroupName!=='others' &&(<h6 className="mb-0">
+                          Test Order{" "}<br/>
+                          <strong className="text-primary">{test.labTestGroupName + " - " + test.labTestName}</strong>.
+                        </h6>
+                          )}
+                          {test.labTestGroupName==='others' &&(<h6 className="mb-0">
+                          Test Order{" "}<br/>
+                          <strong className="text-primary">{test.labTestName + " - " + test.viralLoadIndicationName}</strong>.
+                        </h6>
+                          )}
+                        
+                        <h6 className="mb-0">
+                          Status{" "}<br/>
+                          <strong className="text-primary">{test.labTestOrderStatusName}</strong>.
+                        </h6>
+                        
+                      </Link>
+                      </li>
+                    </>
+
+                    ))}
+                  
+                  </>
+                  ) 
+                  :
+                  <Alert
+                    variant="info"
+                    className="alert-dismissible solid fade show"
+                  >
+                    <p>No Laboratory Test Order Yet</p>
+                  </Alert>
+                }
+              </ul>
+            </PerfectScrollbar>
+          </div>
+        </div>
+      </div>
+      <div className="col-xl-4 col-xxl-4 col-lg-4">
+        <div className="card">
+          <div className="card-header border-0 pb-0">
+            <h4 className="card-title">Refill Summary</h4>
+          </div>
+          <div className="card-body">
+            <PerfectScrollbar
+              style={{ height: "370px" }}
+              id="DZ_W_TimeLine1"
+              className="widget-timeline dz-scroll style-1 height370 ps ps--active-y"
+            >
+              <ul className="timeline">
+              {refillList && refillList.length >0 ? (
+                  <>
+                    {refillList.map((regimen,index) => ( 
+                    <>
+                      <li key={index}>
+                        <div className={index % 2 == 0 ? "timeline-badge info" : "timeline-badge success"}></div>
                         <Link
                           className="timeline-panel text-muted"
                           to="/widget-basic"
                         >
                           <h6 className="mb-0">
-                            Test Order Date{" "}<br/>
-                            <strong className="text-primary">{test.orderDate}</strong>
+                            Regimen
+                            {regimenName(regimen.extra.regimens)}
+                            
                           </h6>
-                          {test.labTestGroupName!=='others' &&(<h6 className="mb-0">
-                            Test Order{" "}<br/>
-                            <strong className="text-primary">{test.labTestGroupName + " - " + test.labTestName}</strong>.
-                          </h6>
-                           )}
-                           {test.labTestGroupName==='others' &&(<h6 className="mb-0">
-                            Test Order{" "}<br/>
-                            <strong className="text-primary">{test.labTestName + " - " + test.viralLoadIndicationName}</strong>.
-                          </h6>
-                           )}
-                          
-                          <h6 className="mb-0">
-                            Status{" "}<br/>
-                            <strong className="text-primary">{test.labTestOrderStatusName}</strong>.
-                          </h6>
-                          
+                          <strong className="text-teal">
+                            Refill Duration<br/>
+                              {regimen.refillPeriod}
+                          </strong><br/> 
+                          <strong className="text-warning">
+                              Next Appointment<br/>
+                              {regimen.nextAppointment}
+                          </strong>                    
+
                         </Link>
-                        </li>
-                      </>
-
-                     ))}
-                    
+                      </li>
                     </>
-                    ) 
-                    :
-                    <Alert
-                      variant="info"
-                      className="alert-dismissible solid fade show"
-                    >
-                      <p>No Laboratory Test Order Yet</p>
-                    </Alert>
-                  }
-                </ul>
-              </PerfectScrollbar>
-            </div>
+
+                    ))}
+                  
+                  </>
+                  ) 
+                  :
+                  <Alert
+                    variant="info"
+                    className="alert-dismissible solid fade show"
+                  >
+                    <p>No Pharmacy Drug Refill</p>
+                  </Alert>
+                }
+
+              </ul>
+            </PerfectScrollbar>
           </div>
         </div>
-        <div className="col-xl-4 col-xxl-4 col-lg-4">
-          <div className="card">
-            <div className="card-header border-0 pb-0">
-              <h4 className="card-title">Refill Summary</h4>
-            </div>
-            <div className="card-body">
-              <PerfectScrollbar
-                style={{ height: "370px" }}
-                id="DZ_W_TimeLine1"
-                className="widget-timeline dz-scroll style-1 height370 ps ps--active-y"
-              >
-                <ul className="timeline">
-                {refillList && refillList.length >0 ? (
-                    <>
-                     {refillList.map((regimen,index) => ( 
-                      <>
-                        <li key={index}>
-                          <div className={index % 2 == 0 ? "timeline-badge info" : "timeline-badge success"}></div>
-                          <Link
-                            className="timeline-panel text-muted"
-                            to="/widget-basic"
-                          >
-                            <h6 className="mb-0">
-                             Regimen
-                             {regimenName(regimen.extra.regimens)}
-                             
-                            </h6>
-                            <strong className="text-teal">
-                              Refill Duration<br/>
-                               {regimen.refillPeriod}
-                            </strong><br/> 
-                            <strong className="text-warning">
-                                Next Appointment<br/>
-                                {regimen.nextAppointment}
-                            </strong>                    
-
-                          </Link>
-                        </li>
-                      </>
-
-                     ))}
-                    
-                    </>
-                    ) 
-                    :
-                    <Alert
-                      variant="info"
-                      className="alert-dismissible solid fade show"
-                    >
-                      <p>No Pharmacy Drug Refill</p>
-                    </Alert>
-                  }
-
-                </ul>
-              </PerfectScrollbar>
-            </div>
-          </div>
-        </div>
+      </div>
        
 
  </div>

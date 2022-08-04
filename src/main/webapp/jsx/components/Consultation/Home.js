@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Label, Icon, List, Button, Card, } from 'semantic-ui-react'
+import { Grid, Segment, Label, Icon, List, Button, Card,Feed } from 'semantic-ui-react'
 // Page titie
-import { FormGroup, Input, Label as FormLabelName, InputGroup, InputGroupText } from "reactstrap";
+import { FormGroup, Label as FormLabelName, InputGroup,
+          InputGroupText,
+          InputGroupButtonDropdown,
+          Input,
+          Dropdown,
+          DropdownToggle,
+          DropdownMenu,
+          DropdownItem
+        } from "reactstrap";
 import ADR from './ADR/Index'
 import OpportunisticInfection from './OpportunisticInfection/Index'
 import TBScreening from './TBScreening/Index'
@@ -16,8 +24,8 @@ import AddCondition from './Conditions/AddCondition'
 import PostPatient from './PostPatient/Index'
 import moment from "moment";
 import { toast } from "react-toastify";
-
-
+import { Accordion, Alert } from "react-bootstrap";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
@@ -65,7 +73,18 @@ const useStyles = makeStyles(theme => ({
 
 const ClinicVisit = (props) => {
   const patientObj = props.patientObj ? props.patientObj : {}
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
+  const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
+  const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
+  const [heightValue, setHeightValue]= useState("cm")
   const [errors, setErrors] = useState({});
+  const [clinicVisitList, setClinicVisitList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [
+    activeAccordionHeaderShadow,
+    setActiveAccordionHeaderShadow,
+  ] = useState(0);
   let temp = { ...errors }
   const classes = useStyles()
   const [getPatientObj, setGetPatientObj] = useState({});
@@ -105,11 +124,11 @@ const ClinicVisit = (props) => {
     adverseDrugReactions: {},
     artStatusId: "" ,
     cd4: "",
-    cd4Percentage: 0,
+    cd4Percentage: "",
     clinicalNote: "",
-    clinicalStageId: 0,
+    clinicalStageId: "",
     facilityId: 0,
-    functionalStatusId: 0,
+    functionalStatusId: "",
     hivEnrollmentId: "",
     nextAppointment: "",
     lmpDate: "",
@@ -121,7 +140,7 @@ const ClinicVisit = (props) => {
     stiTreated: "",
     uuid: "",
     visitDate: "",
-    whoStagingId: 0
+    whoStagingId: ""
   });
   const [vital, setVitalSignDto] = useState({
     bodyWeight: "",
@@ -149,9 +168,25 @@ const ClinicVisit = (props) => {
     WhoStaging();
     AdherenceLevel();
     TBStatus();
-    VitalSigns()
-    GetPatientObj()
+    VitalSigns();
+    GetPatientObj();
+    ClinicVisitList();
   }, []);
+     //GET LIST Drug Refill
+     async function ClinicVisitList() {
+      setLoading(true)
+      axios
+          .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
+          { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+              setLoading(false)
+              setClinicVisitList(response.data);                
+          })
+          .catch((error) => {  
+              setLoading(false)  
+          });        
+    }
   //Check for the last Vital Signs
   const VitalSigns = () => {
     axios
@@ -162,7 +197,6 @@ const ClinicVisit = (props) => {
 
         const lastVitalSigns = response.data[response.data.length - 1]
         if (lastVitalSigns.encounterDate === moment(new Date()).format("YYYY-MM-DD") === true) {
-          console.log(lastVitalSigns)
           setcurrentVitalSigns(lastVitalSigns)
           setShowCurrentVitalSigns(true)
         }
@@ -275,7 +309,6 @@ const ClinicVisit = (props) => {
   const handleCheckBox = e => {
     if (e.target.checked) {
       //currentVitalSigns.personId === null ? props.patientObj.id : currentVitalSigns.personId
-      console.log(currentVitalSigns)
       setVitalSignDto({ ...currentVitalSigns })
     } else {
       setVitalSignDto({
@@ -326,6 +359,11 @@ const ClinicVisit = (props) => {
   //Validations of the forms
   const validate = () => {        
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
+    temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
+    temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
+    temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
+    temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
+    temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
     temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
     temp.systolic = vital.systolic ? "" : "This field is required"
     temp.height = vital.height ? "" : "This field is required"
@@ -335,6 +373,24 @@ const ClinicVisit = (props) => {
     })
     return Object.values(temp).every(x => x == "")
   }
+
+  const  heightFunction =(e)=>{
+    if(e==='cm'){
+        setHeightValue('cm')
+        if(vital.height!==""){
+            const newHeightValue= (vital.height * 100)
+            setVitalSignDto ({...vital,  height: newHeightValue});
+        }
+    }else if(e==='m'){
+        setHeightValue('m')
+        if(vital.height!==""){
+            const newHeightValue= (vital.height/100)
+            setVitalSignDto ({...vital,  height: newHeightValue});
+        }
+        
+    }
+
+}
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -378,33 +434,89 @@ const ClinicVisit = (props) => {
       <div className="col-md-6">
         <h2>Clinic Follow-up Visit</h2>
         </div>
-        {/* <div className="col-md-6">
-            <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous Clinic Visit</Button>
-        </div> */}
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+        
       </div>
       <Grid columns='equal'>
-        {/* <Grid.Column>
-          {showCurrentVitalSigns && (
+       <Grid.Column width={3}>
+          
             <Segment>
               <Label as='a' color='blue' ribbon>
-                Recent Vitals
+                 Vital Signs
               </Label>
               <br />
-              <List celled>
-                {currentVitalSigns.pulse!==null ? <List.Item>Pulse <span className="float-end"><b>{currentVitalSigns.pulse}bpm</b></span></List.Item> :""}
-                {currentVitalSigns.respiratoryRate!==null ?<List.Item>Respiratory Rate <span className="float-end"><b>{currentVitalSigns.respiratoryRate}bpm</b></span></List.Item> :""}
-                 {currentVitalSigns.temperature!==null ?<List.Item>Temperature <span className="float-end"><b>{currentVitalSigns.temperature}<sup>0</sup>C</b></span></List.Item> :""}
-                 {currentVitalSigns.systolic!==null && currentVitalSigns.diastolic!==null ?<List.Item>Blood Presure <span className="float-end"><b>{currentVitalSigns.systolic}/{currentVitalSigns.diastolic}</b> mmHg</span></List.Item> :""}
-                 {currentVitalSigns.height!==null ?<List.Item>Height <span className="float-end"><b>{currentVitalSigns.height}cm</b></span></List.Item> :""}
-                 {currentVitalSigns.bodyWeight!==null ?<List.Item>Weight <span className="float-end"><b>{currentVitalSigns.bodyWeight}kg</b></span></List.Item> :""}
-              </List>
+
+               <PerfectScrollbar
+                style={{ height: "370px" }}
+                id="DZ_W_Todo1"
+                className="widget-media dz-scroll ps ps--active-y"
+              >
+                <br/>
+                <ul className="timeline">
+                { clinicVisitList.length > 0 ?(
+                  
+                <Accordion
+                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
+                    defaultActiveKey="0"
+                  >
+                    <>
+                    {clinicVisitList.map((visit, i)=>
+                  <div className="accordion-item" key={i}>
+                    <Accordion.Toggle
+                      as={Card.Text}
+                      eventKey={`${i}`}
+                      className={`accordion-header ${
+                        activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                      } accordion-header-info`}
+                      onClick={() =>
+                        setActiveAccordionHeaderShadow(
+                          activeAccordionHeaderShadow === 1 ? -1 : i
+                        )
+                      }
+                    >
+                      <span className="accordion-header-icon"></span>
+                      <span className="accordion-header-text">Date : <span className="">{visit.visitDate}</span> </span>
+                      <span className="accordion-header-indicator"></span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse
+                      eventKey={`${i}`}
+                      className="accordion__body"
+                    >
+                      <div className="accordion-body-text">
+                    
+                          <List celled style={{width:'100%'}}>
+                              {visit.vitalSignDto && visit.vitalSignDto.pulse!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px',borderTop:'1px solid #fff', marginTop:'-5px' }}>Pulse <span style={{color:'rgb(153, 46, 98)'}} className="float-end"><b>{visit.vitalSignDto.pulse} bpm</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.respiratoryRate!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Respiratory Rate <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.respiratoryRate} bpm</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.temperature!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Temperature <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.temperature} <sup>0</sup>C</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.systolic!==null && visit.vitalSignDto.diastolic!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Blood Pressure <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.systolic}/{visit.vitalSignDto.diastolic}</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Height <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.height} cm</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
+                              {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{Math.round(visit.vitalSignDto.bodyWeight/(visit.vitalSignDto.height/100))} kg</b></span></List.Item>)}
+                          </List>
+                         
+                      </div>
+                    </Accordion.Collapse>
+                  </div>
+                )}
+                </>
+              </Accordion>             
+
+            ):
+            (
+              <>
+              <br/>
+              <Alert
+                  variant="info"
+                  className="alert-dismissible solid fade show"
+                >
+                  <p>No Vital Signs</p>
+                </Alert>
+              </>
+            )}
+                </ul>
+                </PerfectScrollbar>
             </Segment>
-          )}
-          <Segment>
+         
+          {/* <Segment>
             <Label as='a' color='black' ribbon>
               Conditions
             </Label>
@@ -438,12 +550,12 @@ const ClinicVisit = (props) => {
 
             </Label.Group>
 
-          </Segment>
-        </Grid.Column> */}
-        <Grid.Column >
+          </Segment> */}
+        </Grid.Column>
+        <Grid.Column width={9}>
           <Segment>
             <Label as='a' color='blue' ribbon>
-              <b>Vital Signs</b>
+              <b>VITAL SIGNS</b>
             </Label>
             <br /><br />
             <div className="row">
@@ -455,6 +567,7 @@ const ClinicVisit = (props) => {
                     name="encounterDate"
                     id="encounterDate"
                     value={vital.encounterDate}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     onChange={handleInputChangeVitalSignDto}
                     max={moment(new Date()).format("YYYY-MM-DD")}
                     required
@@ -473,7 +586,8 @@ const ClinicVisit = (props) => {
                       className="form-check-input"
                       name="currentVitalSigns"
                       id="currentVitalSigns"
-                      onChange={handleCheckBox}
+                      onChange={handleCheckBox} 
+                                          
                     />
                     <label
                       className="form-check-label"
@@ -489,7 +603,7 @@ const ClinicVisit = (props) => {
                   <FormLabelName >Body Weight</FormLabelName>
 
                   <InputGroup>
-                    <InputGroupText>
+                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                       kg
                     </InputGroupText>
                     <Input
@@ -497,6 +611,7 @@ const ClinicVisit = (props) => {
                       name="bodyWeight"
                       id="bodyWeight"
                       onChange={handleInputChangeVitalSignDto}
+                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                       min="3"
                       max="150"
                       value={vital.bodyWeight}
@@ -516,9 +631,7 @@ const ClinicVisit = (props) => {
                 <FormGroup>
                   <FormLabelName >Height</FormLabelName>
                   <InputGroup>
-                    <InputGroupText>
-                      cm
-                    </InputGroupText>
+                    
                     <Input
                       type="number"
                       name="height"
@@ -528,8 +641,22 @@ const ClinicVisit = (props) => {
                       min="48.26"
                       max="216.408"
                       onKeyUp={handleInputValueCheckHeight}
+                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                     />
-
+                     <InputGroupButtonDropdown
+                        addonType="append"
+                        isOpen={dropdownOpen}
+                        toggle={toggleDropDown}
+                        style={{ backgroundColor:"#014D88"}}
+                        
+                        >
+                        <DropdownToggle caret style={{ backgroundColor:"#014D88"}}>{heightValue ==='cm'? 'cm' : 'm'}</DropdownToggle>
+                        <DropdownMenu>
+                      
+                            <DropdownItem onClick={()=>heightFunction(heightValue ==='cm'? 'm' : 'cm')}>{heightValue ==='cm'? 'm' : 'cm'}</DropdownItem>
+                                
+                        </DropdownMenu>
+                      </InputGroupButtonDropdown>
                   </InputGroup>
                   {vitalClinicalSupport.height !=="" ? (
                     <span className={classes.error}>{vitalClinicalSupport.height}</span>
@@ -541,18 +668,19 @@ const ClinicVisit = (props) => {
               </div>
               {vital.bodyWeight!=="" && vital.height!=="" && (
               <div className="form-group mb-3 col-md-6">
-                <FormGroup>
+               <FormGroup>
                   <FormLabelName >BMI</FormLabelName>
                   
                   <InputGroup> 
-                  <InputGroupText>
+                  <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                       BMI
-                    </InputGroupText>                   
-                    <Input
-                      type="number"
-                      disabled
-                      value={Math.round(vital.bodyWeight/(vital.height/100))}
-                    />
+                  </InputGroupText>                   
+                  <Input
+                  type="number"
+                  disabled
+                  value={Math.round(vital.bodyWeight/(vital.height/100))}
+                  style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                  />
                   </InputGroup>                
                 </FormGroup>
               </div>
@@ -561,7 +689,7 @@ const ClinicVisit = (props) => {
                 <FormGroup>
                   <FormLabelName >Blood Pressure</FormLabelName>
                   <InputGroup>
-                    <InputGroupText>
+                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                       systolic(mmHg)
                     </InputGroupText>
                     <Input
@@ -573,6 +701,7 @@ const ClinicVisit = (props) => {
                       onChange={handleInputChangeVitalSignDto}
                       value={vital.systolic}
                       onKeyUp={handleInputValueCheckSystolic}
+                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                     />
 
                   </InputGroup>
@@ -589,7 +718,7 @@ const ClinicVisit = (props) => {
                   <FormLabelName >Blood Pressure</FormLabelName>
 
                   <InputGroup>
-                    <InputGroupText>
+                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                       diastolic(mmHg)
                     </InputGroupText>
                     <Input
@@ -599,6 +728,7 @@ const ClinicVisit = (props) => {
                       onChange={handleInputChangeVitalSignDto}
                       value={vital.diastolic}
                       onKeyUp={handleInputValueCheckDiastolic}
+                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                     />
 
                   </InputGroup>
@@ -612,7 +742,7 @@ const ClinicVisit = (props) => {
               </div>
             </div>
             <Label as='a' color='black' ribbon>
-              <b>Consultation</b>
+              <b>CONSULTATION</b>
             </Label>
             <br /><br />
 
@@ -623,19 +753,24 @@ const ClinicVisit = (props) => {
                 className="form-control"
                 value={objValues.clinicalNote}
                 onChange={handleInputChange}
+                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
               ></textarea>
+              {errors.clinicalNote !=="" ? (
+                      <span className={classes.error}>{errors.clinicalNote}</span>
+                  ) : "" }
             </div>
             <div className="row">
 
               <div className=" mb-3 col-md-6">
                 <FormGroup>
-                  <FormLabelName >WHO Staging 8</FormLabelName>
+                  <FormLabelName >WHO Staging *</FormLabelName>
                   <Input
                     type="select"
                     name="whoStagingId"
                     id="whoStagingId"
                     value={objValues.whoStagingId}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                   >
                     <option value="select">Select </option>
@@ -646,7 +781,9 @@ const ClinicVisit = (props) => {
                       </option>
                     ))}
                   </Input>
-
+                  {errors.whoStagingId !=="" ? (
+                      <span className={classes.error}>{errors.whoStagingId}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
               <div className=" mb-3 col-md-6">
@@ -658,6 +795,7 @@ const ClinicVisit = (props) => {
                     id="functionalStatusId"
                     value={objValues.functionalStatusId}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                   >
                     <option value="select">Select </option>
@@ -668,6 +806,9 @@ const ClinicVisit = (props) => {
                       </option>
                     ))}
                   </Input>
+                  {errors.functionalStatusId !=="" ? (
+                      <span className={classes.error}>{errors.functionalStatusId}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
               <div className=" mb-3 col-md-6">
@@ -679,6 +820,7 @@ const ClinicVisit = (props) => {
                     id="adherenceLevel"
                     value={objValues.adherenceLevel}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                   >
                     <option value="select">Select </option>
@@ -689,13 +831,16 @@ const ClinicVisit = (props) => {
                       </option>
                     ))}
                   </Input>
+                  {errors.adherenceLevel !=="" ? (
+                      <span className={classes.error}>{errors.adherenceLevel}</span>
+                  ) : "" }
                 </FormGroup>
               </div>
 
             </div>
             <br />
             <Label as='a' color='red' ribbon>
-              Opportunistic Infection
+              OPPORTUNISTIC INFECTION
             </Label>
             <br /><br />
             <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} />
@@ -707,14 +852,14 @@ const ClinicVisit = (props) => {
             <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} />
             <br />
             <Label as='a' color='teal' ribbon>
-              TB Screening
+              TB SCREENING
             </Label>
             <br /><br />
             {/* TB Screening Form */}
             <TBScreening tbObj={tbObj} setTbObj={setTbObj} />
             <br />
             <Label as='a' color='blue' ribbon>
-              Next Clinical Appointment Date
+              NEXT CLINICAL APPOINTMENT DATE
             </Label>
             <br /><br />
             {/* TB Screening Form */}
@@ -722,11 +867,16 @@ const ClinicVisit = (props) => {
                     type="date"
                     name="nextAppointment"
                     id="nextAppointment"
+                    className="col-md-6"
                     value={vital.nextAppointment}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     min={moment(new Date()).format("YYYY-MM-DD")}
                     required
                   />
+              {errors.nextAppointment !=="" ? (
+                      <span className={classes.error}>{errors.nextAppointment}</span>
+                  ) : "" }
             <br />
             <MatButton
               type="submit"
@@ -744,6 +894,90 @@ const ClinicVisit = (props) => {
                 <span style={{ textTransform: "capitalize" }}>Saving...</span>
               )}
             </MatButton>
+          </Segment>
+        </Grid.Column>
+        <Grid.Column width={4}>
+          <Segment>
+            {/* <List>
+              <List.Item>
+                <Button icon labelPosition='right' color='teal' fluid onClick={() => PostPatientService()}>
+                  <Icon name='external alternate' />
+                  Post Patient
+                </Button>
+              </List.Item>
+              <List.Item>
+                  <Button icon labelPosition='right' style={{backgroundColor:"#922C5D"}} color='green' fluid>
+                      <Icon name='eye' />
+                        View Consultation History
+                    </Button>
+              </List.Item>
+            </List> */}
+            <Card>
+              <Card.Content style={{backgroundColor:"#014d88", color:"#fff"}}>
+                <b>Previous Clinical Notes</b>
+              </Card.Content>
+              <Card.Content>
+              <PerfectScrollbar
+                style={{ height: "370px" }}
+                id="DZ_W_Todo1"
+                className="widget-media dz-scroll ps ps--active-y"
+              >
+                <ul className="timeline">
+                { clinicVisitList.length > 0 ?(
+                  
+                <Accordion
+                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
+                    defaultActiveKey="0"
+                  >
+                    <>
+                    {clinicVisitList.map((visit, i)=>
+                  <div className="accordion-item" key={i}>
+                    <Accordion.Toggle
+                      as={Card.Text}
+                      eventKey={`${i}`}
+                      className={`accordion-header ${
+                        activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                      } accordion-header-info`}
+                      onClick={() =>
+                        setActiveAccordionHeaderShadow(
+                          activeAccordionHeaderShadow === 1 ? -1 : i
+                        )
+                      }
+                    >
+                      <span className="accordion-header-icon"></span>
+                      <span className="accordion-header-text">Consultation Date - <span className="">{visit.visitDate}</span> </span>
+                      <span className="accordion-header-indicator "></span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse
+                      eventKey={`${i}`}
+                      className="accordion__body"
+                    >
+                      <div className="accordion-body-text">
+                          <p>{visit.clinicalNote}</p>
+                      </div>
+                    </Accordion.Collapse>
+                  </div>
+                )}
+                </>
+              </Accordion>             
+
+                    ):
+                    (
+                      <>
+                      <br/>
+                      <Alert
+                          variant="info"
+                          className="alert-dismissible solid fade show"
+                        >
+                          <p>No Clinical Notes</p>
+                        </Alert>
+                      </>
+                    )}
+                </ul>
+                </PerfectScrollbar>
+              </Card.Content>
+            </Card>
+
           </Segment>
         </Grid.Column>
       </Grid>

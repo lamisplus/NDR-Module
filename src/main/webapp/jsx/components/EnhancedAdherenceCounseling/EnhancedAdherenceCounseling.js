@@ -141,6 +141,7 @@ const EAC = (props) => {
                                 value={objValues.dateOfEac}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
                             {errors.dateOfEac !=="" ? (
@@ -158,6 +159,7 @@ const EAC = (props) => {
                                 value={objValues.dateOfLastViralLoad}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
                             
@@ -172,6 +174,7 @@ const EAC = (props) => {
                                 id="lastViralLoad"
                                 value={objValues.lastViralLoad}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
                             
@@ -186,6 +189,7 @@ const EAC = (props) => {
                                 id="note"
                                 value={objValues.note}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             </FormGroup>
                         </div>
