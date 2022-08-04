@@ -2,16 +2,21 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
-import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
-import org.lamisplus.modules.hiv.domain.dto.HivPatientEnrollmentDto;
+import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.service.HivEnrollmentService;
 import org.lamisplus.modules.hiv.service.HivPatientService;
+import org.lamisplus.modules.hiv.service.PatientActivityService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -20,7 +25,10 @@ import java.util.List;
 public class HivEnrollmentController {
     private final HivEnrollmentService hivEnrollmentService;
 
-    private  final HivPatientService patientService;
+    private final HivPatientService patientService;
+
+    private final PatientActivityService patientActivityService;
+
 
     @PostMapping(value = "enrollment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HivPatientDto> createHivEnrollment(@RequestBody HivEnrollmentDto hiv) {
@@ -29,7 +37,7 @@ public class HivEnrollmentController {
 
     @GetMapping(value = "patient/enrollment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<HivPatientDto>> getAllHivEnrollments() {
-        return ResponseEntity.ok (hivEnrollmentService.getAll());
+        return ResponseEntity.ok (hivEnrollmentService.getAll ());
     }
 
     @GetMapping(value = "patients", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,15 +47,22 @@ public class HivEnrollmentController {
 
     @PostMapping(value = "patient", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HivPatientDto> registerHivPatient(@RequestBody HivPatientEnrollmentDto hivPatientEnrollmentDto) {
-        return ResponseEntity.ok (patientService.registerAndEnrollHivPatient(hivPatientEnrollmentDto));
+        return ResponseEntity.ok (patientService.registerAndEnrollHivPatient (hivPatientEnrollmentDto));
     }
+
     @GetMapping(value = "patient/checked-in", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<HivPatientDto>> getHivCheckInPatients() {
         return ResponseEntity.ok (patientService.getHivCheckedInPatients ());
     }
+
     @GetMapping(value = "patient/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HivPatientDto> getHivPatientById(@PathVariable("id") Long id) {
         return ResponseEntity.ok (patientService.getHivPatientById (id));
+    }
+
+    @GetMapping(value = "patient/activities", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PatientActivity>> getPatientActivity(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (patientService.getHivPatientActivitiesById (id));
     }
 
 
@@ -61,9 +76,34 @@ public class HivEnrollmentController {
         return ResponseEntity.ok (hivEnrollmentService.updateHivEnrollment (id, hivEnrollment));
     }
 
-    @DeleteMapping(value = "enrollment/{id}",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "enrollment/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteHivEnrollmentById(@PathVariable("id") Long id) {
         hivEnrollmentService.deleteHivEnrollment (id);
         return ResponseEntity.accepted ().build ();
+    }
+
+
+    @GetMapping("/patients/{patientId}/activities")
+    public List<TimelineVm> getActivities(@PathVariable Long patientId, @RequestParam(required = false, defaultValue = "false") Boolean full) {
+        List<PatientActivity> patientActivities = patientActivityService.getActivitiesFor (patientId);
+        List<TimelineVm> timeline = new ArrayList<> ();
+        Map<String, List<PatientActivity>> activities = patientActivities.stream ()
+                .sorted (Comparator.comparing (PatientActivity::getName))
+                .sorted ((a1, a2) -> a2.getDate ().compareTo (a1.getDate ()))
+                .collect (Collectors.groupingBy (activity -> activity.getDate ().format (DateTimeFormatter.ofPattern ("dd MMM, yyyy"))));
+        activities.forEach ((d, a) -> {
+            TimelineVm timelineVm = new TimelineVm ();
+            timelineVm.setDate (d);
+            timelineVm.setActivities (a);
+            timeline.add (timelineVm);
+        });
+
+        return timeline.stream ()
+                .sorted ((t1, t2) -> LocalDate.parse (t2.getDate (), DateTimeFormatter.ofPattern ("dd MMM, yyyy"))
+                        .compareTo (LocalDate.parse (t1.getDate (), DateTimeFormatter.ofPattern ("dd MMM, yyyy")))
+                )
+                .skip (0)
+                .limit (full ? Long.MAX_VALUE : 3)
+                .collect (Collectors.toList ());
     }
 }

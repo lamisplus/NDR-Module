@@ -79,6 +79,7 @@ public class HivEnrollmentService {
     public List<HivPatientDto> getAll() {
         return hivEnrollmentRepository.getHivEnrollmentByArchived (0)
                 .stream ()
+                .filter (hivEnrollment -> hivEnrollment.getFacilityId ().equals (currentUserOrganizationService.getCurrentUserOrganization ()))
                 .map (this::convertHivEnrollmentToHivPatientDto)
                 .collect (Collectors.toList ());
 
