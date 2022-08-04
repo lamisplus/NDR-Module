@@ -7,13 +7,13 @@ import org.lamisplus.modules.hiv.domain.entity.HIVEac;
 import org.lamisplus.modules.hiv.repositories.HIVEacRepository;
 import org.lamisplus.modules.hiv.service.PatientActivityProvider;
 import org.lamisplus.modules.patient.domain.entity.Person;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class EACActivityProvider implements PatientActivityProvider {
 
@@ -43,6 +43,6 @@ public class EACActivityProvider implements PatientActivityProvider {
             date = eac.getDateOfEac3 ();
         }
 
-        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, null, "EAC");
+        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", "EAC");
     }
 }

@@ -15,7 +15,6 @@ import Pharmacy from './../Pharmacy/Index';
 import Laboratory from './../Laboratory/index';
 import AncPnc from './../PmtctServices/AncPnc';
 import AncEnrollement from './../PmtctServices/AncEnrollement';
-//import ChildConsultation from './../ChildConsultation/Home';
 import LabourDelivery from './../PmtctServices/LabourDelivery';
 import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
 import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
