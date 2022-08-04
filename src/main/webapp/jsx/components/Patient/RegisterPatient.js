@@ -89,6 +89,7 @@ const schema = yup.object().shape({
     countryId: yup.number().required(),
     stateId: yup.number().required(),
     district: yup.number().nullable(),
+    ninNumber: yup.number().nullable(),
 });
 
 const UserRegistration = (props) => {
@@ -230,6 +231,7 @@ const UserRegistration = (props) => {
         } else {
             if(contacts === undefined){
                 setContacts([].concat(contact));
+                
             }else{
                 setContacts(contacts.concat(contact));
             }
@@ -241,6 +243,7 @@ const UserRegistration = (props) => {
         setShowRelative(false);
     }
     const onSubmit = async (data) => {
+        console.log(data.dateOfRegistration)
         try {
             const patientForm = {
                 active: true,
@@ -345,7 +348,7 @@ const UserRegistration = (props) => {
 
     const loadGenders = useCallback(async () => {
         try {
-            const response = await axios.get(`${baseUrl}application-codesets/v2/GENDER`, { headers: {"Authorization" : `Bearer ${token}`} });
+            const response = await axios.get(`${baseUrl}application-codesets/v2/SEX`, { headers: {"Authorization" : `Bearer ${token}`} });
             setGenders(response.data);
         } catch (e) {
             toast.error("An error occured while fetching gender codesets !", {
@@ -1652,6 +1655,7 @@ const UserRegistration = (props) => {
                                         color="primary"
                                         className={classes.button}
                                         startIcon={<SaveIcon />}
+                                        style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
                                     >
                                         {!saving ? (
                                             <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -1668,6 +1672,7 @@ const UserRegistration = (props) => {
                                         color="primary"
                                         className={classes.button}
                                         startIcon={<SaveIcon />}
+                                        style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
                                     >
                                         {!saving ? (
                                             <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -1680,7 +1685,8 @@ const UserRegistration = (props) => {
                             <MatButton
                                 variant="contained"
                                 className={classes.button}
-                                startIcon={<CancelIcon />}
+                                startIcon={<CancelIcon style={{color:'#fff'}}/>}  
+                                style={{backgroundColor:'#992E62'}} 
                                 onClick={handleCancel}
                             >
                                 <span style={{ textTransform: "capitalize" }}>Cancel</span>

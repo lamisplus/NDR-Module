@@ -27,12 +27,12 @@ const ClinicVisitPage = (props) => {
                     className="mb-3"
                 >
 
-                  <Tab eventKey="home" title="Clinic Visit">                   
+                  <Tab eventKey="home" title="CLINIC VISIT ">                   
                     <ConsultationPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>  
-                  {/* <Tab eventKey="history" title=" History">                   
+                  <Tab eventKey="history" title=" HISTORY">                   
                     <ClinicHistoryPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
-                  </Tab>                    */}
+                  </Tab>                   
                 </Tabs>
               </div>
             </Card.Body>

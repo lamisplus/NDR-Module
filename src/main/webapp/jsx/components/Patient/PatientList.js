@@ -248,7 +248,7 @@ const Patients = (props) => {
                                             >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
-                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'50px',width:'220px'}}
+                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
                                                     size="large"
                                                 >
                                                 <Button
@@ -256,7 +256,7 @@ const Patients = (props) => {
                                                 size="small"
                                                 aria-label="select merge strategy"
                                                 aria-haspopup="menu"
-                                                style={{backgroundColor:"#014d88"}}
+                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
                                                 >
                                                     <TiArrowForward />
                                                 </Button>

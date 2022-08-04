@@ -138,6 +138,7 @@ const MentalHealthScreening = (props) => {
                                 id="mhs1"
                                 value={objValues.mhs1}
                                 onChange={handleInputChangeKP}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>
@@ -155,6 +156,7 @@ const MentalHealthScreening = (props) => {
                                 id="mhs2"
                                 value={objValues.mhs2}
                                 onChange={handleInputChangeKP}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>
@@ -172,6 +174,7 @@ const MentalHealthScreening = (props) => {
                             id="mhs3"
                             value={objValues.mhs3}
                             onChange={handleInputChangeKP}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             required
                             >
                             <option value=""> Select</option>
@@ -189,6 +192,7 @@ const MentalHealthScreening = (props) => {
                                 id="mhs4"
                                 value={objValues.mhs4}
                                 onChange={handleInputChangeKP}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>
@@ -206,6 +210,7 @@ const MentalHealthScreening = (props) => {
                                 id="mhs5"
                                 value={objValues.mhs5}
                                 onChange={handleInputChangeKP}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>

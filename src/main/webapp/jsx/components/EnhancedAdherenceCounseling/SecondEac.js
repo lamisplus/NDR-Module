@@ -119,6 +119,7 @@ const EAC = (props) => {
                                 value={objValues.dateOfEac}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
                             {errors.dateOfEac !=="" ? (
