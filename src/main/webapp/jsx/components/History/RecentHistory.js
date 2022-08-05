@@ -110,7 +110,6 @@ const RecentHistory = (props) => {
         });        
   }
   const labStatus =(status)=> {
-    console.log(status)
       if(status===0){
         return "timeline-badge info"
       }else if(status===1){
@@ -229,7 +228,6 @@ const RecentHistory = (props) => {
                         {data.activities && data.activities.map((activity,index) => ( 
                          
                           <>
-                           {console.log(activity)}
                             <li>
                               <div className="timeline-panel">
                               <div className={index % 2 == 0 ? "media me-2 media-info" : "media me-2 media-success"}>{ActivityName(activity.name)}</div>
