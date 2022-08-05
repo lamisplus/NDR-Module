@@ -48,7 +48,7 @@ public class HivPatientService {
 
     private final ObservationRepository observationRepository;
 
-    public HivPatientDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
+    public HivEnrollmentDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
         Long personId = hivPatientEnrollmentDto.getPerson ().getId ();
         processAndSavePatient (hivPatientEnrollmentDto, hivEnrollmentDto, personId);

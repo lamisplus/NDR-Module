@@ -15,10 +15,6 @@ public class CurrentUserOrganizationService {
 
     public Long getCurrentUserOrganization() {
         Optional<User> userWithRoles = userService.getUserWithRoles ();
-        if (userWithRoles.isPresent ()) {
-            User user = userWithRoles.get ();
-            return user.getCurrentOrganisationUnitId ();
-        }
-        return null;
+       return userWithRoles.map (User::getCurrentOrganisationUnitId).orElse (null);
     }
 }

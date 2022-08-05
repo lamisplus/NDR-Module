@@ -12,6 +12,7 @@ import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
 import org.lamisplus.modules.hiv.domain.dto.ARTClinicalCommenceDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
+import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
@@ -256,14 +257,14 @@ public class ArtCommenceService {
         Long personId = entity.getPerson ().getId ();
         PersonResponseDto bioData = personService.getPersonById (personId);
         ARTClinicalCommenceDto artClinicalCommenceDto = convertArtToResponseDto (entity);
-        HivPatientDto hivEnrollmentBy = enrollmentService.getHivEnrollmentById (entity.getHivEnrollment ().getId ());
+        HivEnrollmentDto hivEnrollmentDto = enrollmentService.getHivEnrollmentById (entity.getHivEnrollment ().getId ());
         HivPatientDto hivPatientDto = new HivPatientDto ();
         hivPatientDto.setArtCommence (artClinicalCommenceDto);
         BeanUtils.copyProperties (bioData, hivPatientDto);
         hivPatientDto.setEnrolled (true);
         hivPatientDto.setCommenced (true);
         hivPatientDto.setCurrentStatus (hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId (entity.getPerson ().getId ()));
-        hivPatientDto.setEnrollment (hivEnrollmentBy.getEnrollment ());
+        hivPatientDto.setEnrollment (hivEnrollmentDto);
         return hivPatientDto;
     }
 

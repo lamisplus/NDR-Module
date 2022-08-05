@@ -52,7 +52,7 @@ public class HivEnrollmentService {
 
 
 
-    public HivPatientDto createHivEnrollment(HivEnrollmentDto hivEnrollmentDto) {
+    public HivEnrollmentDto createHivEnrollment(HivEnrollmentDto hivEnrollmentDto) {
         final Long personId = hivEnrollmentDto.getPersonId ();
         Person person = getPerson (personId);
         if (hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0).isPresent ())
@@ -64,15 +64,17 @@ public class HivEnrollmentService {
         hivEnrollment.setVisit (visit);
         }
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
-        return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
+        return convertToDto (hivEnrollmentRepository.save (hivEnrollment));
     }
 
 
-    public HivPatientDto updateHivEnrollment(Long id, HivEnrollmentDto hivEnrollmentDto) {
+    public HivEnrollmentDto updateHivEnrollment(Long id, HivEnrollmentDto hivEnrollmentDto) {
         HivEnrollment existHivEnrollment = getExistEnrollmentById (id);
         HivEnrollment hivEnrollment = convertToEntity (hivEnrollmentDto);
         hivEnrollment.setId (existHivEnrollment.getId ());
-        return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
+        hivEnrollment.setPerson (existHivEnrollment.getPerson ());
+        hivEnrollment.setVisit (existHivEnrollment.getVisit ());
+        return convertToDto (hivEnrollmentRepository.save (hivEnrollment));
     }
 
 
@@ -85,8 +87,8 @@ public class HivEnrollmentService {
 
     }
 
-    public HivPatientDto getHivEnrollmentById(Long id) {
-        return convertHivEnrollmentToHivPatientDto (getExistEnrollmentById (id));
+    public HivEnrollmentDto getHivEnrollmentById(Long id) {
+        return convertToDto (getExistEnrollmentById (id));
     }
 
 
@@ -116,6 +118,7 @@ public class HivEnrollmentService {
         BeanUtils.copyProperties (entity, hivEnrollmentDto);
         hivEnrollmentDto.setPersonId (entity.getPerson ().getId ());
         log.info ("dto converted {} ", hivEnrollmentDto);
+        hivEnrollmentDto.setVisitId (entity.getVisit ().getId ());
         return hivEnrollmentDto;
     }
 

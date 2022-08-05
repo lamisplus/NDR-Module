@@ -25,7 +25,7 @@ public class HivEnrollmentController {
 
 
     @PostMapping(value = "enrollment", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivPatientDto> createHivEnrollment(@RequestBody HivEnrollmentDto hiv) {
+    public ResponseEntity<HivEnrollmentDto> createHivEnrollment(@RequestBody HivEnrollmentDto hiv) {
         return ResponseEntity.ok (hivEnrollmentService.createHivEnrollment (hiv));
     }
 
@@ -40,7 +40,7 @@ public class HivEnrollmentController {
     }
 
     @PostMapping(value = "patient", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivPatientDto> registerHivPatient(@RequestBody HivPatientEnrollmentDto hivPatientEnrollmentDto) {
+    public ResponseEntity<HivEnrollmentDto> registerHivPatient(@RequestBody HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         return ResponseEntity.ok (patientService.registerAndEnrollHivPatient (hivPatientEnrollmentDto));
     }
 
@@ -61,12 +61,12 @@ public class HivEnrollmentController {
 
 
     @GetMapping(value = "enrollment/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivPatientDto> getHivEnrollmentById(@PathVariable("id") Long id) {
+    public ResponseEntity<HivEnrollmentDto> getHivEnrollmentById(@PathVariable("id") Long id) {
         return ResponseEntity.ok (hivEnrollmentService.getHivEnrollmentById (id));
     }
 
     @PutMapping(value = "enrollment/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HivPatientDto> updateHivEnrollmentById(@PathVariable("id") Long id, @RequestBody HivEnrollmentDto hivEnrollment) {
+    public ResponseEntity<HivEnrollmentDto> updateHivEnrollmentById(@PathVariable("id") Long id, @RequestBody HivEnrollmentDto hivEnrollment) {
         return ResponseEntity.ok (hivEnrollmentService.updateHivEnrollment (id, hivEnrollment));
     }
 
