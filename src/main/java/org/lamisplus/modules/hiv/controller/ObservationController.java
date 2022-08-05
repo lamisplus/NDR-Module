@@ -33,6 +33,15 @@ public class ObservationController {
         return ResponseEntity.ok (observationService.updateObservation (id, observationDto));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ObservationDto> getObservationById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (observationService.getObservationById (id));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteObservationById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (observationService.deleteById (id));
+    }
+
     @GetMapping("/person/{id}")
     public ResponseEntity<List<ObservationDto>> getObservationByPersonId(@PathVariable("id") Long id) {
         return ResponseEntity.ok (observationService.getAllObservationByPerson (id));

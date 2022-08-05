@@ -47,6 +47,7 @@ public class ObservationService {
         observation.setPerson (person);
         observation.setUuid (UUID.randomUUID ().toString ());
         observation.setVisit (visit);
+        observation.setArchived (1);
         Observation saveObservation = observationRepository.save (observation);
         observationDto.setId (saveObservation.getId ());
         return observationDto;
@@ -67,6 +68,20 @@ public class ObservationService {
         observationDto.setId (saveObservation.getId ());
         observationDto.setFacilityId (saveObservation.getFacilityId ());
         return observationDto;
+    }
+
+    public ObservationDto getObservationById(Long id) {
+        return convertObservationToDto (getObservation (id));
+    }
+    public String deleteById(Long id) {
+        Observation observation = getObservation (id);
+         observation.setArchived (1);
+         observationRepository.save (observation);
+         return "successfully";
+    }
+
+    private Observation getObservation(Long id) {
+        return observationRepository.findById (id).orElseThrow (() -> new EntityNotFoundException (Observation.class, "id", Long.toString (id)));
     }
 
     public List<ObservationDto> getAllObservationByPerson(Long personId) {
