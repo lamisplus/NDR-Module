@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -27,13 +24,13 @@ public class PatientActivityService {
 
     private List<PatientActivity> getActivitiesFor(Long patientId) {
         Person person = patientRepository.findById (patientId).orElse (null);
-        if(person != null){
-            return beanProvider.getBeansOfType(PatientActivityProvider.class)
-                    .stream()
-                    .flatMap(activityProvider -> activityProvider.getActivitiesFor(person).stream())
-                    .collect(toList());
+        if (person != null) {
+            return beanProvider.getBeansOfType (PatientActivityProvider.class)
+                    .stream ()
+                    .flatMap (activityProvider -> activityProvider.getActivitiesFor (person).stream ())
+                    .collect (toList ());
         }
-      return null;
+        return null;
     }
 
 
@@ -58,5 +55,13 @@ public class PatientActivityService {
                 .skip (0)
                 .limit (full ? Long.MAX_VALUE : 3)
                 .collect (Collectors.toList ());
+    }
+
+    public List<PatientActivity> getActivities(Long id) {
+        return Objects.requireNonNull (getActivitiesFor (id))
+                .stream ()
+                .sorted (Comparator.comparing (PatientActivity::getName))
+                .sorted ((a1, a2) -> a2.getDate ().compareTo (a1.getDate ()))
+                .collect (toList ());
     }
 }

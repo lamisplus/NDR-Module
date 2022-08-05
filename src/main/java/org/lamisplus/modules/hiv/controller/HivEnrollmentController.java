@@ -81,6 +81,10 @@ public class HivEnrollmentController {
     public List<TimelineVm> getActivities(@PathVariable Long patientId, @RequestParam(required = false, defaultValue = "false") Boolean full) {
         return patientActivityService.getTimelineVms (patientId, full);
     }
+    @GetMapping("/patients/{patientId}/history/activities")
+    public List<PatientActivity> getActivitiesHistory(@PathVariable Long patientId) {
+        return patientActivityService.getActivities (patientId);
+    }
 
 
 }
