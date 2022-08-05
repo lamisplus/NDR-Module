@@ -57,7 +57,9 @@ const EAC = (props) => {
     const [eacObj, setEacObj] = useState([]);
     const [errors, setErrors] = useState({});
     const [objValues, setObjValues]=useState({
-                                                dateOfEac: "",
+                                                dateOfEac1: null,
+                                                dateOfEac2: null,
+                                                dateOfEac3: null,
                                                 dateOfLastViralLoad: "",
                                                 lastViralLoad:"",
                                                 note: "",
@@ -136,16 +138,16 @@ const EAC = (props) => {
                             <Label for="">Date of EAC </Label>
                             <Input
                                 type="date"
-                                name="dateOfEac"
-                                id="dateOfEac"
-                                value={objValues.dateOfEac}
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac}</span>
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -207,7 +209,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac==="" ? true : false}
+                    disabled={objValues.dateOfEac1==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

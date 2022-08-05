@@ -29,9 +29,7 @@ export default function App() {
           <Route path="/register-patient">
             <RegisterPatientPage />
           </Route>
-          <Route path="/register-patient">
-            {/* <consultation /> */}
-          </Route>
+
           <Route path="/">
             <Home />
           </Route>       

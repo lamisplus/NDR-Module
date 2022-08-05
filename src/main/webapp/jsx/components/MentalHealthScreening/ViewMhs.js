@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ViewMentalHealthScreening = (props) => {
-    
+    console.log(props.activeContent)
     const patientObj = props.patientObj;
     //let history = useHistory();
     const classes = useStyles()
@@ -66,7 +66,25 @@ const ViewMentalHealthScreening = (props) => {
                                                     type: "Mental health",
                                                     visitId: null
                                                 })
- 
+    useEffect(() => {
+        GetMHSDetail();
+        }, [props.activeContent.id]);
+                                                
+    //Get Mental Health Object
+  const GetMHSDetail =()=>{
+    axios
+       .get(`${baseUrl}laboratory/orders/patients/${props.patientObj.id}`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {
+            console.log(response.data)
+              //setViralLoad(LabObject)
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+  }
     const handleInputChangeKP = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }

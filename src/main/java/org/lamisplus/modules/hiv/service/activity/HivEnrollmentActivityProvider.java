@@ -6,19 +6,16 @@ import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.hiv.service.PatientActivityProvider;
 import org.lamisplus.modules.patient.domain.entity.Person;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class HivEnrollmentActivityProvider implements PatientActivityProvider {
-    /**
-     * @param person
-     * @return
-     */
+
     private final HivEnrollmentRepository hivEnrollmentRepository;
 
     @Override
@@ -27,7 +24,7 @@ public class HivEnrollmentActivityProvider implements PatientActivityProvider {
         List<PatientActivity> patientActivities = new ArrayList<> ();
         String name = "HIV Enrollment";
         PatientActivity patientActivity = hivEnrollmentOptional
-                .map (hivEnrollment -> new PatientActivity (hivEnrollment.getId (), name, hivEnrollment.getDateStarted (), null, "HIV-enrollment"))
+                .map (hivEnrollment -> new PatientActivity (hivEnrollment.getId (), name, hivEnrollment.getDateOfRegistration (), "", "hiv-enrollment"))
                 .orElse (null);
         patientActivities.add (patientActivity);
         return patientActivities;

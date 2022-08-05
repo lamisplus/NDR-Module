@@ -127,12 +127,9 @@ public class HivEnrollmentService {
         HivPatientDto hivPatientDto = new HivPatientDto ();
         BeanUtils.copyProperties (bioData, hivPatientDto);
         hivPatientDto.setEnrolled (true);
-
         Long statusAtRegistrationId = entity.getStatusAtRegistrationId ();
         Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (statusAtRegistrationId);
-        if (status.isPresent ()) {
-            hivPatientDto.setCurrentStatus (status.get ().getDisplay ());
-        }
+        status.ifPresent (applicationCodeSet -> hivPatientDto.setCurrentStatus (applicationCodeSet.getDisplay ()));
         hivPatientDto.setEnrollment (hivEnrollmentDto);
         return hivPatientDto;
     }
@@ -144,10 +141,7 @@ public class HivEnrollmentService {
     public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId) {
         Person person = getPerson (personId);
         Optional<HivEnrollment> hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0);
-        if (hivEnrollment.isPresent ()) {
-            return Optional.of (convertToDto (hivEnrollment.get ()));
-        }
-        return Optional.empty ();
+        return hivEnrollment.map (this::convertToDto);
     }
 
     public Person getPerson(Long personId) {

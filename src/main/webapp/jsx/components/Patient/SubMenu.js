@@ -47,61 +47,62 @@ function SubMenu(props) {
         }
 
     const loadAnc =(row)=> {
-        props.setActiveContent('counseling')
+        props.setActiveContent({...props.activeContent, route:'counseling'})
     }
     const loadStatusUpdate =(row)=> {
-        props.setActiveContent('status-update')
+        props.setActiveContent({...props.activeContent, route:'status-update'})
     }
     const loadPharmacyModal =(row)=> {
-        props.setActiveContent('pharmacy')
+        props.setActiveContent({...props.activeContent, route:'pharmacy'})
     }
     const loadLaboratoryModal =(row)=> {
-        props.setActiveContent('laboratory')
+        props.setActiveContent({...props.activeContent, route:'laboratory'})
     }
     const loadCervicalCancer = (row) =>{
-        props.setActiveContent('cervical-cancer')
+        props.setActiveContent({...props.activeContent, route:'cervical-cancer'})
     }
     const loadPrEPDiscontinuationsInterruptions = (row) =>{
-        props.setActiveContent('prep-interruptions')
+        props.setActiveContent({...props.activeContent, route:'prep-interruptions'})
     }
     const loadPrEPRegistrationForm = (row) =>{
-        props.setActiveContent('prep-registration')
+        props.setActiveContent({...props.activeContent, route:'prep-registration'})
     }
     const loadPrEPCommencementForm = (row) =>{
-        props.setActiveContent('prep-commencement')
+        props.setActiveContent({...props.activeContent, route:'prep-commencement'})
     }
     const loadPrEPEligibiltyScreeningForm = (row) =>{
-        props.setActiveContent('prep-screening')
+        props.setActiveContent({...props.activeContent, route:'prep-screening'})
     }
     const loadPrEPVisitForm = (row) =>{
-        props.setActiveContent('prep-visit')
+        props.setActiveContent({...props.activeContent, route:'prep-visit'})
     }
     const onClickConsultation = (row) =>{        
-        props.setActiveContent('consultation')
+        props.setActiveContent({...props.activeContent, route:'consultation'})
     }
     const onClickHome = (row) =>{        
-        props.setActiveContent('recent-history')
+        props.setActiveContent({...props.activeContent, route:'recent-history'})
     }
     const loadAncPnc =(row)=> {
-        props.setActiveContent('anc-pnc')
+        props.setActiveContent({...props.activeContent, route:'anc-pnc'})
     }
     const loadAncAncEnrollment =(row)=> {
-        props.setActiveContent('anc-enrollment')
+        props.setActiveContent({...props.activeContent, route:'anc-enrollment'})
     }
     const onClickChildConsultation =(row)=> {
-        props.setActiveContent('child-consultation')
+        props.setActiveContent({...props.activeContent, route:'child-consultation'})
     }
     const loadLabourDelivery =(row)=> {
-        props.setActiveContent('labour-delivery')
+        props.setActiveContent({...props.activeContent, route:'labour-delivery'})
     }
     const loadMentalHealth = ()=>{
-        props.setActiveContent('mhs')
+        props.setActiveContent({...props.activeContent, route:'mhs'})
     }
     const loadAdultEvaluation =(row)=> {
-        props.setActiveContent('adult-evaluation')
+        props.setActiveContent({...props.activeContent, route:'adult-evaluation'})
+
     }
     const loadPatientHistory = ()=>{
-        props.setActiveContent('patient-history')
+        props.setActiveContent({...props.activeContent, route:'patient-history'})
     }
 
     return (

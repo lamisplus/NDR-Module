@@ -1,13 +1,21 @@
 package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.lamisplus.modules.base.module.BeanProvider;
 import org.lamisplus.modules.hiv.domain.dto.PatientActivity;
+import org.lamisplus.modules.hiv.domain.dto.TimelineVm;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -17,7 +25,7 @@ public class PatientActivityService {
     private final BeanProvider beanProvider;
     private final PersonRepository patientRepository;
 
-    public List<PatientActivity> getActivitiesFor(Long patientId) {
+    private List<PatientActivity> getActivitiesFor(Long patientId) {
         Person person = patientRepository.findById (patientId).orElse (null);
         if(person != null){
             return beanProvider.getBeansOfType(PatientActivityProvider.class)
@@ -26,5 +34,29 @@ public class PatientActivityService {
                     .collect(toList());
         }
       return null;
+    }
+
+
+    @NotNull
+    public List<TimelineVm> getTimelineVms(Long patientId, Boolean full) {
+        List<PatientActivity> patientActivities = getActivitiesFor (patientId);
+        List<TimelineVm> timeline = new ArrayList<> ();
+        Map<String, List<PatientActivity>> activities = patientActivities.stream ()
+                .sorted (Comparator.comparing (PatientActivity::getName))
+                .sorted ((a1, a2) -> a2.getDate ().compareTo (a1.getDate ()))
+                .collect (Collectors.groupingBy (activity -> activity.getDate ().format (DateTimeFormatter.ofPattern ("dd MMM, yyyy"))));
+        activities.forEach ((d, a) -> {
+            TimelineVm timelineVm = new TimelineVm ();
+            timelineVm.setDate (d);
+            timelineVm.setActivities (a);
+            timeline.add (timelineVm);
+        });
+        return timeline.stream ()
+                .sorted ((t1, t2) -> LocalDate.parse (t2.getDate (), DateTimeFormatter.ofPattern ("dd MMM, yyyy"))
+                        .compareTo (LocalDate.parse (t1.getDate (), DateTimeFormatter.ofPattern ("dd MMM, yyyy")))
+                )
+                .skip (0)
+                .limit (full ? Long.MAX_VALUE : 3)
+                .collect (Collectors.toList ());
     }
 }

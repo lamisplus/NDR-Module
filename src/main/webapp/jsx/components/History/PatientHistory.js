@@ -22,28 +22,19 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import {  Card,CardBody,} from 'reactstrap';
-import Button from "@material-ui/core/Button";
-import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
-//import { useHistory } from "react-router-dom";
-import { FaUserPlus } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
+
 import {FaSyringe, FaUserEdit, FaShare, FaTrash} from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
 import { Label } from 'semantic-ui-react'
-
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
-import moment from "moment";
 import { RowingSharp } from '@mui/icons-material';
 
-//Dtate Picker package
-Moment.locale("en");
-momentLocalizer();
+
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -113,6 +104,7 @@ const useStyles = makeStyles(theme => ({
 const PatientnHistory = (props) => {
     const [recentActivities, setRecentActivities] = useState([])
     const [loading, setLoading] = useState(true)
+    let history = useHistory();
 
     useEffect(() => {
         PatientHistory()
@@ -134,34 +126,29 @@ const PatientnHistory = (props) => {
            
           }
     const LoadViewPage =(row)=>{
+        
+        if(row.path==='Mental health'){        
+            props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
 
-        if(row.name==='Mental health'){
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
+        }else if(row.path==='Art-commence'){
+            props.setActiveContent({...props.activeContent, route:'art-commencement-view', id:row.id})
 
-        }else if(row.name==='ART Commencement'){
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
+        }else if(row.path==='Clinical evaluation'){
+            props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
 
-        }else if(row.name==='Clinical evaluation'){
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
+        }else if(row.path==='EAC First'){
+            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='hiv-enrollment'){
+            history.push({
+                pathname: '/register-patient',
+                state: { id: row.id }
+            });
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='Pharmacy'){
+            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
 
-        }else if(row.name==='EAC First'){
-
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
-        }else if(row.name==='HIV Enrollment'){
-
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
-        }else if(row.name==='Pharmacy refill'){
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
-
-        }else if(row.name==='Laboratory'){
-            props.setActiveContent('mental-health-history')
-            props.setHistoryId(row.id)
+        }else if(row.path==='Laboratory'){
+            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
 
         }else{
 
@@ -208,22 +195,22 @@ const PatientnHistory = (props) => {
                                                                     
                                   </MenuItem>
                             )}
-                            {RowingSharp.editable && ( 
+                            {/* {RowingSharp.editable && ( 
                                 <MenuItem style={{ color:"#000 !important"}}  >
                                      
                                         <FaShare size="15"  />{" "}
                                         <span style={{color: '#000'}}>Edit</span>
                                                                     
                                   </MenuItem>
-                            )}
-                            {row.deletable && ( 
+                            )} */}
+                            {/* {row.deletable && ( 
                                 <MenuItem style={{ color:"#000 !important"}}  >
                                      
                                         <FaShare size="15"  />{" "}
                                         <span style={{color: '#000'}}>Delete</span>
                                                                     
                                   </MenuItem>
-                            )}
+                            )} */}
                                   
                                  
                                   

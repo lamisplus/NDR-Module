@@ -410,7 +410,7 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         toast.success("Clinic Visit save successful");
-        props.setActiveContent('recent-history')
+        props.setActiveContent({...props.activeContent, route:'recent-history'})
       })
       .catch(error => {
         setSaving(false);
@@ -498,7 +498,7 @@ const ClinicVisit = (props) => {
                   </div>
                 )}
                 </>
-              </Accordion>             
+                </Accordion>             
 
             ):
             (

@@ -46,6 +46,7 @@ public class HIVStatusTrackerService {
 
     private final PersonService personService;
 
+
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         Long personId = hivStatusTrackerDto.getPersonId ();
         Person existPerson = getPerson (personId);
