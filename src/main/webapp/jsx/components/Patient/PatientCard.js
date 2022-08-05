@@ -158,6 +158,9 @@ function PatientCard(props) {
     const loadChildEvaluation =(row)=> {
       props.setActiveContent('child-evaluation')
     }
+    const loadArtCommencement =(row)=> {
+      props.setActiveContent('art-commencement')
+    }
     
     const loadArt =(row)=> {
         setpatientObj({...patientObj, ...row});

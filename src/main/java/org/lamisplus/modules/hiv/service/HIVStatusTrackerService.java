@@ -45,9 +45,12 @@ public class HIVStatusTrackerService {
     private final VisitRepository visitRepository;
 
     private final PersonService personService;
+<<<<<<< HEAD
+=======
 
 
 
+>>>>>>> b26e19d3abef0290e5eec2c036f35e138346b5a5
 
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         Long personId = hivStatusTrackerDto.getPersonId ();
@@ -190,4 +193,8 @@ public class HIVStatusTrackerService {
         encounter.setFacilityId (organizationUtil.getCurrentUserOrganization ());
         encounterRepository.save (encounter);
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> b26e19d3abef0290e5eec2c036f35e138346b5a5
 }

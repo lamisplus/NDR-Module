@@ -39,6 +39,7 @@ import { Label } from 'semantic-ui-react'
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
+import { RowingSharp } from '@mui/icons-material';
 
 //Dtate Picker package
 Moment.locale("en");
@@ -110,28 +111,63 @@ const useStyles = makeStyles(theme => ({
 
 
 const PatientnHistory = (props) => {
-    
-    const [patientList, setPatientList] = useState([])
-    const [patientObj, setpatientObj] = useState([])
-
+    const [recentActivities, setRecentActivities] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        //patients()
-      }, []);
+        PatientHistory()
+      }, [props.patientObj.id]);
         ///GET LIST OF Patients
-        // async function patients() {
-        //     axios
-        //         .get(`${baseUrl}covid/patients`,
-        //         { headers: {"Authorization" : `Bearer ${token}`} }
-        //         )
-        //         .then((response) => {
-        //             console.log(response.data)
-        //             setPatientList(response.data);
-        //         })
-        //         .catch((error) => {    
-        //         });        
-        // }
+        const PatientHistory =()=>{
+            setLoading(true)
+            axios
+               .get(`${baseUrl}hiv/patients/${props.patientObj.id}/activities?full=false`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                setLoading(false)
+                  setRecentActivities(response.data[0].activities)
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+          }
+    const LoadViewPage =(row)=>{
 
+        if(row.name==='Mental health'){
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+
+        }else if(row.name==='ART Commencement'){
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+
+        }else if(row.name==='Clinical evaluation'){
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+
+        }else if(row.name==='EAC First'){
+
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+        }else if(row.name==='HIV Enrollment'){
+
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+        }else if(row.name==='Pharmacy refill'){
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+
+        }else if(row.name==='Laboratory'){
+            props.setActiveContent('mental-health-history')
+            props.setHistoryId(row.id)
+
+        }else{
+
+        }
+        
+    }
 
 
   return (
@@ -141,24 +177,21 @@ const PatientnHistory = (props) => {
        
             <MaterialTable
             icons={tableIcons}
-              title="Patient Vaccination History "
+              title="Patient History "
               columns={[
-              { title: "Service type", field: "type" },
+                { title: "Name", field: "name" },
                 {
                   title: "Encounter Date",
                   field: "date",
-                },
-               
-                { title: "Status", field: "status", filtering: false },        
+                },               
+                // { title: "Status", field: "status", filtering: false },        
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
-              data={ patientList.map((row) => ({
-                  type: "",
-                   date: "",
-                    v_status: row.participant_id,
-                    status: row.participant_id,
-                   
-                    actions:
+              isLoading={loading}
+              data={recentActivities.map((row) => ({
+                   name: row.name,
+                   date: row.date,
+                   actions:
             
                     <div>
                     <Menu>
@@ -167,12 +200,30 @@ const PatientnHistory = (props) => {
                         </MenuButton>
                             <MenuList style={{ color:"#000000 !important"}} >
                                                            
-                                  <MenuItem style={{ color:"#000 !important"}}  >
+                            {row.viewable && ( 
+                                <MenuItem style={{ color:"#000 !important"}}  onClick={()=>LoadViewPage(row)}>
                                      
                                         <FaShare size="15"  />{" "}
                                         <span style={{color: '#000'}}>View</span>
                                                                     
                                   </MenuItem>
+                            )}
+                            {RowingSharp.editable && ( 
+                                <MenuItem style={{ color:"#000 !important"}}  >
+                                     
+                                        <FaShare size="15"  />{" "}
+                                        <span style={{color: '#000'}}>Edit</span>
+                                                                    
+                                  </MenuItem>
+                            )}
+                            {row.deletable && ( 
+                                <MenuItem style={{ color:"#000 !important"}}  >
+                                     
+                                        <FaShare size="15"  />{" "}
+                                        <span style={{color: '#000'}}>Delete</span>
+                                                                    
+                                  </MenuItem>
+                            )}
                                   
                                  
                                   
@@ -184,8 +235,8 @@ const PatientnHistory = (props) => {
             
                         options={{
                           headerStyle: {
-                              //backgroundColor: "#9F9FA5",
-                              color: "#000",
+                              backgroundColor: "#014d88",
+                              color: "#fff",
                           },
                           searchFieldStyle: {
                               width : '200%',
