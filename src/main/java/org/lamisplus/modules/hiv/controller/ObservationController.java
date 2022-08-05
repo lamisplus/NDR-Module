@@ -51,6 +51,21 @@ public class ObservationController {
     public ResponseEntity<HIVEacDto> handleEac(@RequestBody HIVEacDto dto) {
         return ResponseEntity.ok (hivEacService.handleEac (dto));
     }
+
+    @PutMapping("/eac/{id}")
+    public ResponseEntity<HIVEacDto> updateEac(@PathVariable("id") Long id, @RequestBody HIVEacDto dto) {
+        return ResponseEntity.ok (hivEacService.updateEac (id, dto));
+    }
+
+    @GetMapping("/eac/{id}")
+    public ResponseEntity<HIVEacDto> getEacById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (hivEacService.getEacById (id));
+    }
+
+    @DeleteMapping("/eac/{id}")
+    public ResponseEntity<String> deleteEacById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (hivEacService.deleteEACById (id));
+    }
     @GetMapping("/eac/person/{id}")
     public ResponseEntity<List<HIVEacDto>> getEac(@PathVariable("id") Long id) {
         return ResponseEntity.ok (hivEacService.getEacByPersonId (id));
