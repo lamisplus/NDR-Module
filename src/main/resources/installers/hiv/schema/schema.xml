@@ -249,6 +249,7 @@
                 refill_period          INTEGER,
                 delivery_point         VARCHAR(255),
                 dsd_model              VARCHAR(255),
+                archived                INTEGER,
                 CONSTRAINT pk_hiv_art_pharmacy PRIMARY KEY (id)
                 );
 
@@ -275,6 +276,7 @@
                 type                VARCHAR(255),
                 uuid                VARCHAR(255),
                 data                JSONB,
+                archived            INTEGER,
                 CONSTRAINT pk_hiv_observation PRIMARY KEY (id)
                 );
 

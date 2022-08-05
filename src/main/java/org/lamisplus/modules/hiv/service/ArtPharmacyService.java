@@ -51,19 +51,43 @@ public class ArtPharmacyService {
         ArtPharmacy artPharmacy = convertRegisterDtoToEntity (dto);
         artPharmacy.setUuid (UUID.randomUUID ().toString ());
         artPharmacy.setVisit (visit);
+        artPharmacy.setArchived (0);
         return convertEntityToRegisterDto (artPharmacyRepository.save (artPharmacy));
     }
 
     public RegisterArtPharmacyDto updateArtPharmacy(Long id, RegisterArtPharmacyDto dto) throws IOException {
-        ArtPharmacy existArtPharmacy = artPharmacyRepository
-                .findById (id)
-                .orElseThrow (() -> getArtPharmacyEntityNotFoundException (id));
+        ArtPharmacy existArtPharmacy = getArtPharmacy (id);
         ArtPharmacy artPharmacy = convertRegisterDtoToEntity (dto);
         artPharmacy.setId (existArtPharmacy.getId ());
+        artPharmacy.setPerson (existArtPharmacy.getPerson ());
+        artPharmacy.setVisit (existArtPharmacy.getVisit ());
+        artPharmacy.setArchived (0);
         return convertEntityToRegisterDto (artPharmacyRepository.save (artPharmacy));
     }
 
 
+    public RegisterArtPharmacyDto getPharmacyById(Long id) throws IOException {
+        ArtPharmacy artPharmacy = getArtPharmacy (id);
+        return  convertEntityToRegisterDto (artPharmacy);
+
+    }
+
+
+    public String  deleteById(Long id) {
+        ArtPharmacy artPharmacy = getArtPharmacy (id);
+       artPharmacy.setArchived (1);
+       artPharmacyRepository.save (artPharmacy);
+       return "Successful";
+
+    }
+
+
+    private ArtPharmacy getArtPharmacy(Long id) {
+        ArtPharmacy existArtPharmacy = artPharmacyRepository
+                .findById (id)
+                .orElseThrow (() -> getArtPharmacyEntityNotFoundException (id));
+        return existArtPharmacy;
+    }
     public List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize) {
         Person person = getPerson (personId);
         Pageable paging = PageRequest.of (pageNo, pageSize, Sort.by ("visitDate").descending ());
@@ -163,7 +187,7 @@ public class ArtPharmacyService {
 
     @NotNull
     private EntityNotFoundException getArtPharmacyEntityNotFoundException(Long id) {
-        return new EntityNotFoundException (Person.class, "id ", "" + id);
+        return new EntityNotFoundException (ArtPharmacy.class, "id ", "" + id);
     }
 
     @NotNull

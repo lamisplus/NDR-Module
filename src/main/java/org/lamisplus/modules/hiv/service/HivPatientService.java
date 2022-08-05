@@ -48,7 +48,9 @@ public class HivPatientService {
 
     private final ObservationRepository observationRepository;
 
-    public HivPatientDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
+    private final  PatientActivityService patientActivityService;
+
+    public HivEnrollmentDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
         Long personId = hivPatientEnrollmentDto.getPerson ().getId ();
         processAndSavePatient (hivPatientEnrollmentDto, hivEnrollmentDto, personId);
@@ -154,7 +156,8 @@ public class HivPatientService {
     }
 
     public List<PatientActivity> getHivPatientActivitiesById(Long id) {
+        return   patientActivityService.getActivities(id);
 
-        return  null;
+
     }
 }

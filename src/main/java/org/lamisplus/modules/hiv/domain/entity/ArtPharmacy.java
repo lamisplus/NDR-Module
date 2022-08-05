@@ -78,6 +78,9 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
     private String deliveryPoint;
     @Column(name = "dsd_model")
     private  String dsdModel;
+    @Basic
+    @Column(name = "archived")
+    private int archived;
     @OneToMany
     @ToString.Exclude
     private Set<Regimen> regimens = new LinkedHashSet<> ();

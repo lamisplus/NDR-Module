@@ -31,6 +31,16 @@ public class ArtPharmacyController {
         return ResponseEntity.ok (artPharmacyService.updateArtPharmacy (id, registerArtPharmacyDto));
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<RegisterArtPharmacyDto> getPharmacyById(@PathVariable("id") Long id) throws IOException {
+        return ResponseEntity.ok (artPharmacyService.getPharmacyById (id));
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<String> deletePharmacyById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (artPharmacyService.deleteById (id));
+    }
+
     @GetMapping("/patient")
     public ResponseEntity<List<RegisterArtPharmacyDto>> getAllPharmacyByPatientId(
             @RequestParam(defaultValue = "0") Integer pageNo,
