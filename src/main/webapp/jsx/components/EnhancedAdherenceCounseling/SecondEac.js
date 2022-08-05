@@ -56,15 +56,16 @@ const EAC = (props) => {
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true)
-    const [eactList, setEACList] = useState({})
     const [objValues, setObjValues]=useState({
-                                                dateOfEac: null,
-                                                dateOfLastViralLoad: null,
-                                                lastViralLoad: null,
-                                                note: null,
-                                                personId:props.patientObj.id,
-                                                status: "Second",
-                                                visitId: null
+                                                dateOfEac1: null,
+                                                dateOfEac2: null,
+                                                dateOfEac3: null,
+                                                dateOfLastViralLoad: "",
+                                                lastViralLoad:"",
+                                                note: "",
+                                                personId: props.patientObj.id,
+                                                status: "",
+                                                visitId:""
                                             })
     useEffect(() => {
         EACHistory()
@@ -78,12 +79,11 @@ const EAC = (props) => {
             )
             .then((response) => {
             setLoading(false)
-                setEACList(response.data)
+            setObjValues(response.data[0])
             })
             .catch((error) => {
             //console.log(error);
-            });
-        
+            });    
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -92,6 +92,7 @@ const EAC = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
+          objValues.status='Second'
           axios.post(`${baseUrl}observation/eac`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
@@ -134,16 +135,16 @@ const EAC = (props) => {
                             <Label for="">Date of Second EAC </Label>
                             <Input
                                 type="date"
-                                name="dateOfEac"
-                                id="dateOfEac"
-                                value={objValues.dateOfEac}
+                                name="dateOfEac2"
+                                id="dateOfEac2"
+                                value={objValues.dateOfEac2}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac}</span>
+                            {errors.dateOfEac2 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac2}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -162,7 +163,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac==="" ? true : false}
+                    disabled={objValues.dateOfEac2==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

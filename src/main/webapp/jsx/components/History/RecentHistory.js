@@ -8,14 +8,9 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { url as baseUrl, token } from "../../../api";
 import { Alert } from "react-bootstrap";
-// import Accordion from '@mui/material/Accordion';
-// import AccordionSummary from '@mui/material/AccordionSummary';
-// import AccordionDetails from '@mui/material/AccordionDetails';
-// import Typography from '@mui/material/Typography';
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {  Label,  List, } from 'semantic-ui-react';
 import { Row, Col, Card,Accordion } from "react-bootstrap";
-
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,12 +28,16 @@ const RecentHistory = (props) => {
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [recentActivities, setRecentActivities] = useState([])
   const [loading, setLoading] = useState(true)
-
+  let history = useHistory();
+  const [
+    activeAccordionHeaderShadow,
+    setActiveAccordionHeaderShadow,
+  ] = useState(0);
 
   useEffect(() => {
     LaboratoryHistory();
     PharmacyList();
-    //ClinicVisitList();
+    ClinicVisitList();
     RecentActivities();
   }, [props.patientObj.id]);
 
@@ -50,7 +49,7 @@ const RecentHistory = (props) => {
        )
        .then((response) => {
         //console.log()
-          setRecentActivities(response.data[0].activities)
+          setRecentActivities(response.data)
        })
        .catch((error) => {
        //console.log(error);
@@ -150,8 +149,37 @@ const RecentHistory = (props) => {
         regimenArr.push(value['name'])
     })
     return regimenArr.toString();
-    }
+  }
+  const LoadViewPage =(row)=>{
+        
+        if(row.path==='Mental health'){        
+            props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
 
+        }else if(row.path==='Art-commence'){
+            props.setActiveContent({...props.activeContent, route:'art-commencement-view', id:row.id})
+
+        }else if(row.path==='Clinical evaluation'){
+            props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
+
+        }else if(row.path==='EAC First'){
+            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='hiv-enrollment'){
+            history.push({
+                pathname: '/register-patient',
+                state: { id: row.id }
+            });
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='Pharmacy'){
+            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+
+        }else if(row.path==='Laboratory'){
+            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+
+        }else{
+
+        }   
+    }
+  //console.log(recentActivities)
 
   return (
     <Fragment>
@@ -169,84 +197,108 @@ const RecentHistory = (props) => {
                 id="DZ_W_Todo1"
                 className="widget-media dz-scroll ps ps--active-y"
               >
-                <ul className="timeline">
-                {recentActivities.length >0 ? (
-                  <>
-                    {recentActivities.map((activitiy,index) => ( 
+                <Accordion
+                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
+                    defaultActiveKey="0"
+                  >
                     <>
-                  <li>
-                    <div className="timeline-panel">
-                      <div className={index % 2 == 0 ? "media me-2 media-info" : "media me-2 media-success"}>{ActivityName(activitiy.name)}</div>
-                      <div className="media-body">
-                        <h5 className="mb-1">{activitiy.name}</h5>
-                        <small className="d-block">
-                          {activitiy.date}
-                        </small>
-                      </div>
-                      <Dropdown className="dropdown">
-                        <Dropdown.Toggle
-                          variant=" light"
-                          className="i-false p-0 btn-info sharp"
-                        >
-                          <svg
-                            width="18px"
-                            height="18px"
-                            viewBox="0 0 24 24"
-                            version="1.1"
-                          >
-                            <g
-                              stroke="none"
-                              strokeWidth="1"
-                              fill="none"
-                              fillRule="evenodd"
-                            >
-                              <rect x="0" y="0" width="24" height="24" />
-                              <circle fill="#000000" cx="5" cy="12" r="2" />
-                              <circle fill="#000000" cx="12" cy="12" r="2" />
-                              <circle fill="#000000" cx="19" cy="12" r="2" />
-                            </g>
-                          </svg>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu className="dropdown-menu">
-                          {activitiy.viewable && ( <Dropdown.Item
-                              className="dropdown-item"
-                              to="/widget-basic"
-                            >
-                              View
-                            </Dropdown.Item>
-                         )}
-                           {activitiy.editable && (<Dropdown.Item
-                              className="dropdown-item"
-                              to="/widget-basic"
-                            >
-                              Delete
-                            </Dropdown.Item>
-                            )}
-                            {activitiy.deletable && (<Dropdown.Item
-                              className="dropdown-item"
-                              to="/widget-basic"
-                            >
-                              Delete
-                            </Dropdown.Item>
-                            )}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </li>
-                  </>
-                  ))}
-
-                  </>
-                  ) 
-                  :
-                    <Alert
-                    variant="info"
-                    className="alert-dismissible solid fade show"
+                    {recentActivities.map((data, i)=>
+                    <div className="accordion-item" key={i}>
+                      <Accordion.Toggle
+                          as={Card.Text}
+                          eventKey={`${i}`}
+                          className={`accordion-header ${
+                            activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                          } accordion-header-info`}
+                          onClick={() =>
+                            setActiveAccordionHeaderShadow(
+                              activeAccordionHeaderShadow === 1 ? -1 : i
+                            )
+                          }
+                      >
+                      <span className="accordion-header-icon"></span>
+                      <span className="accordion-header-text">Visit Date : <span className="">{data.date}</span> </span>
+                      <span className="accordion-header-indicator"></span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse
+                      eventKey={`${i}`}
+                      className="accordion__body"
                     >
-                    <p>No Laboratory Test Order Yet</p>
-                    </Alert>
-                  }
-                </ul>
+                      <div className="accordion-body-text">
+                      <ul className="timeline">
+                        {data.activities && data.activities.map((activity,index) => ( 
+                         
+                          <>
+                           {console.log(activity)}
+                            <li>
+                              <div className="timeline-panel">
+                              <div className={index % 2 == 0 ? "media me-2 media-info" : "media me-2 media-success"}>{ActivityName(activity.name)}</div>
+                              <div className="media-body">
+                                <h5 className="mb-1">{activity.name}</h5>
+                                <small className="d-block">
+                                {activity.date}
+                                </small>
+                              </div>
+                              <Dropdown className="dropdown">
+                                <Dropdown.Toggle
+                                variant=" light"
+                                className="i-false p-0 btn-info sharp"
+                                >
+                                <svg
+                                  width="18px"
+                                  height="18px"
+                                  viewBox="0 0 24 24"
+                                  version="1.1"
+                                >
+                                  <g
+                                  stroke="none"
+                                  strokeWidth="1"
+                                  fill="none"
+                                  fillRule="evenodd"
+                                  >
+                                  <rect x="0" y="0" width="24" height="24" />
+                                  <circle fill="#000000" cx="5" cy="12" r="2" />
+                                  <circle fill="#000000" cx="12" cy="12" r="2" />
+                                  <circle fill="#000000" cx="19" cy="12" r="2" />
+                                  </g>
+                                </svg>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className="dropdown-menu">
+                                {activity.viewable && ( <Dropdown.Item
+                                  className="dropdown-item"
+                                  onClick={()=>LoadViewPage(activity)}
+                                  >
+                                  View
+                                  </Dropdown.Item>
+                                )}
+                                {/* {activity.editable && (<Dropdown.Item
+                                  className="dropdown-item"
+                                  to="/widget-basic"
+                                  >
+                                  Edit
+                                  </Dropdown.Item>
+                                  )} */}
+                                  {/* {activity.deletable && (<Dropdown.Item
+                                  className="dropdown-item"
+                                  to="/widget-basic"
+                                  >
+                                  Delete
+                                  </Dropdown.Item>
+                                  )} */}
+                                </Dropdown.Menu>
+                              </Dropdown>
+                              </div>
+                            </li>
+                          </>
+                        ))}                          
+                      </ul>
+                      </div>
+                    </Accordion.Collapse>
+                  </div>
+                )}
+                </>
+                </Accordion>
+                
               </PerfectScrollbar>
             </div>
           </div>
