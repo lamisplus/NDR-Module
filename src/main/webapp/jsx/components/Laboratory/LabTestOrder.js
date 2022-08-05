@@ -109,7 +109,7 @@ const Laboratory = (props) => {
                     }
                     else{
                         setModuleStatus("2")
-                        toast.error("Laboratory module is not install")
+                        //toast.error("Laboratory module is not install")
                         setButtonHidden(true)
                     }
                 }).catch((error) => {

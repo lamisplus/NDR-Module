@@ -243,7 +243,6 @@ const UserRegistration = (props) => {
         setShowRelative(false);
     }
     const onSubmit = async (data) => {
-        console.log(data.dateOfRegistration)
         try {
             const patientForm = {
                 active: true,

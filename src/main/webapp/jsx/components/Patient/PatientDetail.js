@@ -29,6 +29,10 @@ import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index'
 import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
 import MentalHealthScreening from '../MentalHealthScreening/index'
 import LabHistory from './../Laboratory/LabHistory'
+import PatientHistory from './../History/PatientHistory'
+import ArtCommencement from './../ArtCommencement/ArtCommencement'
+//History of patient
+import ViewMentalHealthScreening from './../MentalHealthScreening/ViewMhs'
 import { TiArrowBack } from 'react-icons/ti'
 
 const styles = theme => ({
@@ -71,6 +75,7 @@ function PatientCard(props) {
     let history = useHistory();
     const [art, setArt] = useState(false);
     const [activeContent, setActiveContent] = useState('recent-history');
+    const [historyId, setHistoryId] = useState("")
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
 
@@ -115,6 +120,11 @@ function PatientCard(props) {
           {activeContent==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='mhs' &&( <MentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='patient-history' &&( <PatientHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent==='art-commencement' &&( <ArtCommencement patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {/* History Pages */}
+          {activeContent==='mental-health-history' &&( <ViewMentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent} setHistoryId={setHistoryId}/>)}
+         
          </CardContent>
       </Card>
     </div>

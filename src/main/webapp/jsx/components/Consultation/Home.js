@@ -437,11 +437,11 @@ const ClinicVisit = (props) => {
         
       </div>
       <Grid columns='equal'>
-       <Grid.Column width={3}>
+       <Grid.Column width={5}>
           
             <Segment>
-              <Label as='a' color='blue' ribbon>
-                 Vital Signs
+              <Label as='a' color='blue' style={{width:'108%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>Vital Signs</h4>
               </Label>
               <br />
 
@@ -460,21 +460,21 @@ const ClinicVisit = (props) => {
                   >
                     <>
                     {clinicVisitList.map((visit, i)=>
-                  <div className="accordion-item" key={i}>
-                    <Accordion.Toggle
-                      as={Card.Text}
-                      eventKey={`${i}`}
-                      className={`accordion-header ${
-                        activeAccordionHeaderShadow === 1 ? "" : "collapsed"
-                      } accordion-header-info`}
-                      onClick={() =>
-                        setActiveAccordionHeaderShadow(
-                          activeAccordionHeaderShadow === 1 ? -1 : i
-                        )
-                      }
-                    >
+                    <div className="accordion-item" key={i}>
+                      <Accordion.Toggle
+                          as={Card.Text}
+                          eventKey={`${i}`}
+                          className={`accordion-header ${
+                            activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                          } accordion-header-info`}
+                          onClick={() =>
+                            setActiveAccordionHeaderShadow(
+                              activeAccordionHeaderShadow === 1 ? -1 : i
+                            )
+                          }
+                      >
                       <span className="accordion-header-icon"></span>
-                      <span className="accordion-header-text">Date : <span className="">{visit.visitDate}</span> </span>
+                      <span className="accordion-header-text">Visit Date : <span className="">{visit.visitDate}</span> </span>
                       <span className="accordion-header-indicator"></span>
                     </Accordion.Toggle>
                     <Accordion.Collapse
@@ -515,47 +515,76 @@ const ClinicVisit = (props) => {
                 </ul>
                 </PerfectScrollbar>
             </Segment>
-         
-          {/* <Segment>
-            <Label as='a' color='black' ribbon>
-              Conditions
-            </Label>
-            <Label as='a' color='teal' onClick={() => addConditionsModal()} className="float-end" size='mini' >
-              <Icon name='plus' />
-            </Label>
-            <br />
-            <Label as='a' color='white' size="mini" pointing>
-              Laser Fever
-            </Label>
-            <Label as='a' color='white' size="mini" pointing>
-              Typoid Fever
-            </Label>
-            <Label as='a' color='white' size="mini" pointing>
-              Asthma
-            </Label>
+            <Segment>
+              <Label as='a' color='teal' style={{width:'108%', height:'35px'}} ribbon>
+                <h4 style={{color:'#fff'}}>Previous Clinical Notes</h4>
+              </Label>
+               
+             <PerfectScrollbar
+               style={{ height: "370px" }}
+               id="DZ_W_Todo1"
+               className="widget-media dz-scroll ps ps--active-y"
+             >
+               <ul className="timeline">
+               { clinicVisitList.length > 0 ?(
+                 
+               <Accordion
+                   className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
+                   defaultActiveKey="0"
+                 >
+                   <>
+                   {clinicVisitList.map((visit, i)=>
+                 <div className="accordion-item" key={i}>
+                   <Accordion.Toggle
+                     as={Card.Text}
+                     eventKey={`${i}`}
+                     className={`accordion-header ${
+                       activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                     } accordion-header-info`}
+                     onClick={() =>
+                       setActiveAccordionHeaderShadow(
+                         activeAccordionHeaderShadow === 1 ? -1 : i
+                       )
+                     }
+                   >
+                     <span className="accordion-header-icon"></span>
+                     <span className="accordion-header-text float-start" style={{width:'100%'}}>Visit Date : <span className="">{visit.visitDate}</span> </span>
+                     <span className="accordion-header-indicator "></span>
+                   </Accordion.Toggle>
+                   <Accordion.Collapse
+                     eventKey={`${i}`}
+                     className="accordion__body"
+                   >
+                     <div className="accordion-body-text">
+                         <p>{visit.clinicalNote}</p>
+                     </div>
+                   </Accordion.Collapse>
+                 </div>
+               )}
+               </>
+             </Accordion>             
 
-          </Segment>
-          <Segment>
-            <Label as='a' color='red' ribbon>
-              Allergies
-            </Label>
-            <Label as='a' color='teal' onClick={() => addAllergiesModal()} className="float-end" size='mini' >
-              <Icon name='plus' />
-            </Label>
-            <br /><br />
-            <Label.Group color='blue'>
-
-              <Label as='a' size="mini">dust</Label>
-              <Label as='a' size="mini">smoke</Label>
-
-            </Label.Group>
-
-          </Segment> */}
+                   ):
+                   (
+                     <>
+                     <br/>
+                     <Alert
+                         variant="info"
+                         className="alert-dismissible solid fade show"
+                       >
+                         <p>No Clinical Notes</p>
+                       </Alert>
+                     </>
+                   )}
+               </ul>
+               </PerfectScrollbar>
+            
+         </Segment>
         </Grid.Column>
-        <Grid.Column width={9}>
+        <Grid.Column width={11}>
           <Segment>
-            <Label as='a' color='blue' ribbon>
-              <b>VITAL SIGNS</b>
+            <Label as='a' color='blue'  style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>VITAL  SIGNS</h4>
             </Label>
             <br /><br />
             <div className="row">
@@ -741,8 +770,8 @@ const ClinicVisit = (props) => {
                 </FormGroup>
               </div>
             </div>
-            <Label as='a' color='black' ribbon>
-              <b>CONSULTATION</b>
+            <Label as='a' color='black'  style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>CONSULTATION</h4>
             </Label>
             <br /><br />
 
@@ -839,27 +868,27 @@ const ClinicVisit = (props) => {
 
             </div>
             <br />
-            <Label as='a' color='red' ribbon>
-              OPPORTUNISTIC INFECTION
+            <Label as='a' color='red' style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
             </Label>
             <br /><br />
             <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} />
             <br />
-            <Label as='a' color='pink' ribbon>
-              ADR
+            <Label as='a' color='pink' style={{width:'106%', height:'35px'}}  ribbon>
+            <h4 style={{color:'#fff'}}>ADR </h4>
             </Label>
             <br /><br />
             <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} />
             <br />
-            <Label as='a' color='teal' ribbon>
-              TB SCREENING
+            <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+            <h4 style={{color:'#fff'}}>TB SCREENING</h4>
             </Label>
             <br /><br />
             {/* TB Screening Form */}
             <TBScreening tbObj={tbObj} setTbObj={setTbObj} />
             <br />
-            <Label as='a' color='blue' ribbon>
-              NEXT CLINICAL APPOINTMENT DATE
+            <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
+            <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE </h4>
             </Label>
             <br /><br />
             {/* TB Screening Form */}
@@ -894,90 +923,6 @@ const ClinicVisit = (props) => {
                 <span style={{ textTransform: "capitalize" }}>Saving...</span>
               )}
             </MatButton>
-          </Segment>
-        </Grid.Column>
-        <Grid.Column width={4}>
-          <Segment>
-            {/* <List>
-              <List.Item>
-                <Button icon labelPosition='right' color='teal' fluid onClick={() => PostPatientService()}>
-                  <Icon name='external alternate' />
-                  Post Patient
-                </Button>
-              </List.Item>
-              <List.Item>
-                  <Button icon labelPosition='right' style={{backgroundColor:"#922C5D"}} color='green' fluid>
-                      <Icon name='eye' />
-                        View Consultation History
-                    </Button>
-              </List.Item>
-            </List> */}
-            <Card>
-              <Card.Content style={{backgroundColor:"#014d88", color:"#fff"}}>
-                <b>Previous Clinical Notes</b>
-              </Card.Content>
-              <Card.Content>
-              <PerfectScrollbar
-                style={{ height: "370px" }}
-                id="DZ_W_Todo1"
-                className="widget-media dz-scroll ps ps--active-y"
-              >
-                <ul className="timeline">
-                { clinicVisitList.length > 0 ?(
-                  
-                <Accordion
-                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
-                    defaultActiveKey="0"
-                  >
-                    <>
-                    {clinicVisitList.map((visit, i)=>
-                  <div className="accordion-item" key={i}>
-                    <Accordion.Toggle
-                      as={Card.Text}
-                      eventKey={`${i}`}
-                      className={`accordion-header ${
-                        activeAccordionHeaderShadow === 1 ? "" : "collapsed"
-                      } accordion-header-info`}
-                      onClick={() =>
-                        setActiveAccordionHeaderShadow(
-                          activeAccordionHeaderShadow === 1 ? -1 : i
-                        )
-                      }
-                    >
-                      <span className="accordion-header-icon"></span>
-                      <span className="accordion-header-text">Consultation Date - <span className="">{visit.visitDate}</span> </span>
-                      <span className="accordion-header-indicator "></span>
-                    </Accordion.Toggle>
-                    <Accordion.Collapse
-                      eventKey={`${i}`}
-                      className="accordion__body"
-                    >
-                      <div className="accordion-body-text">
-                          <p>{visit.clinicalNote}</p>
-                      </div>
-                    </Accordion.Collapse>
-                  </div>
-                )}
-                </>
-              </Accordion>             
-
-                    ):
-                    (
-                      <>
-                      <br/>
-                      <Alert
-                          variant="info"
-                          className="alert-dismissible solid fade show"
-                        >
-                          <p>No Clinical Notes</p>
-                        </Alert>
-                      </>
-                    )}
-                </ul>
-                </PerfectScrollbar>
-              </Card.Content>
-            </Card>
-
           </Segment>
         </Grid.Column>
       </Grid>

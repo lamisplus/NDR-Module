@@ -55,6 +55,8 @@ const EAC = (props) => {
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(true)
+    const [eactList, setEACList] = useState({})
     const [objValues, setObjValues]=useState({
                                                 dateOfEac: null,
                                                 dateOfLastViralLoad: null,
@@ -64,7 +66,25 @@ const EAC = (props) => {
                                                 status: "Second",
                                                 visitId: null
                                             })
- 
+    useEffect(() => {
+        EACHistory()
+    }, [props.patientObj.id]);
+    ///GET LIST OF EAC
+    const EACHistory =()=>{
+        setLoading(true)
+        axios
+            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+            setLoading(false)
+                setEACList(response.data)
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }          

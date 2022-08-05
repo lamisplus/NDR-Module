@@ -99,8 +99,10 @@ function SubMenu(props) {
     }
     const loadAdultEvaluation =(row)=> {
         props.setActiveContent('adult-evaluation')
-      }
-
+    }
+    const loadPatientHistory = ()=>{
+        props.setActiveContent('patient-history')
+    }
 
     return (
         <div>
@@ -183,6 +185,7 @@ function SubMenu(props) {
                         )
                         :""
                     } */}
+                    <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     
                 </Menu>
                )

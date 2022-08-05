@@ -31,18 +31,32 @@ const RecentHistory = (props) => {
   const [vitaLoad, setViralLoad]=useState([])
   const [refillList, setRefillList] = useState([])
   const [clinicVisitList, setClinicVisitList] = useState([])
+  const [recentActivities, setRecentActivities] = useState([])
   const [loading, setLoading] = useState(true)
-  const [
-    activeAccordionHeaderShadow,
-    setActiveAccordionHeaderShadow,
-  ] = useState(0);
+
 
   useEffect(() => {
     LaboratoryHistory();
     PharmacyList();
-    ClinicVisitList();
-  }, []);
+    //ClinicVisitList();
+    RecentActivities();
+  }, [props.patientObj.id]);
 
+  //Get list of LaboratoryHistory
+  const RecentActivities =()=>{
+    axios
+       .get(`${baseUrl}hiv/patients/${props.patientObj.id}/activities?full=false`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {
+        //console.log()
+          setRecentActivities(response.data[0].activities)
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+  }
   //Get list of LaboratoryHistory
   const LaboratoryHistory =()=>{
     axios
@@ -114,6 +128,21 @@ const RecentHistory = (props) => {
         return "timeline-badge secondary"
       }
   }
+  const ActivityName =(name)=> {
+      if(name==='HIV Enrollment'){
+        return "HE"
+      }else if(name==='Pharmacy refill'){
+        return "PR"
+      }else if(name==='Clinical evaluation'){
+        return "CE"
+      }else if(name==='Clinic visit follow up'){
+        return "CV"
+      }else if(name==='ART Commencement'){
+        return "AC"
+      }else {
+        return "RA"
+      }
+  }
   const regimenName =(regimenObj)=> {
     let regimenArr = []
     regimenObj.forEach(function (value, index, array) {
@@ -132,7 +161,7 @@ const RecentHistory = (props) => {
       <div className="col-xl-4 col-xxl-4 col-lg-4">
           <div className="card">
             <div className="card-header  border-0 pb-0">
-              <h4 className="card-title"> Clinic Visits</h4>
+              <h4 className="card-title"> Recent Activities</h4>
             </div>
             <div className="card-body">
               <PerfectScrollbar
@@ -141,63 +170,82 @@ const RecentHistory = (props) => {
                 className="widget-media dz-scroll ps ps--active-y"
               >
                 <ul className="timeline">
-                { clinicVisitList.length > 0 ?(
-                  
-                <Accordion
-                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
-                    defaultActiveKey="0"
-                  >
+                {recentActivities.length >0 ? (
+                  <>
+                    {recentActivities.map((activitiy,index) => ( 
                     <>
-                    {clinicVisitList.map((visit, i)=>
-                  <div className="accordion-item" key={i}>
-                    <Accordion.Toggle
-                      as={Card.Text}
-                      eventKey={`${i}`}
-                      className={`accordion-header ${
-                        activeAccordionHeaderShadow === 1 ? "" : "collapsed"
-                      } accordion-header-info`}
-                      onClick={() =>
-                        setActiveAccordionHeaderShadow(
-                          activeAccordionHeaderShadow === 1 ? -1 : i
-                        )
-                      }
-                    >
-                      <span className="accordion-header-icon"></span>
-                      <span className="accordion-header-text">Visit Date : <span className="">{visit.visitDate}</span> </span>
-                      <span className="accordion-header-indicator "></span>
-                    </Accordion.Toggle>
-                    <Accordion.Collapse
-                      eventKey={`${i}`}
-                      className="accordion__body"
-                    >
-                      <div className="accordion-body-text">
-                    
-                          <List celled style={{width:'100%'}}>
-                              {visit.vitalSignDto && visit.vitalSignDto.pulse!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px',borderTop:'1px solid #fff', marginTop:'-5px' }}>Pulse <span style={{color:'rgb(153, 46, 98)'}} className="float-end"><b>{visit.vitalSignDto.pulse} bpm</b></span></List.Item>)}
-                              {visit.vitalSignDto && visit.vitalSignDto.respiratoryRate!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Respiratory Rate <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.respiratoryRate} bpm</b></span></List.Item>)}
-                              {visit.vitalSignDto && visit.vitalSignDto.temperature!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Temperature <span className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.temperature} <sup>0</sup>C</b></span></List.Item>)}
-                              {visit.vitalSignDto && visit.vitalSignDto.systolic!==null && visit.vitalSignDto.diastolic!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Blood Pressure <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.systolic}/{visit.vitalSignDto.diastolic}</b></span></List.Item>)}
-                              {visit.vitalSignDto && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Height <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.height} cm</b></span></List.Item>)}
-                              {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
-                              {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{Math.round(visit.vitalSignDto.bodyWeight/(visit.vitalSignDto.height/100))} kg</b></span></List.Item>)}
-                          </List>
-                          <p><strong>Clinic Notes : </strong>{visit.clinicalNote}</p>
+                  <li>
+                    <div className="timeline-panel">
+                      <div className={index % 2 == 0 ? "media me-2 media-info" : "media me-2 media-success"}>{ActivityName(activitiy.name)}</div>
+                      <div className="media-body">
+                        <h5 className="mb-1">{activitiy.name}</h5>
+                        <small className="d-block">
+                          {activitiy.date}
+                        </small>
                       </div>
-                    </Accordion.Collapse>
-                  </div>
-                )}
-                </>
-              </Accordion>             
+                      <Dropdown className="dropdown">
+                        <Dropdown.Toggle
+                          variant=" light"
+                          className="i-false p-0 btn-info sharp"
+                        >
+                          <svg
+                            width="18px"
+                            height="18px"
+                            viewBox="0 0 24 24"
+                            version="1.1"
+                          >
+                            <g
+                              stroke="none"
+                              strokeWidth="1"
+                              fill="none"
+                              fillRule="evenodd"
+                            >
+                              <rect x="0" y="0" width="24" height="24" />
+                              <circle fill="#000000" cx="5" cy="12" r="2" />
+                              <circle fill="#000000" cx="12" cy="12" r="2" />
+                              <circle fill="#000000" cx="19" cy="12" r="2" />
+                            </g>
+                          </svg>
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="dropdown-menu">
+                          {activitiy.viewable && ( <Dropdown.Item
+                              className="dropdown-item"
+                              to="/widget-basic"
+                            >
+                              View
+                            </Dropdown.Item>
+                         )}
+                           {activitiy.editable && (<Dropdown.Item
+                              className="dropdown-item"
+                              to="/widget-basic"
+                            >
+                              Delete
+                            </Dropdown.Item>
+                            )}
+                            {activitiy.deletable && (<Dropdown.Item
+                              className="dropdown-item"
+                              to="/widget-basic"
+                            >
+                              Delete
+                            </Dropdown.Item>
+                            )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                  </li>
+                  </>
+                  ))}
 
-            ):
-            (
-            <Alert
-                  variant="info"
-                  className="alert-dismissible solid fade show"
-                >
-                  <p>No clinic visit</p>
-                </Alert>
-            )}
+                  </>
+                  ) 
+                  :
+                    <Alert
+                    variant="info"
+                    className="alert-dismissible solid fade show"
+                    >
+                    <p>No Laboratory Test Order Yet</p>
+                    </Alert>
+                  }
                 </ul>
               </PerfectScrollbar>
             </div>

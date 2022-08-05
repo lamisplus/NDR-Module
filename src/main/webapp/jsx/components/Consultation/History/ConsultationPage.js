@@ -451,7 +451,7 @@ const ClinicVisit = (props) => {
                       <div className="media-body">
                             <ButtonSMUI
                                 color='black'
-                                content='Status-Closed'
+                                content='Visit Date'
                                 icon='calendar alternate'
                                 label={{ basic: true, color: 'grey', pointing: 'left', content: `${moment(visitDate.visitDate).format('dddd, MMMM, YYYY ')}` }}
                             />
