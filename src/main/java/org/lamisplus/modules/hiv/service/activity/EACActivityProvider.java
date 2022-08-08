@@ -43,6 +43,6 @@ public class EACActivityProvider implements PatientActivityProvider {
             date = eac.getDateOfEac3 ();
         }
 
-        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", "EAC");
+        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", "eac");
     }
 }
