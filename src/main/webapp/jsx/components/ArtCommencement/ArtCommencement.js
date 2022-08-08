@@ -68,6 +68,7 @@ const useStyles = makeStyles(theme => ({
 const ArtCommencement = (props) => {
     //const patientObj = props.patientObj;
     //let history = useHistory();
+    let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
     const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -128,7 +129,8 @@ const ArtCommencement = (props) => {
         TBStatus();
         PreganacyStatus();
         RegimenLine();
-      }, []);
+         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
+      }, [props.patientObj]);
       //Get list of WhoStaging
       const WhoStaging =()=>{
         axios
@@ -739,7 +741,7 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-                                    {props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)"? (
+                                    {gender==="Female" || gender==="Transgebder(Female)"? (
                                         <>
                                         <div className="form-group mb-3 col-md-4">
                                             <FormGroup>

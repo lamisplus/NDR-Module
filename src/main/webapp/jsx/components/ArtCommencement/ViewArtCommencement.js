@@ -68,6 +68,8 @@ const useStyles = makeStyles(theme => ({
 const ArtCommencement = (props) => {
     //const patientObj = props.patientObj;
     //let history = useHistory();
+    console.log(props.activeContent.id)
+    let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
     const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -128,7 +130,26 @@ const ArtCommencement = (props) => {
         TBStatus();
         PreganacyStatus();
         RegimenLine();
+        GetARTCommencement();
+        gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, []);
+          //Get Mental Health Object
+    const GetARTCommencement =()=>{
+        axios
+           .get(`${baseUrl}hiv/art/commencement/${props.activeContent.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {            
+
+                setObjValues({...response.data.artCommence})
+                RegimenType(response.data.artCommence.regimenTypeId)
+                setVitalSignDto(...response.data.artCommence.vitalSignDto)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+        }
       //Get list of WhoStaging
       const WhoStaging =()=>{
         axios
@@ -358,7 +379,11 @@ const ArtCommencement = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                    
+                    <div className="col-md-6">
+                        <h2>ART Commencement</h2>
+                    </div>
+                    <div className="col-md-6"></div>
+                    <br/>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label for="artDate">ART Start Date  * </Label>
@@ -728,7 +753,7 @@ const ArtCommencement = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
-                        {props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)"? (
+                        {gender==="Female" || gender==="Transgebder(Female)"? (
                             <>
                             <div className="form-group mb-3 col-md-4">
                                 <FormGroup>

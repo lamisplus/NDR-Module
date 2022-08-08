@@ -128,6 +128,7 @@ const Patients = (props) => {
                     setLoading(false)  
                 });        
         }
+    console.log(patientList)
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
@@ -191,7 +192,7 @@ const Patients = (props) => {
                     hospital_number: getHospitalNumber(row.identifier),
                     //address: row.address,
                    //phone_number:  row.phone,
-                    gender:row.gender.display,
+                    //gender:row.gender.display,
                     age: (row.dateOfBirth === 0 ||
                         row.dateOfBirth === undefined ||
                         row.dateOfBirth === null ||
@@ -243,8 +244,8 @@ const Patients = (props) => {
                                         <>
                                             <Link
                                                 to={{
-                                                    pathname: "/register-patient",
-                                                    state: { patientId : row.id }
+                                                    pathname: "/enroll-patient",
+                                                    state: { patientId : row.id, patientObj: row }
                                                 }}
                                             >
                                                 <ButtonGroup variant="contained" 

@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
 
 const ClinicEvaluationFrom = (props) => {
     const patientObj = props.patientObj;
+    console.log(props)
     //let history = useHistory();
     const classes = useStyles()
     //const [values, setValues] = useState([]);
@@ -175,7 +176,27 @@ const ClinicEvaluationFrom = (props) => {
         type: "Clinical evaluation",
         visitId: null
     })
-
+    useEffect(() => {
+        GetInitialEvaluation();
+    }, [props.activeContent.id]);
+                                                
+    //Get Mental Health Object
+    const GetInitialEvaluation =()=>{
+    axios
+       .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {            
+            const evaluationObj= response.data.find((x)=> x.type==='Clinical evaluation') 
+            console.log(evaluationObj)
+            //setObjValues({...evaluationObj.data})
+              //setViralLoad(LabObject)
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+    }
     //Handle CheckBox 
     const handleMedicalHistory =e =>{
         setMedicalHistory({...medicalHistory, [e.target.name]: e.target.value})

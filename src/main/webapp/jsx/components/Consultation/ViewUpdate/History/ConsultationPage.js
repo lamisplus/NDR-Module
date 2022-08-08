@@ -12,15 +12,11 @@ import { FormGroup, Label as FormLabelName, InputGroup,
 import ADR from './../ADR/Index'
 import OpportunisticInfection from './../OpportunisticInfection/Index'
 import TBScreening from './../TBScreening/Index'
-import { url as baseUrl, token } from "../../../../api";
+import { url as baseUrl, token } from "../../../../../api";
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import axios from "axios";
-//import AddVitals from './Vitals/AddVitals'
-import AddAllergy from './../Allergies/AddAllergy'
-import AddCondition from './../Conditions/AddCondition'
-import PostPatient from './../PostPatient/Index'
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Row, Col,   } from "react-bootstrap";
@@ -86,7 +82,7 @@ const ClinicVisit = (props) => {
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
   const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
   const [heightValue, setHeightValue]= useState("cm")
-  const [enableUpdate, setEnableUpdate]= useState(false)
+  const [enableUpdate, setEnableUpdate]= useState(false) //Enable update for all input field if the user have permission
   const [errors, setErrors] = useState({});
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -101,14 +97,6 @@ const ClinicVisit = (props) => {
   const [adherenceLevel, setAdherenceLevel] = useState([]);
   const [tbStatus, setTbStatus] = useState([]);
   const [TBForms, setTBForms] = useState(false)
-  // const [addVitalModal, setAddVitalModal] = useState(false);
-  // const AddVitalToggle = () => setAddVitalModal(!addVitalModal)
-  const [addConditionModal, setAddConditionModal] = useState(false);
-  const AddConditionToggle = () => setAddConditionModal(!addConditionModal)
-  const [addAllergyModal, setAddAllergyModal] = useState(false);
-  const AddAllergyToggle = () => setAddAllergyModal(!addAllergyModal)
-  const [postPatientModal, setPostPatientModal] = useState(false);
-  const PostPatientToggle = () => setPostPatientModal(!postPatientModal)
   const [currentVitalSigns, setcurrentVitalSigns] = useState({})
   const [showCurrentVitalSigns, setShowCurrentVitalSigns] = useState(false)
   //opportunistic infection Object
@@ -300,18 +288,6 @@ const ClinicVisit = (props) => {
     setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
   }
 
-  const addConditionsModal = () => {
-    //setpatientObj({...patientObj, ...row});
-    setAddConditionModal(!addConditionModal)
-  }
-  const addAllergiesModal = () => {
-    //setpatientObj({...patientObj, ...row});
-    setAddAllergyModal(!addAllergyModal)
-  }
-  const PostPatientService = (row) => {
-    //setpatientObj({...patientObj, ...row});
-    setPostPatientModal(!postPatientModal)
-  }
   //Handle CheckBox 
   const handleCheckBox = e => {
     if (e.target.checked) {
@@ -449,16 +425,16 @@ const ClinicVisit = (props) => {
           setTbObj({...e.tbScreen})
           setAdrList([...e.adverseDrugReactions])
           setInfectionList([...e.opportunisticInfections])
-          console.log(e)
-          console.log(e.adverseDrugReactions)
 
       })
       .catch((error) => {
       });
   }
   const getVisitDetail=(e)=>{
-      GetVisitById(e.id)
-      
+      GetVisitById(e.id)      
+  }
+  const EnableUpdateAction =()=>{
+    setEnableUpdate(true)
   }
 
 
@@ -498,7 +474,7 @@ const ClinicVisit = (props) => {
                 <div className="card">
                     <div className="card-header  border-0 pb-2" style={{backgroundColor:"#014D88"}}>
                     <h4 className="card-title" style={{color:"#fff"}}> </h4>
-                    <ButtonSMUI color='facebook'>
+                    <ButtonSMUI color='facebook' onClick={()=>EnableUpdateAction()}>
                       <Icon name='edit' /> Edit Visit 
                     </ButtonSMUI>
                     </div>
@@ -506,6 +482,9 @@ const ClinicVisit = (props) => {
                     <Grid columns='equal'>
                     <Grid.Column >
                     <Segment>
+                    <Label as='a' color='black' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}> Visit Date - {vital.encounterDate}</h4>
+                        </Label>
                         <div className="row">
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -528,25 +507,7 @@ const ClinicVisit = (props) => {
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
-                            {showCurrentVitalSigns && (
-                            <div className="form-check custom-checkbox ml-1 ">
-                                <input
-                                type="checkbox"
-                                className="form-check-input"
-                                name="currentVitalSigns"
-                                id="currentVitalSigns"
-                                onChange={handleCheckBox} 
-                                disabled={!enableUpdate}
-                                                    
-                                />
-                                <label
-                                className="form-check-label"
-                                htmlFor="basic_checkbox_1"
-                                >
-                                use current Vital Signs
-                                </label>
-                            </div>
-                            )}
+
                         </div>
                         <div className="mb-3 col-md-6">
                             <FormGroup>
@@ -696,8 +657,8 @@ const ClinicVisit = (props) => {
                             </FormGroup>
                         </div>
                         </div>
-                        <Label as='a' color='black' ribbon>
-                        <b>CONSULTATION</b>
+                        <Label as='a' color='grey' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>CONSULTATION</h4>
                         </Label>
                         <br /><br />
 
@@ -798,27 +759,27 @@ const ClinicVisit = (props) => {
 
                         </div>
                         <br />
-                        <Label as='a' color='red' ribbon>
-                        OPPORTUNISTIC INFECTION
+                        <Label as='a' color='red' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
                         </Label>
                         <br /><br />
                         <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} enableUpdate={enableUpdate}/>
                         <br />
-                        <Label as='a' color='pink' ribbon>
-                        ADR
+                        <Label as='a' color='pink' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>ADR</h4>
                         </Label>
                         <br /><br />
                         <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}  enableUpdate={enableUpdate}/>
                         <br />
-                        <Label as='a' color='teal' ribbon>
-                        TB SCREENING
+                        <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>TB SCREENING</h4>
                         </Label>
                         <br /><br />
                         {/* TB Screening Form */}
                         <TBScreening tbObj={tbObj} setTbObj={setTbObj} enableUpdate={enableUpdate}/>
                         <br />
-                        <Label as='a' color='blue' ribbon>
-                        NEXT CLINICAL APPOINTMENT DATE
+                        <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE</h4>
                         </Label>
                         <br /><br />
                         {/* TB Screening Form */}
@@ -847,6 +808,7 @@ const ClinicVisit = (props) => {
                         startIcon={<SaveIcon />}
                         style={{backgroundColor:"#014d88"}}
                         onClick={handleSubmit}
+                        hidden={!enableUpdate}
                         >
                         {!saving ? (
                             <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -862,10 +824,7 @@ const ClinicVisit = (props) => {
                 </div>
             </div>
     </div>    
-      {/* <AddVitals toggle={AddVitalToggle} showModal={addVitalModal} /> */}
-      <AddAllergy toggle={AddAllergyToggle} showModal={addAllergyModal} />
-      <AddCondition toggle={AddConditionToggle} showModal={addConditionModal} />
-      <PostPatient toggle={PostPatientToggle} showModal={postPatientModal} />
+      
     </div>
   );
 };

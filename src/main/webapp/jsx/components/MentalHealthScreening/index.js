@@ -90,7 +90,7 @@ const MentalHealthScreening = (props) => {
                   }else{
                     setReferrer(false)
                   }
-                  props.setActiveContent("recent-history")
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
                   //history.push("/")
               })
               .catch(error => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input, Label, FormGroup} from "reactstrap";
 import { makeStyles } from '@material-ui/core/styles'
-import { token, url as baseUrl } from "./../../../../api";
+import { token, url as baseUrl } from "./../../../../../api";
 import axios from "axios";
 
 
@@ -61,6 +61,7 @@ const TBScreeningForm = (props) => {
                   value={props.tbObj.antiTBDrug}
                   onChange={handleInputChange}
                   style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                  disabled={!props.enableUpdate}
                   required
                   >
                     <option value="">Select </option>
@@ -83,6 +84,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.currentOnIpt}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value=""> Select</option>
@@ -101,6 +103,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.coughing}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value=""> Select</option>
@@ -119,6 +122,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.nightSweat}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value=""> Select</option>
@@ -137,6 +141,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.fever}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value="">Select </option>
@@ -155,6 +160,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.contactWithTBCase}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value=""> Select</option>
@@ -173,6 +179,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.lethergy}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value="">Select </option>
@@ -191,6 +198,7 @@ const TBScreeningForm = (props) => {
                     value={props.tbObj.tbStatusId}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
                     required
                     >
                       <option value="">Select </option>
