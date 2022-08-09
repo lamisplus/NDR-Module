@@ -167,7 +167,7 @@ const ClientStatusUpdate = (props) => {
               .then(response => {
                   setSaving(false);                  
                   toast.success("Client Status Update Successfully!");
-                  props.setActiveContent('recent-history')
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {

@@ -352,8 +352,7 @@ const ArtCommencement = (props) => {
                   props.setArt(true)
                   props.patientObj.commenced=true
                   toast.success("Record save successful");
-                  props.toggle()
-                  props.PatientCurrentStatus()
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {

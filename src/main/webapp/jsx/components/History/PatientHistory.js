@@ -148,13 +148,13 @@ const PatientnHistory = (props) => {
         }else if(row.path==='Clinical-evaluation'){
             props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
 
-        }else if(row.path==='EAC-First'){
+        }else if(row.path==='eac1'){
             props.setActiveContent({...props.activeContent, route:'first-eac-history', id:row.id})
         }
-        else if(row.path==='EAC-Second'){
+        else if(row.path==='eac2'){
             props.setActiveContent({...props.activeContent, route:'second-eac-history', id:row.id})
         }
-        else if(row.path==='EAC-Completed'){
+        else if(row.path==='eac3'){
             props.setActiveContent({...props.activeContent, route:'completed-eac-history', id:row.id})
         }else if(row.path==='hiv-enrollment'){
             history.push({
@@ -162,8 +162,9 @@ const PatientnHistory = (props) => {
                 state: { id: row.id }
             });
             //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
-        }else if(row.path==='Pharmacy'){
-            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='pharmacy'){
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+            props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"history", actionType:"update", obj:row})
 
         }else if(row.path==='Laboratory'){
             props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})

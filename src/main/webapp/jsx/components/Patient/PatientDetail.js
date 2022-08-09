@@ -81,7 +81,7 @@ function PatientCard(props) {
     const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-    
+    console.log(activeContent)
   return (
     <div className={classes.root}>
       <Card >
