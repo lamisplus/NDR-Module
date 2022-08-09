@@ -164,7 +164,7 @@ const PatientnHistory = (props) => {
             //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
         }else if(row.path==='pharmacy'){
             //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
-            props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"history", actionType:"update", obj:row})
+            props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
 
         }else if(row.path==='Laboratory'){
             props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
