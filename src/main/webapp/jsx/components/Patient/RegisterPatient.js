@@ -142,7 +142,7 @@ const UserRegistration = (props) => {
      //HIV INFORMATION
      const [femaleStatus, setfemaleStatus]= useState(false)
      //const [values, setValues] = useState([]);
-     const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
+     const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrerId:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
      const [hivStatus, setHivStatus] = useState([]);
@@ -415,7 +415,7 @@ const UserRegistration = (props) => {
             //HIV FORM VALIDATION
             temp.targetGroupId = objValues.targetGroupId ? "" : "Target group is required."
             temp.dateConfirmedHiv = objValues.dateConfirmedHiv ? "" : "date confirm HIV is required."
-            temp.sourceOfReferrer = objValues.sourceOfReferrer ? "" : "Source of referrer is required."
+            temp.sourceOfReferrerId = objValues.sourceOfReferrerId ? "" : "Source of referrer is required."
             temp.enrollmentSettingId = objValues.enrollmentSettingId ? "" : "Enrollment Setting Number  is required."
             temp.tbStatusId = objValues.tbStatusId ? "" : "TB status is required."    
             temp.statusAtRegistrationId = objValues.statusAtRegistrationId ? "" : "Status at Registration is required."  
@@ -637,7 +637,9 @@ const UserRegistration = (props) => {
             setOvcEnrolled(false)
         }
     }
-
+    const handleCancel =()=>{
+        history.push({ pathname: '/' });
+    }
 
     return (
         <>
@@ -1481,9 +1483,9 @@ const UserRegistration = (props) => {
                                     <Label >Source of Referral *</Label>
                                     <Input
                                         type="select"
-                                        name="sourceOfReferrer"
-                                        id="sourceOfReferrer"
-                                        value={objValues.sourceOfReferrer}
+                                        name="sourceOfReferrerId"
+                                        id="sourceOfReferrerId"
+                                        value={objValues.sourceOfReferrerId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                         required
@@ -1495,8 +1497,8 @@ const UserRegistration = (props) => {
                                                 </option>
                                             ))}
                                     </Input>
-                                    {errors.sourceOfReferrer !=="" ? (
-                                        <span className={classes.error}>{errors.sourceOfReferrer}</span>
+                                    {errors.sourceOfReferrerId !=="" ? (
+                                        <span className={classes.error}>{errors.sourceOfReferrerId}</span>
                                         ) : "" }
                                     </FormGroup>
                                 </div>
@@ -1688,7 +1690,7 @@ const UserRegistration = (props) => {
                                 className={classes.button}
                                 startIcon={<CancelIcon />}
                                 style={{backgroundColor:'#992E62'}}
-                                //onClick={handleCancel}
+                                onClick={handleCancel}
                             >
                                 <span style={{ textTransform: "capitalize", color:"#fff" }}>Cancel</span>
                             </MatButton>

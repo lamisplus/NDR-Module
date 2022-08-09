@@ -661,7 +661,9 @@ const UserRegistration = (props) => {
             setOvcEnrolled(false)
         }
     }
-
+    const handleCancel =()=>{
+        history.push({ pathname: '/' });
+    }
 
     return (
         <>
@@ -1709,9 +1711,10 @@ const UserRegistration = (props) => {
                                 variant="contained"
                                 className={classes.button}
                                 startIcon={<CancelIcon />}
-                                //onClick={handleCancel}
+                                onClick={handleCancel}
+                                style={{backgroundColor:'#992E62'}}
                             >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                                <span style={{ textTransform: "capitalize", color:"#fff"  }}>Cancel</span>
                             </MatButton>
                         </Form>
                     </div>

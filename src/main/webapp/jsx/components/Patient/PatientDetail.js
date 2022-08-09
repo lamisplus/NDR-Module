@@ -37,6 +37,9 @@ import ViewArtCommencement from './../ArtCommencement/ViewArtCommencement'
 import FirstEac from './../EnhancedAdherenceCounseling/ViewEAC/FirstEac'
 import SecondEac from './../EnhancedAdherenceCounseling/ViewEAC/SecondEac'
 import ThirdEac from './../EnhancedAdherenceCounseling/ViewEAC/ThirdEac'
+import ViewLaboratory from './../Laboratory/ViewLaboratory'
+import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
+
 import { TiArrowBack } from 'react-icons/ti'
 
 const styles = theme => ({
@@ -132,6 +135,8 @@ function PatientCard(props) {
           {activeContent.route==='first-eac-history' &&( <FirstEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='second-eac-history' &&( <SecondEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='completed-eac-history' &&( <ThirdEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='lab-view' &&( <ViewLaboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='pharmacy-update' &&( <PharmacyRefillUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

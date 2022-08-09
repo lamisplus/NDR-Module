@@ -218,11 +218,10 @@ const Laboratory = (props) => {
             })
             .catch(error => {
                 setSaving(false);
-                if(error.apierror){
-                    toast.error(error.apierror.message);
-                }else{
-                    toast.error("Something went wrong. Please try again...");
-                }                    
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage); 
+                }                  
             }); 
     }
 

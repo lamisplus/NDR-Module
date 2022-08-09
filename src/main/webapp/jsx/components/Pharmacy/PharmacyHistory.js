@@ -128,7 +128,7 @@ const PharmacyHistory = (props) => {
       }
     const onClickHome = (row) =>{  
        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
-        props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
+        props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:"update", obj:row})
     }
 
   return (
@@ -188,10 +188,8 @@ const PharmacyHistory = (props) => {
                             aria-haspopup="menu"
                             style={{backgroundColor:'rgb(153, 46, 98)'}}
                             >
-                                <MdRemoveRedEye style={{marginRight: "5px"}}/> {" "}{" "} View
+                                <MdRemoveRedEye style={{marginRight: "5px"}}/> {" "}{" "} MdEditNote
                             </Button>
-                            
-                            
                             </ButtonGroup>
                           ), 
                   

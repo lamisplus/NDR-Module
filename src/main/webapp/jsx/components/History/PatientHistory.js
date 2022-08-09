@@ -158,8 +158,8 @@ const PatientnHistory = (props) => {
             props.setActiveContent({...props.activeContent, route:'completed-eac-history', id:row.id})
         }else if(row.path==='hiv-enrollment'){
             history.push({
-                pathname: '/register-patient',
-                state: { id: row.id }
+                pathname: '/update-patient',
+                state: { id: row.id, patientObj:props.patientObj }
             });
             //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
         }else if(row.path==='pharmacy'){
@@ -207,9 +207,9 @@ const PatientnHistory = (props) => {
                             <Dropdown item text='Action'>
 
                             <Dropdown.Menu >
-                                {row.viewable && ( <Dropdown.Item onClick={()=>LoadViewPage(row)}> <Icon name='eye' />View</Dropdown.Item>)}
-                                {/* {row.viewable && ( <Dropdown.Item  ><Icon name='edit' />Edit</Dropdown.Item>)}
-                                {row.viewable && ( <Dropdown.Item  > <Icon name='trash' /> Delete</Dropdown.Item>)} */}
+                                {row.viewable && ( <Dropdown.Item onClick={()=>LoadViewPage(row)}> <Icon name='eye' />View  </Dropdown.Item>)}
+                                {row.viewable && ( <Dropdown.Item  onClick={()=>LoadViewPage(row)}><Icon name='edit' />Edit</Dropdown.Item>)}
+                                {/* {row.viewable && ( <Dropdown.Item  > <Icon name='trash' /> Delete</Dropdown.Item>)}  */}
                             </Dropdown.Menu>
                         </Dropdown>
                             </Button>

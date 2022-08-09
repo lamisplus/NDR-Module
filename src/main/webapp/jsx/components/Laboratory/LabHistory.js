@@ -26,19 +26,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
 import Button from "@material-ui/core/Button";
-import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
-import { Label } from 'semantic-ui-react'
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
-import moment from "moment";
-import { FaUserPlus } from "react-icons/fa";
-import {TiArrowForward} from 'react-icons/ti'
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { MdEditNote } from "react-icons/md";
 
-//Dtate Picker package
-Moment.locale("en");
-momentLocalizer();
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -115,21 +106,12 @@ const LabHistory = (props) => {
     async function LabOrders() {
         setLoading(true)
         axios
-            .get(`${baseUrl}laboratory/orders/patients/${props.patientObj.id}`,
+            .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
             { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
                 setLoading(false)
-                let LabObject= []
-                response.data.forEach(function(value, index, array) {
-                    const dataOrders = value.labOrder.tests                    
-                    if(dataOrders[index]) {
-                        dataOrders.forEach(function(value, index, array) {
-                            LabObject.push(value)
-                        })                       
-                    }                   
-                });
-                setOrderList(LabObject);                
+                setOrderList(response.data);                
             })
             .catch((error) => {  
                 setLoading(false)  
@@ -155,6 +137,11 @@ const LabHistory = (props) => {
           }
       }
 
+      const onClickHome = (row) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+         props.setActiveContent({...props.activeContent, route:'lab-view', id:row.id, activeTab:"history", actionType:"update", obj:row})
+     }
+
   return (
     <div>
             <br/>
@@ -169,20 +156,42 @@ const LabHistory = (props) => {
                   field: "testGroup",
                 },
                 { title: "Test Name", field: "testName", filtering: false },
-                { title: "Order Priority", field: "orderPriority", filtering: false },
-                { title: "Order Date", field: "orderDate", filtering: false },
-                { title: "Status", field: "status", filtering: false },
+                { title: "Lab Number", field: "labNumber", filtering: false },
+                { title: "Date Sample Collected", field: "sampleCollectionDate", filtering: false },
+                { title: "Date Assayed", field: "dateAssayed", filtering: false },
+                { title: "Date Result Received", field: "dateResultReceived", filtering: false },
+                { title: "VL Indication", field: "viralLoadIndication", filtering: false },
+                { title: "Action", field: "Action", filtering: false },
 
               ]}
               isLoading={loading}
               data={ orderList.map((row) => ({
                   //Id: manager.id,
-                  testGroup:row.labTestGroupName,
-                  testName: row.labTestName,
-                  orderPriority: row.orderPriorityName,
-                  orderDate: row.orderDate,                    
-                  status: (<Label color={labStatus(row.labTestOrderStatus)} size="mini">{row.labTestOrderStatusName}</Label>), 
-                  
+                  testGroup:row.labTestGroupId,
+                  testName: row.labTestId,
+                  labNumber: row.labNumber,
+                  sampleCollectionDate: row.sampleCollectionDate,    
+                  dateAssayed: row.dateAssayed,
+                  dateResultReceived: row.dateResultReceived, 
+                  viralLoadIndication: row.viralLoadIndication,
+                  Action: (
+                    <ButtonGroup variant="contained" 
+                        aria-label="split button"
+                        style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
+                        size="large"
+                        onClick={()=>onClickHome(row)}
+                    >
+                    <Button
+                    color="primary"
+                    size="small"
+                    aria-label="select merge strategy"
+                    aria-haspopup="menu"
+                    style={{backgroundColor:'rgb(153, 46, 98)'}}
+                    >
+                        <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
+                    </Button>
+                    </ButtonGroup>
+                  ), 
                   }))}
             
                         options={{
