@@ -31,7 +31,7 @@ public class EACActivityProvider implements PatientActivityProvider {
     @NotNull
     private PatientActivity getEac(String name, HIVEac eac) {
         LocalDate date = eac.getCreatedDate ().toLocalDate ();
-        String path = "eac";
+        StringBuilder path = new StringBuilder ("eac");
         if(eac.getDateOfEac1 () != null && eac.getDateOfEac2 () == null && eac.getDateOfEac3 () == null){
             date = eac.getDateOfEac1 ();
         }
@@ -42,15 +42,15 @@ public class EACActivityProvider implements PatientActivityProvider {
             date = eac.getDateOfEac3 ();
         }
         if(eac.getStatus ().equalsIgnoreCase ("first")){
-          path =  path.concat ("1");
+         path.append (1);
         }
 
         if(eac.getStatus ().equalsIgnoreCase ("Second")){
-            path =  path.concat ("2");
+            path.append ("2");
         }
         if(eac.getStatus ().equalsIgnoreCase ("Completed")){
-            path =  path.concat ("3");
+            path.append("3");
         }
-        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", path);
+        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", path.toString ());
     }
 }
