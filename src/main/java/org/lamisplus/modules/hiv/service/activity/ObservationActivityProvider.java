@@ -20,7 +20,11 @@ public class ObservationActivityProvider implements PatientActivityProvider {
     public List<PatientActivity> getActivitiesFor(Person person) {
         List<Observation> observations = observationRepository.getAllByPerson (person);
         return observations.stream ()
-                .map (observation -> new PatientActivity (observation.getId (), observation.getType (), observation.getDateOfObservation (), "", observation.getType ()))
+                .map (observation -> {
+                    String type = observation.getType ();
+                    String path = type.replaceAll (" ", "-");
+                    return new PatientActivity (observation.getId (), type, observation.getDateOfObservation (), "", path);
+                })
                 .collect (Collectors.toList ());
 
     }

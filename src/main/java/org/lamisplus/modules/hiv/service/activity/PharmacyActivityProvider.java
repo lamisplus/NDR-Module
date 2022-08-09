@@ -22,7 +22,7 @@ public class PharmacyActivityProvider implements PatientActivityProvider {
         List<ArtPharmacy> pharmacies = pharmacyRepository.getArtPharmaciesByPerson (person);
         String name = "Pharmacy refill";
         return pharmacies.stream ()
-                .map (artPharmacy -> new PatientActivity (artPharmacy.getId (), name, artPharmacy.getVisitDate (), "", "Pharmacy"))
+                .map (artPharmacy -> new PatientActivity (artPharmacy.getId (), name, artPharmacy.getVisitDate (), "", "pharmacy"))
                 .collect (Collectors.toList ());
     }
 }

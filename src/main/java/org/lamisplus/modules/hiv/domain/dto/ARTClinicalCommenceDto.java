@@ -24,7 +24,7 @@ public class ARTClinicalCommenceDto implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate visitDate;
-    private  String cd4;
+    private  Long cd4;
     private  Long cd4Percentage;
     @JsonIgnore
     private Boolean isCommencement;
@@ -51,6 +51,9 @@ public class ARTClinicalCommenceDto implements Serializable {
     private LocalDate lmpDate;
     @NotNull
     private Long visitId;
-    VitalSignDto vitalSignDto;
+    private  VitalSignDto vitalSignDto;
+    private  Boolean isViralLoadAtStartOfArt;
+    private  Double  viralLoadAtStartOfArt;
+
 
 }

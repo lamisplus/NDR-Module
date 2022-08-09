@@ -91,6 +91,8 @@
                 next_appointment         date,
                 lmp_date                 date,
                 tb_screen                JSONB,
+                is_viral_load_at_start_of_art BOOLEAN,
+                viral_load_at_start_of_art    DOUBLE PRECISION,
                 CONSTRAINT pk_hiv_art_clinical PRIMARY KEY (id)
                 );
 

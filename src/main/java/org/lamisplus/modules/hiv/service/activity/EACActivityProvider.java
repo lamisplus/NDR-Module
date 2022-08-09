@@ -23,7 +23,6 @@ public class EACActivityProvider implements PatientActivityProvider {
     public List<PatientActivity> getActivitiesFor(Person person) {
         List<HIVEac> eacs = hivEacRepository.getAllByPersonAndArchived (person, 0);
         String name = "EAC ";
-
         return eacs.stream ()
                 .map (eac -> getEac (name, eac))
                 .collect(Collectors.toList());
@@ -32,7 +31,7 @@ public class EACActivityProvider implements PatientActivityProvider {
     @NotNull
     private PatientActivity getEac(String name, HIVEac eac) {
         LocalDate date = eac.getCreatedDate ().toLocalDate ();
-
+        String path = "eac";
         if(eac.getDateOfEac1 () != null && eac.getDateOfEac2 () == null && eac.getDateOfEac3 () == null){
             date = eac.getDateOfEac1 ();
         }
@@ -42,7 +41,16 @@ public class EACActivityProvider implements PatientActivityProvider {
         if(eac.getDateOfEac1 () != null && eac.getDateOfEac2 () !=  null && eac.getDateOfEac3 () != null){
             date = eac.getDateOfEac3 ();
         }
+        if(eac.getStatus ().equalsIgnoreCase ("first")){
+          path =  path.concat ("1");
+        }
 
-        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", "EAC");
+        if(eac.getStatus ().equalsIgnoreCase ("Second")){
+            path =  path.concat ("2");
+        }
+        if(eac.getStatus ().equalsIgnoreCase ("Completed")){
+            path =  path.concat ("3");
+        }
+        return new PatientActivity (eac.getId (), name + eac.getStatus (), date, "", path);
     }
 }
