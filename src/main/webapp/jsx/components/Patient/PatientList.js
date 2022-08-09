@@ -27,7 +27,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
 import { Label } from 'semantic-ui-react'
 import Moment from "moment";
@@ -210,11 +209,11 @@ const Patients = (props) => {
                                     (
                                         <>
                                             <Link
-                                                    to={{
-                                                        pathname: "/patient-history",
-                                                        state: { patientObj: row  }
-                                                    }}
-                                                >
+                                                to={{
+                                                    pathname: "/patient-history",
+                                                    state: { patientObj: row  }
+                                                }}
+                                            >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
                                                     style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}

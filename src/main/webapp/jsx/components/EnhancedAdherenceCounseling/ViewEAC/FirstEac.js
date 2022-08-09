@@ -6,14 +6,11 @@ import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
-import { url as baseUrl } from "../../../api";
-import { token as token } from "../../../api";
+import { url as baseUrl, token } from "./../../../../api";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
-import { Icon,Button, } from 'semantic-ui-react'
-import FirstEAC from './EnhancedAdherenceCounseling';
-import ContinueEAC from './SecondEac';
+
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -51,11 +48,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const EAC = (props) => {
-    //const patientObj = props.patientObj;
+    const patientObj = props.patientObj;
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
+    const [eacObj, setEacObj] = useState([]);
     const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(true)
     const [objValues, setObjValues]=useState({
                                                 dateOfEac1: null,
                                                 dateOfEac2: null,
@@ -64,27 +61,30 @@ const EAC = (props) => {
                                                 lastViralLoad:"",
                                                 note: "",
                                                 personId: props.patientObj.id,
-                                                status: "",
+                                                status: "First",
                                                 visitId:""
                                             })
     useEffect(() => {
-        EACHistory()
-    }, [props.patientObj.id]);
-    ///GET LIST OF EAC
-    const EACHistory =()=>{
-        setLoading(true)
+        EACStatus();
+        }, []);
+    
+        ///GET LIST OF FUNCTIONAL%20_STATUS
+        // TB STATUS
+        const EACStatus =()=>{
         axios
             .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-            setLoading(false)
-            setObjValues(response.data[0])
+                //console.log(response.data);
+                setEacObj(response.data);
             })
             .catch((error) => {
             //console.log(error);
-            });    
-    }
+            });
+        
+        }
+ 
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }          
@@ -92,16 +92,16 @@ const EAC = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
-          objValues.status='Second'
           axios.post(`${baseUrl}observation/eac`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  props.setHideSecond(false)
-                  props.setHideThird(true)
                   props.setEacObj(response.data)
+                  props.setHideFirst(true)
+                  props.setHideFirst(true)
+                  props.setHideSecond(true)
                   toast.success(" Save successful");
                   //props.setActiveContent('recent-history')
 
@@ -129,28 +129,69 @@ const EAC = (props) => {
                         <br/>
                         <br/>
                         <br/>
-                        <h4>First EAC Date  {objValues.dateOfEac1}</h4>
                         <br/>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date of Second EAC </Label>
+                            <Label for="">Date of EAC </Label>
                             <Input
                                 type="date"
-                                name="dateOfEac2"
-                                id="dateOfEac2"
-                                value={objValues.dateOfEac2}
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
                                 onChange={handleInputChange}
-                                min={objValues.dateOfEac1}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac2 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac2}</span>
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
-
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date Of Last Viral Load</Label>
+                            <Input
+                                type="date"
+                                name="dateOfLastViralLoad"
+                                id="dateOfLastViralLoad"
+                                value={objValues.dateOfLastViralLoad}
+                                onChange={handleInputChange}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">lastViralLoad</Label>
+                            <Input
+                                type="number"
+                                name="lastViralLoad"
+                                id="lastViralLoad"
+                                value={objValues.lastViralLoad}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">note</Label>
+                            <Input
+                                type="textarea"
+                                name="note"
+                                id="note"
+                                value={objValues.note}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            </FormGroup>
+                        </div>
                         
                     </div>
                     
@@ -165,7 +206,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac2==="" ? true : false}
+                    disabled={objValues.dateOfEac1==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -174,7 +215,6 @@ const EAC = (props) => {
                     )}
                     </MatButton>
                 
-                   
                     </form>
                 </CardBody>
             </Card>                    

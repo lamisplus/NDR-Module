@@ -140,10 +140,10 @@ const ArtCommencement = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {            
-
-                setObjValues({...response.data.artCommence})
-                RegimenType(response.data.artCommence.regimenTypeId)
-                setVitalSignDto(...response.data.artCommence.vitalSignDto)
+                console.log()
+                setObjValues({...response.data})
+                RegimenType(response.data.regimenTypeId)
+                setVitalSignDto(response.data.vitalSignDto)
            })
            .catch((error) => {
            //console.log(error);

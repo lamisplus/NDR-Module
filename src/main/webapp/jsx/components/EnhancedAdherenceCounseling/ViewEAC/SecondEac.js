@@ -6,14 +6,11 @@ import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
-import { url as baseUrl } from "../../../api";
-import { token as token } from "../../../api";
+import { url as baseUrl, token } from "./../../../../api";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
-import { Icon,Button, } from 'semantic-ui-react'
-import FirstEAC from './EnhancedAdherenceCounseling';
-import ContinueEAC from './SecondEac';
+
 
 const useStyles = makeStyles(theme => ({
     card: {

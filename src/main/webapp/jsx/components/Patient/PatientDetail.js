@@ -34,8 +34,9 @@ import ArtCommencement from './../ArtCommencement/ArtCommencement'
 import ViewMentalHealthScreening from './../MentalHealthScreening/ViewMhs'
 import ViewAdultClinicEvaluationFrom from './../InitailClinicEvaluation/ViewAdultClinicEvaluationFrom'
 import ViewArtCommencement from './../ArtCommencement/ViewArtCommencement'
-//import ViewAdultClinicEvaluationFrom from './../InitailClinicEvaluation/ViewAdultClinicEvaluationFrom'
-//import ViewAdultClinicEvaluationFrom from './../InitailClinicEvaluation/ViewAdultClinicEvaluationFrom'
+import FirstEac from './../EnhancedAdherenceCounseling/ViewEAC/FirstEac'
+import SecondEac from './../EnhancedAdherenceCounseling/ViewEAC/SecondEac'
+import ThirdEac from './../EnhancedAdherenceCounseling/ViewEAC/ThirdEac'
 import { TiArrowBack } from 'react-icons/ti'
 
 const styles = theme => ({
@@ -77,8 +78,7 @@ const styles = theme => ({
 function PatientCard(props) {
     let history = useHistory();
     const [art, setArt] = useState(false);
-    const [activeContent, setActiveContent] = useState({route:"recent-history", id:""});
-    const [historyId, setHistoryId] = useState("")
+    const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
     
@@ -106,8 +106,8 @@ function PatientCard(props) {
           {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {/* {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)} */}
-          {activeContent.route==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent.route==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='anc-enrollment' &&( <AncEnrollement patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='labour-delivery' &&( <LabourDelivery patientObj={patientObj} setActiveContent={setActiveContent}/>)}
@@ -122,16 +122,16 @@ function PatientCard(props) {
           {activeContent.route==='adult-evaluation' &&( <AdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='mhs' &&( <MentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='patient-history' &&( <PatientHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='art-commencement' &&( <ArtCommencement patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent.route==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='patient-history' &&( <PatientHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='art-commencement' &&( <ArtCommencement patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {/* History Pages */}
           {activeContent.route==='mental-health-view' &&( <ViewMentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='adult-clinic-eveluation-view' &&( <ViewAdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='art-commencement-view' &&( <ViewArtCommencement patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {/* {activeContent.route==='mental-health-history' &&( <ViewMentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='mental-health-history' &&( <ViewMentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='mental-health-history' &&( <ViewMentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)} */}
+          {activeContent.route==='first-eac-history' &&( <FirstEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='second-eac-history' &&( <SecondEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='completed-eac-history' &&( <ThirdEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

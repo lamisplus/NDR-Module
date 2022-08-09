@@ -452,7 +452,6 @@ const UserRegistration = (props) => {
                 setErrors({ ...temp })
         return Object.values(temp).every(x => x == "")
     }
-    console.log(errors)
 
     const handleSubmit = async (e) => {
         e.preventDefault(); 

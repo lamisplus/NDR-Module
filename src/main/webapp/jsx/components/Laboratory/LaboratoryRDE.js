@@ -47,19 +47,19 @@ const Laboratory = (props) => {
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
     let temp = { ...errors }
-    const [objValues, setObjValues] = useState({
-                                                orderDate:null,
-                                                patientId: props.patientObj?props.patientObj.id:"",
-                                                tests: "",
-                                                visitId: ""
-                                            });
     const [tests, setTests]=useState({
-                                        description: "",
+
+                                        comments: "",
+                                        dateAssayed: "",
+                                        labNumber: "",
                                         labTestGroupId: "",
                                         labTestId: "",
-                                        labTestOrderStatus: 1,
-                                        orderPriority: "",
-                                        viralLoadIndication:""
+                                        dateResultReceived:"",
+                                        patientId:props.patientObj?props.patientObj.id:"",
+                                        result: "",
+                                        sampleCollectionDate: null,
+                                        viralLoadIndication: 0,
+                                        visitId:"" 
                                     })
     useEffect(() => {
             TestGroup();
@@ -96,27 +96,27 @@ const Laboratory = (props) => {
             });
         
         }
-        //Check if Module Exist
-        const CheckLabModule =()=>{
-            axios
-              .get(`${baseUrl}modules/check?moduleName=laboratory`,
-                  { headers: {"Authorization" : `Bearer ${token}`} }
-              )
-              .then((response) => {
-                  if(response.data===true){
-                    setModuleStatus("1")
-                    setButtonHidden(false)
-                    }
-                    else{
-                        setModuleStatus("2")
-                        //toast.error("Laboratory module is not install")
-                        setButtonHidden(true)
-                    }
-                }).catch((error) => {
-                //console.log(error);
-              });
-          
-        }
+    //Check if Module Exist
+    const CheckLabModule =()=>{
+        axios
+            .get(`${baseUrl}modules/check?moduleName=laboratory`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                if(response.data===true){
+                setModuleStatus("1")
+                setButtonHidden(false)
+                }
+                else{
+                    setModuleStatus("2")
+                    //toast.error("Laboratory module is not install")
+                    setButtonHidden(true)
+                }
+            }).catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     //Get Patiet Visit 
     const PatientVisit =()=>{
         axios
@@ -152,7 +152,7 @@ const Laboratory = (props) => {
             .catch((error) => {
             //console.log(error);
             });        
-        }
+    }
     const handleSelectedTestGroup = e =>{
         setTests ({...tests,  labTestGroupId: e.target.value});
         const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
@@ -160,7 +160,7 @@ const Laboratory = (props) => {
     }
     const handleInputChangeObject = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});               
+        setTests ({...tests,  [e.target.name]: e.target.value});               
     }
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
@@ -177,9 +177,11 @@ const Laboratory = (props) => {
         }
         //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
     }
-    const addOrder = e => { 
-        
+    const addOrder = e => {  
+        console.log(errors) 
         if(validate()){
+            
+            tests.visitId=visitId
             setTestOrderList([...testOrderList, tests])
         }
       }
@@ -191,31 +193,28 @@ const Laboratory = (props) => {
       };
       //Validations of the forms
       const validate = () => {        
-        temp.orderDate = objValues.orderDate ? "" : "This field is required"
+        temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
         temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
         temp.labTestId = tests.labTestId ? "" : "This field is required"
-        temp.orderPriority = tests.orderPriority ? "" : "This field is required"
+        temp.labNumber = tests.labNumber ? "" : "This field is required"
+        temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
+        temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
+        temp.result = tests.result ? "" : "This field is required"
         setErrors({
             ...temp
         })
         return Object.values(temp).every(x => x == "")
     }
-    const labHistory =()=>{
-        props.setActiveContent('lab-history')
-        
-    }
-
+    
     const handleSubmit = (e) => {        
-        e.preventDefault();   
-        objValues.tests= testOrderList
-        objValues.visitId= visitId 
+        e.preventDefault();            
         setSaving(true);
-        axios.post(`${baseUrl}laboratory/orders`,objValues,
+        axios.post(`${baseUrl}laboratory/rde-orders`,testOrderList,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
                 toast.success("Laboratory test order created successful");
-                props.setActiveContent('recent-history')
+                props.setActiveContent({...props.activeContent, route:'recent-history'})
             })
             .catch(error => {
                 setSaving(false);
@@ -250,16 +249,16 @@ const Laboratory = (props) => {
                                 <Label for="encounterDate"> Date Sample Collected*</Label>
                                 <Input
                                     type="date"
-                                    name="dateSampleCollected"
-                                    id="dateSampleCollected"
-                                    value={objValues.dateSampleCollected}
-                                    onChange={handleInputChangeObject}
+                                    name="sampleCollectionDate"
+                                    id="sampleCollectionDate"
+                                    value={tests.sampleCollectionDate}
+                                    onChange={handleInputChange}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                 />
-                                {errors.dateSampleCollected !=="" ? (
-                                    <span className={classes.error}>{errors.dateSampleCollected}</span>
+                                {errors.sampleCollectionDate !=="" ? (
+                                    <span className={classes.error}>{errors.sampleCollectionDate}</span>
                                 ) : "" }
                             </FormGroup>
                         </Col>
@@ -270,8 +269,8 @@ const Laboratory = (props) => {
                                     type="number"
                                     name="labNumber"
                                     id="labNumber"
-                                    value={objValues.labNumber}
-                                    onChange={handleInputChangeObject}
+                                    value={tests.labNumber}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                 />
@@ -285,16 +284,16 @@ const Laboratory = (props) => {
                                 <Label for="encounterDate">Date Assey*</Label>
                                 <Input
                                     type="date"
-                                    name="dateAssey"
-                                    id="dateAssey"
-                                    value={objValues.dateAssey}
-                                    onChange={handleInputChangeObject}
+                                    name="dateAssayed"
+                                    id="dateAssayed"
+                                    value={tests.dateAssayed}
+                                    onChange={handleInputChange}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                 />
-                                {errors.dateAssey !=="" ? (
-                                    <span className={classes.error}>{errors.dateAssey}</span>
+                                {errors.dateAssayed !=="" ? (
+                                    <span className={classes.error}>{errors.dateAssayed}</span>
                                 ) : "" }
                             </FormGroup>
                         </Col>
@@ -305,8 +304,8 @@ const Laboratory = (props) => {
                                     type="date"
                                     name="dateResultReceived"
                                     id="dateResultReceived"
-                                    value={objValues.dateResultReceived}
-                                    onChange={handleInputChangeObject}
+                                    value={tests.dateResultReceived}
+                                    onChange={handleInputChange}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
@@ -368,44 +367,21 @@ const Laboratory = (props) => {
                             <FormGroup>
                                 <Label for="priority">Result*</Label>
                                 <Input
-                                    type="select"
+                                    type="text"
                                     name="result"
                                     id="result"
                                     value={tests.result}
                                     onChange={handleInputChange}  
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                     >
-                                    <option value=""> </option>
-                                    <option value="">Um/+ </option>
-                                    <option value=""> mm/-</option>               
-                                        {/* {priority.map((value) => (
-                                            <option key={value.id} value={value.id}>
-                                                {value.display}
-                                            </option>
-                                        ))} */}
+                                   
                                 </Input>
                                 {errors.result !=="" ? (
                                     <span className={classes.error}>{errors.result}</span>
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                        <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="priority">Comment</Label>
-                                <Input
-                                    type="textarea"
-                                    name="comment"
-                                    id="comment"
-                                    value={tests.comment}
-                                    onChange={handleInputChange}  
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
-                                    >
-                                    
-                                </Input>
-                                
-                            </FormGroup>
-                        </Col>
-                        {showVLIndication && (
+                       
                         <Col md={6} className="form-group mb-3">
                                 <FormGroup>
                                     <Label for="vlIndication">VL Indication*</Label>
@@ -425,10 +401,27 @@ const Laboratory = (props) => {
                                             </option>
                                         ))}
                                 </Input>
+                                {errors.viralLoadIndication !=="" ? (
+                                    <span className={classes.error}>{errors.viralLoadIndication}</span>
+                                ) : "" }
                                 </FormGroup>
                         </Col>
-                        )}
-
+                        <Col md={6} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="priority">Comment</Label>
+                                <Input
+                                    type="textarea"
+                                    name="comments"
+                                    id="comments"
+                                    value={tests.comment}
+                                    onChange={handleInputChange}  
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                    >
+                                    
+                                </Input>
+                                
+                            </FormGroup>
+                        </Col>
                         <Col md={12}>                  
                             <LabelSui as='a' color='black'  className="float-end" onClick={addOrder}  size='tiny' style={{ marginTop:20, marginBottom:20}}>
                                 <Icon name='plus' /> Add Test
@@ -446,8 +439,11 @@ const Laboratory = (props) => {
                                     <tr>
                                         <th>Test Group</th>
                                         <th>Test</th>
-                                        <th>Result</th>
-                                        {/* {showVLIndication ?  (<th>Vira Load Indication</th>) :""} */}
+                                        <th>Date Sample Collected</th>
+                                        <th>Date Asseyed</th>
+                                        <th>Date Result Received</th>
+                                        <th>VL Indication</th>
+                                        <th>Result</th>                                        
                                         <th ></th>
                                     </tr>
                                 </thead>
@@ -483,7 +479,7 @@ const Laboratory = (props) => {
                         startIcon={<SaveIcon />}
                         hidden={buttonHidden}
                         style={{backgroundColor:"#014d88"}}
-                        disabled={testOrderList.length >0 || !saving ? false : true}
+                        disabled={testOrderList.length >0 ? false : true}
                         onClick={handleSubmit}
                         >
                         {!saving ? (
@@ -523,13 +519,17 @@ function TestOrdersList({
     const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
     const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
     const vLIndication=vLIndicationObj.length>0 ?
-       vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : ""
+    vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : ""
 
     return (
             <tr>
                 <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
                 <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>
-               <th>{order.orderPriority}</th>
+                <th>{order.sampleCollectionDate}</th>
+                <th>{order.dateAssayed}</th>
+                <th>{order.dateResultReceived}</th>
+                <th>{vLIndication.display}</th>
+                <th>{order.result}</th>
                 <th></th>
                 <th >
                     <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeOrder(index)}>

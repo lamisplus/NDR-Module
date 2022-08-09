@@ -78,7 +78,7 @@ const ViewMentalHealthScreening = (props) => {
        )
        .then((response) => {            
             const mentalObj= response.data.find((x)=> x.type==='Mental health') 
-            console.log(mentalObj)
+            //console.log(mentalObj)
             setObjValues({...mentalObj.data})
               //setViralLoad(LabObject)
        })

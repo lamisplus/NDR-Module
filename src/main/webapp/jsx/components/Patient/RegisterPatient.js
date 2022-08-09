@@ -342,16 +342,16 @@ const UserRegistration = (props) => {
         }
         if(e.target.name==='hospitalNumber' && e.target.value!==''){
         async function getCharacters() {
-            
-            const response = await axios.get(`${baseUrl}patient/exist/hospital-number`,
+            const hosiptalNumber=e.target.value
+            const response = await axios.post(`${baseUrl}patient/exist/hospital-number`, hosiptalNumber,
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 );
-            if(response.data===true){
+            if(response.data!==true){
                 setHospitalNumStatus(false)
                 setHospitalNumStatus2(true)
             }else{
                 setHospitalNumStatus(false)
-                setHospitalNumStatus(true)
+                setHospitalNumStatus2(true)
             }
         }
         getCharacters();
@@ -453,6 +453,7 @@ const UserRegistration = (props) => {
                     deceasedDateTime: null,
                     firstName: basicInfo.firstName,
                     genderId: basicInfo.genderId,
+                    sexId: basicInfo.genderId,
                     identifier: [
                         {
                             "assignerId": 1,
@@ -704,10 +705,10 @@ const UserRegistration = (props) => {
                                                     <span className={classes.error}>{errors.hospitalNumber}</span>
                                                     ) : "" }
                                                     {hospitalNumStatus===true ? (
-                                                        <span className={classes.error}>{"CBO Code already exist"}</span>
+                                                        <span className={classes.error}>{"Hospital number already exist"}</span>
                                                     ) : "" }
                                                     {hospitalNumStatus2===true ? (
-                                                        <span className={classes.success}>{"CBO Code is OK."}</span>
+                                                        <span className={classes.success}>{"Hospital number is OK."}</span>
                                                     ) :""}
                                                 </FormGroup>
                                             </div>
@@ -1673,6 +1674,7 @@ const UserRegistration = (props) => {
                                 className={classes.button}
                                 startIcon={<SaveIcon />}
                                 onClick={handleSubmit}
+                                style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
                             >
                                 {!saving ? (
                                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -1685,9 +1687,10 @@ const UserRegistration = (props) => {
                                 variant="contained"
                                 className={classes.button}
                                 startIcon={<CancelIcon />}
+                                style={{backgroundColor:'#992E62'}}
                                 //onClick={handleCancel}
                             >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                                <span style={{ textTransform: "capitalize", color:"#fff" }}>Cancel</span>
                             </MatButton>
                         </Form>
                     </div>

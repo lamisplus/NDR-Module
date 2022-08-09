@@ -139,17 +139,23 @@ const PatientnHistory = (props) => {
           }
     const LoadViewPage =(row)=>{
         
-        if(row.path==='Mental health'){        
+        if(row.path==='Mental-health'){        
             props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
 
         }else if(row.path==='Art-commence'){
             props.setActiveContent({...props.activeContent, route:'art-commencement-view', id:row.id})
 
-        }else if(row.path==='Clinical evaluation'){
+        }else if(row.path==='Clinical-evaluation'){
             props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
 
-        }else if(row.path==='EAC First'){
-            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='EAC-First'){
+            props.setActiveContent({...props.activeContent, route:'first-eac-history', id:row.id})
+        }
+        else if(row.path==='EAC-Second'){
+            props.setActiveContent({...props.activeContent, route:'second-eac-history', id:row.id})
+        }
+        else if(row.path==='EAC-Completed'){
+            props.setActiveContent({...props.activeContent, route:'completed-eac-history', id:row.id})
         }else if(row.path==='hiv-enrollment'){
             history.push({
                 pathname: '/register-patient',
@@ -168,7 +174,7 @@ const PatientnHistory = (props) => {
         
     }
 
-console.log(patientHistoryObject)
+
 
   return (
     <div>

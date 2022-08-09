@@ -6,14 +6,11 @@ import SaveIcon from '@material-ui/icons/Save'
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
-import { url as baseUrl } from "../../../api";
-import { token as token } from "../../../api";
+import { url as baseUrl, token } from "./../../../../api";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
-import { Icon,Button, } from 'semantic-ui-react'
-import FirstEAC from './EnhancedAdherenceCounseling';
-import ContinueEAC from './SecondEac';
+
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -92,18 +89,18 @@ const EAC = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
-          objValues.status='Second'
+          objValues.status='Third'
           axios.post(`${baseUrl}observation/eac`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  props.setHideSecond(false)
-                  props.setHideThird(true)
+                  props.setHideThird(false)
+                  props.setHideFirst(false)                 
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
-                  //props.setActiveContent('recent-history')
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {
@@ -129,24 +126,24 @@ const EAC = (props) => {
                         <br/>
                         <br/>
                         <br/>
-                        <h4>First EAC Date  {objValues.dateOfEac1}</h4>
+                        <h4>Second EAC Date {objValues.dateOfEac2}</h4>
                         <br/>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date of Second EAC </Label>
+                            <Label for="">Date of Third EAC </Label>
                             <Input
                                 type="date"
-                                name="dateOfEac2"
-                                id="dateOfEac2"
-                                value={objValues.dateOfEac2}
+                                name="dateOfEac3"
+                                id="dateOfEac3"
+                                value={objValues.dateOfEac3}
                                 onChange={handleInputChange}
-                                min={objValues.dateOfEac1}
+                                min={objValues.dateOfEac2}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac2 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac2}</span>
+                            {errors.dateOfEac3 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac3}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -165,7 +162,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac2==="" ? true : false}
+                    disabled={objValues.dateOfEac3==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -173,8 +170,6 @@ const EAC = (props) => {
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                     </MatButton>
-                
-                   
                     </form>
                 </CardBody>
             </Card>                    

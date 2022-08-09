@@ -57,7 +57,6 @@ const useStyles = makeStyles(theme => ({
 
 const ClinicEvaluationFrom = (props) => {
     const patientObj = props.patientObj;
-    console.log(props)
     //let history = useHistory();
     const classes = useStyles()
     //const [values, setValues] = useState([]);
@@ -178,19 +177,43 @@ const ClinicEvaluationFrom = (props) => {
     })
     useEffect(() => {
         GetInitialEvaluation();
-    }, [props.activeContent.id]);
+    }, []);
                                                 
     //Get Mental Health Object
     const GetInitialEvaluation =()=>{
     axios
-       .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+       .get(`${baseUrl}observation/${props.activeContent.id}`,
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
-       .then((response) => {            
-            const evaluationObj= response.data.find((x)=> x.type==='Clinical evaluation') 
-            console.log(evaluationObj)
+       .then((response) => {  
+            //console.log(response.data.data.medicalHistory) 
+            const newmedicalHistory=response.data.data.medicalHistory
+            setMedicalHistory(newmedicalHistory)
+            medicalHistory=newmedicalHistory
+            console.log(newmedicalHistory)         
+            console.log(medicalHistory)
             //setObjValues({...evaluationObj.data})
               //setViralLoad(LabObject)
+            setEye({...response.data.data.eye})
+            setBreast({...response.data.data.breast})
+            setSkin({...response.data.data.skin})
+            setCardiovascular({...response.data.data.cardiovascular})
+            setGenitalia({...response.data.data.datagenitalia})
+            setRespiratory({...response.data.data.respiratory})
+            setGastrointestinal({...response.data.data.gastrointestinal})
+            setAssesment({...response.data.data.assesment})
+            setWho({...response.data.data.who})
+            setRegimen({...response.data.data.regimen})
+            setPlan({...response.data.data.plan})
+            setEnroll({...response.data.data.enroll})
+            setPlanArt({...response.data.data.planArt})
+            
+            setMedicalHistory({...response.data.data.medicalHistory})
+            setPastArvMedicalMedical({...response.data.data.pastArvMedical})
+            setCurentMedical({...response.data.data.curentMedical})
+            setPatientDisclosure({...response.data.data.patientDisclosure})
+            setGeneralApperance({...response.data.data.generalApperance})
+            objValues.data.next_appointment=response.data.data.next_appointment
        })
        .catch((error) => {
        //console.log(error);
@@ -439,7 +462,7 @@ const ClinicEvaluationFrom = (props) => {
       
     }
 
-console.log(props.patientObj)
+
   return (      
       <div >
                    

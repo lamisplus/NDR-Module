@@ -1,6 +1,7 @@
-import React, {useState, Fragment } from "react";
+import React, {useState, Fragment, useEffect } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import PharmacyRefill from './PharmacyRefill';
+import PharmacyRefillUpdate from './PharmacyRefillUpdate';
 import PharmacyHistory from "./PharmacyHistory";
 
 const divStyle = {
@@ -11,6 +12,12 @@ const divStyle = {
 const PharmacyModule = (props) => {
     const [key, setKey] = useState('home');
     const patientObj = props.patientObj
+    console.log(props.activeContent)
+
+    useEffect ( () => {
+      setKey(props.activeContent.activeTab)
+    }, [props.activeContent.id]);
+    console.log(key)
 
   return (
     <Fragment>  
@@ -29,11 +36,19 @@ const PharmacyModule = (props) => {
                   {/* <Tab eventKey="checked-in" title="Checked In Patients">                   
                     <CheckedInPatients />
                   </Tab> */}
-                  <Tab eventKey="home" title="Pharmacy Drug Refill ">                   
-                    <PharmacyRefill patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                  <Tab eventKey="home" title="Pharmacy Drug Refill ">
+                    {props.activeContent.actionType==='update' ? 
+                      (                 
+                        <PharmacyRefillUpdate patientObj={patientObj} setActiveContent={props.setActiveContent} activeContent={props.activeContent}/>
+                      )
+                      :
+                      (
+                        <PharmacyRefill patientObj={patientObj} setActiveContent={props.setActiveContent} activeContent={props.activeContent}/>
+                      )
+                    }
                   </Tab>  
                   <Tab eventKey="history" title=" History">                   
-                    <PharmacyHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                    <PharmacyHistory patientObj={patientObj} setActiveContent={props.setActiveContent} activeContent={props.activeContent}/>
                   </Tab>                   
                 </Tabs>
               </div>

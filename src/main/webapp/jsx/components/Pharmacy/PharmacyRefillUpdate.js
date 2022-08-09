@@ -11,6 +11,7 @@ import { Spinner } from "reactstrap";
 import Select from "react-select";
 import { url as baseUrl, token } from "../../../api";
 import { toast} from "react-toastify";
+import { Button as ButtonSMUI, Icon} from 'semantic-ui-react'
 //import { Icon,Button, } from 'semantic-ui-react'
 
 
@@ -30,12 +31,14 @@ const useStyles = makeStyles(theme => ({
 let refillPeriodValue=null
 
 const Pharmacy = (props) => {
+    console.log(props.activeContent.obj)
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
     const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
     const [mmdType, setmmdType]=useState();
+    const [enableUpdate, setEnableUpdate]= useState(true) //Enable update for all input field if the user have permission
     const [showmmdType, setShowmmdType]=useState(false);
     const [showDsdModel, setShowDsdModel] = useState(false);
     const [showAdr, setShowAdr] = useState(false);
@@ -46,7 +49,7 @@ const Pharmacy = (props) => {
     const [objValues, setObjValues] = useState({
                                                 adherence: "",
                                                 adrScreened: "",
-                                                adverseDrugReactions: {},
+                                                adverseDrugReactions: [],
                                                 dsdModel:"",
                                                 isDevolve:"",
                                                 extra: {},
@@ -63,14 +66,36 @@ const Pharmacy = (props) => {
     useEffect(() => {
         RegimenLine();
         PrepSideEffect();
-        setRegimenList(
-            Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
-                id: value.value,
-                name: value.label,
-                dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
-              })))
-    }, [selectedOption]);
-    console.log(regimenList)
+        //PharmacyRefillDetail();
+        setObjValues(props.activeContent.obj);
+        setRegimenList(props.activeContent.obj.extra.regimens)
+        setRegimenList(props.activeContent.obj && props.activeContent.obj.extra ? props.activeContent.obj.extra.regimens : [])
+        if(props.activeContent.obj.adrScreened){
+            setShowAdr(true)
+            setSelectedOptionAdr(props.activeContent.obj.adverseDrugReactions)
+        }
+        if(props.activeContent.obj.regimen.length > 0){
+            setSelectedOption(
+                Object.entries(props.activeContent.obj.extra.regimens).map(([key, value]) => ({
+                            label: value.name,
+                            value: value.id
+                          }))
+            )
+            setRegimenList(
+                Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
+                    id: value.value,
+                    name: value.label,
+                    dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
+                  })))
+            setShowRegimen(true)
+        }
+        
+        }, [props.activeContent.obj]);
+
+    const EnableUpdateAction =()=>{
+
+        setEnableUpdate(false)
+    }
     //Get list of RegimenLine
     const RegimenLine =()=>{
     axios
@@ -106,19 +131,13 @@ const Pharmacy = (props) => {
     }
     function RegimenType(id) {
         async function getCharacters() {
-            try{
             const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
             { headers: {"Authorization" : `Bearer ${token}`} })
-            if(response.data.length >0){
-                setRegimenType(
-                    Object.entries(response.data).map(([key, value]) => ({
-                    label: value.description,
-                    value: value.id,
-                    })))
-            }
-            }catch(e) {
-
-            }
+            setRegimenType(
+                Object.entries(response.data).map(([key, value]) => ({
+                  label: value.description,
+                  value: value.id,
+                })))
         }
         getCharacters();
     }
@@ -193,18 +212,20 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenList(data);
      }
+    //  const setSelectedOptionAdrChange = (e)=>{
+    //     setSelectedOptionAdr(e)
+    //  }
 
     const handleSubmit = (e) => {        
         e.preventDefault();
         setSaving(true);
         objValues.adverseDrugReactions=selectedOptionAdr
         objValues.personId=props.patientObj.id
-        //objValues.extra=regimenList 
         objValues.mmdType=mmdType
-        //delete regimenList['name']
+        delete regimenList['name']
         objValues.regimen=regimenList
 
-        axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
+        axios.put(`${baseUrl}hiv/art/pharmacy/${props.activeContent.obj.id}`,objValues,
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
@@ -220,16 +241,22 @@ const Pharmacy = (props) => {
                        
         }); 
     }
-console.log(selectedOption)
+
 
   return (      
       <div>
  
         <div className="row">
         <div className="col-md-6">
-        <h2>Pharmacy Drug Refill</h2> 
-        </div>
+        <h2>Pharmacy Drug Refill -- Detail</h2> 
 
+        </div>
+        <div className="col-md-6">
+        <ButtonSMUI color='facebook' className={'float-end'} onClick={()=>EnableUpdateAction()}>
+            <Icon name='edit' /> Edit Refill 
+        </ButtonSMUI>
+        </div>
+        <br/><br/>
         <Card >
             <CardBody>
             <form >
@@ -244,6 +271,8 @@ console.log(selectedOption)
                         id="devolvePatient"
                         onChange={handleCheckBox}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        checked={objValues.isDevolve}
+                        disabled={enableUpdate}
                         />
                         <label
                         className="form-check-label"
@@ -262,6 +291,7 @@ console.log(selectedOption)
                     id="visitDate"
                     onChange={handleInputChange}
                     value={objValues.visitDate}
+                    disabled={enableUpdate}
                     max= {moment(new Date()).format("YYYY-MM-DD") }
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -275,9 +305,10 @@ console.log(selectedOption)
                     type="select"
                     name="refillPeriod"
                     id="refillPeriod"
-                    disabled={objValues.visitDate!==null? false : true}
+                    disabled={objValues.visitDate!==null ? false : true}
                     onChange={handlRefillPeriod}   
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}  
+                    value={objValues.refillPeriod}               
                     >
                     <option value="">Select </option>
                     <option value="15">15</option>
@@ -316,6 +347,7 @@ console.log(selectedOption)
                     id="deliveryPoint"
                     value={objValues.deliveryPoint}
                     onChange={handleInputChange} 
+                    disabled={enableUpdate}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                     >
                     <option value="">Select </option>
@@ -351,6 +383,7 @@ console.log(selectedOption)
                     type="select"
                     name="dsdModel"
                     id="dsdModel"
+                    disabled={enableUpdate}
                     value={objValues.dsdModel}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -375,7 +408,8 @@ console.log(selectedOption)
                         id="prescriptionError"
                         onChange={handlePrescriptionErrorCheckBox}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        //value={values.ovc_enrolled}
+                        checked={objValues.prescriptionError}
+                        disabled={enableUpdate}
                         />
                         <label
                         className="form-check-label"
@@ -389,12 +423,13 @@ console.log(selectedOption)
                         <input
                         type="checkbox"
                         className="form-check-input"
-                        
+                        disabled={enableUpdate}
                         name="adverseDrugReactions"
                         id="adverseDrugReactions"
                         onChange={handleCheckBoxAdverseDrugReactions}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         //value={values.ovc_enrolled}
+                        checked={objValues.adrScreened}
                         />
                         <label
                         className="form-check-label"
@@ -415,6 +450,7 @@ console.log(selectedOption)
                             isMulti="true"
                             noOptionsMessage="true"
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            disabled={enableUpdate}
 
                         />
                         
@@ -429,6 +465,7 @@ console.log(selectedOption)
                     type="select"
                     name="regimen"
                     id="regimen"
+                    hidden={enableUpdate}
                     value={objValues.drugName}
                     onChange={handleSelectedRegimen}  
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -456,12 +493,13 @@ console.log(selectedOption)
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     isMulti="true"
                     noOptionsMessage="true"
+                    disabled={enableUpdate}
 
                 />
                 </FormGroup>
             </div>
             )}
-            {selectedOption && selectedOption.length >0 ? 
+            {selectedOption && selectedOption.length >0  ? 
 
                 (
                     <>
@@ -530,6 +568,7 @@ console.log(selectedOption)
                     className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
+                    hidden={enableUpdate}
                     style={{backgroundColor:"#014d88"}}
                     disabled={objValues.visitDate===null || saving ? true : false}
                     >

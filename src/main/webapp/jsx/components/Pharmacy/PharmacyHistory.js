@@ -21,24 +21,17 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import {  Card,CardBody,} from 'reactstrap';
+
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
-import Button from "@material-ui/core/Button";
-import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { MdRemoveRedEye } from "react-icons/md";
+//import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
-import { Label } from 'semantic-ui-react'
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
-import moment from "moment";
-import { FaUserPlus } from "react-icons/fa";
-import {TiArrowForward} from 'react-icons/ti'
+//import moment from "moment";
 
-//Dtate Picker package
-Moment.locale("en");
-momentLocalizer();
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -103,11 +96,11 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-let regimenArr = []
+
 const PharmacyHistory = (props) => {    
     const [refillList, setRefillList] = useState([])
     const [loading, setLoading] = useState(true)
-
+    
     useEffect(() => {
         PharmacyList()
       }, [props.patientObj.id]);
@@ -126,21 +119,17 @@ const PharmacyHistory = (props) => {
                 setLoading(false)  
             });        
     }
-
-
-
     const regimenName =(regimenObj)=> {
-      
-      regimenObj.forEach(function (value, index, array) {
-        
+      let regimenArr = []
+      regimenObj.forEach(function (value, index, array) {       
           regimenArr.push(<li key={index}>{value['name']}</li>)
-          //regimenArr.push(value['name'])
       })
       return regimenArr; 
-        //return regimenArr.toString(); 
       }
-
-      //console.log(regimenArr)   
+    const onClickHome = (row) =>{  
+       // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+        props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
+    }
 
   return (
     <div>
@@ -164,6 +153,7 @@ const PharmacyHistory = (props) => {
                 { title: "MMD Type", field: "mmdType", filtering: false },
                 { title: "Prescription Error", field: "prescriptionError", filtering: false },
                 { title: "ADR Screened", field: "adverseDrugReactions", filtering: false },
+                { title: "Action", field: "Action", filtering: false },
 
               ]}
               isLoading={loading}
@@ -175,8 +165,7 @@ const PharmacyHistory = (props) => {
                   regimenName: (
                                 <ul>
                                    {regimenName(row.extra.regimens)}
-                                       
-                                    
+ 
                                 </ul>
                     
                                 ),  
@@ -185,7 +174,26 @@ const PharmacyHistory = (props) => {
                   mmdType: row.mmdType, 
                   prescriptionError: row.prescriptionError, 
                   adverseDrugReactions: row.adrScreened,                   
-                  //status: (<Label color={labStatus(row.labTestOrderStatus)} size="mini">{row.labTestOrderStatusName}</Label>), 
+                  Action: (
+                            <ButtonGroup variant="contained" 
+                                aria-label="split button"
+                                style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
+                                size="large"
+                                onClick={()=>onClickHome(row)}
+                            >
+                            <Button
+                            color="primary"
+                            size="small"
+                            aria-label="select merge strategy"
+                            aria-haspopup="menu"
+                            style={{backgroundColor:'rgb(153, 46, 98)'}}
+                            >
+                                <MdRemoveRedEye style={{marginRight: "5px"}}/> {" "}{" "} View
+                            </Button>
+                            
+                            
+                            </ButtonGroup>
+                          ), 
                   
                   }))}
             
