@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.controller.apierror.IllegalTypeException;
 import org.lamisplus.modules.hiv.domain.dto.RegimenRequestDto;
@@ -66,9 +67,9 @@ public class ArtPharmacyService {
     }
 
 
-    public RegisterArtPharmacyDto getPharmacyById(Long id) throws IOException {
+    public RegisterArtPharmacyDto getPharmacyById(Long id) {
         ArtPharmacy artPharmacy = getArtPharmacy (id);
-        return  convertEntityToRegisterDto (artPharmacy);
+        return getRegisterArtPharmacyDtoWithName (artPharmacy);
 
     }
 
@@ -83,50 +84,50 @@ public class ArtPharmacyService {
 
 
     private ArtPharmacy getArtPharmacy(Long id) {
-        ArtPharmacy existArtPharmacy = artPharmacyRepository
+        return artPharmacyRepository
                 .findById (id)
                 .orElseThrow (() -> getArtPharmacyEntityNotFoundException (id));
-        return existArtPharmacy;
     }
     public List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize) {
         Person person = getPerson (personId);
         Pageable paging = PageRequest.of (pageNo, pageSize, Sort.by ("visitDate").descending ());
         Page<ArtPharmacy> artPharmaciesByPerson = artPharmacyRepository.getArtPharmaciesByPersonAndArchived (person, 0, paging);
         if (artPharmaciesByPerson.hasContent ()) {
-            return artPharmaciesByPerson.getContent ()
-                    .stream ()
-                    .map (artPharmacy -> {
-                        try {
-                            RegisterArtPharmacyDto responseDto = convertEntityToRegisterDto (artPharmacy);
-                            JsonNode extra = responseDto.getExtra ();
-                            String regimens = "regimens";
-                            if (extra.hasNonNull (regimens)) {
-                                JsonNode jsonNode = extra.get (regimens);
-                                Iterator<JsonNode> iterator = jsonNode.iterator ();
-                                while (iterator.hasNext ()){
-                                    JsonNode regimen = iterator.next ();
-                                    if(regimen.hasNonNull ("id")){
-                                        JsonNode regimenId = regimen.get ("id");
-                                        long id = regimenId.asLong ();
-                                        Optional<Regimen> optionalRegimen = regimenRepository.findById (id);
-                                        optionalRegimen.ifPresent (regimen1 -> {
-                                            String description = regimen1.getDescription ();
-                                            ((ObjectNode)regimen).put("name", description );
-                                            responseDto.setExtra (extra);
-                                        });
-                                    }
-
-                                }
-                        }
-                        return responseDto;
-                    } catch(IOException e){
-                e.printStackTrace ();
-            }
-            return null;
-        }).collect (Collectors.toList ());
+            return artPharmaciesByPerson.getContent ().stream ().map (this::getRegisterArtPharmacyDtoWithName).collect (Collectors.toList ());
     }
      return new ArrayList<>();
 }
+
+    @Nullable
+    private RegisterArtPharmacyDto getRegisterArtPharmacyDtoWithName(ArtPharmacy artPharmacy) {
+        try {
+            RegisterArtPharmacyDto responseDto = convertEntityToRegisterDto (artPharmacy);
+            JsonNode extra = responseDto.getExtra ();
+            String regimens = "regimens";
+            if (extra.hasNonNull (regimens)) {
+                JsonNode jsonNode = extra.get (regimens);
+                Iterator<JsonNode> iterator = jsonNode.iterator ();
+                while (iterator.hasNext ()){
+                    JsonNode regimen = iterator.next ();
+                    if(regimen.hasNonNull ("id")){
+                        JsonNode regimenId = regimen.get ("id");
+                        long id = regimenId.asLong ();
+                        Optional<Regimen> optionalRegimen = regimenRepository.findById (id);
+                        optionalRegimen.ifPresent (regimen1 -> {
+                            String description = regimen1.getDescription ();
+                            ((ObjectNode)regimen).put("name", description );
+                            responseDto.setExtra (extra);
+                        });
+                    }
+
+                }
+        }
+            return responseDto;
+    } catch(IOException e){
+e.printStackTrace ();
+}
+        return null;
+    }
 
 
     private ArtPharmacy convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {

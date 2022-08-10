@@ -13,15 +13,18 @@ const useStyles = makeStyles((theme) => ({
 
 function SubMenu(props) {
     const classes = useStyles();
+    let gender=""
     const patientObjs = props.patientObj ? props.patientObj : {}
     const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
     const [patientObj, setpatientObj] = useState(patientObjs)
-    const [genderType, setGenderType] = useState(props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)" ? true : false)
+    const [genderType, setGenderType] = useState()
     let mentalStatus=false
     let initialEvaluationStatus=false
     useEffect(() => {
         Observation();
-        }, []);
+        gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
+        setGenderType(gender==="Female" || gender==="Transgebder(Female)" ? true : false)
+    }, [props.patientObj]);
      //Get list of RegimenLine
      const Observation =()=>{
         axios

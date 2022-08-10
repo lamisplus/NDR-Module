@@ -5,8 +5,9 @@ import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
 import { forwardRef } from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import { Icon } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
+import "react-widgets/dist/css/react-widgets.css";
+import { toast} from "react-toastify";
+
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
@@ -29,11 +30,11 @@ import { useHistory } from "react-router-dom";
 
 import {FaSyringe, FaUserEdit, FaShare, FaTrash} from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
+//import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
 import { Label } from 'semantic-ui-react'
 import { RowingSharp } from '@mui/icons-material';
-
+import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
 
 
 const tableIcons = {
@@ -105,7 +106,7 @@ const PatientnHistory = (props) => {
     const [recentActivities, setRecentActivities] = useState([])
     const [loading, setLoading] = useState(true)
     let history = useHistory();
-
+    let patientHistoryObject = []
     useEffect(() => {
         PatientHistory()
       }, [props.patientObj.id]);
@@ -118,37 +119,224 @@ const PatientnHistory = (props) => {
                )
                .then((response) => {
                 setLoading(false)
-                  setRecentActivities(response.data[0].activities)
-               })
+                        let HistoryObject= []
+                        response.data.forEach(function(value, index, array) {
+                            const dataObj = value.activities 
+                            console.log(dataObj)                 
+                            if(dataObj[index]) {
+                                dataObj.forEach(function(value, index, array) {
+                                    HistoryObject.push(value)
+                                })                       
+                            }                   
+                        });
+                    setRecentActivities(HistoryObject)
+                })
+
                .catch((error) => {
                //console.log(error);
                });
            
           }
+    
     const LoadViewPage =(row)=>{
         
-        if(row.path==='Mental health'){        
+        if(row.path==='Mental-health'){        
             props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
 
         }else if(row.path==='Art-commence'){
             props.setActiveContent({...props.activeContent, route:'art-commencement-view', id:row.id})
 
-        }else if(row.path==='Clinical evaluation'){
+        }else if(row.path==='Clinical-evaluation'){
             props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
 
-        }else if(row.path==='EAC First'){
-            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='eac1'){
+            props.setActiveContent({...props.activeContent, route:'first-eac-history', id:row.id})
+        }
+        else if(row.path==='eac2'){
+            props.setActiveContent({...props.activeContent, route:'second-eac-history', id:row.id})
+        }
+        else if(row.path==='eac3'){
+            props.setActiveContent({...props.activeContent, route:'completed-eac-history', id:row.id})
         }else if(row.path==='hiv-enrollment'){
             history.push({
-                pathname: '/register-patient',
-                state: { id: row.id }
+                pathname: '/update-patient',
+                state: { id: row.id, patientObj:props.patientObj }
             });
             //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
-        }else if(row.path==='Pharmacy'){
-            props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='pharmacy'){
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+            props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
 
         }else if(row.path==='Laboratory'){
             props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+
+        }else{
+
+        }
+        
+    }
+    const LoadDeletePage =(row)=>{
+        
+        if(row.path==='Mental-health'){        
+            //props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
+            axios
+            .delete(`${baseUrl}observation/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });  
+        }else if(row.path==='Art-commence'){
+            //props.setActiveContent({...props.activeContent, route:'art-commencement-view', id:row.id})
+            axios
+            .delete(`${baseUrl}hiv/art/commencement/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });
+
+        }else if(row.path==='Clinical-evaluation'){
+            //props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
+            axios
+            .delete(`${baseUrl}observation/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });
+
+        }else if(row.path==='eac1'){
+            //props.setActiveContent({...props.activeContent, route:'first-eac-history', id:row.id})
+            axios
+            .delete(`${baseUrl}observation/eac/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });  
+        }
+        else if(row.path==='eac2'){
+            //props.setActiveContent({...props.activeContent, route:'second-eac-history', id:row.id})
+            axios
+            .delete(`${baseUrl}observation/eac/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });  
+        }
+        else if(row.path==='eac3'){
+            //props.setActiveContent({...props.activeContent, route:'completed-eac-history', id:row.id})
+            axios
+            .delete(`${baseUrl}observation/eac/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });  
+        }else if(row.path==='hiv-enrollment'){
+            axios
+            .delete(`${baseUrl}hiv/enrollment/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            });  
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+        }else if(row.path==='pharmacy'){
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
+            //props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
+            axios
+            .delete(`${baseUrl}art/pharmacy/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.error("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            }); 
+
+        }else if(row.path==='Laboratory'){
+            //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
 
         }else{
 
@@ -175,47 +363,26 @@ const PatientnHistory = (props) => {
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
               isLoading={loading}
-              data={recentActivities.map((row) => ({
+              data={recentActivities && recentActivities.map((row) => ({
                    name: row.name,
                    date: row.date,
                    actions:
             
                     <div>
-                    <Menu>
-                        <MenuButton style={{ backgroundColor:"#3F51B5", color:"#fff", border:"2px solid #3F51B5", borderRadius:"4px", }}>
-                          Actions <span aria-hidden>▾</span>
-                        </MenuButton>
-                            <MenuList style={{ color:"#000000 !important"}} >
-                                                           
-                            {row.viewable && ( 
-                                <MenuItem style={{ color:"#000 !important"}}  onClick={()=>LoadViewPage(row)}>
-                                     
-                                        <FaShare size="15"  />{" "}
-                                        <span style={{color: '#000'}}>View</span>
-                                                                    
-                                  </MenuItem>
-                            )}
-                            {/* {RowingSharp.editable && ( 
-                                <MenuItem style={{ color:"#000 !important"}}  >
-                                     
-                                        <FaShare size="15"  />{" "}
-                                        <span style={{color: '#000'}}>Edit</span>
-                                                                    
-                                  </MenuItem>
-                            )} */}
-                            {/* {row.deletable && ( 
-                                <MenuItem style={{ color:"#000 !important"}}  >
-                                     
-                                        <FaShare size="15"  />{" "}
-                                        <span style={{color: '#000'}}>Delete</span>
-                                                                    
-                                  </MenuItem>
-                            )} */}
-                                  
-                                 
-                                  
-                          </MenuList>
-                    </Menu>
+                        <Menu.Menu position='right'  >
+                        <Menu.Item >
+                            <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                            <Dropdown item text='Action'>
+
+                            <Dropdown.Menu style={{ marginTop:"10px", }}>
+                                {row.viewable && ( <Dropdown.Item onClick={()=>LoadViewPage(row)}> <Icon name='eye' />View  </Dropdown.Item>)}
+                                {row.viewable && ( <Dropdown.Item  onClick={()=>LoadViewPage(row)}><Icon name='edit' />Edit</Dropdown.Item>)}
+                                {row.viewable && ( <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>)} 
+                            </Dropdown.Menu>
+                        </Dropdown>
+                            </Button>
+                        </Menu.Item>
+                        </Menu.Menu>
                   </div>
                   
                   }))}

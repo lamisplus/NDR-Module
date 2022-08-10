@@ -129,6 +129,7 @@ const EAC = (props) => {
                         <br/>
                         <br/>
                         <br/>
+                        <h4>First EAC Date  {objValues.dateOfEac1}</h4>
                         <br/>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -139,7 +140,8 @@ const EAC = (props) => {
                                 id="dateOfEac2"
                                 value={objValues.dateOfEac2}
                                 onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                min={objValues.dateOfEac1}
+                                //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

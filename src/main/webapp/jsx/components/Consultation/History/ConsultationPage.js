@@ -28,8 +28,9 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { MdDashboard } from "react-icons/md";
-import { Button as ButtonSMUI} from 'semantic-ui-react'
+import { Button as ButtonSMUI, Icon} from 'semantic-ui-react'
 import {Link} from 'react-router-dom';
+//import { objectValues } from "react-toastify/dist/utils";
 
 
 let adherenceLevelObj = []
@@ -85,6 +86,7 @@ const ClinicVisit = (props) => {
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
   const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
   const [heightValue, setHeightValue]= useState("cm")
+  const [enableUpdate, setEnableUpdate]= useState(false)
   const [errors, setErrors] = useState({});
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -395,7 +397,7 @@ const ClinicVisit = (props) => {
         
     }
 
-}
+  }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -430,6 +432,34 @@ const ClinicVisit = (props) => {
       });
     }
   }
+  //Get visit by ID
+  async function GetVisitById(visitID) {
+    axios
+      .get(`${baseUrl}hiv/art/clinic-visit/${visitID}`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+          const e = response.data
+          setVitalSignDto({ ...e.vitalSignDto })
+          objValues.clinicalNote = e.clinicalNote
+          objValues.functionalStatusId= e.functionalStatusId
+          objValues.whoStagingId= e.whoStagingId 
+          objValues.nextAppointment= e.nextAppointment
+          objValues.adherenceLevel = e.adherenceLevel
+          setTbObj({...e.tbScreen})
+          setAdrList([...e.adverseDrugReactions])
+          setInfectionList([...e.opportunisticInfections])
+          console.log(e)
+          console.log(e.adverseDrugReactions)
+
+      })
+      .catch((error) => {
+      });
+  }
+  const getVisitDetail=(e)=>{
+      GetVisitById(e.id)
+      
+  }
 
 
   return (
@@ -446,14 +476,15 @@ const ClinicVisit = (props) => {
                         id="DZ_W_Todo1"
                         className="widget-media dz-scroll ps ps--active-y"
                     >
-                    {clinicVisitList.map((visitDate,index)=>(	
+                    {clinicVisitList.map((visit,index)=>(	
                     <div className="media pb-3 border-bottom mb-0 align-items-center" key={index}>								
                       <div className="media-body">
                             <ButtonSMUI
                                 color='black'
                                 content='Visit Date'
                                 icon='calendar alternate'
-                                label={{ basic: true, color: 'grey', pointing: 'left', content: `${moment(visitDate.visitDate).format('dddd, MMMM, YYYY ')}` }}
+                                onClick={()=>getVisitDetail(visit)}
+                                label={{ basic: true, color: 'grey', pointing: 'left', content: `${moment(visit.visitDate).format('dddd, MMMM, YYYY ')}` }}
                             />
                       </div>
                     </div>
@@ -467,6 +498,9 @@ const ClinicVisit = (props) => {
                 <div className="card">
                     <div className="card-header  border-0 pb-2" style={{backgroundColor:"#014D88"}}>
                     <h4 className="card-title" style={{color:"#fff"}}> </h4>
+                    <ButtonSMUI color='facebook'>
+                      <Icon name='edit' /> Edit Visit 
+                    </ButtonSMUI>
                     </div>
                     <div className="card-body">
                     <Grid columns='equal'>
@@ -484,6 +518,7 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 onChange={handleInputChangeVitalSignDto}
                                 max={moment(new Date()).format("YYYY-MM-DD")}
+                                disabled={!enableUpdate}
                                 required
                             />
                             {errors.encounterDate !=="" ? (
@@ -501,6 +536,7 @@ const ClinicVisit = (props) => {
                                 name="currentVitalSigns"
                                 id="currentVitalSigns"
                                 onChange={handleCheckBox} 
+                                disabled={!enableUpdate}
                                                     
                                 />
                                 <label
@@ -530,6 +566,7 @@ const ClinicVisit = (props) => {
                                 max="150"
                                 value={vital.bodyWeight}
                                 onKeyUp={handleInputValueCheckBodyWeight}
+                                disabled={!enableUpdate}
                                 />
                             </InputGroup>
                             {vitalClinicalSupport.bodyWeight !=="" ? (
@@ -556,13 +593,14 @@ const ClinicVisit = (props) => {
                                 max="216.408"
                                 onKeyUp={handleInputValueCheckHeight}
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                                 />
                                 <InputGroupButtonDropdown
                                     addonType="append"
                                     isOpen={dropdownOpen}
                                     toggle={toggleDropDown}
                                     style={{ backgroundColor:"#014D88"}}
-                                    
+                                    disabled={!enableUpdate}
                                     >
                                     <DropdownToggle caret style={{ backgroundColor:"#014D88"}}>{heightValue ==='cm'? 'cm' : 'm'}</DropdownToggle>
                                     <DropdownMenu>
@@ -594,6 +632,7 @@ const ClinicVisit = (props) => {
                             disabled
                             value={Math.round(vital.bodyWeight/(vital.height/100))}
                             style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            
                             />
                             </InputGroup>                
                             </FormGroup>
@@ -616,6 +655,7 @@ const ClinicVisit = (props) => {
                                 value={vital.systolic}
                                 onKeyUp={handleInputValueCheckSystolic}
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                                 />
 
                             </InputGroup>
@@ -643,6 +683,7 @@ const ClinicVisit = (props) => {
                                 value={vital.diastolic}
                                 onKeyUp={handleInputValueCheckDiastolic}
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                                 />
 
                             </InputGroup>
@@ -668,6 +709,7 @@ const ClinicVisit = (props) => {
                             value={objValues.clinicalNote}
                             onChange={handleInputChange}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            disabled={!enableUpdate}
                         ></textarea>
                         {errors.clinicalNote !=="" ? (
                                 <span className={classes.error}>{errors.clinicalNote}</span>
@@ -685,6 +727,7 @@ const ClinicVisit = (props) => {
                                 value={objValues.whoStagingId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={!enableUpdate}
                                 required
                             >
                                 <option value="select">Select </option>
@@ -710,6 +753,7 @@ const ClinicVisit = (props) => {
                                 value={objValues.functionalStatusId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={!enableUpdate}
                                 required
                             >
                                 <option value="select">Select </option>
@@ -735,9 +779,10 @@ const ClinicVisit = (props) => {
                                 value={objValues.adherenceLevel}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={!enableUpdate}
                                 required
                             >
-                                <option value="select">Select </option>
+                                <option value="">Select </option>
 
                                 {adherenceLevel.map((value) => (
                                 <option key={value.id} value={value.id}>
@@ -757,20 +802,20 @@ const ClinicVisit = (props) => {
                         OPPORTUNISTIC INFECTION
                         </Label>
                         <br /><br />
-                        <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} />
+                        <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} enableUpdate={enableUpdate}/>
                         <br />
                         <Label as='a' color='pink' ribbon>
                         ADR
                         </Label>
                         <br /><br />
-                        <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} />
+                        <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}  enableUpdate={enableUpdate}/>
                         <br />
                         <Label as='a' color='teal' ribbon>
                         TB SCREENING
                         </Label>
                         <br /><br />
                         {/* TB Screening Form */}
-                        <TBScreening tbObj={tbObj} setTbObj={setTbObj} />
+                        <TBScreening tbObj={tbObj} setTbObj={setTbObj} enableUpdate={enableUpdate}/>
                         <br />
                         <Label as='a' color='blue' ribbon>
                         NEXT CLINICAL APPOINTMENT DATE
@@ -782,10 +827,11 @@ const ClinicVisit = (props) => {
                                 name="nextAppointment"
                                 id="nextAppointment"
                                 className="col-md-6"
-                                value={vital.nextAppointment}
+                                value={objValues.nextAppointment}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 min={moment(new Date()).format("YYYY-MM-DD")}
+                                disabled={!enableUpdate}
                                 required
                             />
                         {errors.nextAppointment !=="" ? (

@@ -229,7 +229,7 @@ function PatientCard(props) {
                     <span>
                         {" "}
                         Gender :{" "}
-                        <b>{patientObj.gender.display }</b>
+                        <b>{patientObj.sex && patientObj.sex!==null ?  patientObj.sex : '' }</b>
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>

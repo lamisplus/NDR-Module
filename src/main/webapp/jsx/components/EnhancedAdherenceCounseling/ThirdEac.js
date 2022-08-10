@@ -103,7 +103,7 @@ const EAC = (props) => {
                   props.setHideFirst(false)                 
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
-                  props.setActiveContent('recent-history')
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {
@@ -129,6 +129,7 @@ const EAC = (props) => {
                         <br/>
                         <br/>
                         <br/>
+                        <h4>Second EAC Date {objValues.dateOfEac2}</h4>
                         <br/>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -139,7 +140,8 @@ const EAC = (props) => {
                                 id="dateOfEac3"
                                 value={objValues.dateOfEac3}
                                 onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                min={objValues.dateOfEac2}
+                                //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

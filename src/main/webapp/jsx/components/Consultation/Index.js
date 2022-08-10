@@ -1,7 +1,7 @@
 import React, {useState, Fragment } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import ConsultationPage from './Home';
-import ClinicHistoryPage from "./ClinicHistory";
+import ClinicHistoryPage from "./ViewUpdate/ClinicHistory";
 
 const divStyle = {
   borderRadius: "2px",

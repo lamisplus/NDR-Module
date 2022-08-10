@@ -63,7 +63,14 @@ const Pharmacy = (props) => {
     useEffect(() => {
         RegimenLine();
         PrepSideEffect();
-        }, []);
+        setRegimenList(
+            Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
+                id: value.value,
+                name: value.label,
+                dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
+              })))
+    }, [selectedOption]);
+    console.log(regimenList)
     //Get list of RegimenLine
     const RegimenLine =()=>{
     axios
@@ -99,13 +106,19 @@ const Pharmacy = (props) => {
     }
     function RegimenType(id) {
         async function getCharacters() {
+            try{
             const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
             { headers: {"Authorization" : `Bearer ${token}`} })
-            setRegimenType(
-                Object.entries(response.data).map(([key, value]) => ({
-                  label: value.description,
-                  value: value.id,
-                })))
+            if(response.data.length >0){
+                setRegimenType(
+                    Object.entries(response.data).map(([key, value]) => ({
+                    label: value.description,
+                    value: value.id,
+                    })))
+            }
+            }catch(e) {
+
+            }
         }
         getCharacters();
     }
@@ -180,31 +193,15 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenList(data);
      }
-    //  const setSelectedOptionAdrChange = (e)=>{
-    //     setSelectedOptionAdr(e)
-    //  }
-     const setSelectedOptionChange = (e) =>{
-        const value = e.value
-        setSelectedOption(value)
-        let currentId=null
-        let currentRegimenName=null
-        if(e.length===1){
-            currentId=e[0].value
-            currentRegimenName=e[0].label
-        }else{
-            currentId=e[e.length-1].value
-            currentRegimenName=e[e.length-1].label
-        }
-        setRegimenList([...regimenList, {id:currentId, dispenseQuantity:refillPeriodValue, name:currentRegimenName}])
 
-     }
     const handleSubmit = (e) => {        
         e.preventDefault();
         setSaving(true);
         objValues.adverseDrugReactions=selectedOptionAdr
         objValues.personId=props.patientObj.id
+        //objValues.extra=regimenList 
         objValues.mmdType=mmdType
-        delete regimenList['name']
+        //delete regimenList['name']
         objValues.regimen=regimenList
 
         axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
@@ -212,7 +209,7 @@ const Pharmacy = (props) => {
         .then(response => {
             setSaving(false);
             toast.success("Pharmacy drug refill successful");
-            props.setActiveContent('recent-history')
+            props.setActiveContent({...props.activeContent, route:'recent-history'})
         })
         .catch(error => {
             setSaving(false);
@@ -223,7 +220,7 @@ const Pharmacy = (props) => {
                        
         }); 
     }
-
+console.log(selectedOption)
 
   return (      
       <div>
@@ -453,7 +450,7 @@ const Pharmacy = (props) => {
                 <FormGroup>
                 <Label >Regimen *</Label>
                 <Select
-                    onChange={setSelectedOptionChange}
+                    onChange={setSelectedOption}
                     value={selectedOption}
                     options={regimenType}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -464,7 +461,7 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
             )}
-            {regimenList.length >0 ? 
+            {selectedOption && selectedOption.length >0 ? 
 
                 (
                     <>
@@ -475,7 +472,7 @@ const Pharmacy = (props) => {
                             <div className="form-group mb-3 col-md-8"  >Regimen Name selected </div>
                             <div className="form-group mb-3 col-md-4"  >Quantity </div>
                         </div>
-                        {regimenList.map((input, index) => (
+                        {regimenList.length >0 && regimenList.map((input, index) => (
                             <>
                                 <div className="row">
                                 <div className="form-group mb-3 col-md-8"  >

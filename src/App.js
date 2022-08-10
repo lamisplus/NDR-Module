@@ -13,7 +13,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Home from './main/webapp/jsx/components/Home'
 import PatientDetail from './main/webapp/jsx/components/Patient/PatientDetail'
 import RegisterPatientPage from './main/webapp/jsx/components/Patient/RegisterPatient';
-
+import EnrollPatientPage from './main/webapp/jsx/components/Patient/EnrollPatient';
+import UpdatePatientEnrollment from './main/webapp/jsx/components/Patient/UpdatePatientEnrollment';
 
 export default function App() {
   return (
@@ -28,6 +29,12 @@ export default function App() {
           </Route> 
           <Route path="/register-patient">
             <RegisterPatientPage />
+          </Route>
+          <Route path="/enroll-patient">
+            <EnrollPatientPage />
+          </Route>
+          <Route path="/update-patient">
+            <UpdatePatientEnrollment />
           </Route>
 
           <Route path="/">

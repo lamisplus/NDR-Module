@@ -10,10 +10,14 @@ const TBScreeningForm = (props) => {
   const [tbStatus, setTbStatus] = useState([]); 
   const [TBForms, setTBForms] = useState(false) 
 
-
   useEffect(() => {
     TBStatus();
-    }, []);
+    if(props.tbObj.antiTBDrug ==='NO'){
+      setTBForms(true)
+    }else{
+      setTBForms(false)
+    }
+    }, [props.tbObj]);
 
     ///GET LIST OF FUNCTIONAL%20_STATUS
     // TB STATUS

@@ -68,23 +68,25 @@ const ViewMentalHealthScreening = (props) => {
                                                 })
     useEffect(() => {
         GetMHSDetail();
-        }, [props.activeContent.id]);
+    }, [props.activeContent.id]);
                                                 
     //Get Mental Health Object
-  const GetMHSDetail =()=>{
+    const GetMHSDetail =()=>{
     axios
-       .get(`${baseUrl}laboratory/orders/patients/${props.patientObj.id}`,
+       .get(`${baseUrl}observation/person/${props.patientObj.id}`,
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
-       .then((response) => {
-            console.log(response.data)
+       .then((response) => {            
+            const mentalObj= response.data.find((x)=> x.type==='Mental health') 
+            //console.log(mentalObj)
+            setObjValues({...mentalObj.data})
               //setViralLoad(LabObject)
        })
        .catch((error) => {
        //console.log(error);
        });
    
-  }
+    }
     const handleInputChangeKP = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }
@@ -251,6 +253,7 @@ const ViewMentalHealthScreening = (props) => {
                     startIcon={<SaveIcon />}
                     disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" ? true : false}
                     onClick={handleSubmit}
+                    hidden="true"
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

@@ -405,7 +405,7 @@ const ClinicEvaluationFrom = (props) => {
               setSaving(false);
               props.patientObj.clinicalEvaluation=true
               toast.success("Initial Clinic Evaluation successful");
-              props.setActiveContent('recent-history')
+              props.setActiveContent({...props.activeContent, route:'recent-history'})
           })
           .catch(error => {
               setSaving(false);

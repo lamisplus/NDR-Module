@@ -175,7 +175,51 @@ const ClinicEvaluationFrom = (props) => {
         type: "Clinical evaluation",
         visitId: null
     })
-
+    useEffect(() => {
+        GetInitialEvaluation();
+    }, []);
+                                                
+    //Get Mental Health Object
+    const GetInitialEvaluation =()=>{
+    axios
+       .get(`${baseUrl}observation/${props.activeContent.id}`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {  
+            //console.log(response.data.data.medicalHistory) 
+            const newmedicalHistory=response.data.data.medicalHistory
+            setMedicalHistory(newmedicalHistory)
+            medicalHistory=newmedicalHistory
+            console.log(newmedicalHistory)         
+            console.log(medicalHistory)
+            //setObjValues({...evaluationObj.data})
+              //setViralLoad(LabObject)
+            setEye({...response.data.data.eye})
+            setBreast({...response.data.data.breast})
+            setSkin({...response.data.data.skin})
+            setCardiovascular({...response.data.data.cardiovascular})
+            setGenitalia({...response.data.data.datagenitalia})
+            setRespiratory({...response.data.data.respiratory})
+            setGastrointestinal({...response.data.data.gastrointestinal})
+            setAssesment({...response.data.data.assesment})
+            setWho({...response.data.data.who})
+            setRegimen({...response.data.data.regimen})
+            setPlan({...response.data.data.plan})
+            setEnroll({...response.data.data.enroll})
+            setPlanArt({...response.data.data.planArt})
+            
+            setMedicalHistory({...response.data.data.medicalHistory})
+            setPastArvMedicalMedical({...response.data.data.pastArvMedical})
+            setCurentMedical({...response.data.data.curentMedical})
+            setPatientDisclosure({...response.data.data.patientDisclosure})
+            setGeneralApperance({...response.data.data.generalApperance})
+            objValues.data.next_appointment=response.data.data.next_appointment
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+    }
     //Handle CheckBox 
     const handleMedicalHistory =e =>{
         setMedicalHistory({...medicalHistory, [e.target.name]: e.target.value})
@@ -418,7 +462,7 @@ const ClinicEvaluationFrom = (props) => {
       
     }
 
-console.log(props.patientObj)
+
   return (      
       <div >
                    

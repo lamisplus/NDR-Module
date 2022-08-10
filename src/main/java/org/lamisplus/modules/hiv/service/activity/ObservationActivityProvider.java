@@ -1,6 +1,7 @@
 package org.lamisplus.modules.hiv.service.activity;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.domain.dto.PatientActivity;
 import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ObservationRepository;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ObservationActivityProvider implements PatientActivityProvider {
     private final ObservationRepository observationRepository;
 
@@ -20,7 +22,12 @@ public class ObservationActivityProvider implements PatientActivityProvider {
     public List<PatientActivity> getActivitiesFor(Person person) {
         List<Observation> observations = observationRepository.getAllByPersonAndArchived (person, 0);
         return observations.stream ()
-                .map (observation -> new PatientActivity (observation.getId (), observation.getType (), observation.getDateOfObservation (), "", observation.getType ()))
+                .map (observation -> {
+                    String type = observation.getType ();
+                    String path = type.replaceAll (" ", "-");
+                    log.info ("observation-path {}", path );
+                    return new PatientActivity (observation.getId (), type, observation.getDateOfObservation (), "", path);
+                })
                 .collect (Collectors.toList ());
 
     }

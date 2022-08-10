@@ -27,7 +27,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
 import { Label } from 'semantic-ui-react'
 import Moment from "moment";
@@ -35,6 +34,7 @@ import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
 import { FaUserPlus } from "react-icons/fa";
 import {TiArrowForward} from 'react-icons/ti'
+
 
 
 //Dtate Picker package
@@ -127,6 +127,7 @@ const Patients = (props) => {
                     setLoading(false)  
                 });        
         }
+    console.log(patientList)
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
@@ -190,7 +191,7 @@ const Patients = (props) => {
                     hospital_number: getHospitalNumber(row.identifier),
                     //address: row.address,
                    //phone_number:  row.phone,
-                    gender:row.gender.display,
+                    gender:row && row.sex ? row.sex : "",
                     age: (row.dateOfBirth === 0 ||
                         row.dateOfBirth === undefined ||
                         row.dateOfBirth === null ||
@@ -208,11 +209,11 @@ const Patients = (props) => {
                                     (
                                         <>
                                             <Link
-                                                    to={{
-                                                        pathname: "/patient-history",
-                                                        state: { patientObj: row  }
-                                                    }}
-                                                >
+                                                to={{
+                                                    pathname: "/patient-history",
+                                                    state: { patientObj: row  }
+                                                }}
+                                            >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
                                                     style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
@@ -242,8 +243,8 @@ const Patients = (props) => {
                                         <>
                                             <Link
                                                 to={{
-                                                    pathname: "/register-patient",
-                                                    state: { patientId : row.id }
+                                                    pathname: "/enroll-patient",
+                                                    state: { patientId : row.id, patientObj: row }
                                                 }}
                                             >
                                                 <ButtonGroup variant="contained" 
