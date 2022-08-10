@@ -198,8 +198,8 @@ const Laboratory = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();            
         setSaving(true);
-        setTestOrderList([...testOrderList, tests])
-        axios.put(`${baseUrl}laboratory/rde-orders/${props.activeContent.obj}`,testOrderList,
+        //setTestOrderList([...testOrderList, tests])
+        axios.put(`${baseUrl}laboratory/rde-orders/tests/${props.activeContent.obj.id}`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
@@ -402,7 +402,7 @@ const Laboratory = (props) => {
                                     type="textarea"
                                     name="comments"
                                     id="comments"
-                                    value={tests.comment}
+                                    value={tests.comments}
                                     onChange={handleInputChange}  
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                     >

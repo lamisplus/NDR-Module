@@ -132,16 +132,16 @@ const ArtCommencement = (props) => {
         RegimenLine();
         GetARTCommencement();
         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
-      }, []);
+      }, [props.activeContent.id]);
           //Get Mental Health Object
     const GetARTCommencement =()=>{
         axios
            .get(`${baseUrl}hiv/art/commencement/${props.activeContent.id}`,
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
-           .then((response) => {            
-                console.log()
-                setObjValues({...response.data})
+           .then((response) => { 
+                console.log(response.data)           
+                setObjValues(response.data)
                 RegimenType(response.data.regimenTypeId)
                 setVitalSignDto(response.data.vitalSignDto)
            })
@@ -304,7 +304,7 @@ const ArtCommencement = (props) => {
             temp.regimenTypeId = objValues.regimenTypeId ? "" : "This field is required"
             temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
             temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
-            temp.tbStatusId = objValues.tbStatusId ? "" : "This field is required"
+            //temp.tbStatusId = objValues.tbStatusId ? "" : "This field is required"
             temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
             temp.height = vital.height ? "" : "This field is required"
             temp.systolic = vital.systolic ? "" : "This field is required"
@@ -590,7 +590,7 @@ const ArtCommencement = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-4">
+                        {/* <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label >TB Status</Label>
                             <Input
@@ -614,7 +614,7 @@ const ArtCommencement = (props) => {
                                 <span className={classes.error}>{errors.tbStatusId}</span>
                                 ) : "" }
                             </FormGroup>
-                        </div>
+                        </div> */}
                         <div className=" mb-3 col-md-4">
                             <FormGroup>
                             <Label >Body Weight</Label>
@@ -656,7 +656,7 @@ const ArtCommencement = (props) => {
                                     min="48.26"
                                     max="216.408"
                                     onKeyUp={handleInputValueCheckHeight} 
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 />
                                     <InputGroupButtonDropdown
                                     addonType="append"
@@ -708,7 +708,7 @@ const ArtCommencement = (props) => {
                             </FormGroup>
                         </div>
                         {vital.bodyWeight!=="" && vital.height!=="" && (
-                            <div className="form-group mb-3 col-md-6">
+                            <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
                                 <Label >BMI</Label>
                                 
@@ -720,7 +720,7 @@ const ArtCommencement = (props) => {
                                 type="number"
                                 disabled
                                 value={Math.round(vital.bodyWeight/(vital.height/100))}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 />
                                 </InputGroup>                
                                 </FormGroup>

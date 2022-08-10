@@ -440,7 +440,7 @@ const ClinicVisit = (props) => {
        <Grid.Column width={5}>
           
             <Segment>
-              <Label as='a' color='blue' style={{width:'115%', height:'35px'}} ribbon>
+              <Label as='a' color='blue' style={{width:'110%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>Vital Signs</h4>
               </Label>
               <br />
@@ -457,7 +457,7 @@ const ClinicVisit = (props) => {
                     <Accordion
                         className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
                         defaultActiveKey="0"
-                        style={{width:"250px"}}
+                        
                       >
                         <>
                         {clinicVisitList.map((visit, i)=>
@@ -475,8 +475,8 @@ const ClinicVisit = (props) => {
                               }
                               style={{width:'100%'}}
                           >
-                          <span className="accordion-header-icon "></span>
-                          <span className="accordion-header-text">Visit Date : <span className="">{visit.visitDate}</span> </span>
+                          <span className="accordion-header-icon"></span>
+                          <span className="accordion-header-text float-start">Visit Date : <span className="">{visit.visitDate}</span> </span>
                           <span className="accordion-header-indicator"></span>
                         </Accordion.Toggle>
                         <Accordion.Collapse
@@ -519,7 +519,7 @@ const ClinicVisit = (props) => {
                 </PerfectScrollbar>
             </Segment>
             <Segment>
-              <Label as='a' color='teal' style={{width:'115%', height:'35px'}} ribbon>
+              <Label as='a' color='teal' style={{width:'110%', height:'35px'}} ribbon>
                 <h4 style={{color:'#fff'}}>Previous Clinical Notes</h4>
               </Label>
                

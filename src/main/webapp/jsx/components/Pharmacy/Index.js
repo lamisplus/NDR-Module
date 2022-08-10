@@ -12,12 +12,11 @@ const divStyle = {
 const PharmacyModule = (props) => {
     const [key, setKey] = useState('home');
     const patientObj = props.patientObj
-    console.log(props.activeContent)
-
+    
     useEffect ( () => {
       setKey(props.activeContent.activeTab)
     }, [props.activeContent.id]);
-    console.log(key)
+    //console.log(key)
 
   return (
     <Fragment>  

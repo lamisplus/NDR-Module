@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import MaterialTable from 'material-table';
 import axios from "axios";
-
+import "react-widgets/dist/css/react-widgets.css";
+import { toast} from "react-toastify";
 import { token as token, url as baseUrl } from "./../../../api";
 import { forwardRef } from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import { Link } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-widgets/dist/css/react-widgets.css';
+import { makeStyles } from '@material-ui/core/styles'
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { MdEditNote } from "react-icons/md";
+import "@reach/menu-button/styles.css";
+import 'semantic-ui-css/semantic.min.css';
+import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
+
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
@@ -22,15 +31,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import 'react-toastify/dist/ReactToastify.css';
-import 'react-widgets/dist/css/react-widgets.css';
-import { makeStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { MdEditNote } from "react-icons/md";
-//import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
-import "@reach/menu-button/styles.css";
-//import moment from "moment";
+
 
 
 const tableIcons = {
@@ -130,9 +131,30 @@ const PharmacyHistory = (props) => {
        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
         props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:"update", obj:row})
     }
+    const LoadDeletePage = (row) =>{ 
+        console.log(row) 
+        axios.delete(`${baseUrl}art/pharmacy/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.success("Record Deleted Successfully");
+                PharmacyList()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            }); 
+     }
+    
 
   return (
     <div>
+        
             <br/>
         
             <MaterialTable
@@ -149,7 +171,7 @@ const PharmacyHistory = (props) => {
                 { title: "Regimen Name", field: "regimenName", filtering: false },
                // { title: "Quantity", field: "regimenQuantity", filtering: false },
                 { title: "isDevolve", field: "isDevolve", filtering: false },
-                //{ title: "DSDModel", field: "dsdModel", filtering: false },
+                { title: "DSDModel", field: "dsdModel", filtering: false },
                 { title: "MMD Type", field: "mmdType", filtering: false },
                 { title: "Prescription Error", field: "prescriptionError", filtering: false },
                 { title: "ADR Screened", field: "adverseDrugReactions", filtering: false },
@@ -169,29 +191,26 @@ const PharmacyHistory = (props) => {
                                 </ul>
                     
                                 ),  
-                 // regimenQuantity: "", 
+                 regimenQuantity: "", 
                   isDevolve: row.isDevolve, 
                   mmdType: row.mmdType, 
                   prescriptionError: row.prescriptionError, 
                   adverseDrugReactions: row.adrScreened,                   
-                  Action: (
-                            <ButtonGroup variant="contained" 
-                                aria-label="split button"
-                                style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
-                                size="large"
-                                onClick={()=>onClickHome(row)}
-                            >
-                            <Button
-                            color="primary"
-                            size="small"
-                            aria-label="select merge strategy"
-                            aria-haspopup="menu"
-                            style={{backgroundColor:'rgb(153, 46, 98)'}}
-                            >
-                                <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
-                            </Button>
-                            </ButtonGroup>
-                          ), 
+                  Action:<div>
+                            <Menu.Menu position='right'  >
+                            <Menu.Item >
+                                <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                                <Dropdown item text='Action'>
+
+                                <Dropdown.Menu style={{ marginTop:"10px", }}>
+                                   <Dropdown.Item  onClick={()=>onClickHome(row)}><Icon name='edit' />Update</Dropdown.Item>
+                                    <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                                </Button>
+                            </Menu.Item>
+                            </Menu.Menu>
+                         </div>
                   
                   }))}
             

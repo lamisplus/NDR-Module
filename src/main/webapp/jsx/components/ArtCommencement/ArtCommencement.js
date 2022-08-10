@@ -101,7 +101,9 @@ const ArtCommencement = (props) => {
                                                 vitalSignDto:"",
                                                 facilityId:1,
                                                 regimenTypeId: 0,
-                                                regimenId:0                                                   
+                                                regimenId:0 ,
+                                                viralLoadAtStartOfArt:"",
+                                                isViralLoadAtStartOfArt:""                                                  
 
                                                 });
 
@@ -271,9 +273,9 @@ const ArtCommencement = (props) => {
         const handleInputChangeVitalStart =(e)=>{
             if(e.target.value==="YES" ){
                 setViraLoadStart(true)
-                setObjValues({...objValues, viralLoad:e.target.value})
+                setObjValues({...objValues, isViralLoadAtStartOfArt:true})
             }else{
-                setObjValues({...objValues, viralLoad:e.target.value})
+                setObjValues({...objValues, isViralLoadAtStartOfArt:false})
                 setViraLoadStart(false)
             }
         }
@@ -316,13 +318,17 @@ const ArtCommencement = (props) => {
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {                  
             e.preventDefault(); 
-            if(validate()){                    
+            if(validate()){ 
+            if(heightValue==='m'){//If height is meter convert to centi meter
+                vital.height= vital.height/100
+            }                   
             objValues.personId = props.patientObj.id
             vital.encounterDate = objValues.visitDate
             vital.personId=props.patientObj.id
             objValues.vitalSignDto= vital
             objValues.hivEnrollmentId= props.patientObj.enrollment.id
             objValues.clinicalStageId = objValues.whoStagingId 
+           
             setSaving(true);
             axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
@@ -478,10 +484,10 @@ const ArtCommencement = (props) => {
                                         <Label >Viral Load at Start of ART </Label>
                                         <Input
                                             type="select"
-                                            name="viralLoad"
-                                            id="viralLoad"
+                                            name="isViralLoadAtStartOfArt"
+                                            id="isViralLoadAtStartOfArt"
                                             onChange={handleInputChangeVitalStart}                                            
-                                            value={objValues.viralLoad}
+                                            value={objValues.isViralLoadAtStartOfArt}
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         >
@@ -499,10 +505,10 @@ const ArtCommencement = (props) => {
                                         <Label >Viral Load at Start of ART Result</Label>
                                         <Input
                                             type="text"
-                                            name="viralLoad"
-                                            id="viralLoad"
-                                            //onChange={handleInputChange}
-                                            //value={objValues.viralLoad}
+                                            name="viralLoadAtStartOfArt"
+                                            id="viralLoadAtStartOfArt"
+                                            onChange={handleInputChange}
+                                            value={objValues.viralLoadAtStartOfArt}
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
@@ -645,7 +651,7 @@ const ArtCommencement = (props) => {
                                                 min="48.26"
                                                 max="216.408"
                                                 onKeyUp={handleInputValueCheckHeight} 
-                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                             />
                                              <InputGroupButtonDropdown
                                                 addonType="append"
@@ -709,7 +715,7 @@ const ArtCommencement = (props) => {
                                             type="number"
                                             disabled
                                             value={Math.round(vital.bodyWeight/(vital.height/100))}
-                                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                             />
                                             </InputGroup>                
                                             </FormGroup>
@@ -741,7 +747,7 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-                                    {gender==="Female" || gender==="Transgebder(Female)"? (
+                                    {props.patientObj.sex==="Female" ? (
                                         <>
                                         <div className="form-group mb-3 col-md-4">
                                             <FormGroup>
