@@ -138,7 +138,7 @@ const EAC = (props) => {
                                 value={objValues.dateOfEac2}
                                 onChange={handleInputChange}
                                 min={objValues.dateOfEac1}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

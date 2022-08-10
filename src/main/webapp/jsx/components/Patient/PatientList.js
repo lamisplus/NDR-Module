@@ -191,7 +191,7 @@ const Patients = (props) => {
                     hospital_number: getHospitalNumber(row.identifier),
                     //address: row.address,
                    //phone_number:  row.phone,
-                    //gender:row.gender.display,
+                    gender:row && row.sex ? row.sex : "",
                     age: (row.dateOfBirth === 0 ||
                         row.dateOfBirth === undefined ||
                         row.dateOfBirth === null ||

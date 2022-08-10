@@ -99,7 +99,8 @@ const UserRegistration = (props) => {
                 countryId:"",
                 stateId:"",
                 district:"",
-                landmark:""
+                landmark:"",
+                sexId:""
 
             }
     )
@@ -198,6 +199,7 @@ const UserRegistration = (props) => {
             basicInfo.maritalStatusId=patientObj.maritalStatus.id
             basicInfo.employmentStatusId=patientObj.employmentStatus.id
             basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
+            basicInfo.sexId=patientObj.sexId
             basicInfo.educationId=patientObj.education.id
             basicInfo.phoneNumber=phone.value
             basicInfo.altPhonenumber=altphone.value
@@ -216,7 +218,7 @@ const UserRegistration = (props) => {
 
     const loadGenders = useCallback(async () => {
         try {
-            const response = await axios.get(`${baseUrl}application-codesets/v2/GENDER`, { headers: {"Authorization" : `Bearer ${token}`} });
+            const response = await axios.get(`${baseUrl}application-codesets/v2/SEX`, { headers: {"Authorization" : `Bearer ${token}`} });
             setGenders(response.data);
         } catch (e) {
             
@@ -430,7 +432,7 @@ const UserRegistration = (props) => {
             //temp.middleName = basicInfo.middleName ? "" : "Middle is required."
             //temp.landmark = basicInfo.landmark ? "" : "This field is required."
             temp.lastName = basicInfo.lastName ? "" : "Last Name  is required."
-            temp.genderId = basicInfo.genderId ? "" : "Gender is required."
+            temp.sexId = basicInfo.sexId ? "" : "Sex is required."
             temp.dateOfRegistration1 = basicInfo.dateOfRegistration ? "" : "Date of Registration is required."
             temp.educationId = basicInfo.educationId ? "" : "Education is required."
             temp.address = basicInfo.address ? "" : "Address is required."
@@ -481,7 +483,8 @@ const UserRegistration = (props) => {
                     deceased: false,
                     deceasedDateTime: null,
                     firstName: basicInfo.firstName,
-                    genderId: basicInfo.genderId,
+                    genderId: basicInfo.sexId,
+                    sexId: basicInfo.sexId,
                     identifier: [
                         {
                             "assignerId": 1,
@@ -798,10 +801,10 @@ const UserRegistration = (props) => {
                                                     <Label>Sex *</Label>
                                                     <select
                                                             className="form-control"
-                                                            name="genderId"
-                                                            id="genderId"
+                                                            name="sexId"
+                                                            id="sexId"
                                                             onChange={handleInputChangeBasic}
-                                                            value={basicInfo.genderId}
+                                                            value={basicInfo.sexId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             
                                                         >
@@ -810,8 +813,8 @@ const UserRegistration = (props) => {
                                                             <option key={gender.id} value={gender.id}>{gender.display}</option>
                                                             ))}
                                                         </select>
-                                                        {errors.genderId !=="" ? (
-                                                    <span className={classes.error}>{errors.genderId}</span>
+                                                        {errors.sexId !=="" ? (
+                                                    <span className={classes.error}>{errors.sexId}</span>
                                                     ) : "" }
                                                 </FormGroup>
                                             </div>

@@ -27,7 +27,7 @@ import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { MdRemoveRedEye } from "react-icons/md";
+import { MdEditNote } from "react-icons/md";
 //import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
 //import moment from "moment";
@@ -188,7 +188,7 @@ const PharmacyHistory = (props) => {
                             aria-haspopup="menu"
                             style={{backgroundColor:'rgb(153, 46, 98)'}}
                             >
-                                <MdRemoveRedEye style={{marginRight: "5px"}}/> {" "}{" "} MdEditNote
+                                <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
                             </Button>
                             </ButtonGroup>
                           ), 
