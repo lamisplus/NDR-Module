@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
-import { Input, Label, FormGroup,Row, Col , CardBody, Card, Table } from "reactstrap";
+import { Input, Label, FormGroup,Row, Col , CardBody, Card, Table, InputGroupText, InputGroup } from "reactstrap";
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
@@ -362,25 +362,31 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
+                        {tests.dateAssayed!=="" ? (
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="priority">Result*</Label>
+                                <InputGroup>
                                 <Input
                                     type="text"
                                     name="result"
                                     id="result"
                                     value={tests.result}
                                     onChange={handleInputChange}  
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
-                                    >
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
+                                />
+
+                                {/* <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                    
-                                </Input>
+                                </InputGroupText> */}
+                                </InputGroup>
                                 {errors.result !=="" ? (
                                     <span className={classes.error}>{errors.result}</span>
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                       
+                       ):""
+                    }
                         <Col md={6} className="form-group mb-3">
                                 <FormGroup>
                                     <Label for="vlIndication">VL Indication*</Label>
@@ -412,7 +418,7 @@ const Laboratory = (props) => {
                                     type="textarea"
                                     name="comments"
                                     id="comments"
-                                    value={tests.comment}
+                                    value={tests.comments}
                                     onChange={handleInputChange}  
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                     >

@@ -25,11 +25,12 @@ import {  Card,CardBody,} from 'reactstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
-import Button from "@material-ui/core/Button";
 import "@reach/menu-button/styles.css";
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { MdEditNote } from "react-icons/md";
-
+import "@reach/menu-button/styles.css";
+import 'semantic-ui-css/semantic.min.css';
+import "react-widgets/dist/css/react-widgets.css";
+import { toast} from "react-toastify";
+import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -142,6 +143,25 @@ const LabHistory = (props) => {
          props.setActiveContent({...props.activeContent, route:'lab-view', id:row.id, activeTab:"history", actionType:"update", obj:row})
      }
 
+     const LoadDeletePage = (row) =>{  
+      axios.delete(`${baseUrl}laboratory/rde-orders/tests/${row.id}`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+              toast.success("Record Deleted Successfully");
+              LabOrders()
+          })
+          .catch((error) => {
+              if(error.response && error.response.data){
+                  let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                  toast.error(errorMessage);
+                }
+                else{
+                  toast.error("Something went wrong. Please try again...");
+                }
+          }); 
+   }
+
   return (
     <div>
             <br/>
@@ -167,31 +187,47 @@ const LabHistory = (props) => {
               isLoading={loading}
               data={ orderList.map((row) => ({
                   //Id: manager.id,
-                  testGroup:row.labTestGroupId,
-                  testName: row.labTestId,
+                  testGroup:row.labTestGroupName,
+                  testName: row.labTestName,
                   labNumber: row.labNumber,
                   sampleCollectionDate: row.sampleCollectionDate,    
                   dateAssayed: row.dateAssayed,
                   dateResultReceived: row.dateResultReceived, 
-                  viralLoadIndication: row.viralLoadIndication,
-                  Action: (
-                    <ButtonGroup variant="contained" 
-                        aria-label="split button"
-                        style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
-                        size="large"
-                        onClick={()=>onClickHome(row)}
-                    >
-                    <Button
-                    color="primary"
-                    size="small"
-                    aria-label="select merge strategy"
-                    aria-haspopup="menu"
-                    style={{backgroundColor:'rgb(153, 46, 98)'}}
-                    >
-                        <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
-                    </Button>
-                    </ButtonGroup>
-                  ), 
+                  viralLoadIndication: row.viralLoadIndicationName,
+                  Action: 
+                  // (
+                  //   <ButtonGroup variant="contained" 
+                  //       aria-label="split button"
+                  //       style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
+                  //       size="large"
+                  //       onClick={()=>onClickHome(row)}
+                  //   >
+                  //   <Button
+                  //   color="primary"
+                  //   size="small"
+                  //   aria-label="select merge strategy"
+                  //   aria-haspopup="menu"
+                  //   style={{backgroundColor:'rgb(153, 46, 98)'}}
+                  //   >
+                  //       <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
+                  //   </Button>
+                  //   </ButtonGroup>
+                  // ), 
+                  <div>
+                            <Menu.Menu position='right'  >
+                            <Menu.Item >
+                                <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                                <Dropdown item text='Action'>
+
+                                <Dropdown.Menu style={{ marginTop:"10px", }}>
+                                   <Dropdown.Item  onClick={()=>onClickHome(row)}><Icon name='edit' />Update</Dropdown.Item>
+                                    <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                                </Button>
+                            </Menu.Item>
+                            </Menu.Menu>
+                         </div>
                   }))}
             
                         options={{

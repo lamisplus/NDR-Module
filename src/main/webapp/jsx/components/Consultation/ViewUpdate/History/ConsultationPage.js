@@ -80,6 +80,7 @@ const ClinicVisit = (props) => {
   const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
   const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
+  const [visitId, setVisitId]= useState()
   const [heightValue, setHeightValue]= useState("cm")
   const [enableUpdate, setEnableUpdate]= useState(false) //Enable update for all input field if the user have permission
   const [errors, setErrors] = useState({});
@@ -385,14 +386,15 @@ const ClinicVisit = (props) => {
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
     objValues['vitalSignDto'] = vital
-    axios.post(`${baseUrl}hiv/art/clinic-visit/`, objValues,
+    axios.put(`${baseUrl}hiv/art/clinic-visit/${visitId}`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
 
     )
       .then(response => {
         setSaving(false);
         toast.success("Clinic Visit save successful");
-        props.setActiveContent('recent-history')
+        GetVisitById(visitId)
+        //props.setActiveContent('recent-history')
       })
       .catch(error => {
         setSaving(false);
@@ -430,6 +432,7 @@ const ClinicVisit = (props) => {
       });
   }
   const getVisitDetail=(e)=>{
+      setVisitId(e.id)
       GetVisitById(e.id)      
   }
   const EnableUpdateAction =()=>{

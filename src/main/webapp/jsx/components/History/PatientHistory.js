@@ -27,13 +27,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from "react-router-dom";
-
-import {FaSyringe, FaUserEdit, FaShare, FaTrash} from "react-icons/fa";
-import { MdDashboard } from "react-icons/md";
 //import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
-import { Label } from 'semantic-ui-react'
-import { RowingSharp } from '@mui/icons-material';
+
 import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
 
 
@@ -184,7 +180,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -203,7 +199,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -223,7 +219,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -243,7 +239,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -263,7 +259,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -283,7 +279,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -301,7 +297,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -322,7 +318,7 @@ const PatientnHistory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                toast.error("Record Deleted Successfully");
+                toast.success("Record Deleted Successfully");
                 PatientHistory()
             })
             .catch((error) => {
@@ -335,9 +331,25 @@ const PatientnHistory = (props) => {
                   }
             }); 
 
-        }else if(row.path==='Laboratory'){
+        }else if(row.path==='clinic-visit'){
             //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
-
+            axios
+            .delete(`${baseUrl}hiv/art/clinic-visit/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.success("Record Deleted Successfully");
+                PatientHistory()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            }); 
         }else{
 
         }
