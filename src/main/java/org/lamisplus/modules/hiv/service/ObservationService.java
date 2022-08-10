@@ -73,11 +73,12 @@ public class ObservationService {
     public ObservationDto getObservationById(Long id) {
         return convertObservationToDto (getObservation (id));
     }
+
     public String deleteById(Long id) {
         Observation observation = getObservation (id);
-         observation.setArchived (1);
-         observationRepository.save (observation);
-         return "successfully";
+        observation.setArchived (1);
+        observationRepository.save (observation);
+        return "successfully";
     }
 
     private Observation getObservation(Long id) {
@@ -88,7 +89,9 @@ public class ObservationService {
         Person person = getPerson (personId);
         Long currentUserOrganization = currentUserOrganizationService.getCurrentUserOrganization ();
         List<Observation> observations = observationRepository.getAllByPersonAndFacilityId (person, currentUserOrganization);
-        return observations.stream ().map (this::convertObservationToDto).collect (Collectors.toList ());
+        return observations.stream ()
+                .filter (observation -> observation.getArchived () == 0)
+                .map (this::convertObservationToDto).collect (Collectors.toList ());
 
 
     }

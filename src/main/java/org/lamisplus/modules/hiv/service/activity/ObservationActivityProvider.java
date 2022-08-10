@@ -20,7 +20,7 @@ public class ObservationActivityProvider implements PatientActivityProvider {
 
     @Override
     public List<PatientActivity> getActivitiesFor(Person person) {
-        List<Observation> observations = observationRepository.getAllByPerson (person);
+        List<Observation> observations = observationRepository.getAllByPersonAndArchived (person, 0);
         return observations.stream ()
                 .map (observation -> {
                     String type = observation.getType ();

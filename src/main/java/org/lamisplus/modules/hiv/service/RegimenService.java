@@ -24,4 +24,8 @@ public class RegimenService {
                 .orElseThrow (() -> new EntityNotFoundException (RegimenType.class, "id ", String.valueOf (typeId)));
         return regimenRepository.getAllByRegimenType (regimenType);
     }
+
+    public Regimen getRegimenBy(Long id){
+      return regimenRepository.findById (id).orElseThrow (() -> new EntityNotFoundException (Regimen.class, "id", Long.toString (id)));
+    }
 }
