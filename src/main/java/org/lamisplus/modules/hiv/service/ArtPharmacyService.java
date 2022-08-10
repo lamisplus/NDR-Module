@@ -91,7 +91,7 @@ public class ArtPharmacyService {
     public List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize) {
         Person person = getPerson (personId);
         Pageable paging = PageRequest.of (pageNo, pageSize, Sort.by ("visitDate").descending ());
-        Page<ArtPharmacy> artPharmaciesByPerson = artPharmacyRepository.getArtPharmaciesByPerson (person, paging);
+        Page<ArtPharmacy> artPharmaciesByPerson = artPharmacyRepository.getArtPharmaciesByPersonAndArchived (person, 0, paging);
         if (artPharmaciesByPerson.hasContent ()) {
             return artPharmaciesByPerson.getContent ()
                     .stream ()

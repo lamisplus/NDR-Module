@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface RegimenRepository extends JpaRepository<Regimen, Long> {
     List<Regimen> getAllByRegimenType(RegimenType regimenType);
+
 }

@@ -20,6 +20,7 @@ import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,6 +80,7 @@ public class HivPatientService {
     public List<HivPatientDto> getHivPatients() {
         return personService.getAllPerson ()
                 .stream ()
+                .sorted (Comparator.comparing (PersonResponseDto::getId))
                 .map (p -> convertPersonHivPatientDto (p.getId ()))
                 .collect (Collectors.toList ());
     }
@@ -93,7 +95,7 @@ public class HivPatientService {
             Person person = getPerson (personId);
             PersonResponseDto bioData = personService.getPersonById (personId);
             Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (bioData.getId ());
-            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonAndIsCommencementIsTrue (person);
+            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
             List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
@@ -144,7 +146,10 @@ public class HivPatientService {
         Log.info ("orgId {}", orgId);
         List<Observation> observationList = observationRepository.getAllByPersonAndFacilityId (person, orgId);
         if (!observationList.isEmpty ()) {
-            observationList.forEach (observation -> {
+            observationList
+                    .stream ()
+                    .filter (observation -> observation.getArchived () != 1)
+                    .forEach (observation -> {
                 if (observation.getType ().contains ("Clinical")) {
                     hivPatientDto.setClinicalEvaluation (true);
                 }

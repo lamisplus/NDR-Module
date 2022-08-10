@@ -39,6 +39,7 @@ public class PatientActivityService {
         List<PatientActivity> patientActivities = getActivitiesFor (patientId);
         List<TimelineVm> timeline = new ArrayList<> ();
         Map<String, List<PatientActivity>> activities = patientActivities.stream ()
+                .sorted (Comparator.comparing (PatientActivity::getDate))
                 .sorted (Comparator.comparing (PatientActivity::getName))
                 .sorted ((a1, a2) -> a2.getDate ().compareTo (a1.getDate ()))
                 .collect (Collectors.groupingBy (activity -> activity.getDate ().format (DateTimeFormatter.ofPattern ("dd MMM, yyyy"))));

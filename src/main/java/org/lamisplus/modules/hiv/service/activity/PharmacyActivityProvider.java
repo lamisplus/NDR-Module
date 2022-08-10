@@ -19,7 +19,7 @@ public class PharmacyActivityProvider implements PatientActivityProvider {
 
     @Override
     public List<PatientActivity> getActivitiesFor(Person person) {
-        List<ArtPharmacy> pharmacies = pharmacyRepository.getArtPharmaciesByPerson (person);
+        List<ArtPharmacy> pharmacies = pharmacyRepository.getArtPharmaciesByPersonAndArchived (person, 0);
         String name = "Pharmacy refill";
         return pharmacies.stream ()
                 .map (artPharmacy -> new PatientActivity (artPharmacy.getId (), name, artPharmacy.getVisitDate (), "", "Pharmacy"))
