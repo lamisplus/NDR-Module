@@ -54,6 +54,7 @@ public class ARTClinicalCommenceDto implements Serializable {
     private  VitalSignDto vitalSignDto;
     private  Boolean isViralLoadAtStartOfArt;
     private  Double  viralLoadAtStartOfArt;
+    private LocalDate dateOfViralLoadAtStartOfArt;
 
 
 }
