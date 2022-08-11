@@ -442,7 +442,7 @@ const ClinicEvaluationFrom = (props) => {
                
         e.preventDefault();                    
         setSaving(true);
-        axios.post(`${baseUrl}observation`, observation,
+        axios.put(`${baseUrl}observation/${props.activeContent.id}`, observation,
         { headers: {"Authorization" : `Bearer ${token}`}},            
         )
           .then(response => {
@@ -3308,32 +3308,23 @@ const ClinicEvaluationFrom = (props) => {
                 
                 {saving ? <Spinner /> : ""}
             <br />
-            
-            <MatButton
-            type="submit"
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            startIcon={<SaveIcon />}
-            onClick={handleSubmit}
-            >
-                {!saving ? (
-                <span style={{ textTransform: "capitalize" }}>Save</span>
-                ) : (
-                <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                )}
-            </MatButton>
-            
-            <MatButton
+            {props.activeContent.actionType==='update' ? (
+                <MatButton
+                type="submit"
                 variant="contained"
+                color="primary"
                 className={classes.button}
-                startIcon={<CancelIcon />}
-                
-            >
-                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-            </MatButton>
-            
-                </form>
+                startIcon={<SaveIcon />}
+                onClick={handleSubmit}
+                >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Update</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                    )}
+                </MatButton>
+            ):""}
+            </form>
             </CardBody>
         </Card> 
                   

@@ -326,7 +326,7 @@ const UserRegistration = (props) => {
     const handleInputChangeBasic = e => {        
         setBasicInfo ({...basicInfo,  [e.target.name]: e.target.value}); 
         //manupulate inpute fields base on gender/sex 
-        if(e.target.name==='genderId' && e.target.value==='4') {
+        if(e.target.name==='sexId' && e.target.value==='Female') {
             setfemaleStatus(true)
         } 
         if(e.target.name==='firstName' && e.target.value!==''){
@@ -1273,7 +1273,7 @@ const UserRegistration = (props) => {
                                                                         <Label for="contactEmail">Email</Label>
                                                                         <input
                                                                             className="form-control"
-                                                                            type="text"
+                                                                            type="email"
                                                                             name="email"
                                                                             id="email"
                                                                             value={relatives.email}
@@ -1381,7 +1381,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateOfRegistration"
                                         id="dateOfRegistration"
-                                        max={today}
+                                        min={basicInfo.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}

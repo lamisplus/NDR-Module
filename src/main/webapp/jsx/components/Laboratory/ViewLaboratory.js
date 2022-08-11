@@ -418,24 +418,27 @@ const Laboratory = (props) => {
                     
                     {saving ? <Spinner /> : ""}
                     <br />
-                
-                    <MatButton
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                        startIcon={<SaveIcon />}
-                        hidden={buttonHidden}
-                        style={{backgroundColor:"#014d88"}}
-                        
-                        onClick={handleSubmit}
-                        >
-                        {!saving ? (
-                        <span style={{ textTransform: "capitalize" }}>Save</span>
-                        ) : (
-                        <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                        )}
-                    </MatButton>
+                    {props.activeContent.actionType==='update' ? (
+                        <MatButton
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            startIcon={<SaveIcon />}
+                            hidden={buttonHidden}
+                            style={{backgroundColor:"#014d88"}}
+                            
+                            onClick={handleSubmit}
+                            >
+                            {!saving ? (
+                            <span style={{ textTransform: "capitalize" }}>Update</span>
+                            ) : (
+                            <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                            )}
+                        </MatButton>
+                        )
+                        :""
+                    }
                 
                 </form>
             )}

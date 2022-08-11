@@ -202,7 +202,7 @@ const UserRegistration = (props) => {
             basicInfo.sexId=patientObj.sexId
             basicInfo.educationId=patientObj.education.id
             basicInfo.phoneNumber=phone.value
-            basicInfo.altPhonenumber=altphone.value
+            basicInfo.altPhonenumber= altphone & altphone.value ? altphone.value :""
             basicInfo.email=email.value
             basicInfo.address=country.city
             basicInfo.countryId=country.countryId

@@ -66,7 +66,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ArtCommencement = (props) => {
-    //const patientObj = props.patientObj;
+    const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     //let history = useHistory();
     let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -287,7 +288,7 @@ const ArtCommencement = (props) => {
             temp.regimenTypeId = objValues.regimenTypeId ? "" : "This field is required"
             temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
             temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
-            temp.tbStatusId = objValues.tbStatusId ? "" : "This field is required"
+            //temp.tbStatusId = objValues.tbStatusId ? "" : "This field is required"
             temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
             temp.height = vital.height ? "" : "This field is required"
             temp.systolic = vital.systolic ? "" : "This field is required"
@@ -387,6 +388,7 @@ const ArtCommencement = (props) => {
                                             id="visitDate"
                                             onChange={handleInputChange}
                                             value={objValues.visitDate}
+                                            min={moment(enrollDate).format("YYYY-MM-DD") }
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
@@ -585,7 +587,7 @@ const ArtCommencement = (props) => {
                                             ) : "" }
                                         </FormGroup>
                                     </div>
-                                    <div className="form-group mb-3 col-md-4">
+                                    {/* <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >TB Status</Label>
                                         <Input
@@ -609,7 +611,7 @@ const ArtCommencement = (props) => {
                                             <span className={classes.error}>{errors.tbStatusId}</span>
                                             ) : "" }
                                         </FormGroup>
-                                    </div>
+                                    </div> */}
                                     <div className=" mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >Body Weight</Label>

@@ -138,9 +138,9 @@ const LabHistory = (props) => {
           }
       }
 
-      const onClickHome = (row) =>{  
+      const onClickHome = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
-         props.setActiveContent({...props.activeContent, route:'lab-view', id:row.id, activeTab:"history", actionType:"update", obj:row})
+         props.setActiveContent({...props.activeContent, route:'lab-view', id:row.id, activeTab:"history", actionType:actionType, obj:row})
      }
 
      const LoadDeletePage = (row) =>{  
@@ -220,7 +220,8 @@ const LabHistory = (props) => {
                                 <Dropdown item text='Action'>
 
                                 <Dropdown.Menu style={{ marginTop:"10px", }}>
-                                   <Dropdown.Item  onClick={()=>onClickHome(row)}><Icon name='edit' />Update</Dropdown.Item>
+                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'view')}><Icon name='eye' />View</Dropdown.Item>
+                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
                                     <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>

@@ -51,7 +51,6 @@ const EAC = (props) => {
     const patientObj = props.patientObj;
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
-    const [eacObj, setEacObj] = useState([]);
     const [errors, setErrors] = useState({});
     const [objValues, setObjValues]=useState({
                                                 dateOfEac1: null,
@@ -66,18 +65,26 @@ const EAC = (props) => {
                                             })
     useEffect(() => {
         EACStatus();
-        }, []);
+        }, [props.activeContent.id]);
     
         ///GET LIST OF FUNCTIONAL%20_STATUS
         // TB STATUS
-        const EACStatus =()=>{
+        const EACStatus = ()=>{
         axios
-            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+            .get(`${baseUrl}observation/eac/${props.activeContent.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                //console.log(response.data);
-                setEacObj(response.data);
+                objValues.dateOfEac1=response.data.dateOfEac1
+                objValues.dateOfEac2= response.data.dateOfEac2
+                objValues.dateOfEac3=response.data.dateOfEac3
+                objValues.dateOfLastViralLoad=response.data.dateOfLastViralLoad
+                objValues.lastViralLoad=response.data.lastViralLoad
+                objValues.note=response.data.note
+                objValues.personId=response.data.personId
+                objValues.status=response.data.status
+                objValues.visitId=response.data.visitId
+                setObjValues({...objValues, ...response.data})
             })
             .catch((error) => {
             //console.log(error);
@@ -92,7 +99,7 @@ const EAC = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
-          axios.post(`${baseUrl}observation/eac`,objValues,
+          axios.put(`${baseUrl}observation/eac/${props.activeContent.id}`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
@@ -119,6 +126,7 @@ const EAC = (props) => {
           
     }
 
+    console.log(objValues)
   return (      
         <div>                   
             <Card >
@@ -141,6 +149,7 @@ const EAC = (props) => {
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={props.activeContent.actionType==='update'? false : true}
                                 required
                             />
                             {errors.dateOfEac1 !=="" ? (
@@ -159,6 +168,7 @@ const EAC = (props) => {
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={props.activeContent.actionType==='update'? false : true}
                                 required
                             />
                             
@@ -174,6 +184,7 @@ const EAC = (props) => {
                                 value={objValues.lastViralLoad}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={props.activeContent.actionType==='update'? false : true}
                                 required
                             />
                             
@@ -189,32 +200,32 @@ const EAC = (props) => {
                                 value={objValues.note}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={props.activeContent.actionType==='update'? false : true}
                             />
                             </FormGroup>
                         </div>
                         
                     </div>
-                    
-                    {saving ? <Spinner /> : ""}
                     <br />
-                
-                    <MatButton
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    startIcon={<SaveIcon />}
-                    onClick={handleSubmit}
-                    style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac1==="" ? true : false}
-                    >
-                    {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Save</span>
-                    ) : (
-                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                    )}
-                    </MatButton>
-                
+                {props.activeContent.actionType==='update' ? (
+                        <MatButton
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            startIcon={<SaveIcon />}
+                            onClick={handleSubmit}
+                            style={{backgroundColor:"#014d88"}}
+                            disabled={objValues.dateOfEac1==="" ? true : false}
+                            >
+                            {!saving ? (
+                            <span style={{ textTransform: "capitalize" }}>Update</span>
+                            ) : (
+                            <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                            )}
+                        </MatButton>
+                        ): ""
+                }
                     </form>
                 </CardBody>
             </Card>                    

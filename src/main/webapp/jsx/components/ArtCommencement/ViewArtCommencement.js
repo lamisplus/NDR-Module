@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => ({
 const ArtCommencement = (props) => {
     //const patientObj = props.patientObj;
     //let history = useHistory();
-    console.log(props.activeContent.id)
+    //console.log(props.activeContent.id)
     let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
@@ -140,7 +140,7 @@ const ArtCommencement = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => { 
-                console.log(response.data)           
+                //console.log(response.data)           
                 setObjValues(response.data)
                 RegimenType(response.data.regimenTypeId)
                 setVitalSignDto(response.data.vitalSignDto)
@@ -394,7 +394,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.visitDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
                             />
                                 {errors.visitDate !=="" ? (
                                 <span className={classes.error}>{errors.visitDate}</span>
@@ -411,7 +411,7 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.cd4}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={props.activeContent.actionType==='update' ? false :true}
                             />
                             
                             </FormGroup>
@@ -427,7 +427,7 @@ const ArtCommencement = (props) => {
                             onChange={handleInputChange}
                             value={objValues.cd4Percentage}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            
+                            disabled={props.activeContent.actionType==='update' ? false :true}
                         />
                         
                         </FormGroup>
@@ -441,7 +441,7 @@ const ArtCommencement = (props) => {
                                 id="regimenId"
                                 value={objValues.regimenId}
                                 onChange={handleSelecteRegimen}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 >
                                     <option value=""> Select</option>
@@ -468,7 +468,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.regimenTypeId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
                                 >
                                     <option value=""> Select</option>
             
@@ -494,7 +494,8 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChangeVitalStart}                                            
                                 value={objValues.viralLoad}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                
                             >
                                 <option value=""> Select</option>
                                 <option value="YES"> YES</option>
@@ -515,7 +516,8 @@ const ArtCommencement = (props) => {
                                 //onChange={handleInputChange}
                                 //value={objValues.viralLoad}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                
                             />
                             
                             </FormGroup>
@@ -527,11 +529,12 @@ const ArtCommencement = (props) => {
                                 type="date"
                                 name="viralLoad"
                                 id="viralLoad"
+                                disabled={props.activeContent.actionType==='update' ? false :true}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 //onChange={handleInputChange}
                                 //value={objValues.viralLoad}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                
                             />
                             
                             </FormGroup>
@@ -549,7 +552,8 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                
                                 >
                                     <option value=""> Select</option>
             
@@ -575,7 +579,8 @@ const ArtCommencement = (props) => {
                                 value={objValues.functionalStatusId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                
                                 >
                                     <option value=""> Select</option>
             
@@ -629,6 +634,7 @@ const ArtCommencement = (props) => {
                                     value={vital.bodyWeight}
                                     onKeyUp={handleInputValueCheckBodyWeight} 
                                     style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
                                 />
                                 <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                     kg
@@ -657,6 +663,7 @@ const ArtCommencement = (props) => {
                                     max="216.408"
                                     onKeyUp={handleInputValueCheckHeight} 
                                     style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
                                 />
                                     <InputGroupButtonDropdown
                                     addonType="append"
@@ -694,6 +701,7 @@ const ArtCommencement = (props) => {
                                     value={vital.systolic}
                                     onKeyUp={handleInputValueCheckSystolic}
                                     style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
                                 />
                                 <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                     systolic(mmHg)
@@ -721,6 +729,7 @@ const ArtCommencement = (props) => {
                                 disabled
                                 value={Math.round(vital.bodyWeight/(vital.height/100))}
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                
                                 />
                                 </InputGroup>                
                                 </FormGroup>
@@ -739,6 +748,7 @@ const ArtCommencement = (props) => {
                                     value={vital.diastolic}
                                     onKeyUp={handleInputValueCheckDiastolic} 
                                     style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
                                 />
                                 <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                     diastolic(mmHg)
@@ -765,6 +775,7 @@ const ArtCommencement = (props) => {
                                     value={objValues.address}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
 
                                 >
                                     <option value=""> Select</option>
@@ -787,7 +798,8 @@ const ArtCommencement = (props) => {
                                     onChange={handleInputChange}
                                     value={values.address}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
                                 />
                                 </FormGroup>
                             </div>
@@ -807,6 +819,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.clinicalNote}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
+                                disabled={props.activeContent.actionType==='update' ? false :true}
                             />
                             </FormGroup>
                         </div>
@@ -814,31 +827,34 @@ const ArtCommencement = (props) => {
                     
                     {saving ? <Spinner /> : ""}
                 <br />
-                
-                    <MatButton
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    startIcon={<SaveIcon />}
-                    onClick={handleSubmit}
-                    style={{backgroundColor:"#014d88"}}
-                    >
-                        {!saving ? (
-                        <span style={{ textTransform: "capitalize" }}>Save</span>
-                        ) : (
-                        <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                        )}
-                    </MatButton>
-                
-                    <MatButton
-                        variant="contained"
-                        className={classes.button}
-                        startIcon={<CancelIcon style={{color:'#fff'}}/>}  
-                        style={{backgroundColor:'#992E62'}}                              
-                    >
-                        <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                    </MatButton>
+                        {props.activeContent.actionType==='update' ? (
+                            <>
+                            <MatButton
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            startIcon={<SaveIcon />}
+                            onClick={handleSubmit}
+                            style={{backgroundColor:"#014d88"}}
+                            >
+                                {!saving ? (
+                                <span style={{ textTransform: "capitalize" }}>Save</span>
+                                ) : (
+                                <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                                )}
+                            </MatButton>
+{/*                         
+                            <MatButton
+                                variant="contained"
+                                className={classes.button}
+                                startIcon={<CancelIcon style={{color:'#fff'}}/>}  
+                                style={{backgroundColor:'#992E62'}}                              
+                            >
+                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                            </MatButton> */}
+                            </>
+                            ):""}
                 
                 </form>
                 </CardBody>

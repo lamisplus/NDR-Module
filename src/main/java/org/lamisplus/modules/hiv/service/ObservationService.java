@@ -47,7 +47,7 @@ public class ObservationService {
         observation.setPerson (person);
         observation.setUuid (UUID.randomUUID ().toString ());
         observation.setVisit (visit);
-        observation.setArchived (1);
+        observation.setArchived (0);
         Observation saveObservation = observationRepository.save (observation);
         observationDto.setId (saveObservation.getId ());
         return observationDto;

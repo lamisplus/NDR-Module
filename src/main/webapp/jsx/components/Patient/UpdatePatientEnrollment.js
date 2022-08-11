@@ -220,7 +220,7 @@ const UserRegistration = (props) => {
 
     const loadGenders = useCallback(async () => {
         try {
-            const response = await axios.get(`${baseUrl}application-codesets/v2/GENDER`, { headers: {"Authorization" : `Bearer ${token}`} });
+            const response = await axios.get(`${baseUrl}application-codesets/v2/SEX`, { headers: {"Authorization" : `Bearer ${token}`} });
             setGenders(response.data);
         } catch (e) {
             
@@ -526,8 +526,8 @@ const UserRegistration = (props) => {
                 patientForm.id = patientId;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
-                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
-                toast.success("Patient Register successful");
+                const response = await axios.put(`${baseUrl}hiv/patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                toast.success("Patient Updated successful");
                 history.push('/');
             } catch (error) {                
                 let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "An error occured while registering a patient !";
@@ -812,7 +812,7 @@ const UserRegistration = (props) => {
                                                         >
                                                             <option value={""}>Select</option>
                                                             {genders.map((gender, index) => (
-                                                            <option key={gender.id} value={gender.id}>{gender.display}</option>
+                                                            <option key={gender.id} value={gender.display}>{gender.display}</option>
                                                             ))}
                                                         </select>
                                                         {errors.sexId !=="" ? (
@@ -1696,32 +1696,36 @@ const UserRegistration = (props) => {
 
                             <br />
 
-
-                            <MatButton
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                className={classes.button}
-                                startIcon={<SaveIcon />}
-                                onClick={handleSubmit}
-                                style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
-                            >
-                                {!saving ? (
-                                    <span style={{ textTransform: "capitalize" }}>Save</span>
-                                ) : (
-                                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                                )}
-                            </MatButton>
-    
-                            <MatButton
-                                variant="contained"
-                                className={classes.button}
-                                startIcon={<CancelIcon />}
-                                onClick={handleCancel}
-                                style={{backgroundColor:'#992E62'}}
-                            >
-                                <span style={{ textTransform: "capitalize", color:"#fff" }}>Cancel</span>
-                            </MatButton>
+                            {props.activeContent.actionType ==='update' ?
+                            (
+                                <>
+                                    <MatButton
+                                        type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.button}
+                                        startIcon={<SaveIcon />}
+                                        onClick={handleSubmit}
+                                        style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
+                                    >
+                                        {!saving ? (
+                                            <span style={{ textTransform: "capitalize" }}>Update</span>
+                                        ) : (
+                                            <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                                        )}
+                                    </MatButton>
+            
+                                    <MatButton
+                                        variant="contained"
+                                        className={classes.button}
+                                        startIcon={<CancelIcon />}
+                                        onClick={handleCancel}
+                                        style={{backgroundColor:'#992E62'}}
+                                    >
+                                        <span style={{ textTransform: "capitalize", color:"#fff" }}>Cancel</span>
+                                    </MatButton>
+                            </>
+                            ):""}
                         </Form>
                     </div>
                 </CardContent>
