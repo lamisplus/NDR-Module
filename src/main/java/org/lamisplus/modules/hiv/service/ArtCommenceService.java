@@ -83,7 +83,7 @@ public class ArtCommenceService {
             throw new IllegalTypeException (ARTClinical.class, "Art commence date", message);
         }
         Person person = hivEnrollment.getPerson ();
-        boolean artCommenceExist = artClinicalRepository.findByPersonAndIsCommencementIsTrue (person).isPresent ();
+        boolean artCommenceExist = artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0).isPresent ();
         if (artCommenceExist) throw new RecordExistException (ARTClinical.class, "personId", "" + personId);
         Visit visit = processAndCreateVisit (personId);
         if (visit != null) {

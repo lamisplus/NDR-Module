@@ -57,6 +57,7 @@ public class HIVEacService {
     public String deleteEACById(Long id){
         HIVEac hivEac = getHivEac (id);
         hivEac.setArchived (1);
+        hivEacRepository.save (hivEac);
         return "successful";
     }
     private HIVEac getHivEac(Long id) {
