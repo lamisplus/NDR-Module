@@ -81,6 +81,7 @@ const ClinicVisit = (props) => {
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
   const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
   const [visitId, setVisitId]= useState()
+  const [enableUpdateButton, setEnableUpdateButton]=useState(false)
   const [heightValue, setHeightValue]= useState("cm")
   const [enableUpdate, setEnableUpdate]= useState(false) //Enable update for all input field if the user have permission
   const [errors, setErrors] = useState({});
@@ -432,13 +433,15 @@ const ClinicVisit = (props) => {
       });
   }
   const getVisitDetail=(e)=>{
+        setEnableUpdateButton(true)
       setVisitId(e.id)
       GetVisitById(e.id)      
   }
   const EnableUpdateAction =()=>{
-    setEnableUpdate(true)
-  }
 
+      setEnableUpdate(true)
+  }
+console.log(enableUpdateButton)
 
   return (
     <div>
@@ -476,9 +479,11 @@ const ClinicVisit = (props) => {
                 <div className="card">
                     <div className="card-header  border-0 pb-2" style={{backgroundColor:"#014D88"}}>
                     <h4 className="card-title" style={{color:"#fff"}}> </h4>
-                    <ButtonSMUI color='facebook' onClick={()=>EnableUpdateAction()}>
+                    {enableUpdateButton && (
+                    <ButtonSMUI color='facebook' onClick={()=>EnableUpdateAction()} >
                       <Icon name='edit' /> Edit Visit 
                     </ButtonSMUI>
+                    )}
                     </div>
                     <div className="card-body">
                     <Grid columns='equal'>
@@ -813,9 +818,9 @@ const ClinicVisit = (props) => {
                         hidden={!enableUpdate}
                         >
                         {!saving ? (
-                            <span style={{ textTransform: "capitalize" }}>Save</span>
+                            <span style={{ textTransform: "capitalize" }}>Update</span>
                         ) : (
-                            <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                            <span style={{ textTransform: "capitalize" }}>Updating...</span>
                         )}
                         </MatButton>
                     </Segment>

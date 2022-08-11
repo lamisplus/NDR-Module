@@ -127,9 +127,9 @@ const PharmacyHistory = (props) => {
       })
       return regimenArr; 
       }
-    const onClickHome = (row) =>{  
+    const onClickHome = (row, actionType) =>{  
        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
-        props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:"update", obj:row})
+        props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:actionType, obj:row})
     }
     const LoadDeletePage = (row) =>{ 
         console.log(row) 
@@ -203,7 +203,7 @@ const PharmacyHistory = (props) => {
                                 <Dropdown item text='Action'>
 
                                 <Dropdown.Menu style={{ marginTop:"10px", }}>
-                                   <Dropdown.Item  onClick={()=>onClickHome(row)}><Icon name='edit' />Update</Dropdown.Item>
+                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
                                     <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>

@@ -66,17 +66,17 @@ const EAC = (props) => {
                                             })
     useEffect(() => {
         EACHistory()
-    }, [props.patientObj.id]);
+    }, [props.activeContent.id]);
     ///GET LIST OF EAC
     const EACHistory =()=>{
         setLoading(true)
         axios
-            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+            .get(`${baseUrl}observation/eac/${props.activeContent.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-            setLoading(false)
-            setObjValues(response.data[0])
+                setLoading(false)
+                setObjValues({...objValues, ...response.data})
             })
             .catch((error) => {
             //console.log(error);
@@ -90,7 +90,7 @@ const EAC = (props) => {
         e.preventDefault();        
           setSaving(true);
           objValues.status='Second'
-          axios.post(`${baseUrl}observation/eac`,objValues,
+          axios.put(`${baseUrl}observation/eac/${props.activeContent.id}`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
@@ -141,6 +141,7 @@ const EAC = (props) => {
                                 //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
+                                disabled={props.activeContent.actionType==='update'? false : true}
                             />
                             {errors.dateOfEac2 !=="" ? (
                                 <span className={classes.error}>{errors.dateOfEac2}</span>
@@ -153,7 +154,7 @@ const EAC = (props) => {
                     
                     {saving ? <Spinner /> : ""}
                     <br />
-                
+                    {props.activeContent.actionType==='update' ? (
                     <MatButton
                     type="submit"
                     variant="contained"
@@ -170,7 +171,7 @@ const EAC = (props) => {
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                     </MatButton>
-                
+                    ):""}
                    
                     </form>
                 </CardBody>

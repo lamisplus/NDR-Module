@@ -326,7 +326,7 @@ const UserRegistration = (props) => {
     const handleInputChangeBasic = e => {        
         setBasicInfo ({...basicInfo,  [e.target.name]: e.target.value}); 
         //manupulate inpute fields base on gender/sex 
-        if(e.target.name==='genderId' && e.target.value==='4') {
+        if(e.target.name==='sexId' && e.target.value==='Female') {
             setfemaleStatus(true)
         } 
         if(e.target.name==='firstName' && e.target.value!==''){

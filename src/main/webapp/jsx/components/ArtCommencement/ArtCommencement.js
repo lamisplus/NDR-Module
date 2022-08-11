@@ -67,7 +67,6 @@ const useStyles = makeStyles(theme => ({
 
 const ArtCommencement = (props) => {
     const patientObj = props.patientObj;
-    console.log(patientObj)
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     //let history = useHistory();
     let gender=""

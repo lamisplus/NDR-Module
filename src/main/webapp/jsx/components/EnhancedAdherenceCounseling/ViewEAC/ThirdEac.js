@@ -66,17 +66,17 @@ const EAC = (props) => {
                                             })
     useEffect(() => {
         EACHistory()
-    }, [props.patientObj.id]);
+    }, [props.activeContent.id]);
     ///GET LIST OF EAC
     const EACHistory =()=>{
         setLoading(true)
         axios
-            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+            .get(`${baseUrl}observation/eac/${props.activeContent.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-            setLoading(false)
-            setObjValues(response.data[0])
+                setLoading(false)
+                setObjValues({...objValues, ...response.data})
             })
             .catch((error) => {
             //console.log(error);
@@ -90,11 +90,12 @@ const EAC = (props) => {
         e.preventDefault();        
           setSaving(true);
           objValues.status='Third'
-          axios.post(`${baseUrl}observation/eac`,objValues,
+          axios.put(`${baseUrl}observation/eac/${props.activeContent.id}`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
+                
                   setSaving(false);
                   props.setHideThird(false)
                   props.setHideFirst(false)                 
@@ -137,7 +138,7 @@ const EAC = (props) => {
                                 id="dateOfEac3"
                                 value={objValues.dateOfEac3}
                                 onChange={handleInputChange}
-                                min={objValues.dateOfEac2}
+                                min={objValues.dateOfEac2!==""? objValues.dateOfEac2 : ""}
                                 //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -151,9 +152,9 @@ const EAC = (props) => {
                         
                     </div>
                     
-                    {saving ? <Spinner /> : ""}
+                    {/* {saving ? <Spinner /> : ""} */}
                     <br />
-                
+                    {props.activeContent.actionType==='update' ? (
                     <MatButton
                     type="submit"
                     variant="contained"
@@ -162,7 +163,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac3==="" ? true : false}
+                    disabled={props.activeContent.actionType==='update'? false : true}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -170,6 +171,7 @@ const EAC = (props) => {
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                     </MatButton>
+                    ):""}
                     </form>
                 </CardBody>
             </Card>                    

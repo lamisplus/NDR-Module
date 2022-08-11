@@ -66,10 +66,9 @@ const Pharmacy = (props) => {
     useEffect(() => {
         RegimenLine();
         PrepSideEffect();
-        PharmacyRefillDetail();
+        PharmacyRefillDetail(); 
         
-        
-        }, [props.activeContent.obj]);
+        }, [props.activeContent.obj, props.activeContent.id]);
 
     const EnableUpdateAction =()=>{
 
@@ -83,9 +82,9 @@ const Pharmacy = (props) => {
                 )
                 .then((response) => {
                     const data=response.data
-                    console.log(response.data);
+                    //console.log(response.data);
                     setObjValues(data);
-                    setRegimenList(data.extra.regimens)
+                    //setRegimenList(data.extra.regimens)
                     setRegimenList(data && data.extra ? data.extra.regimens : [])
                     if(data.adrScreened){
                         setShowAdr(true)
@@ -98,12 +97,12 @@ const Pharmacy = (props) => {
                                         value: value.id
                                     }))
                         )
-                        setRegimenList(
-                            Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
-                                id: value.value,
-                                name: value.label,
-                                dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
-                            })))
+                        // setRegimenList(
+                        //     Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
+                        //         id: value.value,
+                        //         name: value.label,
+                        //         dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
+                        //     })))
                         setShowRegimen(true)
                     }
                 })
@@ -228,10 +227,8 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenList(data);
      }
-    //  const setSelectedOptionAdrChange = (e)=>{
-    //     setSelectedOptionAdr(e)
-    //  }
 
+    console.log(regimenList)
     const handleSubmit = (e) => {        
         e.preventDefault();
         setSaving(true);
@@ -268,9 +265,11 @@ const Pharmacy = (props) => {
 
         </div>
         <div className="col-md-6">
-        <ButtonSMUI color='facebook' className={'float-end'} onClick={()=>EnableUpdateAction()}>
-            <Icon name='edit' /> Edit Refill 
-        </ButtonSMUI>
+        {props.activeContent.actionType==='update' ? (
+            <ButtonSMUI color='facebook' className={'float-end'} onClick={()=>EnableUpdateAction()}>
+                <Icon name='edit' /> Edit Refill 
+            </ButtonSMUI>
+        ):""}
         </div>
         <br/><br/>
         <Card >
@@ -509,7 +508,7 @@ const Pharmacy = (props) => {
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     isMulti="true"
                     noOptionsMessage="true"
-                    disabled={enableUpdate}
+                    isDisabled={enableUpdate}
 
                 />
                 </FormGroup>
@@ -589,9 +588,9 @@ const Pharmacy = (props) => {
                     disabled={objValues.visitDate===null || saving ? true : false}
                     >
                     {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    <span style={{ textTransform: "capitalize" }}>Update</span>
                     ) : (
-                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    <span style={{ textTransform: "capitalize" }}>Updating...</span>
                     )}
                 </MatButton>
 
