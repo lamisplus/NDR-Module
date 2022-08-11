@@ -49,7 +49,7 @@ const RecentHistory = (props) => {
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
-        //console.log()
+          console.log(response.data)
           setRecentActivities(response.data)
        })
        .catch((error) => {

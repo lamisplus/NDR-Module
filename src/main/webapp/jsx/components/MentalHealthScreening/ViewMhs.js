@@ -50,7 +50,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ViewMentalHealthScreening = (props) => {
-    console.log(props.activeContent)
     const patientObj = props.patientObj;
     //let history = useHistory();
     const classes = useStyles()
@@ -241,26 +240,29 @@ const ViewMentalHealthScreening = (props) => {
                         </div>                        
                     </div>
                     
-                    {saving ? <Spinner /> : ""}
-                    <br />
-                
-                    <MatButton
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    style={{backgroundColor:"#014d88"}}
-                    startIcon={<SaveIcon />}
-                    disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" ? true : false}
-                    onClick={handleSubmit}
-                    hidden="true"
-                    >
-                    {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Save</span>
-                    ) : (
-                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                    )}
-                    </MatButton>
+                    {props.activeContent.actionType ==='update' ?
+                        (
+                   
+                            <MatButton
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            style={{backgroundColor:"#014d88"}}
+                            startIcon={<SaveIcon />}
+                            disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" ? true : false}
+                            onClick={handleSubmit}
+                            
+                            >
+                            {!saving ? (
+                            <span style={{ textTransform: "capitalize" }}>Update</span>
+                            ) : (
+                            <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                            )}
+                            </MatButton>
+                            )
+                        :""
+                        }
                 
                     </form>
                 </CardBody>

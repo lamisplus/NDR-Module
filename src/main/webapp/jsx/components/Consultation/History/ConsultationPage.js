@@ -87,6 +87,7 @@ const ClinicVisit = (props) => {
   const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
   const [heightValue, setHeightValue]= useState("cm")
   const [enableUpdate, setEnableUpdate]= useState(false)
+  const [enableEdit, setEnableEdit]= useState(true)
   const [errors, setErrors] = useState({});
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -449,14 +450,15 @@ const ClinicVisit = (props) => {
           setTbObj({...e.tbScreen})
           setAdrList([...e.adverseDrugReactions])
           setInfectionList([...e.opportunisticInfections])
-          console.log(e)
-          console.log(e.adverseDrugReactions)
+          // console.log(e)
+          // console.log(e.adverseDrugReactions)
 
       })
       .catch((error) => {
       });
   }
   const getVisitDetail=(e)=>{
+     setEnableEdit(false)
       GetVisitById(e.id)
       
   }
@@ -488,7 +490,7 @@ const ClinicVisit = (props) => {
                             />
                       </div>
                     </div>
-						))}
+						        ))}
                     </PerfectScrollbar>
                     </div>
                 </div>
@@ -498,9 +500,11 @@ const ClinicVisit = (props) => {
                 <div className="card">
                     <div className="card-header  border-0 pb-2" style={{backgroundColor:"#014D88"}}>
                     <h4 className="card-title" style={{color:"#fff"}}> </h4>
-                    <ButtonSMUI color='facebook'>
-                      <Icon name='edit' /> Edit Visit 
-                    </ButtonSMUI>
+                   
+                      <ButtonSMUI color='facebook' hidden={enableEdit}>
+                        <Icon name='edit' /> Edit Visit 
+                      </ButtonSMUI>
+                   
                     </div>
                     <div className="card-body">
                     <Grid columns='equal'>
@@ -849,9 +853,9 @@ const ClinicVisit = (props) => {
                         onClick={handleSubmit}
                         >
                         {!saving ? (
-                            <span style={{ textTransform: "capitalize" }}>Save</span>
+                            <span style={{ textTransform: "capitalize" }}>Update</span>
                         ) : (
-                            <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                            <span style={{ textTransform: "capitalize" }}>Updating...</span>
                         )}
                         </MatButton>
                     </Segment>
