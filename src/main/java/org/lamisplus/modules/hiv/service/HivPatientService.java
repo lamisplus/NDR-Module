@@ -80,7 +80,7 @@ public class HivPatientService {
     public List<HivPatientDto> getHivPatients() {
         return personService.getAllPerson ()
                 .stream ()
-                .sorted (Comparator.comparing (PersonResponseDto::getId))
+                .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
                 .map (p -> convertPersonHivPatientDto (p.getId ()))
                 .collect (Collectors.toList ());
     }
@@ -145,6 +145,7 @@ public class HivPatientService {
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
         Log.info ("orgId {}", orgId);
         List<Observation> observationList = observationRepository.getAllByPersonAndFacilityId (person, orgId);
+        Log.info ("observationList {}", observationList);
         if (!observationList.isEmpty ()) {
             observationList
                     .stream ()

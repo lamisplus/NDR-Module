@@ -86,6 +86,9 @@ public class ArtClinicVisitService {
         VitalSignDto vitalSignDto = artClinicVisitDto.getVitalSignDto ();
         vitalSignService.updateVitalSign (existArtClinical.getVitalSign ().getId (), vitalSignDto);
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, existArtClinical.getVitalSign ().getId ());
+        artClinical.setVisit (existArtClinical.getVisit ());
+        artClinical.setHivEnrollment (existArtClinical.getHivEnrollment ());
+        artClinical.setPerson (existArtClinical.getPerson ());
         artClinical.setId (existArtClinical.getId ());
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));
     }
