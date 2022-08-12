@@ -349,6 +349,7 @@ const UserRegistration = (props) => {
                 );
             if(response.data!==true){
                 setHospitalNumStatus(false)
+                setObjValues ({...objValues,  uniqueId: e.target.value});
                 setHospitalNumStatus2(true)
             }else{
                 setHospitalNumStatus(false)
@@ -356,7 +357,7 @@ const UserRegistration = (props) => {
             }
         }
         getCharacters();
-    }           
+        }           
     } 
     //Function to show relatives 
     const handleAddRelative = () => {
@@ -1367,6 +1368,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.uniqueId}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled
                                         
                                     />
                                     {errors.uniqueId !=="" ? (

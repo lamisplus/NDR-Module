@@ -160,7 +160,9 @@ const UserRegistration = (props) => {
     let patientObj = {};
     patientId = locationState ? locationState.patientId : null;
     patientObj = locationState ? locationState.patientObj : {}; 
-    console.log(props)
+    //status for hospital Number 
+    const [hospitalNumStatus, setHospitalNumStatus]= useState(false);
+    const [hospitalNumStatus2, setHospitalNumStatus2]= useState(false);
     
     useEffect(() => { 
         loadGenders();
@@ -200,7 +202,7 @@ const UserRegistration = (props) => {
             basicInfo.maritalStatusId=patientObj.maritalStatus.id
             basicInfo.employmentStatusId=patientObj.employmentStatus.id
             basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
-            basicInfo.sexId=patientObj.sexId 
+            basicInfo.sexId=patientObj.sex 
             basicInfo.educationId=patientObj.education.id
             basicInfo.phoneNumber=phone.value
             basicInfo.altPhonenumber=altphone.value
@@ -212,9 +214,12 @@ const UserRegistration = (props) => {
             basicInfo.stateId=country.stateId
             basicInfo.district=country.district
             setObjValues(patientObj.enrollment)
+            const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))
+            basicInfo.age=patientAge
+            setfemaleStatus(patientObj.sex==='Female'? true : false)
 
         }
-        console.log(basicInfo.stateId)
+       
         
     }, [patientObj, patientId]);
 
@@ -278,6 +283,22 @@ const UserRegistration = (props) => {
         //console.log(error);
         });        
     }
+    //Calculate Date of birth 
+    const calculate_age = dob => {
+        var today = new Date();
+        var dateParts = dob.split("-");
+        var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+        var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+        var age_now = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age_now--;
+                }
+            if (age_now === 0) {
+                    return m + " month(s)";
+                }
+                return age_now ;
+      };
      //Get States from selected country
      const getStates = e => {
         const getCountryId =e.target.value;
@@ -370,7 +391,7 @@ const UserRegistration = (props) => {
     const handleInputChangeBasic = e => {        
         setBasicInfo ({...basicInfo,  [e.target.name]: e.target.value}); 
         //manupulate inpute fields base on gender/sex 
-        if(e.target.name==='genderId' && e.target.value==='4') {
+        if(e.target.name==='sexId' && e.target.value==='Female') {
             setfemaleStatus(true)
         }
         if(e.target.name==='firstName' && e.target.value!==''){
@@ -384,7 +405,25 @@ const UserRegistration = (props) => {
         if(e.target.name==='middleName' && e.target.value!==''){
             const name = alphabetOnly(e.target.value)
             setBasicInfo ({...basicInfo,  [e.target.name]: name});
-        }           
+        }
+        if(e.target.name==='hospitalNumber' && e.target.value!==''){
+            async function getCharacters() {
+                const hosiptalNumber=e.target.value
+                const response = await axios.post(`${baseUrl}patient/exist/hospital-number`, hosiptalNumber,
+                        { headers: {"Authorization" : `Bearer ${token}`} }
+                    );
+                if(response.data!==true){
+                    setHospitalNumStatus(false)
+                    setObjValues ({...objValues,  uniqueId: e.target.value});
+                    setHospitalNumStatus2(true)
+                }else{
+                    setHospitalNumStatus(false)
+                    setHospitalNumStatus2(true)
+                }
+            }
+            getCharacters();
+            }  
+             
     } 
     //Function to show relatives 
     const handleAddRelative = () => {
@@ -713,7 +752,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     />
                                                    {errors.dateOfRegistration1 !=="" ? (
                                                     <span className={classes.error}>{errors.dateOfRegistration1}</span>
@@ -732,11 +771,20 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.hospitalNumber}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     />
                                                    {errors.hospitalNumber !=="" ? (
                                                     <span className={classes.error}>{errors.hospitalNumber}</span>
                                                     ) : "" }
+                                                    {errors.hospitalNumber !=="" ? (
+                                                    <span className={classes.error}>{errors.hospitalNumber}</span>
+                                                    ) : "" }
+                                                    {hospitalNumStatus===true ? (
+                                                        <span className={classes.error}>{"Hospital number already exist"}</span>
+                                                    ) : "" }
+                                                    {hospitalNumStatus2===true ? (
+                                                        <span className={classes.success}>{"Hospital number is OK."}</span>
+                                                    ) :""}
                                                 </FormGroup>
                                             </div>
                                         </div>
@@ -753,7 +801,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.firstName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     />
                                                     {errors.firstName !=="" ? (
                                                     <span className={classes.error}>{errors.firstName}</span>
@@ -772,7 +820,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.middleName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     />
                                                 </FormGroup>
                                             </div>
@@ -788,7 +836,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.lastName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     />
                                                    {errors.lastName !=="" ? (
                                                     <span className={classes.error}>{errors.lastName}</span>
@@ -808,6 +856,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.sexId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                             
                                                         >
                                                             <option value={""}>Select</option>
@@ -830,7 +879,7 @@ const UserRegistration = (props) => {
                                                                 value="Actual"
                                                                 name="dateOfBirth"
                                                                 defaultChecked
-                                                                disabled
+                                                                disabled={props.activeContent.actionType==='update'? false : true}
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
                                                                 style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             /> Actual
@@ -842,7 +891,7 @@ const UserRegistration = (props) => {
                                                                 type="radio"
                                                                 value="Estimated"
                                                                 name="dateOfBirth"
-                                                                disabled
+                                                                disabled={props.activeContent.actionType==='update'? false : true}
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
                                                                 style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             /> Estimated
@@ -863,6 +912,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.dob}
                                                         onChange={handleDobChange}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     />
                                                    
                                                 </FormGroup>
@@ -898,7 +948,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.maritalStatusId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled
+                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                         >
                                                             <option value={""}>Select</option>
                                                             {maritalStatusOptions.map((maritalStatusOption, index) => (
@@ -919,7 +969,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.employmentStatusId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled
+                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                         >
                                                             <option value={""}>Select</option>
                                                             {occupationOptions.map((occupationOption, index) => (
@@ -942,7 +992,7 @@ const UserRegistration = (props) => {
                                                         onChange={handleInputChangeBasic}
                                                         value={basicInfo.educationId}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        disabled={props.activeContent.actionType==='update'? false : true}
                                                     >
                                                         <option value={""}>Select</option>
                                                         {educationOptions.map((educationOption, index) => (
@@ -979,6 +1029,7 @@ const UserRegistration = (props) => {
                                                     id="phoneNumber"
                                                     value={basicInfo.phoneNumber}
                                                     onChange={(e)=>{checkPhoneNumberBasic(e,'phoneNumber')}}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                     
                                                 />
                                                 {errors.phoneNumber !=="" ? (
@@ -997,6 +1048,7 @@ const UserRegistration = (props) => {
                                                     placeholder="(234)7099999999"
                                                     value={basicInfo.altPhonenumber}
                                                     onChange={(e)=>{checkPhoneNumberBasic(e,'altPhonenumber')}}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                 />
 
                                             </FormGroup>
@@ -1013,6 +1065,7 @@ const UserRegistration = (props) => {
                                                     onChange={handleInputChangeBasic}
                                                     value={basicInfo.email}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                 />
                                                
                                             </FormGroup>
@@ -1031,6 +1084,7 @@ const UserRegistration = (props) => {
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     value={basicInfo.countryId}
                                                     onChange={getStates}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                     >
                                                     <option value={""}>Select</option>
                                                     {countries.map((value, index) => (
@@ -1056,6 +1110,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.stateId}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     onChange={getProvinces}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                     >
                                                     <option value="">Select</option>
                                                     {states.map((value, index) => (
@@ -1081,6 +1136,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.district}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     onChange={handleInputChangeBasic}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                     >
                                                     <option value="">Select</option>
                                                     {provinces.map((value, index) => (
@@ -1108,6 +1164,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.address}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                    
                                                 />
                                                {errors.address !=="" ? (
@@ -1127,6 +1184,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.landmark}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                    disabled={props.activeContent.actionType==='update'? false : true}
                                                     
                                                 />
                                                 
@@ -1211,6 +1269,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.relationshipId}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                             >
                                                                             <option value={""}>Select</option>
                                                                             {relationshipOptions.map((relative, index) => (
@@ -1234,6 +1293,7 @@ const UserRegistration = (props) => {
                                                                             id="firstName"
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                         />
                                                                        {errors.firstName !=="" ? (
                                                                         <span className={classes.error}>{errors.firstName}</span>
@@ -1252,6 +1312,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.middleName}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                         />
                                                                         {/* {errors.cmiddleName && <p>{errors.cmiddleName.message}</p>} */}
                                                                     </FormGroup>
@@ -1268,6 +1329,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.lastName}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                         />
                                                                        {errors.lastName !=="" ? (
                                                                         <span className={classes.error}>{errors.lastName}</span>
@@ -1288,7 +1350,7 @@ const UserRegistration = (props) => {
                                                                             name="phone"
                                                                             value={relatives.phone}
                                                                             id="phone"
-                                                                           
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                             onChange={(e)=>{checkPhoneNumber(e.slice(0, 10),'phone')}}
                                                                         />
                                                                     
@@ -1306,6 +1368,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.email}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                         />
                                                                         {/* {errors.contactEmail && <p>{errors.contactEmail.message}</p>} */}
                                                                     </FormGroup>
@@ -1322,6 +1385,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.address}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
+                                                                            disabled={props.activeContent.actionType==='update'? false : true}
                                                                         />
                                                                         {/* {errors.contactAddress && <p>{errors.contactAddress.message}</p>} */}
                                                                     </FormGroup>
@@ -1394,6 +1458,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.uniqueId}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled
                                         
                                     />
                                     {errors.uniqueId !=="" ? (
@@ -1412,6 +1477,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled={props.activeContent.actionType==='update'? false : true}
                                         
                                     />
                                     {errors.dateOfRegistration !=="" ? (
@@ -1431,6 +1497,7 @@ const UserRegistration = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.entryPointId}
                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    disabled={props.activeContent.actionType==='update'? false : true}
                                     
                                 >
                                 <option value=""> </option>                  
@@ -1458,6 +1525,7 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             value={objValues.facilityName}  
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            disabled={props.activeContent.actionType==='update'? false : true}
                                         />
                                         </FormGroup>
                                     ):""}
@@ -1473,6 +1541,7 @@ const UserRegistration = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.statusAtRegistrationId}
                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    disabled={props.activeContent.actionType==='update'? false : true}
                                     
                                 >
                                 <option value=""> Select</option>                  
@@ -1499,6 +1568,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled={props.activeContent.actionType==='update'? false : true}
                                         
                                     /> 
                                     {errors.dateConfirmedHiv !=="" ? (
@@ -1516,7 +1586,8 @@ const UserRegistration = (props) => {
                                         value={objValues.sourceOfReferrer}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        required
+                                        disabled={props.activeContent.actionType==='update'? false : true}
+                                        
                                     >
                                         <option value="">Select </option>                 
                                             {sourceReferral.map((value) => (
@@ -1541,7 +1612,7 @@ const UserRegistration = (props) => {
                                         value={objValues.enrollmentSettingId}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                         onChange={handleInputChange}
-                                        required
+                                        disabled={props.activeContent.actionType==='update'? false : true}
                                         >
                                         <option value=""> Select</option>
 
@@ -1568,7 +1639,8 @@ const UserRegistration = (props) => {
                                             id = "pregnancyStatusId"
                                             value = {objValues.pregnancyStatusId}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            onChange = {handleInputChange}                                        
+                                            onChange = {handleInputChange}  
+                                            disabled={props.activeContent.actionType==='update'? false : true}                                      
                                         >
                                         < option value = "" >Select </option>
                                         {pregnancyStatus.map((value) => (
@@ -1591,7 +1663,7 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             value={objValues.dateOfLpm}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            required
+                                            disabled={props.activeContent.actionType==='update'? false : true}
                                         />  
                                             
                                         </FormGroup>
@@ -1608,7 +1680,7 @@ const UserRegistration = (props) => {
                                         value={objValues.tbStatusId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        required
+                                        disabled={props.activeContent.actionType==='update'? false : true}
                                         >
                                         <option value=""> Select</option>
                                             {tbStatus.map((value) => (
@@ -1632,6 +1704,7 @@ const UserRegistration = (props) => {
                                         name="ovc_enrolled"
                                         id="ovc_enrolled"                                        
                                         onChange={handleCheckBox}
+                                        disabled={props.activeContent.actionType==='update'? false : true}
                                         />
                                         <label
                                         className="form-check-label"
@@ -1654,6 +1727,7 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                             value={objValues.ovcNumber}
+                                            disabled={props.activeContent.actionType==='update'? false : true}
                                             
                                         />
                                         </FormGroup>
@@ -1673,6 +1747,7 @@ const UserRegistration = (props) => {
                                         value={objValues.targetGroupId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled={props.activeContent.actionType==='update'? false : true}
                                         >
                                         <option value=""> Select</option>                    
                                                 {kP.map((value) => (

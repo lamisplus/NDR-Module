@@ -188,7 +188,7 @@ const UserRegistration = (props) => {
             const email = contactPoint.contactPoint.find(obj => obj.type == 'email');
             const altphone = contactPoint.contactPoint.find(obj => obj.type == 'altphone');
             const country = address && address.address && address.address.length > 0 ? address.address[0] : null;
-            console.log(country)
+            
             //setValue('dob', format(new Date(patientObj.dateOfBirth), 'yyyy-MM-dd'));
             basicInfo.dob=patientObj.dateOfBirth
             basicInfo.firstName=patientObj.firstName
@@ -196,10 +196,11 @@ const UserRegistration = (props) => {
             basicInfo.middleName=patientObj.otherName
             basicInfo.lastName=patientObj.surname
             basicInfo.hospitalNumber=hospitalNumber ? hospitalNumber.value : ''
+            setObjValues ({...objValues,  uniqueId: hospitalNumber ? hospitalNumber.value : ''});
             basicInfo.maritalStatusId=patientObj.maritalStatus.id
             basicInfo.employmentStatusId=patientObj.employmentStatus.id
             basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
-            basicInfo.sexId=patientObj.sexId
+            basicInfo.sexId=patientObj.sex
             basicInfo.educationId=patientObj.education.id
             basicInfo.phoneNumber=phone.value
             basicInfo.altPhonenumber= altphone & altphone.value ? altphone.value :""
@@ -210,6 +211,9 @@ const UserRegistration = (props) => {
             getProvincesId(country.stateId)
             basicInfo.stateId=country.stateId
             basicInfo.district=country.district
+            const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))
+            basicInfo.age=patientAge
+            setfemaleStatus(patientObj.sex==='Female'? true : false)
 
         }
         console.log(basicInfo.stateId)
@@ -296,7 +300,22 @@ const UserRegistration = (props) => {
         //console.log(error);
         });  
     }
-    
+    //Calculate Date of birth 
+    const calculate_age = dob => {
+        var today = new Date();
+        var dateParts = dob.split("-");
+        var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+        var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+        var age_now = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age_now--;
+                }
+            if (age_now === 0) {
+                    return m + " month(s)";
+                }
+                return age_now ;
+      };
      //fetch province
      const getProvinces = e => {
             const stateId = e.target.value;
@@ -368,7 +387,7 @@ const UserRegistration = (props) => {
     const handleInputChangeBasic = e => {        
         setBasicInfo ({...basicInfo,  [e.target.name]: e.target.value}); 
         //manupulate inpute fields base on gender/sex 
-        if(e.target.name==='genderId' && e.target.value==='4') {
+        if(e.target.name==='sexId' && e.target.value==='Female') {
             setfemaleStatus(true)
         }
         if(e.target.name==='firstName' && e.target.value!==''){
@@ -382,7 +401,8 @@ const UserRegistration = (props) => {
         if(e.target.name==='middleName' && e.target.value!==''){
             const name = alphabetOnly(e.target.value)
             setBasicInfo ({...basicInfo,  [e.target.name]: name});
-        }           
+        }
+                   
     } 
     //Function to show relatives 
     const handleAddRelative = () => {
@@ -810,7 +830,7 @@ const UserRegistration = (props) => {
                                                         >
                                                             <option value={""}>Select</option>
                                                             {genders.map((gender, index) => (
-                                                            <option key={gender.id} value={gender.id}>{gender.display}</option>
+                                                            <option key={gender.id} value={gender.display}>{gender.display}</option>
                                                             ))}
                                                         </select>
                                                         {errors.sexId !=="" ? (
@@ -1392,7 +1412,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.uniqueId}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        
+                                        disabled
                                     />
                                     {errors.uniqueId !=="" ? (
                                     <span className={classes.error}>{errors.uniqueId}</span>
