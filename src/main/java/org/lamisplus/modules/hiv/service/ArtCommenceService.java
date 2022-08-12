@@ -48,7 +48,6 @@ public class ArtCommenceService {
 
     private final HIVStatusTrackerService hivStatusTrackerService;
 
-    private final HivEnrollmentService enrollmentService;
 
     private final PersonService personService;
 

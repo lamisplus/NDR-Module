@@ -12,6 +12,7 @@ import {  Card,Accordion } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import "react-widgets/dist/css/react-widgets.css";
 import { toast} from "react-toastify";
+import PatientHistory from "./PatientHistory";
 
 const useStyles = makeStyles((theme) => ({
   root: {
