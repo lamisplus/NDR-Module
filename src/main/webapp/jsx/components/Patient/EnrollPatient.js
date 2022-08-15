@@ -147,6 +147,7 @@ const UserRegistration = (props) => {
      const [enrollSetting, setEnrollSetting] = useState([]);
      const [tbStatus, setTbStatus] = useState([]);
      const [kP, setKP] = useState([]);
+     const [newSex, setNewSex] = useState([]);
      const [pregnancyStatus, setPregnancyStatus] = useState([]);
      //set ro show the facility name field if is transfer in 
      const [transferIn, setTransferIn] = useState(false);
@@ -163,6 +164,7 @@ const UserRegistration = (props) => {
 
     useEffect(() => { 
         loadGenders();
+        getSex();
         loadMaritalStatus();
         loadEducation();
         loadOccupation();
@@ -188,7 +190,8 @@ const UserRegistration = (props) => {
             const email = contactPoint.contactPoint.find(obj => obj.type == 'email');
             const altphone = contactPoint.contactPoint.find(obj => obj.type == 'altphone');
             const country = address && address.address && address.address.length > 0 ? address.address[0] : null;
-            
+            //const getSexId=  genders.length>0 && genders.find((x)=> x.display===patientObj.sex)//get patient sex ID by filtering the request
+            //console.log(newSex)
             //setValue('dob', format(new Date(patientObj.dateOfBirth), 'yyyy-MM-dd'));
             basicInfo.dob=patientObj.dateOfBirth
             basicInfo.firstName=patientObj.firstName
@@ -200,12 +203,13 @@ const UserRegistration = (props) => {
             basicInfo.maritalStatusId=patientObj.maritalStatus.id
             basicInfo.employmentStatusId=patientObj.employmentStatus.id
             basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
-            basicInfo.sexId=patientObj.sex
+            //basicInfo.sexId=patientObj.sex
             basicInfo.educationId=patientObj.education.id
             basicInfo.phoneNumber=phone.value
             basicInfo.altPhonenumber= altphone & altphone.value ? altphone.value :""
             basicInfo.email=email.value
             basicInfo.address=country.city
+            basicInfo.landmark=country.line[0]
             basicInfo.countryId=country.countryId
             setStateByCountryId(country.countryId); 
             getProvincesId(country.stateId)
@@ -216,10 +220,23 @@ const UserRegistration = (props) => {
             setfemaleStatus(patientObj.sex==='Female'? true : false)
 
         }
-        console.log(basicInfo.stateId)
         
     }, [patientObj, patientId]);
-
+    //Get list of Source of Referral
+    const getSex =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/SEX`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            const getSexId=  response.data.find((x)=> x.display===patientObj.sex)//get patient sex ID by filtering the request
+            basicInfo.sexId=getSexId.display
+        })
+        .catch((error) => {
+        //console.log(error);
+        });        
+}
     const loadGenders = useCallback(async () => {
         try {
             const response = await axios.get(`${baseUrl}application-codesets/v2/SEX`, { headers: {"Authorization" : `Bearer ${token}`} });
@@ -478,8 +495,8 @@ const UserRegistration = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault(); 
 
-        console.log(basicInfo)
-         console.log(basicInfo.dateOfRegistration )
+        const getSexId=  genders.find((x)=> x.display===basicInfo.sexId)//get patient sex ID by filtering the request
+        basicInfo.sexId=getSexId.id
          if(validate()){
             try {
                 const patientForm = {

@@ -211,7 +211,7 @@ const CaptureBiometric = (props) => {
 
     return (
         <div >
-            <Modal isOpen={props.modalstatus} toggle={props.togglestatus} className={props.className} size="lg">
+            <Modal isOpen={props.modalstatus} toggle={props.togglestatus} className={props.className} size="lg" backdrop="static">
                 <Form >
                     <ModalHeader toggle={props.togglestatus}>capture Biometric</ModalHeader>
                     <ModalBody>

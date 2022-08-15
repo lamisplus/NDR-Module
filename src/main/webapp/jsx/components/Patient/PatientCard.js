@@ -257,15 +257,13 @@ function PatientCard(props) {
                                       {patientBiometricStatus!==true ? (
                                     
                                           <>
-                                              {permissions.includes('patient_check_in') || permissions.includes("all_permission") ? (
+                                             
                                                   <>
                                                   <Label as='a' color='teal' onClick={() => handleBiometricCapture(patientObj.id)} tag>
                                                       Capture Now
                                                   </Label>
                                                   </>
-                                              )
-                                              :""
-                                              }
+                                            
                                           </>
                                       )
                                       :""
