@@ -183,7 +183,23 @@ const UserRegistration = (props) => {
         GetCountry();
         if(patientObj){
             const contacts = patientObj.contact ? patientObj.contact : [];
-            setContacts(contacts.contact);
+            //setContacts(contacts.contact);
+            let newConatctsInfo=[]
+            //Manipulate relatives contact  address:"",
+            const actualcontacts=contacts.contact && contacts.contact.length>0 && contacts.contact.map((x)=>{ 
+                const contactInfo = 
+                    { 
+                        address:x.address.line[0],
+                        phone:x.contactPoint.value,
+                        firstName:x.firstName,
+                        email: "",
+                        relationshipId: x.relationshipId,
+                        lastName: x.surname,
+                        middleName: x.otherName
+                    }
+                newConatctsInfo.push(contactInfo)
+            })
+            setContacts(newConatctsInfo);
             const identifiers = patientObj.identifier;
             const address = patientObj.address;
             const contactPoint = patientObj.contactPoint;
@@ -460,7 +476,7 @@ const UserRegistration = (props) => {
     const handleEditRelative = (relative, index) => {
         setRelatives(relative)
         contacts.splice(index, 1); 
-    };   
+    };     
     const getRelationship = (relationshipId) => {
         const relationship = relationshipOptions.find(obj => obj.id == relationshipId);
         return relationship ? relationship.display : '';
@@ -504,6 +520,29 @@ const UserRegistration = (props) => {
         const getSexId=  genders.find((x)=> x.display===basicInfo.sexId)//get patient sex ID by filtering the request
         basicInfo.sexId=getSexId.id
          if(validate()){
+            let newConatctsInfo=[]
+            //Manipulate relatives contact  address:"",
+            const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
+                
+                const contactInfo = { 
+                address: {
+                    line: [
+                        x.address
+                    ],
+                },
+                contactPoint: {
+                    type: "phone",
+                    value: x.phone
+                },
+                firstName: x.firstName,
+                fullName: x.firstName + " " + x.middleName + " " + x.lastName,
+                relationshipId: x.relationshipId,
+                surname: x.lastName,
+                otherName: x.middleName
+            }
+            
+            newConatctsInfo.push(contactInfo)
+            })
             try {
                 const patientForm = {
                     active: true,
@@ -520,7 +559,7 @@ const UserRegistration = (props) => {
                             "stateId": basicInfo.stateId
                         }
                     ],
-                    contact: contacts,
+                    contact: newConatctsInfo,
                     contactPoint: [],
                     dateOfBirth: basicInfo.dob,
                     deceased: false,

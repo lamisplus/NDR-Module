@@ -105,7 +105,8 @@ const ArtCommencement = (props) => {
                                                 regimenTypeId: 0,
                                                 regimenId:0 ,
                                                 viralLoadAtStartOfArt:"",
-                                                isViralLoadAtStartOfArt:""                                                  
+                                                isViralLoadAtStartOfArt :null,
+                                                dateOfViralLoadAtStartOfArt: null                                                  
 
                                                 });
 
@@ -228,6 +229,15 @@ const ArtCommencement = (props) => {
         const handleInputChange = e => {
             setErrors({...temp, [e.target.name]:""})
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
+                if(e.target.name==='isViralLoadAtStartOfArt' && e.target.value!==""){
+                    if(e.target.value==='true'){
+                        setViraLoadStart(true)
+                        setObjValues ({...objValues,  [e.target.name]: true});
+                    }else{
+                        setObjValues({...objValues, [e.target.name]:false})
+                        setViraLoadStart(false)
+                    }
+                }
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})           
@@ -272,15 +282,15 @@ const ArtCommencement = (props) => {
             setVitalClinicalSupport({...vitalClinicalSupport, diastolic:""})
             }
         }
-        const handleInputChangeVitalStart =(e)=>{
-            if(e.target.value==="YES" ){
-                setViraLoadStart(true)
-                setObjValues({...objValues, isViralLoadAtStartOfArt:true})
-            }else{
-                setObjValues({...objValues, isViralLoadAtStartOfArt:false})
-                setViraLoadStart(false)
-            }
-        }
+        // const handleInputChangeVitalStart =(e)=>{
+        //     if(e.target.value===true ){
+        //         setViraLoadStart(true)
+        //         setObjValues({...objValues, isViralLoadAtStartOfArt:true})
+        //     }else{
+        //         setObjValues({...objValues, isViralLoadAtStartOfArt:false})
+        //         setViraLoadStart(false)
+        //     }
+        // }
 
         //FORM VALIDATION
         const validate = () => {
@@ -322,7 +332,7 @@ const ArtCommencement = (props) => {
             e.preventDefault(); 
             if(validate()){ 
             if(heightValue==='m'){//If height is meter convert to centi meter
-                vital.height= vital.height/100
+                vital.height= (vital.height/100).toFixed(2)
             }                   
             objValues.personId = props.patientObj.id
             vital.encounterDate = objValues.visitDate
@@ -490,14 +500,14 @@ const ArtCommencement = (props) => {
                                             type="select"
                                             name="isViralLoadAtStartOfArt"
                                             id="isViralLoadAtStartOfArt"
-                                            onChange={handleInputChangeVitalStart}                                            
+                                            onChange={handleInputChange}                                            
                                             value={objValues.isViralLoadAtStartOfArt}
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         >
                                             <option value=""> Select</option>
-                                            <option value="YES"> YES</option>
-                                            <option value="NO"> NO</option>
+                                            <option value="true"> YES</option>
+                                            <option value="false"> NO</option>
                                         </Input>
                                         
                                         </FormGroup>
@@ -508,7 +518,7 @@ const ArtCommencement = (props) => {
                                         <FormGroup>
                                         <Label >Viral Load at Start of ART Result</Label>
                                         <Input
-                                            type="text"
+                                            type="number"
                                             name="viralLoadAtStartOfArt"
                                             id="viralLoadAtStartOfArt"
                                             onChange={handleInputChange}
@@ -524,11 +534,11 @@ const ArtCommencement = (props) => {
                                         <Label >Date of Viral Load at Start of ART</Label>
                                         <Input
                                             type="date"
-                                            name="viralLoad"
-                                            id="viralLoad"
+                                            name="dateOfViralLoadAtStartOfArt"
+                                            id="dateOfViralLoadAtStartOfArt"
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
-                                            //onChange={handleInputChange}
-                                            //value={objValues.viralLoad}
+                                            onChange={handleInputChange}
+                                            value={objValues.dateOfViralLoadAtStartOfArt}
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
@@ -589,6 +599,8 @@ const ArtCommencement = (props) => {
                                             ) : "" }
                                         </FormGroup>
                                     </div>
+                                    {objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-8"></div>)}
+                                    {!objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-4"></div>)}
                                     {/* <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >TB Status</Label>
@@ -679,6 +691,24 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
+
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >BMI</Label>
+                                            
+                                            <InputGroup> 
+                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                                BMI
+                                            </InputGroupText>                   
+                                            <Input
+                                            type="number"
+                                            disabled
+                                            value={Math.round(vital.bodyWeight/(vital.height/100))}
+                                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                            />
+                                            </InputGroup>                
+                                            </FormGroup>
+                                        </div>
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >Blood Pressure</Label>
@@ -733,25 +763,7 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-                                    {vital.bodyWeight!=="" && vital.height!=="" && (
-                                        <div className="form-group mb-3 col-md-6">
-                                            <FormGroup>
-                                            <Label >BMI</Label>
-                                            
-                                            <InputGroup> 
-                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                                BMI
-                                            </InputGroupText>                   
-                                            <Input
-                                            type="number"
-                                            disabled
-                                            value={Math.round(vital.bodyWeight/(vital.height/100))}
-                                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                                            />
-                                            </InputGroup>                
-                                            </FormGroup>
-                                        </div>
-                                        )}
+                                  
                                     {props.patientObj.sex==="Female" ? (
                                         <>
                                         <div className="form-group mb-3 col-md-4">

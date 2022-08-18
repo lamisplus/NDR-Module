@@ -127,7 +127,6 @@ const Patients = (props) => {
                     setLoading(false)  
                 });        
         }
-    console.log(patientList)
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");

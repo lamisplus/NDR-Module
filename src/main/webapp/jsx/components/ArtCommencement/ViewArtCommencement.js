@@ -102,7 +102,10 @@ const ArtCommencement = (props) => {
                                                 vitalSignDto:"",
                                                 facilityId:1,
                                                 regimenTypeId: 0,
-                                                regimenId:0                                                   
+                                                regimenId:0,
+                                                viralLoadAtStartOfArt:"",
+                                                isViralLoadAtStartOfArt :null,
+                                                dateOfViralLoadAtStartOfArt: null                                                    
 
                                                 });
 
@@ -142,6 +145,9 @@ const ArtCommencement = (props) => {
            .then((response) => { 
                 //console.log(response.data)           
                 setObjValues(response.data)
+                if(response.data.isViralLoadAtStartOfArt===true){
+                    setViraLoadStart(true)
+                }
                 RegimenType(response.data.regimenTypeId)
                 setVitalSignDto(response.data.vitalSignDto)
            })
@@ -243,6 +249,15 @@ const ArtCommencement = (props) => {
         const handleInputChange = e => {
             setErrors({...temp, [e.target.name]:""})
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
+            if(e.target.name==='isViralLoadAtStartOfArt' && e.target.value!==""){
+                if(e.target.value==='true'){
+                    setViraLoadStart(true)
+                    setObjValues ({...objValues,  [e.target.name]: true});
+                }else{
+                    setObjValues({...objValues, [e.target.name]:false})
+                    setViraLoadStart(false)
+                }
+            }
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})           
@@ -342,6 +357,9 @@ const ArtCommencement = (props) => {
             objValues.vitalSignDto= vital
             objValues.hivEnrollmentId= props.patientObj.enrollment.id
             objValues.clinicalStageId = objValues.whoStagingId 
+            if(heightValue==='m'){//If height is meter convert to centi meter
+                vital.height= (vital.height/100).toFixed(2)
+            } 
             setSaving(true);
             axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
@@ -489,17 +507,17 @@ const ArtCommencement = (props) => {
                             <Label >Viral Load at Start of ART </Label>
                             <Input
                                 type="select"
-                                name="viralLoad"
-                                id="viralLoad"
-                                onChange={handleInputChangeVitalStart}                                            
-                                value={objValues.viralLoad}
+                                name="isViralLoadAtStartOfArt"
+                                id="isViralLoadAtStartOfArt"
+                                onChange={handleInputChange}                                            
+                                value={objValues.isViralLoadAtStartOfArt}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 disabled={props.activeContent.actionType==='update' ? false :true}
                                 
                             >
                                 <option value=""> Select</option>
-                                <option value="YES"> YES</option>
-                                <option value="NO"> NO</option>
+                                <option value="true"> YES</option>
+                                <option value="false"> NO</option>
                             </Input>
                             
                             </FormGroup>
@@ -510,11 +528,11 @@ const ArtCommencement = (props) => {
                             <FormGroup>
                             <Label >Viral Load at Start of ART Result</Label>
                             <Input
-                                type="text"
-                                name="viralLoad"
-                                id="viralLoad"
-                                //onChange={handleInputChange}
-                                //value={objValues.viralLoad}
+                                type="number"
+                                name="viralLoadAtStartOfArt"
+                                id="viralLoadAtStartOfArt"
+                                onChange={handleInputChange}
+                                value={objValues.viralLoadAtStartOfArt}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 disabled={props.activeContent.actionType==='update' ? false :true}
                                 
@@ -527,12 +545,12 @@ const ArtCommencement = (props) => {
                             <Label >Date of Viral Load at Start of ART</Label>
                             <Input
                                 type="date"
-                                name="viralLoad"
-                                id="viralLoad"
+                                name="dateOfViralLoadAtStartOfArt"
+                                id="dateOfViralLoadAtStartOfArt"
                                 disabled={props.activeContent.actionType==='update' ? false :true}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
-                                //onChange={handleInputChange}
-                                //value={objValues.viralLoad}
+                                onChange={handleInputChange}
+                                value={objValues.dateOfViralLoadAtStartOfArt}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
