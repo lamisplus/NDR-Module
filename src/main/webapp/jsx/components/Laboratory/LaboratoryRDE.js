@@ -193,13 +193,19 @@ const Laboratory = (props) => {
       };
       //Validations of the forms
       const validate = () => {        
-        temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
+        //temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
         temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
         temp.labTestId = tests.labTestId ? "" : "This field is required"
-        temp.labNumber = tests.labNumber ? "" : "This field is required"
-        temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
+        //temp.labNumber = tests.labNumber ? "" : "This field is required"
+        //temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
-        temp.result = tests.result ? "" : "This field is required"
+        if(tests.dateResultReceived!==""){
+            temp.result = tests.result ? "" : "This field is required"
+        }
+        if(tests.dateResultReceived!==""){
+            temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
+        }
+        
         setErrors({
             ...temp
         })
@@ -263,7 +269,7 @@ const Laboratory = (props) => {
                         </Col>
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">laboratory Number*</Label>
+                                <Label for="encounterDate">laboratory Number</Label>
                                 <Input
                                     type="number"
                                     name="labNumber"
@@ -280,31 +286,14 @@ const Laboratory = (props) => {
                         </Col>
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Date Assey*</Label>
-                                <Input
-                                    type="date"
-                                    name="dateAssayed"
-                                    id="dateAssayed"
-                                    value={tests.dateAssayed}
-                                    onChange={handleInputChange}
-                                    max= {moment(new Date()).format("YYYY-MM-DD") }
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                />
-                                {errors.dateAssayed !=="" ? (
-                                    <span className={classes.error}>{errors.dateAssayed}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </Col>
-                        <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="encounterDate">Date Result Received*</Label>
+                                <Label for="encounterDate">Date Result Received</Label>
                                 <Input
                                     type="date"
                                     name="dateResultReceived"
                                     id="dateResultReceived"
                                     value={tests.dateResultReceived}
                                     onChange={handleInputChange}
+                                    //min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD") }
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
@@ -314,6 +303,28 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
+                        <Col md={6} className="form-group mb-3">
+                        {tests.dateResultReceived!=="" ? (
+                            <FormGroup>
+                                <Label for="encounterDate">Date Assey *</Label>
+                                <Input
+                                    type="date"
+                                    name="dateAssayed"
+                                    id="dateAssayed"
+                                    value={tests.dateAssayed}
+                                    onChange={handleInputChange}
+                                    //min={tests.sampleCollectionDate}
+                                    max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.dateAssayed !=="" ? (
+                                    <span className={classes.error}>{errors.dateAssayed}</span>
+                                ) : "" }
+                            </FormGroup>
+                        ): ""}
+                        </Col>
+                        
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="testGroup">Select Test Group*</Label>
@@ -362,10 +373,10 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                        {tests.dateAssayed!=="" ? (
+                        {tests.dateResultReceived!=="" ? (
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="priority">Result*</Label>
+                                <Label for="priority">Result *</Label>
                                 <InputGroup>
                                 <Input
                                     type="text"

@@ -73,6 +73,7 @@ const useStyles = makeStyles(theme => ({
 
 const ClinicVisit = (props) => {
   const patientObj = props.patientObj ? props.patientObj : {}
+  console.log(props.patientObj.artCommence.visitDate)
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -604,6 +605,7 @@ const ClinicVisit = (props) => {
                     value={vital.encounterDate}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     onChange={handleInputChangeVitalSignDto}
+                    min={props.patientObj.enrollment.dateOfRegistration}
                     max={moment(new Date()).format("YYYY-MM-DD")}
                     required
                   />
@@ -701,25 +703,7 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
-              {vital.bodyWeight!=="" && vital.height!=="" && (
-              <div className="form-group mb-3 col-md-6">
-               <FormGroup>
-                  <FormLabelName >BMI</FormLabelName>
-                  
-                  <InputGroup> 
-                  <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                      BMI
-                  </InputGroupText>                   
-                  <Input
-                  type="number"
-                  disabled
-                  value={Math.round(vital.bodyWeight/(vital.height/100))}
-                  style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                  />
-                  </InputGroup>                
-                </FormGroup>
-              </div>
-              )}
+              
               <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Blood Pressure</FormLabelName>
@@ -748,9 +732,9 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
-              <div className="form-group mb-3 col-md-6">
+              <div className="form-group mb-3 mt-2 col-md-6">
                 <FormGroup>
-                  <FormLabelName >Blood Pressure</FormLabelName>
+                  <FormLabelName ></FormLabelName>
 
                   <InputGroup>
                     <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
@@ -775,6 +759,25 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
+              {vital.bodyWeight!=="" && vital.height!=="" && (
+              <div className="form-group mb-3 col-md-6">
+               <FormGroup>
+                  <FormLabelName >BMI</FormLabelName>
+                  
+                  <InputGroup> 
+                  <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                      BMI
+                  </InputGroupText>                   
+                  <Input
+                  type="number"
+                  disabled
+                  value={Math.round(vital.bodyWeight/(vital.height/100))}
+                  style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                  />
+                  </InputGroup>                
+                </FormGroup>
+              </div>
+              )}
             </div>
             <Label as='a' color='black'  style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>CONSULTATION</h4>
@@ -878,13 +881,13 @@ const ClinicVisit = (props) => {
               <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
             </Label>
             <br /><br />
-            <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} />
+            <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} artStartDate={props.patientObj.artCommence.visitDate}/>
             <br />
             <Label as='a' color='pink' style={{width:'106%', height:'35px'}}  ribbon>
             <h4 style={{color:'#fff'}}>ADR </h4>
             </Label>
             <br /><br />
-            <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} />
+            <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={props.patientObj.artCommence.visitDate} />
             <br />
             <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>TB SCREENING</h4>

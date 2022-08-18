@@ -39,6 +39,7 @@ import SecondEac from './../EnhancedAdherenceCounseling/ViewEAC/SecondEac'
 import ThirdEac from './../EnhancedAdherenceCounseling/ViewEAC/ThirdEac'
 import ViewLaboratory from './../Laboratory/ViewLaboratory'
 import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
+import Biometrics from './Biometric'
 
 import { TiArrowBack } from 'react-icons/ti'
 
@@ -106,26 +107,27 @@ function PatientCard(props) {
             </ButtonMui>
           </Link>
           <br/><br/>
-          {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='biometrics' &&(<Biometrics patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {/* {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)} */}
           {activeContent.route==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='anc-enrollment' &&( <AncEnrollement patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='labour-delivery' &&( <LabourDelivery patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='prep-commencement' &&( <PrEPCommencementForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='prep-screening' &&( <PrEPEligibiltyScreeningForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent.route==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='anc-enrollment' &&( <AncEnrollement patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='labour-delivery' &&( <LabourDelivery patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='prep-commencement' &&( <PrEPCommencementForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='prep-screening' &&( <PrEPEligibiltyScreeningForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='prep-visit' &&( <PrEPVisit />)}
-          {activeContent.route==='prep-registration' &&( <PrEPRegistrationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)} 
-          {activeContent.route==='counseling' &&( <EnhancedAdherenceCounseling patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='cervical-cancer' &&( <CervicalCancer patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent.route==='prep-registration' &&( <PrEPRegistrationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)} 
+          {activeContent.route==='counseling' &&( <EnhancedAdherenceCounseling patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='cervical-cancer' &&( <CervicalCancer patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='status-update' &&( <ClientStatusUpdate patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='adult-evaluation' &&( <AdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent}/>)}
+          {activeContent.route==='adult-evaluation' &&( <AdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='mhs' &&( <MentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent}/>)}
-          {activeContent.route==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent} />)}
           {activeContent.route==='patient-history' &&( <PatientHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='art-commencement' &&( <ArtCommencement patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {/* History Pages */}

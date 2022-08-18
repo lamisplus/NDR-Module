@@ -1,4 +1,4 @@
-import React, {useState, Fragment } from "react";
+import React, {useState, Fragment, useEffect } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import ConsultationPage from './Home';
 import ClinicHistoryPage from "./ViewUpdate/ClinicHistory";
@@ -11,6 +11,11 @@ const divStyle = {
 const ClinicVisitPage = (props) => {
     const [key, setKey] = useState('home');
     const patientObj = props.patientObj
+    
+    useEffect ( () => {
+      setKey(props.activeContent.activeTab)
+    }, [props.activeContent.id]);
+
 
   return (
     <Fragment>  
@@ -31,7 +36,7 @@ const ClinicVisitPage = (props) => {
                     <ConsultationPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>  
                   <Tab eventKey="history" title=" HISTORY">                   
-                    <ClinicHistoryPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                    <ClinicHistoryPage patientObj={patientObj} activeContent={props.activeContent} setActiveContent={props.setActiveContent} />
                   </Tab>                   
                 </Tabs>
               </div>

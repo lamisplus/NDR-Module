@@ -167,6 +167,11 @@ const ClinicVisit = (props) => {
     VitalSigns()
     GetPatientObj();
     ClinicVisitListHistory();
+    if(props.activeContent.id!==null){
+      console.log(props.activeContent.id)
+      GetVisitById(props.activeContent.id)
+      setVisitId(props.activeContent.id)
+    }
   }, []);
      //GET LIST Drug Refill
      async function ClinicVisitListHistory() {
@@ -433,7 +438,7 @@ const ClinicVisit = (props) => {
       });
   }
   const getVisitDetail=(e)=>{
-        setEnableUpdateButton(true)
+      setEnableUpdateButton(true)
       setVisitId(e.id)
       GetVisitById(e.id)      
   }
@@ -441,12 +446,12 @@ const ClinicVisit = (props) => {
 
       setEnableUpdate(true)
   }
-console.log(enableUpdateButton)
+
 
   return (
     <div>
         <div className="row">
-            <div className="col-xl-4 col-xxl-4 col-lg-4" >
+            <div className="col-xl-3 col-xxl-3 col-lg-3" >
                 <div className="card" style={{ height: "500px" }}>
                     <div className="card-header  border-0 pb-2" style={{backgroundColor:"#014D88"}}>
                     <h4 className="card-title" style={{color:"#fff"}}> Clinic Visits</h4>
@@ -465,7 +470,7 @@ console.log(enableUpdateButton)
                                 content='Visit Date'
                                 icon='calendar alternate'
                                 onClick={()=>getVisitDetail(visit)}
-                                label={{ basic: true, color: 'grey', pointing: 'left', content: `${moment(visit.visitDate).format('dddd, MMMM, YYYY ')}` }}
+                                label={{ basic: true, color: 'grey', pointing: 'left', content: `${visit.visitDate}` }}
                             />
                       </div>
                     </div>
@@ -475,7 +480,7 @@ console.log(enableUpdateButton)
                 </div>
             </div>
 
-            <div className="col-xl-8 col-xxl-8 col-lg-8">
+            <div className="col-xl-9 col-xxl-9 col-lg-9">
                 <div className="card">
                     <div className="card-header  border-0 pb-2" style={{backgroundColor:"#014D88"}}>
                     <h4 className="card-title" style={{color:"#fff"}}> </h4>

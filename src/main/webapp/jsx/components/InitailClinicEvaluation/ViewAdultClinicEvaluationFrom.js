@@ -177,7 +177,7 @@ const ClinicEvaluationFrom = (props) => {
     })
     useEffect(() => {
         GetInitialEvaluation();
-    }, []);
+    }, [props.activeContent.id]);
                                                 
     //Get Mental Health Object
     const GetInitialEvaluation =()=>{
@@ -186,12 +186,8 @@ const ClinicEvaluationFrom = (props) => {
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {  
-            //console.log(response.data.data.medicalHistory) 
-            const newmedicalHistory=response.data.data.medicalHistory
-            setMedicalHistory(newmedicalHistory)
-            medicalHistory=newmedicalHistory
-            console.log(newmedicalHistory)         
-            console.log(medicalHistory)
+             
+            const newmedicalHistory=response.data.data.medicalHistory    
             //setObjValues({...evaluationObj.data})
               //setViralLoad(LabObject)
             setEye({...response.data.data.eye})
@@ -208,7 +204,7 @@ const ClinicEvaluationFrom = (props) => {
             setEnroll({...response.data.data.enroll})
             setPlanArt({...response.data.data.planArt})
             
-            setMedicalHistory({...response.data.data.medicalHistory})
+            setMedicalHistory({...medicalHistory, ...response.data.data.medicalHistory})
             setPastArvMedicalMedical({...response.data.data.pastArvMedical})
             setCurentMedical({...response.data.data.curentMedical})
             setPatientDisclosure({...response.data.data.patientDisclosure})
@@ -220,6 +216,7 @@ const ClinicEvaluationFrom = (props) => {
        });
    
     }
+    console.log(medicalHistory)
     //Handle CheckBox 
     const handleMedicalHistory =e =>{
         setMedicalHistory({...medicalHistory, [e.target.name]: e.target.value})

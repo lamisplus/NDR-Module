@@ -183,7 +183,10 @@ const RecentHistory = (props) => {
     }else if(row.path==='Laboratory'){
         props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id, actionType:action})
 
-    }else{
+    }else if(row.path==='clinic-visit'){
+      props.setActiveContent({...props.activeContent, route:'consultation', id:row.id, activeTab:"history",actionType:action, })
+
+  }else{
 
     }
     
@@ -372,6 +375,10 @@ const LoadDeletePage =(row)=>{
     }
     
 }
+const redirectLink=()=>{
+  props.setActiveContent({...props.activeContent, route:'recent-history'})
+}
+
 
   return (
     <Fragment>
@@ -457,7 +464,7 @@ const LoadDeletePage =(row)=>{
                                 <Dropdown.Menu className="dropdown-menu">
                                 {activity.viewable && ( <Dropdown.Item
                                   className="dropdown-item"
-                                  onClick={()=>LoadViewPage(activity,'update')}
+                                  onClick={()=>LoadViewPage(activity,'view')}
                                   >
                                   View
                                   </Dropdown.Item>
@@ -513,9 +520,10 @@ const LoadDeletePage =(row)=>{
                     <>
                       <li key={index}>
                       <div className={labStatus(test.labTestOrderStatus)}></div>
-                      <Link
+                      <span
                         className="timeline-panel text-muted"
-                        to="/widget-basic"
+                        onClick={()=>redirectLink()}
+                        //to=""
                       >
                         <h6 className="mb-0">
                           Test Order Date{" "}<br/>
@@ -537,7 +545,7 @@ const LoadDeletePage =(row)=>{
                           <strong className="text-primary">{test.labTestOrderStatusName}</strong>.
                         </h6>
                         
-                      </Link>
+                      </span>
                       </li>
                     </>
 
@@ -576,9 +584,10 @@ const LoadDeletePage =(row)=>{
                     <>
                       <li key={index}>
                         <div className={index % 2 == 0 ? "timeline-badge info" : "timeline-badge success"}></div>
-                        <Link
+                        <span
                           className="timeline-panel text-muted"
-                          to="/widget-basic"
+                          onClick={()=>redirectLink()}
+                          //to=""
                         >
                           <h6 className="mb-0">
                             Regimen
@@ -594,7 +603,7 @@ const LoadDeletePage =(row)=>{
                               {regimen.nextAppointment}
                           </strong>                    
 
-                        </Link>
+                        </span>
                       </li>
                     </>
 

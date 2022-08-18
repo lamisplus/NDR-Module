@@ -266,7 +266,7 @@ const ClientStatusUpdate = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of Tracked</Label>
+                            <Label for="participant_id">Date Tracked</Label>
                            
                             <Input
                                 type="date"

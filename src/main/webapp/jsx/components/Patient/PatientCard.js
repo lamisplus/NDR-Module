@@ -158,6 +158,10 @@ function PatientCard(props) {
     const loadChildEvaluation =(row)=> {
       props.setActiveContent('child-evaluation')
     }
+    const capturePatientBiometric =(row)=> {
+      //props.setActiveContent('biometrics')
+      props.setActiveContent({...props.activeContent, route:'biometrics'})
+    }
     const loadArtCommencement =(row)=> {
       props.setActiveContent('art-commencement')
     }
@@ -250,16 +254,16 @@ function PatientCard(props) {
                           <>
                               <div >
                                   <Typography variant="caption">
-                                      <Label color={patientBiometricStatus===true? "green" : "red"} size={"mini"}>
+                                      <Label color={props.patientObj.biometricStatus===true? "green" : "red"} size={"mini"}>
                                           Biometric Status
-                                          <Label.Detail>{patientBiometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
+                                          <Label.Detail>{props.patientObj.biometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
                                       </Label>
-                                      {patientBiometricStatus!==true ? (
+                                      {props.patientObj.biometricStatus!==true ? (
                                     
                                           <>
                                              
                                                   <>
-                                                  <Label as='a' color='teal' onClick={() => handleBiometricCapture(patientObj.id)} tag>
+                                                  <Label as='a' color='teal' onClick={() => capturePatientBiometric(patientObj.id)} tag>
                                                       Capture Now
                                                   </Label>
                                                   </>

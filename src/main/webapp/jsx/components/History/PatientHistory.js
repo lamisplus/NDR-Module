@@ -166,6 +166,9 @@ const PatientnHistory = (props) => {
         }else if(row.path==='Laboratory'){
             props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id, actionType:action})
 
+        }else if(row.path==='clinic-visit'){
+            props.setActiveContent({...props.activeContent, route:'consultation', id:row.id, activeTab:"history", actionType:action, })
+      
         }else{
 
         }

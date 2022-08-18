@@ -21,6 +21,7 @@ import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import { Spinner } from "reactstrap";
+import { DateTimePicker } from "react-widgets";
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -89,7 +90,7 @@ const ArtCommencement = (props) => {
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
                                                 personId:props.patientObj.id,
-                                                visitDate: "",
+                                                visitDate: null,
                                                 viralLoad: "",
                                                 whoStagingId:"",
                                                 clinicalStageId:"",
@@ -378,7 +379,7 @@ const ArtCommencement = (props) => {
                             <CardBody>
                             <form >
                                 <div className="row">
-                                
+                               
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label for="artDate">ART Start Date  * </Label>
@@ -390,6 +391,7 @@ const ArtCommencement = (props) => {
                                             value={objValues.visitDate}
                                             min={moment(enrollDate).format("YYYY-MM-DD") }
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
+                                            
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />
@@ -704,28 +706,10 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-                                    {vital.bodyWeight!=="" && vital.height!=="" && (
-                                        <div className="form-group mb-3 col-md-6">
-                                            <FormGroup>
-                                            <Label >BMI</Label>
-                                            
-                                            <InputGroup> 
-                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                                BMI
-                                            </InputGroupText>                   
-                                            <Input
-                                            type="number"
-                                            disabled
-                                            value={Math.round(vital.bodyWeight/(vital.height/100))}
-                                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                                            />
-                                            </InputGroup>                
-                                            </FormGroup>
-                                        </div>
-                                        )}
-                                    <div className="form-group mb-3 col-md-4">
+
+                                    <div className="form-group mb-3 mt-2 col-md-4">
                                         <FormGroup>
-                                        <Label >Blood Pressure</Label>
+                                        <Label ></Label>
                                         
                                         <InputGroup> 
                                             <Input 
@@ -749,6 +733,25 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
+                                    {vital.bodyWeight!=="" && vital.height!=="" && (
+                                        <div className="form-group mb-3 col-md-6">
+                                            <FormGroup>
+                                            <Label >BMI</Label>
+                                            
+                                            <InputGroup> 
+                                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                                BMI
+                                            </InputGroupText>                   
+                                            <Input
+                                            type="number"
+                                            disabled
+                                            value={Math.round(vital.bodyWeight/(vital.height/100))}
+                                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                            />
+                                            </InputGroup>                
+                                            </FormGroup>
+                                        </div>
+                                        )}
                                     {props.patientObj.sex==="Female" ? (
                                         <>
                                         <div className="form-group mb-3 col-md-4">

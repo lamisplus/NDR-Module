@@ -179,9 +179,9 @@ const UserRegistration = (props) => {
         PregnancyStatus();
         GetCountry();
         if(patientObj){
-            console.log(patientObj)
+
             const contacts = patientObj.contact ? patientObj.contact : [];
-            setContacts(contacts.contact);
+            setContacts(patientObj.contacts);
             const identifiers = patientObj.identifier;
             const address = patientObj.address;
             const contactPoint = patientObj.contactPoint;
@@ -206,10 +206,10 @@ const UserRegistration = (props) => {
             //basicInfo.sexId=patientObj.sex
             basicInfo.educationId=patientObj.education.id
             basicInfo.phoneNumber=phone.value
-            basicInfo.altPhonenumber= altphone & altphone.value ? altphone.value :""
+            basicInfo.altPhonenumber= altphone && altphone.value ? altphone.value :""
             basicInfo.email=email.value
             basicInfo.address=country.city
-            basicInfo.landmark=country.line[0]
+            basicInfo.landmark=country.line && country.line.length>0 ? country.line[0]: ""
             basicInfo.countryId=country.countryId
             setStateByCountryId(country.countryId); 
             getProvincesId(country.stateId)
@@ -500,6 +500,7 @@ const UserRegistration = (props) => {
          if(validate()){
             try {
                 const patientForm = {
+                    id:"",
                     active: true,
                     address: [
                         {
@@ -744,6 +745,7 @@ const UserRegistration = (props) => {
                                                         className="form-control"
                                                         type="date"
                                                         name="dateOfRegistration"
+                                                        max={today}
                                                         id="dateOfRegistration"
                                                         value={basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
@@ -774,6 +776,23 @@ const UserRegistration = (props) => {
                                                     ) : "" }
                                                 </FormGroup>
                                             </div>
+                                            <div className="form-group mb-3 col-md-4">
+                                                <FormGroup>
+                                                    <Label for="patientId">EMR Number* </Label>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="emrNumber"
+                                                        id="emrNumber"
+                                                        disabled='true'
+                                                        value={Math.floor(Math.random() * 1094328)}
+                                                        //onChange={handleInputChangeBasic}
+                                                        style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
+                                                    />
+                                                   
+                                                </FormGroup>
+                                            
+                                        </div>
                                         </div>
 
                                         <div className="row">
@@ -989,6 +1008,22 @@ const UserRegistration = (props) => {
                                                     ) : "" }
                                                 </FormGroup>
                                             </div>
+                                            <div className="form-group mb-3 col-md-4">
+                                                <FormGroup>
+                                                    <Label for="patientId">National Identity Number (NIN)  </Label>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="nin"
+                                                        id="nin"
+                                                        
+                                                        //onChange={handleInputChangeBasic}
+                                                        style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
+                                                    />
+                                                   
+                                                </FormGroup>
+                                            
+                                        </div>
                                         </div>
                                     </div>
                                 </div>

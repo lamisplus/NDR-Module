@@ -141,7 +141,7 @@ const UserRegistration = (props) => {
      //HIV INFORMATION
      const [femaleStatus, setfemaleStatus]= useState(false)
      //const [values, setValues] = useState([]);
-     const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
+     const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrerId:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
      const [hivStatus, setHivStatus] = useState([]);
@@ -192,7 +192,6 @@ const UserRegistration = (props) => {
             const email = contactPoint.contactPoint.find(obj => obj.type == 'email');
             const altphone = contactPoint.contactPoint.find(obj => obj.type == 'altphone');
             const country = address && address.address && address.address.length > 0 ? address.address[0] : null;
-            console.log(country)
             //setValue('dob', format(new Date(patientObj.dateOfBirth), 'yyyy-MM-dd'));
             basicInfo.dob=patientObj.dateOfBirth
             basicInfo.firstName=patientObj.firstName
@@ -205,10 +204,10 @@ const UserRegistration = (props) => {
             basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
             basicInfo.sexId=patientObj.sex 
             basicInfo.educationId=patientObj.education.id
-            basicInfo.phoneNumber=phone.value
-            basicInfo.altPhonenumber=altphone.value
-            basicInfo.email=email.value
-            basicInfo.address=country.city
+            basicInfo.phoneNumber=phone && phone.value ? phone.value : ""
+            basicInfo.altPhonenumber= altphone && altphone.value ? altphone.value : ""
+            basicInfo.email=email && email.value ? email.value : ""
+            basicInfo.address=country && country.city ? country.city : ""
             basicInfo.landmark=country.line[0]
             basicInfo.countryId=country.countryId
             setStateByCountryId(country.countryId); 
@@ -412,7 +411,7 @@ const UserRegistration = (props) => {
             async function getCharacters() {
                 const hosiptalNumber=e.target.value
                 const response = await axios.post(`${baseUrl}patient/exist/hospital-number`, hosiptalNumber,
-                        { headers: {"Authorization" : `Bearer ${token}`} }
+                        { headers: {"Authorization" : `Bearer ${token}`, 'Content-Type': 'text/plain'} }
                     );
                 if(response.data!==true){
                     setHospitalNumStatus(false)
@@ -488,7 +487,7 @@ const UserRegistration = (props) => {
             //HIV FORM VALIDATION
             temp.targetGroupId = objValues.targetGroupId ? "" : "Target group is required."
             temp.dateConfirmedHiv = objValues.dateConfirmedHiv ? "" : "date confirm HIV is required."
-            temp.sourceOfReferrer = objValues.sourceOfReferrer ? "" : "Source of referrer is required."
+            temp.sourceOfReferrerId = objValues.sourceOfReferrerId ? "" : "Source of referrer is required."
             temp.enrollmentSettingId = objValues.enrollmentSettingId ? "" : "Enrollment Setting Number  is required."
             temp.tbStatusId = objValues.tbStatusId ? "" : "TB status is required."    
             temp.statusAtRegistrationId = objValues.statusAtRegistrationId ? "" : "Status at Registration is required."  
@@ -566,14 +565,14 @@ const UserRegistration = (props) => {
                 patientForm.id = patientId;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
-                const response = await axios.put(`${baseUrl}hiv/patient/${patientId}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.put(`${baseUrl}hiv/patient/${patientObj.id}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
                 toast.success("Patient Updated successful");
                 history.push('/');
             } catch (error) {                
-                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "An error occured while registering a patient !";
-                    toast.error(errorMessage, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage); 
+                }
             }
         }
 
@@ -753,7 +752,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled={locationState.actionType==='update'? false : true}
+                                                        //disabled={locationState.actionType==='update'? false : true}
                                                     />
                                                    {errors.dateOfRegistration1 !=="" ? (
                                                     <span className={classes.error}>{errors.dateOfRegistration1}</span>
@@ -788,6 +787,23 @@ const UserRegistration = (props) => {
                                                     ) :""}
                                                 </FormGroup>
                                             </div>
+                                            <div className="form-group mb-3 col-md-4">
+                                                <FormGroup>
+                                                    <Label for="patientId">EMR Number* </Label>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="emrNumber"
+                                                        id="emrNumber"
+                                                        disabled='true'
+                                                        value={Math.floor(Math.random() * 1094328)}
+                                                        //onChange={handleInputChangeBasic}
+                                                        style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
+                                                    />
+                                                   
+                                                </FormGroup>
+                                            
+                                        </div>
                                         </div>
 
                                         <div className="row">
@@ -802,7 +818,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.firstName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled={locationState.actionType==='update'? false : true}
+                                                        //disabled={locationState.actionType==='update'? false : true}
                                                     />
                                                     {errors.firstName !=="" ? (
                                                     <span className={classes.error}>{errors.firstName}</span>
@@ -821,7 +837,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.middleName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled={locationState.actionType==='update'? false : true}
+                                                        //disabled={locationState.actionType==='update'? false : true}
                                                     />
                                                 </FormGroup>
                                             </div>
@@ -837,7 +853,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.lastName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled={locationState.actionType==='update'? false : true}
+                                                        //disabled={locationState.actionType==='update'? false : true}
                                                     />
                                                    {errors.lastName !=="" ? (
                                                     <span className={classes.error}>{errors.lastName}</span>
@@ -857,7 +873,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.sexId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled={locationState.actionType==='update'? false : true}
+                                                            //disabled={locationState.actionType==='update'? false : true}
                                                             
                                                         >
                                                             <option value={""}>Select</option>
@@ -880,7 +896,7 @@ const UserRegistration = (props) => {
                                                                 value="Actual"
                                                                 name="dateOfBirth"
                                                                 defaultChecked
-                                                                disabled={locationState.actionType==='update'? false : true}
+                                                                //disabled={locationState.actionType==='update'? false : true}
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
                                                                 style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             /> Actual
@@ -892,7 +908,7 @@ const UserRegistration = (props) => {
                                                                 type="radio"
                                                                 value="Estimated"
                                                                 name="dateOfBirth"
-                                                                disabled={locationState.actionType==='update'? false : true}
+                                                                //disabled={locationState.actionType==='update'? false : true}
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
                                                                 style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             /> Estimated
@@ -913,7 +929,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.dob}
                                                         onChange={handleDobChange}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled={locationState.actionType==='update'? false : true}
+                                                        //disabled={locationState.actionType==='update'? false : true}
                                                     />
                                                    
                                                 </FormGroup>
@@ -949,7 +965,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.maritalStatusId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled={locationState.actionType==='update'? false : true}
+                                                            //disabled={locationState.actionType==='update'? false : true}
                                                         >
                                                             <option value={""}>Select</option>
                                                             {maritalStatusOptions.map((maritalStatusOption, index) => (
@@ -970,7 +986,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.employmentStatusId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled={locationState.actionType==='update'? false : true}
+                                                            //disabled={locationState.actionType==='update'? false : true}
                                                         >
                                                             <option value={""}>Select</option>
                                                             {occupationOptions.map((occupationOption, index) => (
@@ -993,7 +1009,7 @@ const UserRegistration = (props) => {
                                                         onChange={handleInputChangeBasic}
                                                         value={basicInfo.educationId}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled={locationState.actionType==='update'? false : true}
+                                                        //disabled={locationState.actionType==='update'? false : true}
                                                     >
                                                         <option value={""}>Select</option>
                                                         {educationOptions.map((educationOption, index) => (
@@ -1005,6 +1021,22 @@ const UserRegistration = (props) => {
                                                     ) : "" }
                                                 </FormGroup>
                                             </div>
+                                            <div className="form-group mb-3 col-md-4">
+                                                <FormGroup>
+                                                    <Label for="patientId">National Identity Number (NIN)  </Label>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="nin"
+                                                        id="nin"
+                                                        
+                                                        //onChange={handleInputChangeBasic}
+                                                        style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
+                                                    />
+                                                   
+                                                </FormGroup>
+                                            
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1030,7 +1062,7 @@ const UserRegistration = (props) => {
                                                     id="phoneNumber"
                                                     value={basicInfo.phoneNumber}
                                                     onChange={(e)=>{checkPhoneNumberBasic(e,'phoneNumber')}}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                     
                                                 />
                                                 {errors.phoneNumber !=="" ? (
@@ -1049,7 +1081,7 @@ const UserRegistration = (props) => {
                                                     placeholder="(234)7099999999"
                                                     value={basicInfo.altPhonenumber}
                                                     onChange={(e)=>{checkPhoneNumberBasic(e,'altPhonenumber')}}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                 />
 
                                             </FormGroup>
@@ -1066,7 +1098,7 @@ const UserRegistration = (props) => {
                                                     onChange={handleInputChangeBasic}
                                                     value={basicInfo.email}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                 />
                                                
                                             </FormGroup>
@@ -1085,7 +1117,7 @@ const UserRegistration = (props) => {
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     value={basicInfo.countryId}
                                                     onChange={getStates}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                     >
                                                     <option value={""}>Select</option>
                                                     {countries.map((value, index) => (
@@ -1111,7 +1143,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.stateId}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     onChange={getProvinces}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                     >
                                                     <option value="">Select</option>
                                                     {states.map((value, index) => (
@@ -1137,7 +1169,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.district}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     onChange={handleInputChangeBasic}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                     >
                                                     <option value="">Select</option>
                                                     {provinces.map((value, index) => (
@@ -1165,7 +1197,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.address}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                    
                                                 />
                                                {errors.address !=="" ? (
@@ -1185,7 +1217,7 @@ const UserRegistration = (props) => {
                                                     value={basicInfo.landmark}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                    disabled={locationState.actionType==='update'? false : true}
+                                                    //disabled={locationState.actionType==='update'? false : true}
                                                     
                                                 />
                                                 
@@ -1270,7 +1302,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.relationshipId}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                             >
                                                                             <option value={""}>Select</option>
                                                                             {relationshipOptions.map((relative, index) => (
@@ -1294,7 +1326,7 @@ const UserRegistration = (props) => {
                                                                             id="firstName"
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                         />
                                                                        {errors.firstName !=="" ? (
                                                                         <span className={classes.error}>{errors.firstName}</span>
@@ -1313,7 +1345,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.middleName}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                         />
                                                                         {/* {errors.cmiddleName && <p>{errors.cmiddleName.message}</p>} */}
                                                                     </FormGroup>
@@ -1330,7 +1362,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.lastName}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                         />
                                                                        {errors.lastName !=="" ? (
                                                                         <span className={classes.error}>{errors.lastName}</span>
@@ -1351,7 +1383,7 @@ const UserRegistration = (props) => {
                                                                             name="phone"
                                                                             value={relatives.phone}
                                                                             id="phone"
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                             onChange={(e)=>{checkPhoneNumber(e.slice(0, 10),'phone')}}
                                                                         />
                                                                     
@@ -1369,7 +1401,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.email}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                         />
                                                                         {/* {errors.contactEmail && <p>{errors.contactEmail.message}</p>} */}
                                                                     </FormGroup>
@@ -1386,7 +1418,7 @@ const UserRegistration = (props) => {
                                                                             value={relatives.address}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
-                                                                            disabled={locationState.actionType==='update'? false : true}
+                                                                            //disabled={locationState.actionType==='update'? false : true}
                                                                         />
                                                                         {/* {errors.contactAddress && <p>{errors.contactAddress.message}</p>} */}
                                                                     </FormGroup>
@@ -1478,7 +1510,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         
                                     />
                                     {errors.dateOfRegistration !=="" ? (
@@ -1498,7 +1530,7 @@ const UserRegistration = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.entryPointId}
                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                    disabled={locationState.actionType==='update'? false : true}
+                                    //disabled={locationState.actionType==='update'? false : true}
                                     
                                 >
                                 <option value=""> </option>                  
@@ -1526,7 +1558,7 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             value={objValues.facilityName}  
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            disabled={locationState.actionType==='update'? false : true}
+                                            //disabled={locationState.actionType==='update'? false : true}
                                         />
                                         </FormGroup>
                                     ):""}
@@ -1542,7 +1574,7 @@ const UserRegistration = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.statusAtRegistrationId}
                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                    disabled={locationState.actionType==='update'? false : true}
+                                    //disabled={locationState.actionType==='update'? false : true}
                                     
                                 >
                                 <option value=""> Select</option>                  
@@ -1569,7 +1601,7 @@ const UserRegistration = (props) => {
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         
                                     /> 
                                     {errors.dateConfirmedHiv !=="" ? (
@@ -1582,12 +1614,12 @@ const UserRegistration = (props) => {
                                     <Label >Source of Referral *</Label>
                                     <Input
                                         type="select"
-                                        name="sourceOfReferrer"
-                                        id="sourceOfReferrer"
-                                        value={objValues.sourceOfReferrer}
+                                        name="sourceOfReferrerId"
+                                        id="sourceOfReferrerId"
+                                        value={objValues.sourceOfReferrerId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         
                                     >
                                         <option value="">Select </option>                 
@@ -1597,8 +1629,8 @@ const UserRegistration = (props) => {
                                                 </option>
                                             ))}
                                     </Input>
-                                    {errors.sourceOfReferrer !=="" ? (
-                                        <span className={classes.error}>{errors.sourceOfReferrer}</span>
+                                    {errors.sourceOfReferrerId !=="" ? (
+                                        <span className={classes.error}>{errors.sourceOfReferrerId}</span>
                                         ) : "" }
                                     </FormGroup>
                                 </div>
@@ -1613,7 +1645,7 @@ const UserRegistration = (props) => {
                                         value={objValues.enrollmentSettingId}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                         onChange={handleInputChange}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         >
                                         <option value=""> Select</option>
 
@@ -1641,7 +1673,7 @@ const UserRegistration = (props) => {
                                             value = {objValues.pregnancyStatusId}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                             onChange = {handleInputChange}  
-                                            disabled={locationState.actionType==='update'? false : true}                                      
+                                            //disabled={locationState.actionType==='update'? false : true}                                      
                                         >
                                         < option value = "" >Select </option>
                                         {pregnancyStatus.map((value) => (
@@ -1664,7 +1696,7 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             value={objValues.dateOfLpm}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            disabled={locationState.actionType==='update'? false : true}
+                                            //disabled={locationState.actionType==='update'? false : true}
                                         />  
                                             
                                         </FormGroup>
@@ -1681,7 +1713,7 @@ const UserRegistration = (props) => {
                                         value={objValues.tbStatusId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         >
                                         <option value=""> Select</option>
                                             {tbStatus.map((value) => (
@@ -1705,7 +1737,7 @@ const UserRegistration = (props) => {
                                         name="ovc_enrolled"
                                         id="ovc_enrolled"                                        
                                         onChange={handleCheckBox}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         />
                                         <label
                                         className="form-check-label"
@@ -1728,7 +1760,7 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                             value={objValues.ovcNumber}
-                                            disabled={locationState.actionType==='update'? false : true}
+                                            //disabled={locationState.actionType==='update'? false : true}
                                             
                                         />
                                         </FormGroup>
@@ -1748,7 +1780,7 @@ const UserRegistration = (props) => {
                                         value={objValues.targetGroupId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        disabled={locationState.actionType==='update'? false : true}
+                                        //disabled={locationState.actionType==='update'? false : true}
                                         >
                                         <option value=""> Select</option>                    
                                                 {kP.map((value) => (

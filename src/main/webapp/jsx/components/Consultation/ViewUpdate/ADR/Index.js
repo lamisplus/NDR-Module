@@ -113,6 +113,7 @@ const ADR = (props) => {
                 name="adrOnsetDate"
                 id="adrOnsetDate"
                 value={props.adrObj.adrOnsetDate}
+                min={props.artStartDate}
                 onChange={handAdrleInputChange}
                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 max= {moment(new Date()).format("YYYY-MM-DD") }

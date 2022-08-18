@@ -117,6 +117,7 @@ const UserRegistration = (props) => {
                     lastName: "",
                     middleName: ""
                 }
+                
         )
 
     const [today, setToday] = useState(new Date().toISOString().substr(0, 10).replace('T', ' '));
@@ -238,7 +239,7 @@ const UserRegistration = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
-            console.log(response.data);
+            
             setCountries(response.data);
         })
         .catch((error) => {
@@ -326,7 +327,7 @@ const UserRegistration = (props) => {
     const handleInputChangeBasic = e => {        
         setBasicInfo ({...basicInfo,  [e.target.name]: e.target.value}); 
         //manupulate inpute fields base on gender/sex 
-        if(e.target.name==='sexId' && e.target.value==='Female') {
+        if(e.target.name==='sexId' && e.target.value==='377') {
             setfemaleStatus(true)
         } 
         if(e.target.name==='firstName' && e.target.value!==''){
@@ -342,21 +343,24 @@ const UserRegistration = (props) => {
             setBasicInfo ({...basicInfo,  [e.target.name]: name});
         }
         if(e.target.name==='hospitalNumber' && e.target.value!==''){
-        async function getCharacters() {
+        async function getHosiptalNumber() {
             const hosiptalNumber=e.target.value
             const response = await axios.post(`${baseUrl}patient/exist/hospital-number`, hosiptalNumber,
-                    { headers: {"Authorization" : `Bearer ${token}`} }
+                    { headers: {"Authorization" : `Bearer ${token}`, 'Content-Type': 'text/plain'} }
                 );
             if(response.data!==true){
                 setHospitalNumStatus(false)
+                errors.hospitalNumber=""
                 setObjValues ({...objValues,  uniqueId: e.target.value});
                 setHospitalNumStatus2(true)
             }else{
-                setHospitalNumStatus(false)
-                setHospitalNumStatus2(true)
+                errors.hospitalNumber=""
+                toast.error("Error! Hosiptal Number already exist");
+                setHospitalNumStatus(true)
+                setHospitalNumStatus2(false)
             }
         }
-        getCharacters();
+        getHosiptalNumber();
         }           
     } 
     //Function to show relatives 
@@ -430,8 +434,31 @@ const UserRegistration = (props) => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();  
+        e.preventDefault(); 
          if(validate()){
+            let newConatctsInfo=[]
+            //Manipulate relatives contact  address:"",
+            const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
+                
+                const contactInfo = { 
+                address: {
+                    line: [
+                        x.address
+                    ],
+                },
+                contactPoint: {
+                    type: "phone",
+                    value: x.phone
+                },
+                firstName: x.firstName,
+                fullName: x.firstName + " " + x.middleName + " " + x.lastName,
+                relationshipId: x.relationshipId,
+                surname: x.lastName,
+                otherName: x.middleName
+            }
+            
+            newConatctsInfo.push(contactInfo)
+            })
             try {
                 const patientForm = {
                     active: true,
@@ -448,7 +475,7 @@ const UserRegistration = (props) => {
                             "stateId": basicInfo.stateId
                         }
                     ],
-                    contact: contacts,
+                    contact: newConatctsInfo,
                     contactPoint: [],
                     dateOfBirth: basicInfo.dob,
                     deceased: false,
@@ -497,10 +524,10 @@ const UserRegistration = (props) => {
                 toast.success("Patient Register successful");
                 history.push('/');
             } catch (error) {                
-                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "An error occured while registering a patient !";
-                    toast.error(errorMessage, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage); 
+                }
             }
         }
 
@@ -683,6 +710,7 @@ const UserRegistration = (props) => {
                                                         type="date"
                                                         name="dateOfRegistration"
                                                         id="dateOfRegistration"
+                                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                                         value={basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
@@ -716,8 +744,25 @@ const UserRegistration = (props) => {
                                                     ) :""}
                                                 </FormGroup>
                                             </div>
+                                            <div className="form-group mb-3 col-md-4">
+                                                <FormGroup>
+                                                    <Label for="patientId">EMR Number* </Label>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="emrNumber"
+                                                        id="emrNumber"
+                                                        disabled='true'
+                                                        value={Math.floor(Math.random() * 1094328)}
+                                                        //onChange={handleInputChangeBasic}
+                                                        style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
+                                                    />
+                                                   
+                                                </FormGroup>
+                                            
                                         </div>
-
+                                        </div>
+                                        
                                         <div className="row">
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
@@ -924,6 +969,22 @@ const UserRegistration = (props) => {
                                                     ) : "" }
                                                 </FormGroup>
                                             </div>
+                                            <div className="form-group mb-3 col-md-4">
+                                                <FormGroup>
+                                                    <Label for="patientId">National Identity Number (NIN)  </Label>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="nin"
+                                                        id="nin"
+                                                        
+                                                        //onChange={handleInputChangeBasic}
+                                                        style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
+                                                    />
+                                                   
+                                                </FormGroup>
+                                            
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -947,6 +1008,7 @@ const UserRegistration = (props) => {
                                                     maxLength={5}
                                                     name="phoneNumber"
                                                     id="phoneNumber"
+                                                    masks={{ng: '...-...-....', at: '(....) ...-....'}}
                                                     value={basicInfo.phoneNumber}
                                                    onChange={(e)=>{checkPhoneNumberBasic(e,'phoneNumber')}}
                                                    //onChange={(e)=>{handleInputChangeBasic(e,'phoneNumber')}}
@@ -969,6 +1031,7 @@ const UserRegistration = (props) => {
                                                     country={'ng'}
                                                     placeholder="(234)7099999999"
                                                     value={basicInfo.altPhonenumber}
+                                                    masks={{ng: '...-...-....', at: '(....) ...-....'}}
                                                     onChange={(e)=>{checkPhoneNumberBasic(e,'altPhonenumber')}}
                                                     
                                                 />
@@ -1261,6 +1324,7 @@ const UserRegistration = (props) => {
                                                                             placeholder="(234)7099999999"
                                                                             name="phone"
                                                                             value={relatives.phone}
+                                                                            masks={{ng: '...-...-....', at: '(....) ...-....'}}
                                                                             id="phone"
                                                                            
                                                                             onChange={(e)=>{checkPhoneNumber(e.slice(0, 10),'phone')}}
@@ -1293,6 +1357,7 @@ const UserRegistration = (props) => {
                                                                             type="text"
                                                                             name="address"
                                                                             id="address"
+                                                                            
                                                                             value={relatives.address}
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
@@ -1384,6 +1449,7 @@ const UserRegistration = (props) => {
                                         name="dateOfRegistration"
                                         id="dateOfRegistration"
                                         min={basicInfo.dateOfRegistration}
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
@@ -1470,7 +1536,8 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
-                                        max={today}
+                                        //max={today}
+                                        max={objValues.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}

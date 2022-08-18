@@ -74,12 +74,12 @@ const EAC = (props) => {
     const EACHistory =()=>{
         setLoading(true)
         axios
-            .get(`${baseUrl}observation/eac/person/${props.patientObj.id}`,
+            .get(`${baseUrl}observation/eac/person/current-eac/${props.patientObj.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
             setLoading(false)
-            setObjValues(response.data[0])
+            setObjValues(response.data)
             })
             .catch((error) => {
             //console.log(error);

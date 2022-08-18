@@ -27,7 +27,7 @@ const ADR = (props) => {
   const classes = useStyles()
   let temp = { ...errors }
   const [prepSideEffect, setPrepSideEffect] = useState([]);
-  
+
   useEffect(() => {
     PrepSideEffect();
   }, []);
@@ -47,6 +47,7 @@ const ADR = (props) => {
        
         }
   const handAdrleInputChange = e => {
+    console.log(e.target.value)
     props.setAdrObj ({...props.adrObj,  [e.target.name]: e.target.value});
   }
    //Validations of the forms
@@ -110,6 +111,7 @@ const ADR = (props) => {
                 id="adrOnsetDate"
                 value={props.adrObj.adrOnsetDate}
                 onChange={handAdrleInputChange}
+                min={props.artStartDate}
                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 max= {moment(new Date()).format("YYYY-MM-DD") }
                 required
