@@ -188,7 +188,7 @@ const TBScreeningForm = (props) => {
                 </Input>
               </FormGroup>
               </div>
-              <div className="form-group mb-3 col-md-4">
+              {/* <div className="form-group mb-3 col-md-4">
               <FormGroup>
                 <Label >TB Status</Label>
                 <Input
@@ -210,7 +210,197 @@ const TBScreeningForm = (props) => {
                         ))}
                 </Input>
               </FormGroup>
+              </div> */}
+              {(props.tbObj.currentOnIpt==="NO" && props.tbObj.coughing==="NO" && props.tbObj.nightSweat ==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='TB suspected and referred for evaluation' && x.display!=='Currently on INH prophylaxis'  && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
               </div>
+                </>
+                )
+              }
+              {(props.tbObj.currentOnIpt==="YES" && props.tbObj.coughing==="NO" && props.tbObj.nightSweat ==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='TB suspected and referred for evaluation' && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
+              </div>
+                </>
+                )
+              }
+
+              {(props.tbObj.currentOnIpt==="YES" && props.tbObj.coughing==="YES" && props.tbObj.nightSweat ==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='No sign or symptoms of TB' && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
+              </div>
+                </>
+                )
+              }
+              {(props.tbObj.currentOnIpt==="YES" && props.tbObj.coughing==="NO" && props.tbObj.nightSweat ==="YES" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='No sign or symptoms of TB' && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
+              </div>
+                </>
+                )
+              }
+              {(props.tbObj.currentOnIpt==="YES" && props.tbObj.coughing==="NO" && props.tbObj.nightSweat ==="NO" && props.tbObj.fever==="YES" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='No sign or symptoms of TB' && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
+              </div>
+                </>
+                )
+              }
+              {(props.tbObj.currentOnIpt==="YES" && props.tbObj.coughing==="NO" && props.tbObj.nightSweat ==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="YES" && props.tbObj.lethergy==="NO") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='No sign or symptoms of TB' && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
+              </div>
+                </>
+                )
+              }
+              {(props.tbObj.currentOnIpt==="YES" && props.tbObj.coughing==="NO" && props.tbObj.nightSweat ==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="YES") &&
+                (<>
+                  <div className="form-group mb-3 col-md-4">
+              <FormGroup>
+                <Label >TB Status</Label>
+                <Input
+                    type="select"
+                    name="tbStatusId"
+                    id="tbStatusId"
+                    value={props.tbObj.tbStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={!props.enableUpdate}
+                    >
+                      <option value="">Select </option>
+
+                        {(tbStatus.filter((x)=> x.display!=='No sign or symptoms of TB' && x.display!=='Currently on TB treatment')).map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                </Input>
+              </FormGroup>
+              </div>
+                </>
+                )
+              }
           </>
           )
           :

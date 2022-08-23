@@ -361,7 +361,7 @@ const ArtCommencement = (props) => {
                 vital.height= (vital.height/100).toFixed(2)
             } 
             setSaving(true);
-            axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
+            axios.put(`${baseUrl}hiv/art/commencement/${props.activeContent.id}`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
@@ -857,9 +857,9 @@ const ArtCommencement = (props) => {
                             style={{backgroundColor:"#014d88"}}
                             >
                                 {!saving ? (
-                                <span style={{ textTransform: "capitalize" }}>Save</span>
+                                <span style={{ textTransform: "capitalize" }}>Update</span>
                                 ) : (
-                                <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                                <span style={{ textTransform: "capitalize" }}>Updating...</span>
                                 )}
                             </MatButton>
 {/*                         

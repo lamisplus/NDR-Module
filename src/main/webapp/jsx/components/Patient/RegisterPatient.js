@@ -393,6 +393,7 @@ const UserRegistration = (props) => {
     };
     const handleEditRelative = (relative, index) => {
         setRelatives(relative)
+        setShowRelative(true);
         contacts.splice(index, 1); 
     };   
     const getRelationship = (relationshipId) => {
@@ -1368,7 +1369,7 @@ const UserRegistration = (props) => {
                                                             </div>
 
                                                             <div className="row">
-                                                                <div className="">
+                                                                <div className="col-1">
                                                                     <MatButton
                                                                         type="button"
                                                                         variant="contained"
@@ -1380,7 +1381,7 @@ const UserRegistration = (props) => {
                                                                     </MatButton>
                                                                 </div>
 
-                                                                <div className="">
+                                                                <div className="col-1">
                                                                     <MatButton
                                                                         type="button"
                                                                         variant="contained"
@@ -1598,7 +1599,7 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
-                                {femaleStatus && (
+                                {(femaleStatus && basicInfo.age > 9) && (
                                     <>
                                    
                                     <div className = "form-group mb-3 col-md-6" >

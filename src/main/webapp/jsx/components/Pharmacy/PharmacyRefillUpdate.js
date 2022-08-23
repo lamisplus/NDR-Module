@@ -31,7 +31,8 @@ const useStyles = makeStyles(theme => ({
 let refillPeriodValue=null
 
 const Pharmacy = (props) => {
-    console.log(props.activeContent.obj)
+    const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
@@ -306,6 +307,7 @@ const Pharmacy = (props) => {
                     id="visitDate"
                     onChange={handleInputChange}
                     value={objValues.visitDate}
+                    min={moment(enrollDate).format("YYYY-MM-DD") }
                     disabled={enableUpdate}
                     max= {moment(new Date()).format("YYYY-MM-DD") }
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -585,7 +587,7 @@ const Pharmacy = (props) => {
                     onClick={handleSubmit}
                     hidden={enableUpdate}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.visitDate===null || saving ? true : false}
+                    disabled={(objValues.visitDate===null && regimenList.length>0) || saving ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Update</span>

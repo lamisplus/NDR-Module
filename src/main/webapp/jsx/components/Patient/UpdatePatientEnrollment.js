@@ -157,7 +157,6 @@ const UserRegistration = (props) => {
      const [hideTargetGroup, setHideTargetGroup]= useState("false");
     
     const locationState = location.state;
-    console.log(locationState)
     let patientId = null;
     let patientObj = {};
     patientId = locationState ? locationState.patientId : null;
@@ -475,6 +474,7 @@ const UserRegistration = (props) => {
     };
     const handleEditRelative = (relative, index) => {
         setRelatives(relative)
+        setShowRelative(true);
         contacts.splice(index, 1); 
     };     
     const getRelationship = (relationshipId) => {
@@ -753,11 +753,12 @@ const UserRegistration = (props) => {
             <ToastContainer autoClose={3000} hideProgressBar />
             <Card className={classes.cardBottom}>
                 <CardContent>
-                    <Link
-                        to={{
-                            pathname: "/",
-                            state: 'users'
-                        }}>
+                <Link
+                    to={{
+                        pathname: "/patient-history",
+                        state: { patientObj: patientObj  }
+                    }}
+                >
                         <Button
                             variant="contained"
                             color="primary"
@@ -1465,7 +1466,7 @@ const UserRegistration = (props) => {
                                                             </div>
 
                                                             <div className="row">
-                                                                <div className="">
+                                                                <div className="col-1">
                                                                     <MatButton
                                                                         type="button"
                                                                         variant="contained"
@@ -1477,7 +1478,7 @@ const UserRegistration = (props) => {
                                                                     </MatButton>
                                                                 </div>
 
-                                                                <div className="">
+                                                                <div className="col-1">
                                                                     <MatButton
                                                                         type="button"
                                                                         variant="contained"
@@ -1545,7 +1546,8 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateOfRegistration"
                                         id="dateOfRegistration"
-                                        max={today}
+                                        min={basicInfo.dateOfRegistration}
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
@@ -1636,7 +1638,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
-                                        max={today}
+                                        max={objValues.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
@@ -1699,7 +1701,7 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
-                                {femaleStatus && (
+                                {(femaleStatus && basicInfo.age > 9) && (
                                     <>
                                    
                                     <div className = "form-group mb-3 col-md-6" >

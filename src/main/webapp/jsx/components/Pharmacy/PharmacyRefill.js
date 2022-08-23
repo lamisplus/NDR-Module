@@ -30,6 +30,8 @@ const useStyles = makeStyles(theme => ({
 let refillPeriodValue=null
 
 const Pharmacy = (props) => {
+    const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
@@ -70,7 +72,6 @@ const Pharmacy = (props) => {
                 dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
               })))
     }, [selectedOption]);
-    console.log(regimenList)
     //Get list of RegimenLine
     const RegimenLine =()=>{
     axios
@@ -164,6 +165,7 @@ const Pharmacy = (props) => {
     const handlRefillPeriod = e =>{
         const refillcount= e.target.value
         refillPeriodValue=refillcount
+        
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
@@ -262,6 +264,7 @@ console.log(selectedOption)
                     id="visitDate"
                     onChange={handleInputChange}
                     value={objValues.visitDate}
+                    min={moment(enrollDate).format("YYYY-MM-DD") }
                     max= {moment(new Date()).format("YYYY-MM-DD") }
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -522,7 +525,7 @@ console.log(selectedOption)
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />
-            
+                {regimenList.length >0 && (
                 <MatButton
                     type="submit"
                     variant="contained"
@@ -531,7 +534,7 @@ console.log(selectedOption)
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.visitDate===null || saving ? true : false}
+                    
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -539,7 +542,7 @@ console.log(selectedOption)
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                 </MatButton>
-
+                )}
                 </form>
             </CardBody>
         </Card> 

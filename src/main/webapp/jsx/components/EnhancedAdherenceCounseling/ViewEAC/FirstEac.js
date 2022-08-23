@@ -138,25 +138,7 @@ const EAC = (props) => {
                         <br/>
                         <br/>
                         <br/>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Date of EAC </Label>
-                            <Input
-                                type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
-                                onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update'? false : true}
-                                required
-                            />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
+
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">Date Of Last Viral Load</Label>
@@ -172,6 +154,26 @@ const EAC = (props) => {
                                 required
                             />
                             
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date of EAC </Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
+                                onChange={handleInputChange}
+                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={props.activeContent.actionType==='update'? false : true}
+                                required
+                            />
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">

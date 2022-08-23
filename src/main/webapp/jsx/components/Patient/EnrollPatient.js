@@ -468,6 +468,7 @@ const UserRegistration = (props) => {
     };
     const handleEditRelative = (relative, index) => {
         setRelatives(relative)
+        setShowRelative(true);
         contacts.splice(index, 1); 
     };   
     const getRelationship = (relationshipId) => {
@@ -784,7 +785,7 @@ const UserRegistration = (props) => {
                                                         className="form-control"
                                                         type="date"
                                                         name="dateOfRegistration"
-                                                        max={today}
+                                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                                         id="dateOfRegistration"
                                                         value={basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
@@ -1438,7 +1439,7 @@ const UserRegistration = (props) => {
                                                             </div>
 
                                                             <div className="row">
-                                                                <div className="">
+                                                                <div className="col-1">
                                                                     <MatButton
                                                                         type="button"
                                                                         variant="contained"
@@ -1450,7 +1451,7 @@ const UserRegistration = (props) => {
                                                                     </MatButton>
                                                                 </div>
 
-                                                                <div className="">
+                                                                <div className="col-1">
                                                                     <MatButton
                                                                         type="button"
                                                                         variant="contained"
@@ -1517,7 +1518,8 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateOfRegistration"
                                         id="dateOfRegistration"
-                                        max={today}
+                                        min={basicInfo.dateOfRegistration}
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
@@ -1604,7 +1606,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
-                                        max={today}
+                                        max={objValues.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
@@ -1665,7 +1667,7 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
-                                {femaleStatus && (
+                                {(femaleStatus && basicInfo.age > 9) && (
                                     <>
                                    
                                     <div className = "form-group mb-3 col-md-6" >

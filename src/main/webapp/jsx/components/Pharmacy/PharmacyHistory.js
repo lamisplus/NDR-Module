@@ -194,8 +194,8 @@ const PharmacyHistory = (props) => {
                  regimenQuantity: "", 
                   isDevolve: row.isDevolve, 
                   mmdType: row.mmdType, 
-                  prescriptionError: row.prescriptionError, 
-                  adverseDrugReactions: row.adrScreened,                   
+                  prescriptionError: row.prescriptionError===false? "NO":"YES", 
+                  adverseDrugReactions: row.adrScreened===false? "NO":"YES",                   
                   Action:<div>
                             <Menu.Menu position='right'  >
                             <Menu.Item >
