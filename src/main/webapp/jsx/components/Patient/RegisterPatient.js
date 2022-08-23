@@ -1,14 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import {format} from 'date-fns';
 import MatButton from "@material-ui/core/Button";
 import Button from "@material-ui/core/Button";
 import {FormGroup, Label, Spinner,Input,Form} from "reactstrap";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faCheckSquare, faCoffee, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
-import {yupResolver} from '@hookform/resolvers/yup';
-import * as yup from "yup";
 import * as moment from 'moment';
 import {makeStyles} from "@material-ui/core/styles";
 import {Card, CardContent} from "@material-ui/core";
@@ -20,11 +17,9 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import {Link, useHistory, useLocation} from "react-router-dom";
 import {TiArrowBack} from 'react-icons/ti'
-import {useForm} from "react-hook-form";
 import {token, url as baseUrl } from "../../../api";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { getValue } from "@syncfusion/ej2-base";
 import  './patient.css'
 // import Form from 'react-bootstrap/Form';
 
@@ -266,8 +261,7 @@ const UserRegistration = (props) => {
         .catch((error) => {
         //console.log(error);
         });  
-    }
-    
+    }   
      //fetch province
      const getProvinces = e => {
             const stateId = e.target.value;
@@ -639,6 +633,14 @@ const UserRegistration = (props) => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
         if(e.target.name ==="entryPointId" ){
             if(e.target.value==="21"){
+                setTransferIn(true)
+            }else{
+                setTransferIn(false)
+            }
+        }
+        if(e.target.name ==="pregnancyStatusId" ){
+            console.log(e.target.value)
+            if(e.target.value==="72"){
                 setTransferIn(true)
             }else{
                 setTransferIn(false)
@@ -1622,23 +1624,26 @@ const UserRegistration = (props) => {
                                         </Input>                                                                        
                                     </FormGroup>  
                                     </div>
-
-                                    <div className="form-group mb-3 col-md-6">
-                                        <FormGroup>
-                                        <Label >Date of LMP </Label>                                    
-                                        <Input
-                                            type="date"
-                                            name="dateOfLpm"
-                                            id="dateOfLpm"
-                                            max={today}
-                                            onChange={handleInputChange}
-                                            value={objValues.dateOfLpm}
-                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            required
-                                        />  
-                                            
-                                        </FormGroup>
-                                    </div>
+                                    {objValues.pregnancyStatusId!=='72' && (
+                                    <>
+                                        <div className="form-group mb-3 col-md-6">
+                                            <FormGroup>
+                                            <Label >Date of LMP </Label>                                    
+                                            <Input
+                                                type="date"
+                                                name="dateOfLpm"
+                                                id="dateOfLpm"
+                                                max={today}
+                                                onChange={handleInputChange}
+                                                value={objValues.dateOfLpm}
+                                                style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                required
+                                            />  
+                                                
+                                            </FormGroup>
+                                        </div>
+                                    </>
+                                    )}
                                     </>
                                 )}
                                 <div className="form-group mb-3 col-md-6">

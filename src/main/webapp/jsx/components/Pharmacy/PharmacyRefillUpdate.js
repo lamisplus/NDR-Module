@@ -577,7 +577,7 @@ const Pharmacy = (props) => {
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />
-            
+            {regimenList.length >0 && (
                 <MatButton
                     type="submit"
                     variant="contained"
@@ -595,7 +595,7 @@ const Pharmacy = (props) => {
                     <span style={{ textTransform: "capitalize" }}>Updating...</span>
                     )}
                 </MatButton>
-
+            )}
                 </form>
             </CardBody>
         </Card> 

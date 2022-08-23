@@ -143,6 +143,7 @@ const EAC = (props) => {
                                 id="dateOfLastViralLoad"
                                 value={objValues.dateOfLastViralLoad}
                                 onChange={handleInputChange}
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required

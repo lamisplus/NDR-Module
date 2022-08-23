@@ -49,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 
 const EAC = (props) => {
     const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -126,7 +127,6 @@ const EAC = (props) => {
           
     }
 
-    console.log(objValues)
   return (      
         <div>                   
             <Card >
@@ -148,6 +148,7 @@ const EAC = (props) => {
                                 id="dateOfLastViralLoad"
                                 value={objValues.dateOfLastViralLoad}
                                 onChange={handleInputChange}
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 disabled={props.activeContent.actionType==='update'? false : true}

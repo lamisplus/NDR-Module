@@ -34,7 +34,8 @@ const useStyles = makeStyles(theme => ({
 
 const Laboratory = (props) => {
     let visitId=""
-    console.log(props.activeContent.obj)
+    const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -42,7 +43,7 @@ const Laboratory = (props) => {
     const [moduleStatus, setModuleStatus]= useState("0")
     const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
-    const [priority, setPriority]=useState([])
+    const [vlRequired, setVlRequired]=useState(false)
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -145,9 +146,16 @@ const Laboratory = (props) => {
             });        
     }
     const handleSelectedTestGroup = e =>{
+
         setTests ({...tests,  labTestGroupId: e.target.value});
         const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
         setTest(getTestList[0].labTests)
+        if(e.target.value==='4'){            
+            setVlRequired(true)
+        }else{
+            setVlRequired(false) 
+        }
+        //setTests ({...tests,  [e.target.name]: e.target.value}); 
     }
     const handleInputChangeObject = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
@@ -187,7 +195,7 @@ const Laboratory = (props) => {
         temp.labTestId = tests.labTestId ? "" : "This field is required"
         temp.labNumber = tests.labNumber ? "" : "This field is required"
         temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
-        temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
+        vlRequired && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
         temp.result = tests.result ? "" : "This field is required"
         setErrors({
             ...temp
@@ -242,6 +250,7 @@ const Laboratory = (props) => {
                                     id="sampleCollectionDate"
                                     value={tests.sampleCollectionDate}
                                     onChange={handleInputChange}
+                                    min={enrollDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
@@ -277,6 +286,7 @@ const Laboratory = (props) => {
                                     id="dateAssayed"
                                     value={tests.dateAssayed}
                                     onChange={handleInputChange}
+                                    min={tests.dateResultReceived}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
@@ -295,6 +305,7 @@ const Laboratory = (props) => {
                                     id="dateResultReceived"
                                     value={tests.dateResultReceived}
                                     onChange={handleInputChange}
+                                    min={tests.sampleCollectionDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
@@ -370,7 +381,7 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                       
+                       {vlRequired && (
                         <Col md={6} className="form-group mb-3">
                                 <FormGroup>
                                     <Label for="vlIndication">VL Indication*</Label>
@@ -395,6 +406,7 @@ const Laboratory = (props) => {
                                 ) : "" }
                                 </FormGroup>
                         </Col>
+                        )}
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="priority">Comment</Label>
