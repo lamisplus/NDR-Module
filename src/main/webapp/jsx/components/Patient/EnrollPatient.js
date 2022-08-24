@@ -722,6 +722,14 @@ const UserRegistration = (props) => {
             }else{
                 setTransferIn(false)
             }
+        }  
+        if(e.target.name ==="pregnancyStatusId" ){
+            console.log(e.target.value)
+            if(e.target.value==="72"){
+                setTransferIn(true)
+            }else{
+                setTransferIn(false)
+            }
         }                
     }    
     
@@ -1690,7 +1698,8 @@ const UserRegistration = (props) => {
                                         </Input>                                                                        
                                     </FormGroup>  
                                     </div>
-
+                                    {objValues.pregnancyStatusId!=='72' && (
+                                    <>
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
                                         <Label >Date of LMP </Label>                                    
@@ -1707,6 +1716,8 @@ const UserRegistration = (props) => {
                                             
                                         </FormGroup>
                                     </div>
+                                    </>
+                                    )}
                                     </>
                                 )}
                                 <div className="form-group mb-3 col-md-6">
