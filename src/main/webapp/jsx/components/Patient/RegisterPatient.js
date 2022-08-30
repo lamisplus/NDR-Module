@@ -675,26 +675,32 @@ const UserRegistration = (props) => {
 
     return (
         <>
-            <ToastContainer autoClose={3000} hideProgressBar />
+        <ToastContainer autoClose={3000} hideProgressBar />
+        <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
+			<ol className="breadcrumb">
+				<li className="breadcrumb-item active"><h4> <Link to={"/"} >HIV /</Link> Patient Registration</h4></li>
+			</ol>
+		  </div>
+          <Link
+                to={{
+                    pathname: "/",
+                    state: 'users'
+                }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className=" float-end mr-10 pr-10"
+                    style={{backgroundColor:'#014d88',fontWeight:"bolder", margingRight:"-40px"}}
+                    startIcon={<TiArrowBack />}
+                >
+                    <span style={{ textTransform: "capitalize", color:'#fff' }}>Back </span>
+                </Button>
+            </Link>
+            <br /><br/>
+  
             <Card className={classes.cardBottom}>
                 <CardContent>
-                    <Link
-                        to={{
-                            pathname: "/",
-                            state: 'users'
-                        }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className=" float-end ms-1"
-                            style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
-                            startIcon={<TiArrowBack />}
-                        >
-                            <span style={{ textTransform: "capitalize", color:'#fff' }}>Back </span>
-                        </Button>
-                    </Link>
-                    <br />
-                    <br />
+                    
                     <div className="col-xl-12 col-lg-12">
                         <Form >
                             <div className="card">

@@ -180,7 +180,7 @@ const UserRegistration = (props) => {
         GetCountry();
         if(patientObj){
 
-            const contacts = patientObj.contact ? patientObj.contact : [];
+            const contacts =patientObj && patientObj.contact ? patientObj.contact : [];
             //setContacts(patientObj.contacts);
             let newConatctsInfo=[]
             //Manipulate relatives contact  address:"",
@@ -201,10 +201,10 @@ const UserRegistration = (props) => {
             const identifiers = patientObj.identifier;
             const address = patientObj.address;
             const contactPoint = patientObj.contactPoint;
-            const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');
-            const phone = contactPoint.contactPoint.find(obj => obj.type == 'phone');
-            const email = contactPoint.contactPoint.find(obj => obj.type == 'email');
-            const altphone = contactPoint.contactPoint.find(obj => obj.type == 'altphone');
+            const hospitalNumber = identifiers.identifier.find(obj => obj.type === 'HospitalNumber');
+            const phone = contactPoint.contactPoint.find(obj => obj.type === 'phone');
+            const email = contactPoint.contactPoint.find(obj => obj.type === 'email');
+            const altphone = contactPoint.contactPoint.find(obj => obj.type === 'altphone');
             const country = address && address.address && address.address.length > 0 ? address.address[0] : null;
             //const getSexId=  genders.length>0 && genders.find((x)=> x.display===patientObj.sex)//get patient sex ID by filtering the request
             //console.log(newSex)
@@ -214,23 +214,23 @@ const UserRegistration = (props) => {
             basicInfo.dateOfRegistration=patientObj.dateOfRegistration
             basicInfo.middleName=patientObj.otherName
             basicInfo.lastName=patientObj.surname
-            basicInfo.hospitalNumber=hospitalNumber ? hospitalNumber.value : ''
+            basicInfo.hospitalNumber=hospitalNumber && hospitalNumber ? hospitalNumber.value : ''
             setObjValues ({...objValues,  uniqueId: hospitalNumber ? hospitalNumber.value : ''});
-            basicInfo.maritalStatusId=patientObj.maritalStatus.id
-            basicInfo.employmentStatusId=patientObj.employmentStatus.id
-            basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
+            basicInfo.maritalStatusId=patientObj && patientObj.maritalStatus ? patientObj.maritalStatus.id : ""
+            basicInfo.employmentStatusId=patientObj && patientObj.employmentStatus ? patientObj.employmentStatus.id :""
+            basicInfo.genderId=patientObj && patientObj.gender ? patientObj.gender.id : null
             //basicInfo.sexId=patientObj.sex
-            basicInfo.educationId=patientObj.education.id
-            basicInfo.phoneNumber=phone.value
+            basicInfo.educationId=patientObj && patientObj.education ? patientObj.education.id : ""
+            basicInfo.phoneNumber=phone && phone.value ? phone.value :""
             basicInfo.altPhonenumber= altphone && altphone.value ? altphone.value :""
-            basicInfo.email=email.value
-            basicInfo.address=country.city
+            basicInfo.email=email && email.value ? email.value :""
+            basicInfo.address=country  && country.city ? country.city :""
             basicInfo.landmark=country.line && country.line.length>0 ? country.line[0]: ""
-            basicInfo.countryId=country.countryId
+            basicInfo.countryId=country && country.countryId  ? country.countryId  :""
             setStateByCountryId(country.countryId); 
-            getProvincesId(country.stateId)
-            basicInfo.stateId=country.stateId
-            basicInfo.district=country.district
+            getProvincesId(country && country.stateId  ? country.stateId  :"")
+            basicInfo.stateId=country && country.stateId  ? country.stateId  :""
+            basicInfo.district=country && country.district ? country.district :""
             const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))
             basicInfo.age=patientAge
             setfemaleStatus(patientObj.sex==='Female'? true : false)
@@ -348,7 +348,7 @@ const UserRegistration = (props) => {
                     return m + " month(s)";
                 }
                 return age_now ;
-      };
+    };
      //fetch province
      const getProvinces = e => {
             const stateId = e.target.value;
@@ -756,6 +756,11 @@ const UserRegistration = (props) => {
 
     return (
         <>
+        <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
+			<ol className="breadcrumb">
+				<li className="breadcrumb-item active"><h4> <Link to={"/"} >HIV /</Link> Patient Enrollment</h4></li>
+			</ol>
+		  </div>
             <ToastContainer autoClose={3000} hideProgressBar />
             <Card className={classes.cardBottom}>
                 <CardContent>
@@ -798,7 +803,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        //disabled
                                                     />
                                                    {errors.dateOfRegistration1 !=="" ? (
                                                     <span className={classes.error}>{errors.dateOfRegistration1}</span>
@@ -817,7 +822,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.hospitalNumber}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        //disabled
                                                     />
                                                    {errors.hospitalNumber !=="" ? (
                                                     <span className={classes.error}>{errors.hospitalNumber}</span>
@@ -832,7 +837,7 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="emrNumber"
                                                         id="emrNumber"
-                                                        disabled='true'
+                                                        //disabled='true'
                                                         value={Math.floor(Math.random() * 1094328)}
                                                         //onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
@@ -855,7 +860,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.firstName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        //disabled
                                                     />
                                                     {errors.firstName !=="" ? (
                                                     <span className={classes.error}>{errors.firstName}</span>
@@ -874,7 +879,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.middleName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        //disabled
                                                     />
                                                 </FormGroup>
                                             </div>
@@ -890,7 +895,7 @@ const UserRegistration = (props) => {
                                                         value={basicInfo.lastName}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        //disabled
                                                     />
                                                    {errors.lastName !=="" ? (
                                                     <span className={classes.error}>{errors.lastName}</span>
@@ -932,7 +937,7 @@ const UserRegistration = (props) => {
                                                                 value="Actual"
                                                                 name="dateOfBirth"
                                                                 defaultChecked
-                                                                disabled
+                                                                //disabled
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
                                                                 style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             /> Actual
@@ -1000,7 +1005,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.maritalStatusId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled
+                                                            //disabled
                                                         >
                                                             <option value={""}>Select</option>
                                                             {maritalStatusOptions.map((maritalStatusOption, index) => (
@@ -1021,7 +1026,7 @@ const UserRegistration = (props) => {
                                                             onChange={handleInputChangeBasic}
                                                             value={basicInfo.employmentStatusId}
                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                            disabled
+                                                            //disabled
                                                         >
                                                             <option value={""}>Select</option>
                                                             {occupationOptions.map((occupationOption, index) => (
@@ -1044,7 +1049,7 @@ const UserRegistration = (props) => {
                                                         onChange={handleInputChangeBasic}
                                                         value={basicInfo.educationId}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                                        disabled
+                                                        //disabled
                                                     >
                                                         <option value={""}>Select</option>
                                                         {educationOptions.map((educationOption, index) => (

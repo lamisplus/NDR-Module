@@ -7,6 +7,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Link } from 'react-router-dom'
+import ButtonMui from "@material-ui/core/Button";
+import { TiArrowBack } from 'react-icons/ti'
 //import Chip from '@material-ui/core/Chip';
 import Divider from '@material-ui/core/Divider';
 import { Button } from 'semantic-ui-react';
@@ -199,17 +202,30 @@ function PatientCard(props) {
   return (
     <div className={classes.root}>
        <ExpansionPanel defaultExpanded>
+
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 
                 <Row>
-                    
-                    <Col md={11}>
+                
+                    <Col md={12}>
                     <Row className={"mt-1"}>
                     <Col md={12} className={classes.root2}>
                         <b style={{fontSize: "25px"}}>
                         {patientObj.firstName + " " + patientObj.surname }
                         </b>
-                        
+                        <Link to={"/"} >
+                        <ButtonMui
+                            variant="contained"
+                            color="primary"
+                            className=" float-end ms-2 mr-2 mt-2"
+                            //startIcon={<FaUserPlus size="10"/>}
+                            startIcon={<TiArrowBack  />}
+                            style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
+
+                        >
+                            <span style={{ textTransform: "capitalize" }}>Back</span>
+                        </ButtonMui>
+                      </Link>
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>

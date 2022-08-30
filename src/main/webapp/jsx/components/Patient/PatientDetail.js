@@ -2,7 +2,6 @@ import React,{useState} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
-import ButtonMui from "@material-ui/core/Button";
 import 'semantic-ui-css/semantic.min.css';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -41,7 +40,6 @@ import ViewLaboratory from './../Laboratory/ViewLaboratory'
 import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
 import Biometrics from './Biometric'
 
-import { TiArrowBack } from 'react-icons/ti'
 
 const styles = theme => ({
   root: {
@@ -88,25 +86,16 @@ function PatientCard(props) {
     console.log(activeContent)
   return (
     <div className={classes.root}>
+      <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
+			<ol className="breadcrumb">
+				<li className="breadcrumb-item active"><h4> <Link to={"/"} >HIV /</Link> Patient Dashboard</h4></li>
+			</ol>
+		  </div>
       <Card >
         <CardContent>
             <PatientCardDetail patientObj={patientObj} setArt={setArt} setActiveContent={setActiveContent}/>            
             <SubMenu patientObj={patientObj} art={art} setActiveContent={setActiveContent}/>
             <br/>
-            <Link to={"/"} >
-            <ButtonMui
-                variant="contained"
-                color="primary"
-                className=" float-end ms-2"
-                //startIcon={<FaUserPlus size="10"/>}
-                startIcon={<TiArrowBack  />}
-                style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
-
-            >
-                <span style={{ textTransform: "capitalize" }}>Back</span>
-            </ButtonMui>
-          </Link>
-          <br/><br/>
           {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='biometrics' &&(<Biometrics patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
