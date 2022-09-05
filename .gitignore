@@ -33,8 +33,22 @@ application-debug.log
 /nbdist/
 /.nb-gradle/
 build/
+src/main/resources/views/static/hiv/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+src/main/resources/views/static/hiv/asset-manifest.json
+src/main/resources/views/static/hiv/index.html
+src/main/resources/views/static/hiv/static/css/2.519af126.chunk.css
+src/main/resources/views/static/hiv/static/css/main.52fd109c.chunk.css
+src/main/resources/views/static/hiv/static/js/4.cb52f285.chunk.js
+src/main/resources/views/static/hiv/static/js/4.cb52f285.chunk.js.LICENSE.txt
+src/main/resources/views/static/hiv/static/js/5.3ebbfe36.chunk.js
+src/main/resources/views/static/hiv/static/js/5.3ebbfe36.chunk.js.LICENSE.txt
+src/main/resources/views/static/hiv/static/js/6.c36cd898.chunk.js
+src/main/resources/views/static/hiv/static/media/brand-icons.6729d297.svg
+src/main/resources/views/static/hiv/static/media/icons.62d9dae4.svg
+src/main/resources/views/static/hiv/static/media/outline-icons.9c4845b4.svg
+src/main/resources/views/static/hiv/static/media/rw-widgets.e8b49908.svg
