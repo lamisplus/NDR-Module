@@ -27,14 +27,14 @@ import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
 import { Label } from 'semantic-ui-react'
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-import { FaUserPlus } from "react-icons/fa";
+//import { FaUserPlus } from "react-icons/fa";
 import {TiArrowForward} from 'react-icons/ti'
+
 
 
 //Dtate Picker package
@@ -152,20 +152,6 @@ const Patients = (props) => {
   return (
     <div>
 
-         <Link to={"register-patient"}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    className=" float-end"
-                    startIcon={<FaUserPlus size="10"/>}
-                    style={{backgroundColor:'#014d88'}}
-                >
-                    <span style={{ textTransform: "capitalize" }}>New Patient</span>
-                </Button>
-                </Link>
-                <br/><br/>
-                <br/>
-        
             <MaterialTable
             icons={tableIcons}
               title="Find Patient "
@@ -176,7 +162,7 @@ const Patients = (props) => {
                   field: "name",
                 },
                 { title: "Hospital Number", field: "hospital_number", filtering: false },
-                { title: "Gender", field: "gender", filtering: false },
+                { title: "Sex", field: "gender", filtering: false },
                 { title: "Age", field: "age", filtering: false },
                 //{ title: "Enrollment Status", field: "v_status", filtering: false },
                 //{ title: "ART Number", field: "v_status", filtering: false },
@@ -186,11 +172,35 @@ const Patients = (props) => {
               isLoading={loading}
               data={ patientList.map((row) => ({
                   //Id: manager.id,
-                    name:row.firstName + " " + row.surname,
+                    name:row.currentStatus!== "Not Enrolled" ?
+                        (
+                           <>
+                            <Link
+                            to ={{
+                                pathname: "/patient-history",
+                                state: { patientObj: row  }
+                            }}
+
+                            title={"Click to view patient dashboard"}
+                            > {row.firstName + " " + row.surname}
+                            </Link>
+                            </>
+                        ):
+                        (
+                            <>
+                             <Link
+                                to={{
+                                    pathname: "/enroll-patient",
+                                    state: { patientId : row.id, patientObj: row }
+                                }}
+ 
+                             title={"Enroll Patient"}
+                             > {row.firstName + " " + row.surname}
+                             </Link>
+                             </>
+                         ),
                     hospital_number: getHospitalNumber(row.identifier),
-                    //address: row.address,
-                   //phone_number:  row.phone,
-                    gender:row.gender.display,
+                    gender:row && row.sex ? row.sex : "",
                     age: (row.dateOfBirth === 0 ||
                         row.dateOfBirth === undefined ||
                         row.dateOfBirth === null ||
@@ -208,11 +218,11 @@ const Patients = (props) => {
                                     (
                                         <>
                                             <Link
-                                                    to={{
-                                                        pathname: "/patient-history",
-                                                        state: { patientObj: row  }
-                                                    }}
-                                                >
+                                                to={{
+                                                    pathname: "/patient-history",
+                                                    state: { patientObj: row  }
+                                                }}
+                                            >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
                                                     style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
@@ -242,13 +252,13 @@ const Patients = (props) => {
                                         <>
                                             <Link
                                                 to={{
-                                                    pathname: "/register-patient",
-                                                    state: { patientId : row.id }
+                                                    pathname: "/enroll-patient",
+                                                    state: { patientId : row.id, patientObj: row }
                                                 }}
                                             >
                                                 <ButtonGroup variant="contained" 
                                                     aria-label="split button"
-                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'50px',width:'220px'}}
+                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
                                                     size="large"
                                                 >
                                                 <Button
@@ -256,7 +266,7 @@ const Patients = (props) => {
                                                 size="small"
                                                 aria-label="select merge strategy"
                                                 aria-haspopup="menu"
-                                                style={{backgroundColor:"#014d88"}}
+                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
                                                 >
                                                     <TiArrowForward />
                                                 </Button>

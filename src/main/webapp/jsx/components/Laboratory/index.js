@@ -1,7 +1,8 @@
-import React, {useState, Fragment } from "react";
+import React, {useState, Fragment, useEffect } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import LabTestOrder from './LabTestOrder';
 import LabHistory from "./LabHistory";
+import LaboratoryRDE from "./LaboratoryRDE";
 
 const divStyle = {
   borderRadius: "2px",
@@ -11,6 +12,10 @@ const divStyle = {
 const LaboratoryModule = (props) => {
     const [key, setKey] = useState('home');
     const patientObj = props.patientObj
+    useEffect ( () => {
+      setKey(props.activeContent.activeTab)
+    }, [props.activeContent.id]);
+
 
   return (
     <Fragment>  
@@ -29,10 +34,13 @@ const LaboratoryModule = (props) => {
                   {/* <Tab eventKey="checked-in" title="Checked In Patients">                   
                     <CheckedInPatients />
                   </Tab> */}
-                  <Tab eventKey="home" title="Laboratory Test Order">                   
+                  <Tab eventKey="home" title="LABORATORY RDE">                   
+                    <LaboratoryRDE patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                  </Tab>
+                  {/* <Tab eventKey="testOrder" title="LABORATORY TEST ORDER">                   
                     <LabTestOrder patientObj={patientObj} setActiveContent={props.setActiveContent}/>
-                  </Tab>  
-                  <Tab eventKey="history" title=" History">                   
+                  </Tab>   */}
+                  <Tab eventKey="history" title=" HISTORY">                   
                     <LabHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>                   
                 </Tabs>

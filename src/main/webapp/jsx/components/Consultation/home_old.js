@@ -762,7 +762,7 @@ const ClinicVisit = (props) => {
 
           </Segment>
         </Grid.Column>
-      </Grid>
+        </Grid>
       {/* <AddVitals toggle={AddVitalToggle} showModal={addVitalModal} /> */}
       <AddAllergy toggle={AddAllergyToggle} showModal={addAllergyModal} />
       <AddCondition toggle={AddConditionToggle} showModal={addConditionModal} />

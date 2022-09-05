@@ -44,6 +44,10 @@ public class Observation extends HivAuditEntity  implements Persistable<Long> {
     @Column(columnDefinition = "jsonb")
     private JsonNode data;
 
+    @Basic
+    @Column(name = "archived")
+    private int archived;
+
     @Override
     public boolean isNew() {
         return id == null;

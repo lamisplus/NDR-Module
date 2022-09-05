@@ -9,11 +9,25 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { url as baseUrl,token } from "./../../../../api";
 import axios from "axios";
 import moment from "moment";
+import { toast } from "react-toastify";
+
+const useStyles = makeStyles(theme => ({
+  error: {
+    color: "#f85032",
+    fontSize: "11px",
+  },
+  success: {
+    color: "#4BB543 ",
+    fontSize: "11px",
+  },
+}))
 
 const ADR = (props) => {
-
+  const [errors, setErrors] = useState({});
+  const classes = useStyles()
+  let temp = { ...errors }
   const [prepSideEffect, setPrepSideEffect] = useState([]);
-  
+
   useEffect(() => {
     PrepSideEffect();
   }, []);
@@ -33,10 +47,25 @@ const ADR = (props) => {
        
         }
   const handAdrleInputChange = e => {
+    console.log(e.target.value)
     props.setAdrObj ({...props.adrObj,  [e.target.name]: e.target.value});
   }
+   //Validations of the forms
+   const validate = () => {        
+    temp.adr = props.adrObj.adr ? "" : "This field is required"
+    temp.adrOnsetDate = props.adrObj.adrOnsetDate ? "" : "This field is required"
+
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
+  }
   const addADR = e => { 
-    props.setAdrList([...props.adrList, props.adrObj])
+    if(validate()){
+        props.setAdrList([...props.adrList, props.adrObj])
+    }else{
+      toast.error(" Field are required ");
+    }
   }
   /* Remove ADR  function **/
   const removeRelativeLocation = index => {       
@@ -58,6 +87,7 @@ const ADR = (props) => {
                 id="adr"
                 value={props.adrObj.adr}
                 onChange={handAdrleInputChange}
+                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 required
                 >
                   <option value=""> Select</option>
@@ -67,7 +97,9 @@ const ADR = (props) => {
                         </option>
                     ))}
             </Input>
-          
+            {errors.adr !=="" ? (
+                <span className={classes.error}>{errors.adr}</span>
+            ) : "" }
             </FormGroup>
         </div>
         <div className="form-group mb-3 col-md-5">        
@@ -79,11 +111,15 @@ const ADR = (props) => {
                 id="adrOnsetDate"
                 value={props.adrObj.adrOnsetDate}
                 onChange={handAdrleInputChange}
+                min={props.artStartDate}
+                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 max= {moment(new Date()).format("YYYY-MM-DD") }
                 required
                 > 
             </Input>
-          
+            {errors.adrOnsetDate !=="" ? (
+                <span className={classes.error}>{errors.adrOnsetDate}</span>
+            ) : "" }
             </FormGroup>
         </div>
         

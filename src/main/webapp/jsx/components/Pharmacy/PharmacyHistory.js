@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import MaterialTable from 'material-table';
 import axios from "axios";
-
+import "react-widgets/dist/css/react-widgets.css";
+import { toast} from "react-toastify";
 import { token as token, url as baseUrl } from "./../../../api";
 import { forwardRef } from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import { Link } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-widgets/dist/css/react-widgets.css';
+import { makeStyles } from '@material-ui/core/styles'
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { MdEditNote } from "react-icons/md";
+import "@reach/menu-button/styles.css";
+import 'semantic-ui-css/semantic.min.css';
+import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
+
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
@@ -21,24 +30,9 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import {  Card,CardBody,} from 'reactstrap';
-import 'react-toastify/dist/ReactToastify.css';
-import 'react-widgets/dist/css/react-widgets.css';
-import { makeStyles } from '@material-ui/core/styles'
-import Button from "@material-ui/core/Button";
-import { MdDashboard } from "react-icons/md";
-import {Menu,MenuList,MenuButton,MenuItem,} from "@reach/menu-button";
-import "@reach/menu-button/styles.css";
-import { Label } from 'semantic-ui-react'
-import Moment from "moment";
-import momentLocalizer from "react-widgets-moment";
-import moment from "moment";
-import { FaUserPlus } from "react-icons/fa";
-import {TiArrowForward} from 'react-icons/ti'
 
-//Dtate Picker package
-Moment.locale("en");
-momentLocalizer();
+
+
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -103,11 +97,11 @@ const useStyles = makeStyles(theme => ({
     }, 
 }))
 
-let regimenArr = []
+
 const PharmacyHistory = (props) => {    
     const [refillList, setRefillList] = useState([])
     const [loading, setLoading] = useState(true)
-
+    
     useEffect(() => {
         PharmacyList()
       }, [props.patientObj.id]);
@@ -126,24 +120,41 @@ const PharmacyHistory = (props) => {
                 setLoading(false)  
             });        
     }
-
-
-
     const regimenName =(regimenObj)=> {
-      
-      regimenObj.forEach(function (value, index, array) {
-        
+      let regimenArr = []
+      regimenObj.forEach(function (value, index, array) {       
           regimenArr.push(<li key={index}>{value['name']}</li>)
-          //regimenArr.push(value['name'])
       })
       return regimenArr; 
-        //return regimenArr.toString(); 
       }
-
-      //console.log(regimenArr)   
+    const onClickHome = (row, actionType) =>{  
+       // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+        props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+    }
+    const LoadDeletePage = (row) =>{ 
+        console.log(row) 
+        axios.delete(`${baseUrl}art/pharmacy/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                toast.success("Record Deleted Successfully");
+                PharmacyList()
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                  }
+                  else{
+                    toast.error("Something went wrong. Please try again...");
+                  }
+            }); 
+     }
+    
 
   return (
     <div>
+        
             <br/>
         
             <MaterialTable
@@ -160,10 +171,11 @@ const PharmacyHistory = (props) => {
                 { title: "Regimen Name", field: "regimenName", filtering: false },
                // { title: "Quantity", field: "regimenQuantity", filtering: false },
                 { title: "isDevolve", field: "isDevolve", filtering: false },
-                //{ title: "DSDModel", field: "dsdModel", filtering: false },
+                { title: "DSDModel", field: "dsdModel", filtering: false },
                 { title: "MMD Type", field: "mmdType", filtering: false },
                 { title: "Prescription Error", field: "prescriptionError", filtering: false },
                 { title: "ADR Screened", field: "adverseDrugReactions", filtering: false },
+                { title: "Action", field: "Action", filtering: false },
 
               ]}
               isLoading={loading}
@@ -175,17 +187,30 @@ const PharmacyHistory = (props) => {
                   regimenName: (
                                 <ul>
                                    {regimenName(row.extra.regimens)}
-                                       
-                                    
+ 
                                 </ul>
                     
                                 ),  
-                 // regimenQuantity: "", 
+                 regimenQuantity: "", 
                   isDevolve: row.isDevolve, 
                   mmdType: row.mmdType, 
-                  prescriptionError: row.prescriptionError, 
-                  adverseDrugReactions: row.adrScreened,                   
-                  //status: (<Label color={labStatus(row.labTestOrderStatus)} size="mini">{row.labTestOrderStatusName}</Label>), 
+                  prescriptionError: row.prescriptionError===false? "NO":"YES", 
+                  adverseDrugReactions: row.adrScreened===false? "NO":"YES",                   
+                  Action:<div>
+                            <Menu.Menu position='right'  >
+                            <Menu.Item >
+                                <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                                <Dropdown item text='Action'>
+
+                                <Dropdown.Menu style={{ marginTop:"10px", }}>
+                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
+                                    <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                                </Button>
+                            </Menu.Item>
+                            </Menu.Menu>
+                         </div>
                   
                   }))}
             

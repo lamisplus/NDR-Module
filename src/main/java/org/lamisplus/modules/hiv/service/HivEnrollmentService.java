@@ -52,7 +52,7 @@ public class HivEnrollmentService {
 
 
 
-    public HivPatientDto createHivEnrollment(HivEnrollmentDto hivEnrollmentDto) {
+    public HivEnrollmentDto createHivEnrollment(HivEnrollmentDto hivEnrollmentDto) {
         final Long personId = hivEnrollmentDto.getPersonId ();
         Person person = getPerson (personId);
         if (hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0).isPresent ())
@@ -64,28 +64,31 @@ public class HivEnrollmentService {
         hivEnrollment.setVisit (visit);
         }
         hivEnrollment.setUuid (UUID.randomUUID ().toString ());
-        return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
+        return convertToDto (hivEnrollmentRepository.save (hivEnrollment));
     }
 
 
-    public HivPatientDto updateHivEnrollment(Long id, HivEnrollmentDto hivEnrollmentDto) {
+    public HivEnrollmentDto updateHivEnrollment(Long id, HivEnrollmentDto hivEnrollmentDto) {
         HivEnrollment existHivEnrollment = getExistEnrollmentById (id);
         HivEnrollment hivEnrollment = convertToEntity (hivEnrollmentDto);
         hivEnrollment.setId (existHivEnrollment.getId ());
-        return convertHivEnrollmentToHivPatientDto (hivEnrollmentRepository.save (hivEnrollment));
+        hivEnrollment.setPerson (existHivEnrollment.getPerson ());
+        hivEnrollment.setVisit (existHivEnrollment.getVisit ());
+        return convertToDto (hivEnrollmentRepository.save (hivEnrollment));
     }
 
 
     public List<HivPatientDto> getAll() {
         return hivEnrollmentRepository.getHivEnrollmentByArchived (0)
                 .stream ()
+                .filter (hivEnrollment -> hivEnrollment.getFacilityId ().equals (currentUserOrganizationService.getCurrentUserOrganization ()))
                 .map (this::convertHivEnrollmentToHivPatientDto)
                 .collect (Collectors.toList ());
 
     }
 
-    public HivPatientDto getHivEnrollmentById(Long id) {
-        return convertHivEnrollmentToHivPatientDto (getExistEnrollmentById (id));
+    public HivEnrollmentDto getHivEnrollmentById(Long id) {
+        return convertToDto (getExistEnrollmentById (id));
     }
 
 
@@ -115,6 +118,7 @@ public class HivEnrollmentService {
         BeanUtils.copyProperties (entity, hivEnrollmentDto);
         hivEnrollmentDto.setPersonId (entity.getPerson ().getId ());
         log.info ("dto converted {} ", hivEnrollmentDto);
+        hivEnrollmentDto.setVisitId (entity.getVisit ().getId ());
         return hivEnrollmentDto;
     }
 
@@ -126,12 +130,9 @@ public class HivEnrollmentService {
         HivPatientDto hivPatientDto = new HivPatientDto ();
         BeanUtils.copyProperties (bioData, hivPatientDto);
         hivPatientDto.setEnrolled (true);
-
         Long statusAtRegistrationId = entity.getStatusAtRegistrationId ();
         Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (statusAtRegistrationId);
-        if (status.isPresent ()) {
-            hivPatientDto.setCurrentStatus (status.get ().getDisplay ());
-        }
+        status.ifPresent (applicationCodeSet -> hivPatientDto.setCurrentStatus (applicationCodeSet.getDisplay ()));
         hivPatientDto.setEnrollment (hivEnrollmentDto);
         return hivPatientDto;
     }
@@ -143,10 +144,7 @@ public class HivEnrollmentService {
     public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId) {
         Person person = getPerson (personId);
         Optional<HivEnrollment> hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived (person, 0);
-        if (hivEnrollment.isPresent ()) {
-            return Optional.of (convertToDto (hivEnrollment.get ()));
-        }
-        return Optional.empty ();
+        return hivEnrollment.map (this::convertToDto);
     }
 
     public Person getPerson(Long personId) {

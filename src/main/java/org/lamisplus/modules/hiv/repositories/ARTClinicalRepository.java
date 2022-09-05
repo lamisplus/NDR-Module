@@ -16,9 +16,10 @@ public interface ARTClinicalRepository extends CommonJpaRepository<ARTClinical, 
 
     List<ARTClinical> findByArchivedAndIsCommencementIsFalse(int i);
 
-    Optional<ARTClinical> findByPersonAndIsCommencementIsTrue(Person person);
+    Optional<ARTClinical> findByPersonAndIsCommencementIsTrueAndArchived(Person person, Integer archived);
 
     List<ARTClinical> findAllByPersonAndIsCommencementIsFalseAndArchived(Person person, Integer archived);
     Page<ARTClinical> findAllByPersonAndIsCommencementIsFalseAndArchived(Person person, Integer archived, Pageable pageable);
+    Page<ARTClinical> findAllByPersonAndArchived(Person person, Integer archived, Pageable pageable);
 
 }

@@ -39,6 +39,30 @@ public class HIVEacService {
         hivEac.setStatus (dto.getStatus ());
         return hivEacRepository.save (hivEac);
     }
+    public HIVEacDto updateEac(Long id,HIVEacDto dto) {
+        HIVEac hivEac = getHivEac (id);
+        hivEac.setDateOfEac1 (dto.getDateOfEac1 ());
+        hivEac.setDateOfEac2 (dto.getDateOfEac2 ());
+        hivEac.setDateOfEac3 (dto.getDateOfEac3 ());
+       hivEac.setNote (dto.getNote ());
+       hivEac.setLastViralLoad (dto.getLastViralLoad ());
+       hivEac.setDateOfLastViralLoad (dto.getDateOfLastViralLoad ());
+       return convertHivEacToDto (hivEacRepository.save (hivEac));
+    }
+
+    public HIVEacDto getEacById(Long id){
+        return convertHivEacToDto (getHivEac (id));
+    }
+
+    public String deleteEACById(Long id){
+        HIVEac hivEac = getHivEac (id);
+        hivEac.setArchived (1);
+        hivEacRepository.save (hivEac);
+        return "successful";
+    }
+    private HIVEac getHivEac(Long id) {
+        return hivEacRepository.findById (id).orElseThrow (() -> new EntityNotFoundException (HIVEac.class, "id", Long.toString (id)));
+    }
 
     public HIVEacDto handleEac(HIVEacDto dto) {
         Long id = dto.getId ();

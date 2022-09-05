@@ -8,7 +8,6 @@ import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
@@ -61,7 +60,7 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
 
     @Column(nullable = false, unique = true, updatable = false)
     private String uuid;
-    @Future
+
     @Column(name = "next_appointment", nullable = false)
     private LocalDate nextAppointment;
     @Type(type = "jsonb-node")
@@ -78,6 +77,9 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
     private String deliveryPoint;
     @Column(name = "dsd_model")
     private  String dsdModel;
+    @Basic
+    @Column(name = "archived")
+    private int archived;
     @OneToMany
     @ToString.Exclude
     private Set<Regimen> regimens = new LinkedHashSet<> ();

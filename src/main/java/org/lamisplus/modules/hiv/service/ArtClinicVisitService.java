@@ -86,6 +86,9 @@ public class ArtClinicVisitService {
         VitalSignDto vitalSignDto = artClinicVisitDto.getVitalSignDto ();
         vitalSignService.updateVitalSign (existArtClinical.getVitalSign ().getId (), vitalSignDto);
         ARTClinical artClinical = convertDtoToART (artClinicVisitDto, existArtClinical.getVitalSign ().getId ());
+        artClinical.setVisit (existArtClinical.getVisit ());
+        artClinical.setHivEnrollment (existArtClinical.getHivEnrollment ());
+        artClinical.setPerson (existArtClinical.getPerson ());
         artClinical.setId (existArtClinical.getId ());
         return convertToClinicVisitDto (artClinicalRepository.save (artClinical));
     }
@@ -111,7 +114,7 @@ public class ArtClinicVisitService {
     public List<ARTClinicalVisitDisplayDto> getAllArtClinicVisitByPersonId(Long personId, int pageNo, int pageSize ) {
         Person person = getPerson (personId);
         Pageable paging = PageRequest.of (pageNo, pageSize, Sort.by ("visitDate").descending ());
-        Page<ARTClinical> clinicVisits = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0, paging);
+        Page<ARTClinical> clinicVisits = artClinicalRepository.findAllByPersonAndArchived (person, 0, paging);
         if(clinicVisits.hasContent ()){
            return clinicVisits.getContent ().stream ().map (this::getArtClinicalVisitDisplayDto).collect(Collectors.toList());
         }

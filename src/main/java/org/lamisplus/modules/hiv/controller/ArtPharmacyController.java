@@ -6,6 +6,7 @@ import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
 import org.lamisplus.modules.hiv.service.ArtPharmacyService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,19 +20,29 @@ import java.util.List;
 public class ArtPharmacyController {
     private final ArtPharmacyService artPharmacyService;
 
-    @PostMapping
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<RegisterArtPharmacyDto> registerArtPharmacy(@RequestBody RegisterArtPharmacyDto registerArtPharmacyDto) throws IOException {
         return ResponseEntity.ok (artPharmacyService.registerArtPharmacy (registerArtPharmacyDto));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<RegisterArtPharmacyDto> updateArtPharmacy(
             @PathVariable("id") Long id,
             @RequestBody RegisterArtPharmacyDto registerArtPharmacyDto) throws IOException {
         return ResponseEntity.ok (artPharmacyService.updateArtPharmacy (id, registerArtPharmacyDto));
     }
 
-    @GetMapping("/patient")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<RegisterArtPharmacyDto> getPharmacyById(@PathVariable("id") Long id) throws IOException {
+        return ResponseEntity.ok (artPharmacyService.getPharmacyById (id));
+    }
+
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
+    ResponseEntity<String> deletePharmacyById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (artPharmacyService.deleteById (id));
+    }
+
+    @GetMapping(value = "/patient", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RegisterArtPharmacyDto>> getAllPharmacyByPatientId(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,

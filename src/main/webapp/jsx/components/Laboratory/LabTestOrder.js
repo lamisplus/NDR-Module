@@ -109,7 +109,7 @@ const Laboratory = (props) => {
                     }
                     else{
                         setModuleStatus("2")
-                        toast.error("Laboratory module is not install")
+                        //toast.error("Laboratory module is not install")
                         setButtonHidden(true)
                     }
                 }).catch((error) => {
@@ -255,6 +255,7 @@ const Laboratory = (props) => {
                                     value={objValues.orderDate}
                                     onChange={handleInputChangeObject}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                 />
                                 {errors.orderDate !=="" ? (
@@ -270,7 +271,8 @@ const Laboratory = (props) => {
                                     name="labTestGroupId"
                                     id="labTestGroupId"
                                     value={tests.labTestGroupId}
-                                    onChange={handleSelectedTestGroup}                   
+                                    onChange={handleSelectedTestGroup} 
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
                                     >
                                     <option value="">Select </option>
                                                     
@@ -293,7 +295,8 @@ const Laboratory = (props) => {
                                     name="labTestId"
                                     id="labTestId"
                                     value={tests.labTestId}
-                                    onChange={handleInputChangeTest}                   
+                                    onChange={handleInputChangeTest} 
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
                                     >
                                     <option value="">Select </option>
                                                     
@@ -316,7 +319,8 @@ const Laboratory = (props) => {
                                     name="orderPriority"
                                     id="orderPriority"
                                     value={tests.orderPriority}
-                                    onChange={handleInputChange}                   
+                                    onChange={handleInputChange}  
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                     >
                                     <option value="">Select </option>
                                                     
@@ -340,7 +344,8 @@ const Laboratory = (props) => {
                                     name="viralLoadIndication"
                                     id="viralLoadIndication"
                                     value={tests.viralLoadIndication}
-                                    onChange={handleInputChange}                   
+                                    onChange={handleInputChange}  
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                     >
                                     <option value="">Select </option>
                                                     

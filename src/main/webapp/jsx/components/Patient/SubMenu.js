@@ -13,15 +13,19 @@ const useStyles = makeStyles((theme) => ({
 
 function SubMenu(props) {
     const classes = useStyles();
+    let gender=""
     const patientObjs = props.patientObj ? props.patientObj : {}
     const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
     const [patientObj, setpatientObj] = useState(patientObjs)
-    const [genderType, setGenderType] = useState(props.patientObj.gender.display==="Female" || props.patientObj.gender.display==="Transgebder(Female)" ? true : false)
+    const [genderType, setGenderType] = useState()
     let mentalStatus=false
     let initialEvaluationStatus=false
     useEffect(() => {
         Observation();
-        }, []);
+        gender =props.patientObj && props.patientObj.sex ? props.patientObj.sex : null
+        setGenderType(gender==="Female" ? true : false)
+    }, [props.patientObj]);
+    console.log(props.patientObj)
      //Get list of RegimenLine
      const Observation =()=>{
         axios
@@ -47,60 +51,63 @@ function SubMenu(props) {
         }
 
     const loadAnc =(row)=> {
-        props.setActiveContent('counseling')
+        props.setActiveContent({...props.activeContent, route:'counseling'})
     }
     const loadStatusUpdate =(row)=> {
-        props.setActiveContent('status-update')
+        props.setActiveContent({...props.activeContent, route:'status-update'})
     }
     const loadPharmacyModal =(row)=> {
-        props.setActiveContent('pharmacy')
+        props.setActiveContent({...props.activeContent, route:'pharmacy'})
     }
     const loadLaboratoryModal =(row)=> {
-        props.setActiveContent('laboratory')
+        props.setActiveContent({...props.activeContent, route:'laboratory'})
     }
     const loadCervicalCancer = (row) =>{
-        props.setActiveContent('cervical-cancer')
+        props.setActiveContent({...props.activeContent, route:'cervical-cancer'})
     }
     const loadPrEPDiscontinuationsInterruptions = (row) =>{
-        props.setActiveContent('prep-interruptions')
+        props.setActiveContent({...props.activeContent, route:'prep-interruptions'})
     }
     const loadPrEPRegistrationForm = (row) =>{
-        props.setActiveContent('prep-registration')
+        props.setActiveContent({...props.activeContent, route:'prep-registration'})
     }
     const loadPrEPCommencementForm = (row) =>{
-        props.setActiveContent('prep-commencement')
+        props.setActiveContent({...props.activeContent, route:'prep-commencement'})
     }
     const loadPrEPEligibiltyScreeningForm = (row) =>{
-        props.setActiveContent('prep-screening')
+        props.setActiveContent({...props.activeContent, route:'prep-screening'})
     }
     const loadPrEPVisitForm = (row) =>{
-        props.setActiveContent('prep-visit')
+        props.setActiveContent({...props.activeContent, route:'prep-visit'})
     }
     const onClickConsultation = (row) =>{        
-        props.setActiveContent('consultation')
+        props.setActiveContent({...props.activeContent, route:'consultation'})
     }
     const onClickHome = (row) =>{        
-        props.setActiveContent('recent-history')
+        props.setActiveContent({...props.activeContent, route:'recent-history'})
     }
     const loadAncPnc =(row)=> {
-        props.setActiveContent('anc-pnc')
+        props.setActiveContent({...props.activeContent, route:'anc-pnc'})
     }
     const loadAncAncEnrollment =(row)=> {
-        props.setActiveContent('anc-enrollment')
+        props.setActiveContent({...props.activeContent, route:'anc-enrollment'})
     }
     const onClickChildConsultation =(row)=> {
-        props.setActiveContent('child-consultation')
+        props.setActiveContent({...props.activeContent, route:'child-consultation'})
     }
     const loadLabourDelivery =(row)=> {
-        props.setActiveContent('labour-delivery')
+        props.setActiveContent({...props.activeContent, route:'labour-delivery'})
     }
     const loadMentalHealth = ()=>{
-        props.setActiveContent('mhs')
+        props.setActiveContent({...props.activeContent, route:'mhs'})
     }
     const loadAdultEvaluation =(row)=> {
-        props.setActiveContent('adult-evaluation')
-      }
+        props.setActiveContent({...props.activeContent, route:'adult-evaluation'})
 
+    }
+    const loadPatientHistory = ()=>{
+        props.setActiveContent({...props.activeContent, route:'patient-history'})
+    }
 
     return (
         <div>
@@ -150,14 +157,14 @@ function SubMenu(props) {
                 <Menu size="mini" color={"black"} inverted>
                     
                     <Menu.Item onClick={() => onClickHome()} disabled={patientCurrentStatus} > Home</Menu.Item>
-                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} disabled={patientCurrentStatus} > Initial Clinic Evaluation</Menu.Item>)}
+                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} disabled={patientCurrentStatus} >Clinic Evaluation</Menu.Item>)}
                     <Menu.Item onClick={() => onClickConsultation()} disabled={patientCurrentStatus}> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled={patientCurrentStatus}> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled={patientCurrentStatus}> Pharmacy</Menu.Item>
-                    <Menu.Item onClick={() => loadAnc(patientObj)} disabled={patientCurrentStatus}> Enhanced Adherence Counselling</Menu.Item>
+                    <Menu.Item onClick={() => loadAnc(patientObj)} disabled={patientCurrentStatus}> EAC</Menu.Item>
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} >Client Status Update</Menu.Item>
                     {!patientObj.mentalHealth && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} >Mental Health Screening</Menu.Item>)}
-                    {/* <Dropdown text="PrEP" labeled simple className='icon link item'>
+                    <Dropdown text="PrEP" labeled simple className='icon link item'>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)}> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPVisitForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Visit</span></Dropdown.Item>
@@ -165,9 +172,9 @@ function SubMenu(props) {
                                 <Dropdown.Item onClick={() => loadPrEPDiscontinuationsInterruptions(patientObj)}><span  style={{color:"#fff",}}>PrEP Discontinuations & Interruptions</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPCommencementForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Commencement</span></Dropdown.Item>
                             </Dropdown.Menu>
-                    </Dropdown> */}
+                    </Dropdown>
                             
-                    {/* {genderType===true ? 
+                    {props.patientObj.sex==='Female' ? 
                         (
                             <>
                             <Dropdown text="PMTCT"   labeled simple    className='icon link item'>
@@ -182,7 +189,8 @@ function SubMenu(props) {
                             </>
                         )
                         :""
-                    } */}
+                    }
+                    <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     
                 </Menu>
                )

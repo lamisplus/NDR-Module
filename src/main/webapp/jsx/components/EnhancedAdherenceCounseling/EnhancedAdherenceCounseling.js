@@ -52,12 +52,15 @@ const useStyles = makeStyles(theme => ({
 
 const EAC = (props) => {
     const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [eacObj, setEacObj] = useState([]);
     const [errors, setErrors] = useState({});
     const [objValues, setObjValues]=useState({
-                                                dateOfEac: "",
+                                                dateOfEac1: null,
+                                                dateOfEac2: null,
+                                                dateOfEac3: null,
                                                 dateOfLastViralLoad: "",
                                                 lastViralLoad:"",
                                                 note: "",
@@ -133,23 +136,6 @@ const EAC = (props) => {
                         <br/>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date of EAC </Label>
-                            <Input
-                                type="date"
-                                name="dateOfEac"
-                                id="dateOfEac"
-                                value={objValues.dateOfEac}
-                                onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                required
-                            />
-                            {errors.dateOfEac !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
                             <Label for="">Date Of Last Viral Load</Label>
                             <Input
                                 type="date"
@@ -157,12 +143,34 @@ const EAC = (props) => {
                                 id="dateOfLastViralLoad"
                                 value={objValues.dateOfLastViralLoad}
                                 onChange={handleInputChange}
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
                             
                             </FormGroup>
                         </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date of EAC </Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
+                                onChange={handleInputChange}
+                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">lastViralLoad</Label>
@@ -172,6 +180,7 @@ const EAC = (props) => {
                                 id="lastViralLoad"
                                 value={objValues.lastViralLoad}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
                             
@@ -186,6 +195,7 @@ const EAC = (props) => {
                                 id="note"
                                 value={objValues.note}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             </FormGroup>
                         </div>
@@ -203,7 +213,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac==="" ? true : false}
+                    disabled={objValues.dateOfEac1==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

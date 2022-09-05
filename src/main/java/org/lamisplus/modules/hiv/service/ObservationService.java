@@ -47,6 +47,7 @@ public class ObservationService {
         observation.setPerson (person);
         observation.setUuid (UUID.randomUUID ().toString ());
         observation.setVisit (visit);
+        observation.setArchived (0);
         Observation saveObservation = observationRepository.save (observation);
         observationDto.setId (saveObservation.getId ());
         return observationDto;
@@ -69,11 +70,28 @@ public class ObservationService {
         return observationDto;
     }
 
+    public ObservationDto getObservationById(Long id) {
+        return convertObservationToDto (getObservation (id));
+    }
+
+    public String deleteById(Long id) {
+        Observation observation = getObservation (id);
+        observation.setArchived (1);
+        observationRepository.save (observation);
+        return "successfully";
+    }
+
+    private Observation getObservation(Long id) {
+        return observationRepository.findById (id).orElseThrow (() -> new EntityNotFoundException (Observation.class, "id", Long.toString (id)));
+    }
+
     public List<ObservationDto> getAllObservationByPerson(Long personId) {
         Person person = getPerson (personId);
         Long currentUserOrganization = currentUserOrganizationService.getCurrentUserOrganization ();
         List<Observation> observations = observationRepository.getAllByPersonAndFacilityId (person, currentUserOrganization);
-        return observations.stream ().map (this::convertObservationToDto).collect (Collectors.toList ());
+        return observations.stream ()
+                .filter (observation -> observation.getArchived () == 0)
+                .map (this::convertObservationToDto).collect (Collectors.toList ());
 
 
     }

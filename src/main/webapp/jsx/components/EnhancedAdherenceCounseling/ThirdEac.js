@@ -55,16 +55,36 @@ const EAC = (props) => {
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(true)
     const [objValues, setObjValues]=useState({
-                                                dateOfEac: null,
-                                                dateOfLastViralLoad: null,
-                                                lastViralLoad: null,
-                                                note: null,
-                                                personId:props.patientObj.id,
-                                                status: "Third",
-                                                visitId: null
+                                                dateOfEac1: null,
+                                                dateOfEac2: null,
+                                                dateOfEac3: null,
+                                                dateOfLastViralLoad: "",
+                                                lastViralLoad:"",
+                                                note: "",
+                                                personId: props.patientObj.id,
+                                                status: "",
+                                                visitId:""
                                             })
- 
+    useEffect(() => {
+        EACHistory()
+    }, [props.patientObj.id]);
+    ///GET LIST OF EAC
+    const EACHistory =()=>{
+        setLoading(true)
+        axios
+            .get(`${baseUrl}observation/eac/person/current-eac/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+            setLoading(false)
+            setObjValues(response.data)
+            })
+            .catch((error) => {
+            //console.log(error);
+            });    
+    }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }          
@@ -72,6 +92,7 @@ const EAC = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
+          objValues.status='Third'
           axios.post(`${baseUrl}observation/eac`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
@@ -82,7 +103,7 @@ const EAC = (props) => {
                   props.setHideFirst(false)                 
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
-                  props.setActiveContent('recent-history')
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {
@@ -108,21 +129,24 @@ const EAC = (props) => {
                         <br/>
                         <br/>
                         <br/>
+                        <h4>Second EAC Date {objValues.dateOfEac2}</h4>
                         <br/>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">Date of Third EAC </Label>
                             <Input
                                 type="date"
-                                name="dateOfEac"
-                                id="dateOfEac"
-                                value={objValues.dateOfEac}
+                                name="dateOfEac3"
+                                id="dateOfEac3"
+                                value={objValues.dateOfEac3}
                                 onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                min={objValues.dateOfEac2}
+                                //max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac}</span>
+                            {errors.dateOfEac3 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac3}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -141,7 +165,7 @@ const EAC = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac==="" ? true : false}
+                    disabled={objValues.dateOfEac3==="" ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

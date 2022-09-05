@@ -100,7 +100,6 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @Column(columnDefinition = "jsonb")
     JsonNode adheres;
 
-    @PastOrPresent
     @Column(name = "next_appointment")
     private LocalDate nextAppointment;
 
@@ -112,6 +111,15 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
     @Column(columnDefinition = "jsonb", name = "tb_screen")
     private JsonNode tbScreen;
 
+    @Column(name = "is_viral_load_at_start_of_art")
+    private  Boolean isViralLoadAtStartOfArt;
+
+    @Column(name = "viral_load_at_start_of_art")
+    private  Double  viralLoadAtStartOfArt;
+
+    @PastOrPresent
+    @Column(name = "date_of_viral_load_at_start_of_art")
+    private LocalDate dateOfViralLoadAtStartOfArt;
     @Override
     public boolean isNew() {
         return id == null;

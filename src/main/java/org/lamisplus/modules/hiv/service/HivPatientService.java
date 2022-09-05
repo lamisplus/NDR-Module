@@ -8,6 +8,7 @@ import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetReposito
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientEnrollmentDto;
+import org.lamisplus.modules.hiv.domain.dto.PatientActivity;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
@@ -19,6 +20,7 @@ import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,7 +49,9 @@ public class HivPatientService {
 
     private final ObservationRepository observationRepository;
 
-    public HivPatientDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
+    private final  PatientActivityService patientActivityService;
+
+    public HivEnrollmentDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
         Long personId = hivPatientEnrollmentDto.getPerson ().getId ();
         processAndSavePatient (hivPatientEnrollmentDto, hivEnrollmentDto, personId);
@@ -76,6 +80,7 @@ public class HivPatientService {
     public List<HivPatientDto> getHivPatients() {
         return personService.getAllPerson ()
                 .stream ()
+                .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
                 .map (p -> convertPersonHivPatientDto (p.getId ()))
                 .collect (Collectors.toList ());
     }
@@ -90,7 +95,7 @@ public class HivPatientService {
             Person person = getPerson (personId);
             PersonResponseDto bioData = personService.getPersonById (personId);
             Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (bioData.getId ());
-            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonAndIsCommencementIsTrue (person);
+            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
             List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
@@ -140,8 +145,12 @@ public class HivPatientService {
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
         Log.info ("orgId {}", orgId);
         List<Observation> observationList = observationRepository.getAllByPersonAndFacilityId (person, orgId);
-        if (! observationList.isEmpty ()) {
-            observationList.forEach (observation -> {
+        Log.info ("observationList {}", observationList);
+        if (!observationList.isEmpty ()) {
+            observationList
+                    .stream ()
+                    .filter (observation -> observation.getArchived () != 1)
+                    .forEach (observation -> {
                 if (observation.getType ().contains ("Clinical")) {
                     hivPatientDto.setClinicalEvaluation (true);
                 }
@@ -152,4 +161,9 @@ public class HivPatientService {
         }
     }
 
+    public List<PatientActivity> getHivPatientActivitiesById(Long id) {
+        return   patientActivityService.getActivities(id);
+
+
+    }
 }

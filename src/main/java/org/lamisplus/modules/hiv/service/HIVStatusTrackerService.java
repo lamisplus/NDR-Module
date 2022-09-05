@@ -34,22 +34,24 @@ import java.util.stream.Collectors;
 public class HIVStatusTrackerService {
 
     private final HIVStatusTrackerRepository hivStatusTrackerRepository;
-    private final PersonService personService;
+
 
     private final CurrentUserOrganizationService organizationUtil;
 
     private final PersonRepository personRepository;
 
+    private final EncounterRepository encounterRepository;
+
     private final VisitRepository visitRepository;
 
+    private final PersonService personService;
 
-    private final EncounterRepository encounterRepository;
 
     public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
         Long personId = hivStatusTrackerDto.getPersonId ();
         Person existPerson = getPerson (personId);
         log.info ("person   from status status {}", existPerson.getSurname ());
-        Visit visit = processAndCreateVisit(personId);
+        Visit visit = processAndCreateVisit (personId);
         HIVStatusTracker hivStatusTracker = convertDtoToEntity (hivStatusTrackerDto);
         hivStatusTracker.setArchived (0);
         hivStatusTracker.setUuid (UUID.randomUUID ().toString ());
@@ -59,9 +61,7 @@ public class HIVStatusTrackerService {
         return convertEntityToDto (hivStatusTrackerRepository.save (hivStatusTracker));
     }
 
-    private Visit getVisit(Long visitId) {
-        return visitRepository.findById (visitId).orElseThrow (() -> new EntityNotFoundException (Visit.class, "id", String.valueOf (visitId)));
-    }
+
 
     public HIVStatusTrackerDto updateHIVStatusTracker(Long id, HIVStatusTrackerDto hivStatusTrackerDto) {
         HIVStatusTracker existingHivStatusTracker = getExistingHivStatusTracker (id);
@@ -173,7 +173,6 @@ public class HIVStatusTrackerService {
         }
         return null;
     }
-
 
     private void createHivVisitEncounter(Optional<Person> personOptional, Visit visit) {
         Log.info ("creating Encounter visit Id {}", visit.getId ());

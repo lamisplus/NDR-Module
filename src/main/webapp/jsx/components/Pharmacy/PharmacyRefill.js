@@ -11,7 +11,7 @@ import { Spinner } from "reactstrap";
 import Select from "react-select";
 import { url as baseUrl, token } from "../../../api";
 import { toast} from "react-toastify";
-import { Icon,Button, } from 'semantic-ui-react'
+//import { Icon,Button, } from 'semantic-ui-react'
 
 
 const useStyles = makeStyles(theme => ({ 
@@ -30,6 +30,8 @@ const useStyles = makeStyles(theme => ({
 let refillPeriodValue=null
 
 const Pharmacy = (props) => {
+    const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
@@ -63,7 +65,13 @@ const Pharmacy = (props) => {
     useEffect(() => {
         RegimenLine();
         PrepSideEffect();
-        }, []);
+        setRegimenList(
+            Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
+                id: value.value,
+                name: value.label,
+                dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
+              })))
+    }, [selectedOption]);
     //Get list of RegimenLine
     const RegimenLine =()=>{
     axios
@@ -99,13 +107,19 @@ const Pharmacy = (props) => {
     }
     function RegimenType(id) {
         async function getCharacters() {
+            try{
             const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
             { headers: {"Authorization" : `Bearer ${token}`} })
-            setRegimenType(
-                Object.entries(response.data).map(([key, value]) => ({
-                  label: value.description,
-                  value: value.id,
-                })))
+            if(response.data.length >0){
+                setRegimenType(
+                    Object.entries(response.data).map(([key, value]) => ({
+                    label: value.description,
+                    value: value.id,
+                    })))
+            }
+            }catch(e) {
+
+            }
         }
         getCharacters();
     }
@@ -151,6 +165,7 @@ const Pharmacy = (props) => {
     const handlRefillPeriod = e =>{
         const refillcount= e.target.value
         refillPeriodValue=refillcount
+        
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
@@ -180,31 +195,15 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenList(data);
      }
-    //  const setSelectedOptionAdrChange = (e)=>{
-    //     setSelectedOptionAdr(e)
-    //  }
-     const setSelectedOptionChange = (e) =>{
-        const value = e.value
-        setSelectedOption(value)
-        let currentId=null
-        let currentRegimenName=null
-        if(e.length===1){
-            currentId=e[0].value
-            currentRegimenName=e[0].label
-        }else{
-            currentId=e[e.length-1].value
-            currentRegimenName=e[e.length-1].label
-        }
-        setRegimenList([...regimenList, {id:currentId, dispenseQuantity:refillPeriodValue, name:currentRegimenName}])
 
-     }
     const handleSubmit = (e) => {        
         e.preventDefault();
         setSaving(true);
         objValues.adverseDrugReactions=selectedOptionAdr
         objValues.personId=props.patientObj.id
+        //objValues.extra=regimenList 
         objValues.mmdType=mmdType
-        delete regimenList['name']
+        //delete regimenList['name']
         objValues.regimen=regimenList
 
         axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
@@ -212,7 +211,7 @@ const Pharmacy = (props) => {
         .then(response => {
             setSaving(false);
             toast.success("Pharmacy drug refill successful");
-            props.setActiveContent('recent-history')
+            props.setActiveContent({...props.activeContent, route:'recent-history'})
         })
         .catch(error => {
             setSaving(false);
@@ -223,7 +222,7 @@ const Pharmacy = (props) => {
                        
         }); 
     }
-
+console.log(selectedOption)
 
   return (      
       <div>
@@ -246,6 +245,7 @@ const Pharmacy = (props) => {
                         name="devolvePatient"
                         id="devolvePatient"
                         onChange={handleCheckBox}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         />
                         <label
                         className="form-check-label"
@@ -264,7 +264,9 @@ const Pharmacy = (props) => {
                     id="visitDate"
                     onChange={handleInputChange}
                     value={objValues.visitDate}
+                    min={moment(enrollDate).format("YYYY-MM-DD") }
                     max= {moment(new Date()).format("YYYY-MM-DD") }
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                 />
                 </FormGroup>
@@ -277,7 +279,8 @@ const Pharmacy = (props) => {
                     name="refillPeriod"
                     id="refillPeriod"
                     disabled={objValues.visitDate!==null? false : true}
-                    onChange={handlRefillPeriod}                    
+                    onChange={handlRefillPeriod}   
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                     >
                     <option value="">Select </option>
                     <option value="15">15</option>
@@ -302,6 +305,7 @@ const Pharmacy = (props) => {
                     disabled={objValues.refillPeriod!==null? false : true}
                     onChange={handleInputChange}
                     value={objValues.nextAppointment}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
                 />
                 </FormGroup>
@@ -314,7 +318,8 @@ const Pharmacy = (props) => {
                     name="deliveryPoint"
                     id="deliveryPoint"
                     value={objValues.deliveryPoint}
-                    onChange={handleInputChange}                    
+                    onChange={handleInputChange} 
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                     >
                     <option value="">Select </option>
                     <option value="Facility">Facility </option>
@@ -335,6 +340,7 @@ const Pharmacy = (props) => {
                         disabled="true"
                         value={mmdType}
                         onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     />
                      
                     </FormGroup>
@@ -350,6 +356,7 @@ const Pharmacy = (props) => {
                     id="dsdModel"
                     value={objValues.dsdModel}
                     onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     >
                     <option value="">Select </option>
                     <option value="CPARP">CPARP </option>
@@ -370,6 +377,7 @@ const Pharmacy = (props) => {
                         name="prescriptionError"
                         id="prescriptionError"
                         onChange={handlePrescriptionErrorCheckBox}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         //value={values.ovc_enrolled}
                         />
                         <label
@@ -388,6 +396,7 @@ const Pharmacy = (props) => {
                         name="adverseDrugReactions"
                         id="adverseDrugReactions"
                         onChange={handleCheckBoxAdverseDrugReactions}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         //value={values.ovc_enrolled}
                         />
                         <label
@@ -408,6 +417,7 @@ const Pharmacy = (props) => {
                             options={prepSideEffect}
                             isMulti="true"
                             noOptionsMessage="true"
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
 
                         />
                         
@@ -424,6 +434,7 @@ const Pharmacy = (props) => {
                     id="regimen"
                     value={objValues.drugName}
                     onChange={handleSelectedRegimen}  
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     disabled={objValues.refillPeriod!==null? false : true}                 
                     >
                     <option value="">Select </option>
@@ -442,9 +453,10 @@ const Pharmacy = (props) => {
                 <FormGroup>
                 <Label >Regimen *</Label>
                 <Select
-                    onChange={setSelectedOptionChange}
+                    onChange={setSelectedOption}
                     value={selectedOption}
                     options={regimenType}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     isMulti="true"
                     noOptionsMessage="true"
 
@@ -452,7 +464,7 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
             )}
-            {regimenList.length >0 ? 
+            {selectedOption && selectedOption.length >0 ? 
 
                 (
                     <>
@@ -463,7 +475,7 @@ const Pharmacy = (props) => {
                             <div className="form-group mb-3 col-md-8"  >Regimen Name selected </div>
                             <div className="form-group mb-3 col-md-4"  >Quantity </div>
                         </div>
-                        {regimenList.map((input, index) => (
+                        {regimenList.length >0 && regimenList.map((input, index) => (
                             <>
                                 <div className="row">
                                 <div className="form-group mb-3 col-md-8"  >
@@ -488,6 +500,7 @@ const Pharmacy = (props) => {
                                         name="dispenseQuantity"
                                         id="dispenseQuantity"
                                         value={input.dispenseQuantity}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         required
                                         >
@@ -512,7 +525,7 @@ const Pharmacy = (props) => {
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />
-            
+                {regimenList.length >0 && (
                 <MatButton
                     type="submit"
                     variant="contained"
@@ -521,7 +534,7 @@ const Pharmacy = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.visitDate===null || saving ? true : false}
+                    
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -529,7 +542,7 @@ const Pharmacy = (props) => {
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                 </MatButton>
-
+                )}
                 </form>
             </CardBody>
         </Card> 

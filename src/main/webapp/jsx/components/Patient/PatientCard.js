@@ -7,6 +7,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Link } from 'react-router-dom'
+import ButtonMui from "@material-ui/core/Button";
+import { TiArrowBack } from 'react-icons/ti'
 //import Chip from '@material-ui/core/Chip';
 import Divider from '@material-ui/core/Divider';
 import { Button } from 'semantic-ui-react';
@@ -158,6 +161,13 @@ function PatientCard(props) {
     const loadChildEvaluation =(row)=> {
       props.setActiveContent('child-evaluation')
     }
+    const capturePatientBiometric =(row)=> {
+      //props.setActiveContent('biometrics')
+      props.setActiveContent({...props.activeContent, route:'biometrics'})
+    }
+    const loadArtCommencement =(row)=> {
+      props.setActiveContent('art-commencement')
+    }
     
     const loadArt =(row)=> {
         setpatientObj({...patientObj, ...row});
@@ -192,17 +202,30 @@ function PatientCard(props) {
   return (
     <div className={classes.root}>
        <ExpansionPanel defaultExpanded>
+
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 
                 <Row>
-                    
-                    <Col md={11}>
+                
+                    <Col md={12}>
                     <Row className={"mt-1"}>
                     <Col md={12} className={classes.root2}>
                         <b style={{fontSize: "25px"}}>
                         {patientObj.firstName + " " + patientObj.surname }
                         </b>
-                        
+                        <Link to={"/"} >
+                        <ButtonMui
+                            variant="contained"
+                            color="primary"
+                            className=" float-end ms-2 mr-2 mt-2"
+                            //startIcon={<FaUserPlus size="10"/>}
+                            startIcon={<TiArrowBack  />}
+                            style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
+
+                        >
+                            <span style={{ textTransform: "capitalize" }}>Back</span>
+                        </ButtonMui>
+                      </Link>
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>
@@ -226,7 +249,7 @@ function PatientCard(props) {
                     <span>
                         {" "}
                         Gender :{" "}
-                        <b>{patientObj.gender.display }</b>
+                        <b>{patientObj.sex && patientObj.sex!==null ?  patientObj.sex : '' }</b>
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>
@@ -247,22 +270,20 @@ function PatientCard(props) {
                           <>
                               <div >
                                   <Typography variant="caption">
-                                      <Label color={patientBiometricStatus===true? "green" : "red"} size={"mini"}>
+                                      <Label color={props.patientObj.biometricStatus===true? "green" : "red"} size={"mini"}>
                                           Biometric Status
-                                          <Label.Detail>{patientBiometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
+                                          <Label.Detail>{props.patientObj.biometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
                                       </Label>
-                                      {patientBiometricStatus!==true ? (
+                                      {props.patientObj.biometricStatus!==true ? (
                                     
                                           <>
-                                              {permissions.includes('patient_check_in') || permissions.includes("all_permission") ? (
+                                             
                                                   <>
-                                                  <Label as='a' color='teal' onClick={() => handleBiometricCapture(patientObj.id)} tag>
+                                                  <Label as='a' color='teal' onClick={() => capturePatientBiometric(patientObj.id)} tag>
                                                       Capture Now
                                                   </Label>
                                                   </>
-                                              )
-                                              :""
-                                              }
+                                            
                                           </>
                                       )
                                       :""

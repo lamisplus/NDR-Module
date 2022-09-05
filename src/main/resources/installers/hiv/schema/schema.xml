@@ -91,6 +91,9 @@
                 next_appointment         date,
                 lmp_date                 date,
                 tb_screen                JSONB,
+                is_viral_load_at_start_of_art BOOLEAN,
+                viral_load_at_start_of_art    DOUBLE PRECISION,
+                date_of_viral_load_at_start_of_art  date,
                 CONSTRAINT pk_hiv_art_clinical PRIMARY KEY (id)
                 );
 
@@ -249,6 +252,7 @@
                 refill_period          INTEGER,
                 delivery_point         VARCHAR(255),
                 dsd_model              VARCHAR(255),
+                archived                INTEGER,
                 CONSTRAINT pk_hiv_art_pharmacy PRIMARY KEY (id)
                 );
 
@@ -275,6 +279,7 @@
                 type                VARCHAR(255),
                 uuid                VARCHAR(255),
                 data                JSONB,
+                archived            INTEGER,
                 CONSTRAINT pk_hiv_observation PRIMARY KEY (id)
                 );
 

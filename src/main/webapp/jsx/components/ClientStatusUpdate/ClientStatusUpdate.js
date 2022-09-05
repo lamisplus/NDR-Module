@@ -167,7 +167,7 @@ const ClientStatusUpdate = (props) => {
               .then(response => {
                   setSaving(false);                  
                   toast.success("Client Status Update Successfully!");
-                  props.setActiveContent('recent-history')
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {
@@ -207,6 +207,7 @@ const ClientStatusUpdate = (props) => {
                                 id="hivStatus"
                                 value={values.hivStatus}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value="">Select</option>
@@ -231,6 +232,7 @@ const ClientStatusUpdate = (props) => {
                                 value={objValues.statusDate}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             /> 
                             {errors.statusDate !=="" ? (
@@ -247,6 +249,7 @@ const ClientStatusUpdate = (props) => {
                                 id="trackOutcome"
                                 value={objValues.trackOutcome}
                                 onChange={handleInputChangeOut}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>
@@ -263,7 +266,7 @@ const ClientStatusUpdate = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="participant_id">Date of Tracked</Label>
+                            <Label for="participant_id">Date Tracked</Label>
                            
                             <Input
                                 type="date"
@@ -272,6 +275,7 @@ const ClientStatusUpdate = (props) => {
                                 value={objValues.trackDate}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             /> 
                             {errors.trackDate !=="" ? (
@@ -292,6 +296,7 @@ const ClientStatusUpdate = (props) => {
                                 value={objValues.agreedDate}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             /> 
                             {errors.agreedDate !=="" ? (
@@ -308,6 +313,7 @@ const ClientStatusUpdate = (props) => {
                                 id="reasonForInterruption"
                                 value={objValues.reasonForInterruption}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>
@@ -334,6 +340,7 @@ const ClientStatusUpdate = (props) => {
                                 id="causeOfDeath"
                                 value={objValues.causeOfDeath}
                                 onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>

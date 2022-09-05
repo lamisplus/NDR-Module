@@ -65,10 +65,12 @@ const EAC = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
+
                 setLoading(false)
                 setEacList(response.data); 
                 setEacObj(response.data) 
                 const responseObj = response.data.filter((x)=> x.status !=='Completed') 
+                console.log(responseObj)
                 if(responseObj<1) {
                     setHideFirst(false)
                     setHideSecond(false)
@@ -79,8 +81,8 @@ const EAC = (props) => {
                     setHideThird(false)
                 }else if(responseObj[0].status==='Second'){
                     setHideFirst(true)
-                    setHideSecond(true)
-                    setHideThird(false)
+                    setHideSecond(false)
+                    setHideThird(true)
                 } else if(responseObj[0].status==='Completed'){
                     setHideFirst(true)
                     setHideSecond(false)

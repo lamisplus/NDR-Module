@@ -29,6 +29,13 @@ public class RegimenController {
         return ResponseEntity.ok (repository.findAll ());
     }
 
+
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Regimen> getRegimen(@PathVariable("id") Long id) {
+        return ResponseEntity.ok (regimenService.getRegimenBy (id));
+    }
+
     @GetMapping(value = "/types/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Regimen>> getRegimensByTypeId(@PathVariable("id") Long id) {
         return ResponseEntity.ok (regimenService.getRegimenByTypeId (id));
