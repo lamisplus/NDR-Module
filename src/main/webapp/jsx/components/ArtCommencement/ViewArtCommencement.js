@@ -66,10 +66,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ArtCommencement = (props) => {
-    //const patientObj = props.patientObj;
+    const patientObj = props.patientObj;
     //let history = useHistory();
     //console.log(props.activeContent.id)
     let gender=""
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
     const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -410,6 +411,7 @@ const ArtCommencement = (props) => {
                                 id="visitDate"
                                 onChange={handleInputChange}
                                 value={objValues.visitDate}
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 disabled={props.activeContent.actionType==='update' ? false :true}
@@ -638,6 +640,7 @@ const ArtCommencement = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </div> */}
+                        <div className="row">
                         <div className=" mb-3 col-md-4">
                             <FormGroup>
                             <Label >Body Weight</Label>
@@ -665,8 +668,7 @@ const ArtCommencement = (props) => {
                                 <span className={classes.error}>{errors.bodyWeight}</span>
                             ) : "" }
                             </FormGroup>
-                        </div>
-                        
+                        </div>                        
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label >Height</Label>
@@ -705,34 +707,6 @@ const ArtCommencement = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Blood Pressure</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="number"
-                                    name="systolic"
-                                    id="systolic"
-                                    min="90"
-                                    max="2240"
-                                    onChange={handleInputChangeVitalSignDto}
-                                    value={vital.systolic}
-                                    onKeyUp={handleInputValueCheckSystolic}
-                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
-                                    disabled={props.activeContent.actionType==='update' ? false :true}
-                                />
-                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                    systolic(mmHg)
-                                </InputGroupText>
-                            </InputGroup>
-                            {vitalClinicalSupport.systolic !=="" ? (
-                                <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                            ) : ""}
-                            {errors.systolic !=="" ? (
-                                <span className={classes.error}>{errors.systolic}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
                         {vital.bodyWeight!=="" && vital.height!=="" && (
                             <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
@@ -752,12 +726,35 @@ const ArtCommencement = (props) => {
                                 </InputGroup>                
                                 </FormGroup>
                             </div>
-                            )}
-                        <div className="form-group mb-3 col-md-4">
+                        )}
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-8">
                             <FormGroup>
                             <Label >Blood Pressure</Label>
-                            
                             <InputGroup> 
+                                <Input 
+                                    type="number"
+                                    name="systolic"
+                                    id="systolic"
+                                    min="90"
+                                    max="2240"
+                                    onChange={handleInputChangeVitalSignDto}
+                                    value={vital.systolic}
+                                    onKeyUp={handleInputValueCheckSystolic}
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
+                                    disabled={props.activeContent.actionType==='update' ? false :true}
+                                />
+                                {vitalClinicalSupport.systolic !=="" ? (
+                                <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                                ) : ""}
+                                {errors.systolic !=="" ? (
+                                    <span className={classes.error}>{errors.systolic}</span>
+                                ) : "" }
+                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                    systolic(mmHg)
+                                </InputGroupText>
+      
                                 <Input 
                                     type="text"
                                     name="diastolic"
@@ -771,14 +768,15 @@ const ArtCommencement = (props) => {
                                 <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                     diastolic(mmHg)
                                 </InputGroupText>
-                            </InputGroup>
-                            {vitalClinicalSupport.diastolic !=="" ? (
+                                {vitalClinicalSupport.diastolic !=="" ? (
                                 <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                            ) : ""}
-                            {errors.diastolic !=="" ? (
-                                <span className={classes.error}>{errors.diastolic}</span>
-                            ) : "" }
+                                ) : ""}
+                                {errors.diastolic !=="" ? (
+                                    <span className={classes.error}>{errors.diastolic}</span>
+                                ) : "" }
+                            </InputGroup>                            
                             </FormGroup>
+                        </div>
                         </div>
                         {gender==="Female" || gender==="Transgebder(Female)"? (
                             <>
@@ -844,7 +842,7 @@ const ArtCommencement = (props) => {
                     </div>
                     
                     {saving ? <Spinner /> : ""}
-                <br />
+                    <br />
                         {props.activeContent.actionType==='update' ? (
                             <>
                             <MatButton

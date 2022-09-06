@@ -11,7 +11,7 @@ import { token as token } from "../../../api";
 import { useHistory } from "react-router-dom";
 import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-
+import moment from "moment";
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import { Spinner } from "reactstrap";
 
@@ -69,43 +69,28 @@ const CervicalCancer = (props) => {
     const [tbStatus, setTbStatus] = useState([]);
     const [regimenLine, setRegimenLine] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
-    const [pregancyStatus, setPregancyStatus] = useState([]);
-    const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
                                                     personId:"",
-                                                    visitDate: "",
-                                                    viralLoad: "",
-                                                    whoStagingId:"",
-                                                    clinicalStageId:"",
-                                                    cd4: "",
-                                                    cd4Percentage: "",
-                                                    isCommencement: true,
-                                                    functionalStatusId: "",
-                                                    clinicalNote: "",
-                                                    hivEnrollmentId: "",
-                                                    vitalSignDto:"",
-                                                    facilityId:1,
-                                                    regimenTypeId: 0,
-                                                    regimenId:0                                                   
+                                                    screeningResult:"",
+                                                    screenMethod:"",
+                                                    screenType:"",
+                                                    dateOfScreening:"",                                                  
 
                                                 });
-
-    const [vital, setVitalSignDto]= useState({
-                                                bodyWeight: "",
-                                                diastolic:"",
-                                                encounterDate: "",
-                                                facilityId: 1,
-                                                height: "",
-                                                personId: "",
-                                                serviceTypeId: 1,
-                                                systolic:"" 
-                                            })
+    const [observation, setObservation]=useState({
+            data: {},
+            dateOfObservation: "yyyy-MM-dd",
+            facilityId: null,
+            personId: 0,
+            type: "Cervical cancer",
+            visitId: null
+    })
 
     useEffect(() => {
-        FunctionalStatus();
+        //FunctionalStatus();
         WhoStaging();
         TBStatus();
-        PreganacyStatus();
+        //PreganacyStatus();
         RegimenLine();
       }, []);
       //Get list of WhoStaging
@@ -138,50 +123,8 @@ const CervicalCancer = (props) => {
            });
        
         }
-         //Get list of RegimenLine
-         const RegimenType =(id)=>{
-            axios
-               .get(`${baseUrl}hiv/regimen/types/${id}`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setRegimenType(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-            }
-        //Get list of PREGANACY_STATUS
-      const PreganacyStatus =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setPregancyStatus(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-        }
-        ///GET LIST OF FUNCTIONAL%20_STATUS
-        async function FunctionalStatus() {
-            axios
-                .get(`${baseUrl}application-codesets/v2/FUNCTIONAL%20_STATUS`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-                )
-                .then((response) => {
-                    
-                    setFunctionalStatus(response.data);
-                    //setValues(response.data)
-                })
-                .catch((error) => {    
-                });        
-        }
+
+
         // TB STATUS
         const TBStatus =()=>{
             axios
@@ -201,28 +144,7 @@ const CervicalCancer = (props) => {
         const handleInputChange = e => {
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
-        const handleInputChangeVitalSignDto = e => {            
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
-        }
-        const handleSelecteRegimen = e => { 
-            let regimenID=  e.target.value
-            setObjValues ({...objValues, regimenId:regimenID});
-            RegimenType(regimenID)           
-            //setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
-        }
-        
-        const handleInputChange2 = e => {
-        let temp = { ...errors }
-        if(e.target.name === objValues.bodyWeight && e.target.value >3){
-            temp.name = objValues.bodyWeight ? "" : "Body Weight cannot be greater than 200."
-            setErrors({
-                ...temp
-                })    
-            return Object.values(temp).every(x => x == "")
-        }
-        //temp.name = details.name ? "" : "This field is required"
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        }
+
         //FORM VALIDATION
         const validate = () => {
             let temp = { ...errors }
@@ -237,14 +159,11 @@ const CervicalCancer = (props) => {
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {                  
             e.preventDefault();                     
-            objValues.personId = props.patientObj.id
-            vital.encounterDate = objValues.visitDate
-            vital.personId=props.patientObj.id
-            objValues.vitalSignDto= vital
-            objValues.hivEnrollmentId= props.patientObj.enrollment.id
-            objValues.clinicalStageId = objValues.whoStagingId 
             setSaving(true);
-            axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
+            observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+            observation.personId =patientObj.id
+            observation.data=objValues
+            axios.post(`${baseUrl}observation`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
@@ -281,10 +200,10 @@ const CervicalCancer = (props) => {
                             <Label for="artDate">Date of Screening * </Label>
                             <Input
                                 type="date"
-                                name="visitDate"
-                                id="visitDate"
+                                name="dateOfScreening"
+                                id="dateOfScreening"
                                 onChange={handleInputChange}
-                                value={objValues.visitDate}
+                                value={objValues.dateOfScreening}
                                 required
                             />
                             </FormGroup>
@@ -295,10 +214,10 @@ const CervicalCancer = (props) => {
                         <Label >Screen Type</Label>
                         <Input
                                 type="select"
-                                name="regimenId"
-                                id="regimenId"
-                                //value={objValues.regimenId}
-                                onChange={handleSelecteRegimen}
+                                name="screenType"
+                                id="screenType"
+                                value={objValues.screenType}
+                                onChange={handleInputChange}
                                 required
                                 >
                                     <option value="Select"> </option>
@@ -317,9 +236,9 @@ const CervicalCancer = (props) => {
                         <Label >Screening Method</Label>
                         <Input
                                 type="select"
-                                name="regimenTypeId"
-                                id="regimenTypeId"
-                                value={objValues.regimenTypeId}
+                                name="screenMethod"
+                                id="screenMethod"
+                                value={objValues.screenMethod}
                                 onChange={handleInputChange}
                                 required
                                 >
@@ -330,7 +249,7 @@ const CervicalCancer = (props) => {
                                             {value.description}
                                         </option>
                                     ))}
-                            </Input>
+                            </Input> 
                         {/* {errors.last_name !=="" ? (
                                 <span className={classes.error}>{errors.last_name}</span>
                             ) : "" } */}
@@ -342,9 +261,9 @@ const CervicalCancer = (props) => {
                             <Label >Screening Result *</Label>
                             <Input
                                 type="select"
-                                name="whoStagingId"
-                                id="whoStagingId"
-                                value={objValues.whoStagingId}
+                                name="screeningResult"
+                                id="screeningResult"
+                                value={objValues.screeningResult}
                                 onChange={handleInputChange}
                                 required
                                 >

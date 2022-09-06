@@ -32,7 +32,7 @@ let refillPeriodValue=null
 
 const Pharmacy = (props) => {
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);

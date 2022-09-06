@@ -1646,6 +1646,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
+                                        min={basicInfo.dob}
                                         max={objValues.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
@@ -1780,6 +1781,32 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
+                                {hideTargetGroup==="false" ? (
+                                <div className="form-group mb-3 col-md-6">
+                                    <FormGroup>
+                                    <Label >Target Group *</Label>
+                                    <Input
+                                        type="select"
+                                        name="targetGroupId"
+                                        id="targetGroupId"
+                                        value={objValues.targetGroupId}
+                                        onChange={handleInputChange}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        //disabled={locationState.actionType==='update'? false : true}
+                                        >
+                                        <option value=""> Select</option>                    
+                                                {kP.map((value) => (
+                                                    <option key={value.id} value={value.id}>
+                                                        {value.display}
+                                                    </option>
+                                                ))}
+                                    </Input>
+                                    {errors.targetGroupId !=="" ? (
+                                        <span className={classes.error}>{errors.targetGroupId}</span>
+                                        ) : "" }
+                                    </FormGroup>
+                                </div>
+                                ) : ""}
                                 <div className="form-group mb-3 col-md-3">
                                     
                                     <div className="form-check custom-checkbox ml-1 ">
@@ -1821,32 +1848,7 @@ const UserRegistration = (props) => {
                                         ""
                                     }
                                 </div>
-                                {hideTargetGroup==="false" ? (
-                                <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Target Group *</Label>
-                                    <Input
-                                        type="select"
-                                        name="targetGroupId"
-                                        id="targetGroupId"
-                                        value={objValues.targetGroupId}
-                                        onChange={handleInputChange}
-                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        //disabled={locationState.actionType==='update'? false : true}
-                                        >
-                                        <option value=""> Select</option>                    
-                                                {kP.map((value) => (
-                                                    <option key={value.id} value={value.id}>
-                                                        {value.display}
-                                                    </option>
-                                                ))}
-                                    </Input>
-                                    {errors.targetGroupId !=="" ? (
-                                        <span className={classes.error}>{errors.targetGroupId}</span>
-                                        ) : "" }
-                                    </FormGroup>
-                                </div>
-                                ) : ""}
+                                
                             
                             </div>
                                 </div>
