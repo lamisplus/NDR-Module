@@ -27,6 +27,7 @@ import 'react-phone-input-2/lib/style.css'
 import { getValue } from "@syncfusion/ej2-base";
 import  './patient.css'
 // import Form from 'react-bootstrap/Form';
+import {  Modal } from "react-bootstrap";
 
 
 
@@ -155,7 +156,8 @@ const UserRegistration = (props) => {
      const [ovcEnrolled, setOvcEnrolled] = useState(false);
      //Input fields to hidden base on some conditions
      const [hideTargetGroup, setHideTargetGroup]= useState("false");
-    
+     const [open, setOpen] = React.useState(false)
+     const toggle = () => setOpen(!open);
     const locationState = location.state;
     let patientId = null;
     let patientObj = {};
@@ -392,7 +394,9 @@ const UserRegistration = (props) => {
             setBasicInfo({...basicInfo, age:  ""});
         }
         setBasicInfo({...basicInfo, dob: e.target.value});
-        
+        if(basicInfo.age!=='' && basicInfo.age>=60){
+            toggle()
+        }
     }
     const handleDateOfBirthChange = (e) => {
         if (e.target.value == "Actual") {
@@ -403,7 +407,9 @@ const UserRegistration = (props) => {
     }
     const handleAgeChange = (e) => {
         if (!ageDisabled && e.target.value) {
-            
+            if(e.target.value!=='' && e.target.value>=60){
+                toggle()
+            }
             const currentDate = new Date();
             currentDate.setDate(15);
             currentDate.setMonth(5);
@@ -949,7 +955,7 @@ const UserRegistration = (props) => {
                                                                 type="radio"
                                                                 value="Estimated"
                                                                 name="dateOfBirth"
-                                                                disabled
+                                                                //disabled
                                                                 onChange={(e) => handleDateOfBirthChange(e)}
                                                                 style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                             /> Estimated
@@ -966,6 +972,7 @@ const UserRegistration = (props) => {
                                                         type="date"
                                                         name="dob"
                                                         id="dob"
+                                                        min="1940-01-01"
                                                         max={today}
                                                         value={basicInfo.dob}
                                                         onChange={handleDobChange}
@@ -1066,7 +1073,7 @@ const UserRegistration = (props) => {
                                                     <Label for="patientId">National Identity Number (NIN)  </Label>
                                                     <input
                                                         className="form-control"
-                                                        type="text"
+                                                        type="number"
                                                         name="nin"
                                                         id="nin"
                                                         
@@ -1619,6 +1626,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
+                                        min={basicInfo.dob}
                                         max={objValues.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
@@ -1750,6 +1758,31 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
+                                {hideTargetGroup==="false" ? (
+                                <div className="form-group mb-3 col-md-6">
+                                    <FormGroup>
+                                    <Label >Target Group *</Label>
+                                    <Input
+                                        type="select"
+                                        name="targetGroupId"
+                                        id="targetGroupId"
+                                        value={objValues.targetGroupId}
+                                        onChange={handleInputChange}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        >
+                                        <option value=""> Select</option>                    
+                                                {kP.map((value) => (
+                                                    <option key={value.id} value={value.id}>
+                                                        {value.display}
+                                                    </option>
+                                                ))}
+                                    </Input>
+                                    {errors.targetGroupId !=="" ? (
+                                        <span className={classes.error}>{errors.targetGroupId}</span>
+                                        ) : "" }
+                                    </FormGroup>
+                                </div>
+                                ) : ""}
                                 <div className="form-group mb-3 col-md-3">
                                     
                                     <div className="form-check custom-checkbox ml-1 ">
@@ -1789,31 +1822,7 @@ const UserRegistration = (props) => {
                                         ""
                                     }
                                 </div>
-                                {hideTargetGroup==="false" ? (
-                                <div className="form-group mb-3 col-md-6">
-                                    <FormGroup>
-                                    <Label >Target Group *</Label>
-                                    <Input
-                                        type="select"
-                                        name="targetGroupId"
-                                        id="targetGroupId"
-                                        value={objValues.targetGroupId}
-                                        onChange={handleInputChange}
-                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                        >
-                                        <option value=""> Select</option>                    
-                                                {kP.map((value) => (
-                                                    <option key={value.id} value={value.id}>
-                                                        {value.display}
-                                                    </option>
-                                                ))}
-                                    </Input>
-                                    {errors.targetGroupId !=="" ? (
-                                        <span className={classes.error}>{errors.targetGroupId}</span>
-                                        ) : "" }
-                                    </FormGroup>
-                                </div>
-                                ) : ""}
+                                
                             
                             </div>
                                 </div>
@@ -1852,6 +1861,22 @@ const UserRegistration = (props) => {
                     </div>
                 </CardContent>
             </Card>
+            <Modal show={open} toggle={toggle} className="fade" size="sm"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered backdrop="static">
+             <Modal.Header >
+            <Modal.Title id="contained-modal-title-vcenter">
+                Notification!
+            </Modal.Title>
+            </Modal.Header>
+                <Modal.Body>
+                    <h4>Are you Sure of the Age entered?</h4>
+                    
+                </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={toggle} style={{backgroundColor:"#014d88", color:"#fff"}}>Yes</Button>
+            </Modal.Footer>
+            </Modal>
         </>
     );
 };

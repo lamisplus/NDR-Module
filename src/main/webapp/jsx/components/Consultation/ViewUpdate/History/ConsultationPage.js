@@ -521,7 +521,8 @@ const ClinicVisit = (props) => {
                         <div className="form-group mb-3 col-md-6">
 
                         </div>
-                        <div className="mb-3 col-md-6">
+                        <div className="row">
+                        <div className="mb-3 col-md-4">
                             <FormGroup>
                             <FormLabelName >Body Weight</FormLabelName>
 
@@ -550,8 +551,7 @@ const ClinicVisit = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
-
-                        <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <FormLabelName >Height</FormLabelName>
                             <InputGroup>
@@ -592,7 +592,7 @@ const ClinicVisit = (props) => {
                             </FormGroup>
                         </div>
                         {vital.bodyWeight!=="" && vital.height!=="" && (
-                        <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-3 col-md-4">
                         <FormGroup>
                             <FormLabelName >BMI</FormLabelName>
                             
@@ -611,7 +611,9 @@ const ClinicVisit = (props) => {
                             </FormGroup>
                         </div>
                         )}
-                        <div className="form-group mb-3 col-md-6">
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-8">
                             <FormGroup>
                             <FormLabelName >Blood Pressure</FormLabelName>
                             <InputGroup>
@@ -630,25 +632,13 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 disabled={!enableUpdate}
                                 />
-
-                            </InputGroup>
-                            {vitalClinicalSupport.systolic !=="" ? (
+                               {vitalClinicalSupport.systolic !=="" ? (
                                 <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                            ) : ""}
-                            {errors.systolic !=="" ? (
-                                <span className={classes.error}>{errors.systolic}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <FormLabelName >Blood Pressure</FormLabelName>
-
-                            <InputGroup>
-                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                diastolic(mmHg)
-                                </InputGroupText>
-                                <Input
+                              ) : ""}
+                              {errors.systolic !=="" ? (
+                                  <span className={classes.error}>{errors.systolic}</span>
+                              ) : "" }
+                              <Input
                                 type="text"
                                 name="diastolic"
                                 id="diastolic"
@@ -658,15 +648,19 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 disabled={!enableUpdate}
                                 />
-
-                            </InputGroup>
-                            {vitalClinicalSupport.diastolic !=="" ? (
+                                {vitalClinicalSupport.diastolic !=="" ? (
                                 <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                            ) : ""}
-                            {errors.diastolic !=="" ? (
-                                <span className={classes.error}>{errors.diastolic}</span>
-                            ) : "" }
+                                  ) : ""}
+                                  {errors.diastolic !=="" ? (
+                                      <span className={classes.error}>{errors.diastolic}</span>
+                                  ) : "" }
+                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                diastolic(mmHg)
+                                </InputGroupText>
+                            </InputGroup>
+                           
                             </FormGroup>
+                        </div>
                         </div>
                         </div>
                         <Label as='a' color='grey' style={{width:'106%', height:'35px'}} ribbon>

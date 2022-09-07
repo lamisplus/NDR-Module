@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 const Laboratory = (props) => {
     let visitId=""
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -160,11 +160,11 @@ const Laboratory = (props) => {
         setTests ({...tests,  labTestGroupId: e.target.value});
         const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
         setTest(getTestList[0].labTests)
-        if(e.target.value==='4'){            
-            setVlRequired(true)
-        }else{
-            setVlRequired(false) 
-        }
+        // if(e.target.value==='4'){            
+        //     setVlRequired(true)
+        // }else{
+        //     setVlRequired(false) 
+        // }
     }
     const handleInputChangeObject = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
@@ -176,15 +176,21 @@ const Laboratory = (props) => {
     }
     const handleInputChangeTest = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
+        
         if(e.target.value==="16"){
             setShowVLIndication(true)
+            setVlRequired(true)
+            setErrors({...temp, viralLoadIndication:""})
+            
             setTests ({...tests,  labTestId: e.target.value});
         }else{
             setShowVLIndication(false)
+            setVlRequired(false) 
             setTests ({...tests,  labTestId: e.target.value});
         }
         //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
     }
+
     const addOrder = e => {  
         console.log(errors) 
         if(validate()){
@@ -322,7 +328,7 @@ const Laboratory = (props) => {
                                     name="dateAssayed"
                                     id="dateAssayed"
                                     value={tests.dateAssayed}
-                                    min={tests.dateResultReceived}
+                                    min={tests.sampleCollectionDate}
                                     onChange={handleInputChange}
                                     //min={tests.sampleCollectionDate}
                                     max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
@@ -548,16 +554,16 @@ function TestOrdersList({
     const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
     const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
     const vLIndication=vLIndicationObj.length>0 ?
-    vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : ""
+    vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : {}
 
     return (
             <tr>
-                <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
+                <th>{testGroupName.groupName=='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
                 <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>
                 <th>{order.sampleCollectionDate}</th>
                 <th>{order.dateAssayed}</th>
                 <th>{order.dateResultReceived}</th>
-                <th>{vLIndication.display}</th>
+                <th>{vLIndication && vLIndication.display ? vLIndication.display : ""}</th>
                 <th>{order.result}</th>
                 <th></th>
                 <th >

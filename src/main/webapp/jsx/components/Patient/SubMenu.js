@@ -25,7 +25,6 @@ function SubMenu(props) {
         gender =props.patientObj && props.patientObj.sex ? props.patientObj.sex : null
         setGenderType(gender==="Female" ? true : false)
     }, [props.patientObj]);
-    console.log(props.patientObj)
      //Get list of RegimenLine
      const Observation =()=>{
         axios
@@ -115,7 +114,7 @@ function SubMenu(props) {
                 (
                 <Menu size="mini" color={"grey"} inverted >
                     <Menu.Item onClick={() => onClickHome()} disabled> Home</Menu.Item>
-                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} > Initial Clinic Evaluation</Menu.Item>)}
+                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} > Initial Evaluation</Menu.Item>)}
                     <Menu.Item onClick={() => onClickConsultation()} disabled> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
@@ -154,10 +153,9 @@ function SubMenu(props) {
                )
                :
                (
-                <Menu size="mini" color={"black"} inverted>
-                    
+                <Menu size="mini" color={"black"} inverted>                    
                     <Menu.Item onClick={() => onClickHome()} disabled={patientCurrentStatus} > Home</Menu.Item>
-                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} disabled={patientCurrentStatus} >Clinic Evaluation</Menu.Item>)}
+                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} disabled={patientCurrentStatus} >Initial Evaluation</Menu.Item>)}
                     <Menu.Item onClick={() => onClickConsultation()} disabled={patientCurrentStatus}> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled={patientCurrentStatus}> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled={patientCurrentStatus}> Pharmacy</Menu.Item>
@@ -172,8 +170,7 @@ function SubMenu(props) {
                                 <Dropdown.Item onClick={() => loadPrEPDiscontinuationsInterruptions(patientObj)}><span  style={{color:"#fff",}}>PrEP Discontinuations & Interruptions</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPCommencementForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Commencement</span></Dropdown.Item>
                             </Dropdown.Menu>
-                    </Dropdown>
-                            
+                    </Dropdown>                            
                     {props.patientObj.sex==='Female' ? 
                         (
                             <>

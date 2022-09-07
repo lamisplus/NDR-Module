@@ -72,8 +72,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ClinicVisit = (props) => {
-  const patientObj = props.patientObj ? props.patientObj : {}
-  console.log(props.patientObj.artCommence.visitDate)
+  let patientObj = props.patientObj ? props.patientObj : {}
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -172,6 +171,8 @@ const ClinicVisit = (props) => {
     VitalSigns();
     GetPatientObj();
     ClinicVisitList();
+    PatientDetaild();
+    //hiv/patient/3
   }, []);
      //GET LIST Drug Refill
      async function ClinicVisitList() {
@@ -188,8 +189,8 @@ const ClinicVisit = (props) => {
               setLoading(false)  
           });        
     }
-  //Check for the last Vital Signs
-  const VitalSigns = () => {
+    //Check for the last Vital Signs
+    const VitalSigns = () => {
     axios
       .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
         { headers: { "Authorization": `Bearer ${token}` } }
@@ -205,7 +206,20 @@ const ClinicVisit = (props) => {
       .catch((error) => {
         //console.log(error);
       });
-  }
+    }
+    //Check for the Patient Object
+    const PatientDetaild = () => {
+      axios
+        .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
+            patientObj=response.data
+        })
+        .catch((error) => {
+          //console.log(error);
+        });
+      }
     //Get The updated patient objeect
     const GetPatientObj = () => {
       axios
@@ -409,6 +423,7 @@ const ClinicVisit = (props) => {
 
     )
       .then(response => {
+        PatientDetaild();
         setSaving(false);
         toast.success("Clinic Visit save successful");
         props.setActiveContent({...props.activeContent, route:'recent-history'})
@@ -605,7 +620,7 @@ const ClinicVisit = (props) => {
                     value={vital.encounterDate}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     onChange={handleInputChangeVitalSignDto}
-                    min={props.patientObj.enrollment.dateOfRegistration}
+                    min={props.patientObj && props.patientObj.artCommence ? props.patientObj.artCommence.visitDate : null}
                     max={moment(new Date()).format("YYYY-MM-DD")}
                     required
                   />
@@ -635,7 +650,8 @@ const ClinicVisit = (props) => {
                   </div>
                 )}
               </div>
-              <div className="mb-3 col-md-6">
+              <div className="row">
+              <div className="mb-3 col-md-4">
                 <FormGroup>
                   <FormLabelName >Body Weight</FormLabelName>
 
@@ -663,8 +679,7 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
-
-              <div className="form-group mb-3 col-md-6">
+              <div className="form-group mb-3 col-md-4">
                 <FormGroup>
                   <FormLabelName >Height</FormLabelName>
                   <InputGroup>
@@ -703,64 +718,8 @@ const ClinicVisit = (props) => {
                   ) : "" }
                 </FormGroup>
               </div>
-              
-              <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Blood Pressure</FormLabelName>
-                  <InputGroup>
-                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                      systolic(mmHg)
-                    </InputGroupText>
-                    <Input
-                      type="number"
-                      name="systolic"
-                      id="systolic"
-                      min="90"
-                      max="2240"
-                      onChange={handleInputChangeVitalSignDto}
-                      value={vital.systolic}
-                      onKeyUp={handleInputValueCheckSystolic}
-                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                    />
-
-                  </InputGroup>
-                  {vitalClinicalSupport.systolic !=="" ? (
-                    <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                  ) : ""}
-                  {errors.systolic !=="" ? (
-                      <span className={classes.error}>{errors.systolic}</span>
-                  ) : "" }
-                </FormGroup>
-              </div>
-              <div className="form-group mb-3 mt-2 col-md-6">
-                <FormGroup>
-                  <FormLabelName ></FormLabelName>
-
-                  <InputGroup>
-                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                      diastolic(mmHg)
-                    </InputGroupText>
-                    <Input
-                      type="text"
-                      name="diastolic"
-                      id="diastolic"
-                      onChange={handleInputChangeVitalSignDto}
-                      value={vital.diastolic}
-                      onKeyUp={handleInputValueCheckDiastolic}
-                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                    />
-
-                  </InputGroup>
-                  {vitalClinicalSupport.diastolic !=="" ? (
-                    <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                  ) : ""}
-                  {errors.diastolic !=="" ? (
-                      <span className={classes.error}>{errors.diastolic}</span>
-                  ) : "" }
-                </FormGroup>
-              </div>
               {vital.bodyWeight!=="" && vital.height!=="" && (
-              <div className="form-group mb-3 col-md-6">
+              <div className="form-group mb-3 col-md-4">
                <FormGroup>
                   <FormLabelName >BMI</FormLabelName>
                   
@@ -778,6 +737,56 @@ const ClinicVisit = (props) => {
                 </FormGroup>
               </div>
               )}
+              </div>
+              <div className="row">
+              <div className="form-group mb-3 col-md-10">
+                <FormGroup>
+                  <FormLabelName >Blood Pressure</FormLabelName>
+                  <InputGroup>
+                    
+                    <Input
+                      type="number"
+                      name="systolic"
+                      id="systolic"
+                      min="90"
+                      max="2240"
+                      onChange={handleInputChangeVitalSignDto}
+                      value={vital.systolic}
+                      onKeyUp={handleInputValueCheckSystolic}
+                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                    />
+                    {vitalClinicalSupport.systolic !=="" ? (
+                    <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                    ) : ""}
+                    {errors.systolic !=="" ? (
+                        <span className={classes.error}>{errors.systolic}</span>
+                    ) : "" }
+                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                      systolic(mmHg)
+                    </InputGroupText>
+                    <Input
+                      type="text"
+                      name="diastolic"
+                      id="diastolic"
+                      onChange={handleInputChangeVitalSignDto}
+                      value={vital.diastolic}
+                      onKeyUp={handleInputValueCheckDiastolic}
+                      style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                    />
+                     {vitalClinicalSupport.diastolic !=="" ? (
+                    <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
+                    ) : ""}
+                    {errors.diastolic !=="" ? (
+                        <span className={classes.error}>{errors.diastolic}</span>
+                    ) : "" }
+                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                    diastolic(mmHg)
+                  </InputGroupText>
+                  </InputGroup>
+                </FormGroup>
+              </div>
+
+              </div>
             </div>
             <Label as='a' color='black'  style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>CONSULTATION</h4>
@@ -881,13 +890,13 @@ const ClinicVisit = (props) => {
               <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
             </Label>
             <br /><br />
-            <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} artStartDate={props.patientObj.artCommence.visitDate}/>
+            <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} artStartDate={props.patientObj.enrollment.dateOfRegistration}/>
             <br />
             <Label as='a' color='pink' style={{width:'106%', height:'35px'}}  ribbon>
             <h4 style={{color:'#fff'}}>ADR </h4>
             </Label>
             <br /><br />
-            <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={props.patientObj.artCommence.visitDate} />
+            <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={props.patientObj.enrollment.dateOfRegistration} />
             <br />
             <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>TB SCREENING</h4>

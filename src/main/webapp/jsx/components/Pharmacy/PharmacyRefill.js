@@ -31,7 +31,7 @@ let refillPeriodValue=null
 
 const Pharmacy = (props) => {
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
@@ -264,7 +264,7 @@ console.log(selectedOption)
                     id="visitDate"
                     onChange={handleInputChange}
                     value={objValues.visitDate}
-                    min={moment(enrollDate).format("YYYY-MM-DD") }
+                    min={enrollDate}
                     max= {moment(new Date()).format("YYYY-MM-DD") }
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
