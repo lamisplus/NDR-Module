@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 
+import javax.persistence.Basic;
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -52,4 +54,20 @@ public class HivEnrollmentDto implements Serializable {
     private Long tbStatusId;
     @NotNull
     private Long visitId;
+
+    //new
+    private String houseHoldNumber;
+    @Basic
+    private String referredToOVCPartner;
+    @Basic
+    private String referredFromOVCPartner;
+    @PastOrPresent
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateReferredToOVCPartner;
+    @Basic
+    @PastOrPresent
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateReferredFromOVCPartner;
 }
