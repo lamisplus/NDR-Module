@@ -7,7 +7,7 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
-import javax.ejb.Local;
+
 import javax.persistence.*;
 import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>, Serializable {
+public class HivEnrollment extends HivAuditEntity implements Persistable<Long>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -115,7 +115,7 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
     @PastOrPresent
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate  dateReferredFromOVCPartner;
+    private LocalDate dateReferredFromOVCPartner;
 
     @Basic
     @Column(name = "date_of_lpm")
