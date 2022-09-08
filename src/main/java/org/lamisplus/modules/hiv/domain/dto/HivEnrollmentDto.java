@@ -57,6 +57,7 @@ public class HivEnrollmentDto implements Serializable {
 
     //new
     private String houseHoldNumber;
+    private String careEntryPointOther;
     @Basic
     private String referredToOVCPartner;
     @Basic

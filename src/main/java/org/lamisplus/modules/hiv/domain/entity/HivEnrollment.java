@@ -93,6 +93,10 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
     private String houseHoldNumber;
 
     @Basic
+    @Column(name = "care_entry_point_other")
+    private String careEntryPointOther;
+
+    @Basic
     @Column(name = "referred_to_OVCPartner")
     private String referredToOVCPartner;
 
