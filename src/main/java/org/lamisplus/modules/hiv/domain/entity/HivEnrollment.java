@@ -7,7 +7,9 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
+
 import javax.persistence.*;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -20,7 +22,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>, Serializable {
+public class HivEnrollment extends HivAuditEntity implements Persistable<Long>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -82,10 +84,39 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
     @Basic
     @Column(name = "facility_name")
     private String facilityName;
-
     @Basic
     @Column(name = "ovc_number")
     private String ovcNumber;
+
+    @Basic
+    @Column(name = "house_hold_number")
+    private String houseHoldNumber;
+
+    @Basic
+    @Column(name = "care_entry_point_other")
+    private String careEntryPointOther;
+
+    @Basic
+    @Column(name = "referred_to_OVCPartner")
+    private String referredToOVCPartner;
+
+    @Basic
+    @Column(name = "referred_from_OVCPartner")
+    private String referredFromOVCPartner;
+
+    @PastOrPresent
+    @Column(name = "date_referred_to_OVCPartner")
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateReferredToOVCPartner;
+
+    @Basic
+    @Column(name = "date_referred_from_OVCPartner")
+    @PastOrPresent
+    @Convert(converter = LocalDateConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateReferredFromOVCPartner;
+
     @Basic
     @Column(name = "date_of_lpm")
     @Convert(converter = LocalDateConverter.class)
@@ -98,8 +129,6 @@ public class HivEnrollment extends  HivAuditEntity  implements Persistable<Long>
     @Basic
     @Column(name = "tb_status_id")
     private Long tbStatusId;
-
-
 
 
     @Override

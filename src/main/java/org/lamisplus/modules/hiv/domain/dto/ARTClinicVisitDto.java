@@ -28,7 +28,6 @@ public class ARTClinicVisitDto implements Serializable {
     private LocalDate visitDate;
     private String cd4;
     private Long cd4Percentage;
-    @JsonIgnore
     private Boolean isCommencement;
     private Long functionalStatusId;
     private String clinicalNote;

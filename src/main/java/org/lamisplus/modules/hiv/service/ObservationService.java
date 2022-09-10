@@ -27,8 +27,8 @@ public class ObservationService {
     private final PersonRepository personRepository;
 
     private final CurrentUserOrganizationService currentUserOrganizationService;
-
-    private final ArtCommenceService artCommenceService;
+    
+   private final HandleHIVVisitEncounter handleHIVisitEncounter;
 
     public ObservationDto createAnObservation(ObservationDto observationDto) {
         Long personId = observationDto.getPersonId ();
@@ -38,7 +38,7 @@ public class ObservationService {
             throw new RecordExistException (Observation.class, "type", observationDto.getType ());
         }
         observationDto.setFacilityId (orgId);
-        Visit visit = artCommenceService.processAndCreateVisit (personId);
+        Visit visit = handleHIVisitEncounter.processAndCreateVisit (personId, observationDto.getDateOfObservation());
         if (visit != null) {
             observationDto.setVisitId (visit.getId ());
         }

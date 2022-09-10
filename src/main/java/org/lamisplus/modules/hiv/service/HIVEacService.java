@@ -20,8 +20,8 @@ public class HIVEacService {
 
     private final HIVEacRepository hivEacRepository;
     private final PersonRepository personRepository;
-
-    private final ArtCommenceService artCommenceService;
+    
+    private final HandleHIVVisitEncounter handleHIVisitEncounter;
 
     private final CurrentUserOrganizationService currentUserOrganizationService;
 
@@ -32,7 +32,7 @@ public class HIVEacService {
         hivEac.setUuid (UUIDUtils.random ().toString ());
         Person person = getPerson (personId);
         hivEac.setPerson (person);
-        Visit visit = artCommenceService.processAndCreateVisit (personId);
+        Visit visit = handleHIVisitEncounter.processAndCreateVisit (personId, dto.getDateOfEac1());
         hivEac.setVisit (visit);
         hivEac.setFacilityId (currentUserOrganizationService.getCurrentUserOrganization ());
         dto.setStatus ("First");
