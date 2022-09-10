@@ -134,6 +134,7 @@ public class ArtClinicVisitService {
 				.personId(visit.getPerson().getId())
 				.hivEnrollmentId(visit.getHivEnrollment().getId())
 				.adherenceLevel(visit.getAdherenceLevel())
+				.isCommencement(visit.getIsCommencement())
 				.adheres(visit.getAdheres())
 				.clinicalNote(visit.getClinicalNote())
 				.facilityId(visit.getFacilityId())
