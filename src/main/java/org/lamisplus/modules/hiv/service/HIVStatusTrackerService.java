@@ -101,7 +101,7 @@ public class HIVStatusTrackerService {
 		}
 		int months = Period.between(statusDate.get(), LocalDate.now()).getMonths();
 		log.info("month {}", months);
-		if (months > 1) {
+		if (months >= 1) {
 			return "IIT";
 		}
 		return "ACTIVE ON ART";
