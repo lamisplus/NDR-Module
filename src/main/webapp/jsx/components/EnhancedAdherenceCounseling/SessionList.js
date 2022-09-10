@@ -22,6 +22,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import {  Card,CardBody,} from 'reactstrap';
+import ButtonMui from "@material-ui/core/Button";
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
@@ -30,7 +31,7 @@ import "@reach/menu-button/styles.css";
 import 'semantic-ui-css/semantic.min.css';
 import "react-widgets/dist/css/react-widgets.css";
 import { toast} from "react-toastify";
-import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
+import StopEac from './StopEac'
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -99,6 +100,8 @@ const useStyles = makeStyles(theme => ({
 const LabHistory = (props) => {    
     const [orderList, setOrderList] = useState([])
     const [loading, setLoading] = useState(true)
+    const [artModal, setArtModal] = useState(false);
+    const Arttoggle = () => setArtModal(!artModal);
 
     useEffect(() => {
         LabOrders()
@@ -138,36 +141,58 @@ const LabHistory = (props) => {
           }
       }
 
-      const onClickHome = (row, actionType) =>{  
+    const AddNewSession = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
-         props.setActiveContent({...props.activeContent, route:'first-eac', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+         props.setActiveContent({...props.activeContent, route:'new-eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
      }
-
-     const LoadDeletePage = (row) =>{  
-      axios.delete(`${baseUrl}laboratory/rde-orders/tests/${row.id}`,
-              { headers: {"Authorization" : `Bearer ${token}`} }
-          )
-          .then((response) => {
-              toast.success("Record Deleted Successfully");
-              LabOrders()
-          })
-          .catch((error) => {
-              if(error.response && error.response.data){
-                  let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                  toast.error(errorMessage);
-                }
-                else{
-                  toast.error("Something went wrong. Please try again...");
-                }
-          }); 
-   }
-
+     const LoadEacOutCome = (row, actionType) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+         props.setActiveContent({...props.activeContent, route:'eac-outcome', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+     }
+     const loadEacStop =()=> {
+            setArtModal(!artModal)
+    }
    const LabObj = [{"id":16,"orderId":13,"patientId":9,"visitId":0,"labTestGroupId":4,"labTestGroupName":"Others","labTestId":16,"labTestName":"Viral Load","labNumber":"788","sampleCollectionDate":"2022-09-08","dateAssayed":"2022-09-09","result":"78","dateResultReceived":"2022-09-09","comments":"good","viralLoadIndication":297,"viralLoadIndicationName":"Targeted Monitoring"}]
-
-
+   
   return (
     <div>
-            <br/>
+            <ButtonMui
+                variant="contained"
+                color="primary"
+                className=" float-end ms-2 mr-2 mt-2"
+                //startIcon={<FaUserPlus size="10"/>}
+                //startIcon={<TiArrowBack  />}
+                onClick={() => loadEacStop()}
+                style={{backgroundColor:"#000", color:'#fff', height:'35px'}}
+
+            >
+                <span style={{ textTransform: "capitalize" }}>Stop EAC</span>
+            </ButtonMui>
+            <ButtonMui
+                variant="contained"
+                color="primary"
+                className=" float-end ms-2 mr-2 mt-2"
+                //startIcon={<FaUserPlus size="10"/>}
+                //startIcon={<TiArrowBack  />}
+                onClick={LoadEacOutCome}
+                style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
+
+            >
+                <span style={{ textTransform: "capitalize" }}>Outcome</span>
+            </ButtonMui>
+            <ButtonMui
+                variant="contained"
+                color="primary"
+                className=" float-end ms-2 mr-2 mt-2 "
+                //startIcon={<FaUserPlus size="10"/>}
+                //startIcon={<TiArrowBack  />}
+                onClick={AddNewSession}
+                style={{backgroundColor:"#014D88", color:'#fff', height:'35px'}}
+
+            >
+                <span style={{ textTransform: "capitalize" }}>Add Session</span>
+            </ButtonMui>
+            <br/> <br/> <br/>
         
             <MaterialTable
             icons={tableIcons}
@@ -213,7 +238,7 @@ const LabHistory = (props) => {
                           debounceInterval: 400
                       }}
             />
-       
+       <StopEac  toggle={Arttoggle} showModal={artModal}  />
     </div>
   );
 }

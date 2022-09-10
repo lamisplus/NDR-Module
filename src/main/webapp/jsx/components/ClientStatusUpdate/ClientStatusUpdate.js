@@ -50,10 +50,10 @@ const useStyles = makeStyles(theme => ({
 const ClientStatusUpdate = (props) => {
 
     const patientObj = props.patientObj;
+    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    //let history = useHistory();
+    console.log(patientObj)
     const classes = useStyles()
-    const [hideConfirmDeath, setHideConfirmDeath] = useState(true);
-    const [hideReturn, setHideReturn] = useState(true);
-    const [trackingOutCome, setTrankingOutCome] = useState([])
     const [hivStatus, setHivStatus] = useState([]);
     const [reasonForInteruption, setReasonForInteruption] = useState([]);
     const [causeDeath, setCauseDeath] = useState([]);
@@ -65,8 +65,11 @@ const ClientStatusUpdate = (props) => {
                                                 personId: "",
                                                 reasonForInterruption: "",
                                                 statusDate: null,
-                                                trackDate:null,
-                                                trackOutcome: "",
+                                                dateConfirmedDied:"",
+                                                reasonForStoppingTreatment:"",
+                                                dateStopped:"",
+                                                dateArtTransferOut:"",
+                                                datePreArtTransferOut:"",
                                                 visitId: null
                                             });
     const [saving, setSaving] = useState(false);
@@ -75,7 +78,7 @@ const ClientStatusUpdate = (props) => {
         CauseDeath();
         ReasonForInteruption();
         HIVStatus();
-        TrackingOutcome();
+        //TrackingOutcome();
       }, []);
 
     //Get list of HIV_STATUS
@@ -86,22 +89,7 @@ const ClientStatusUpdate = (props) => {
            )
            .then((response) => {
                
-               setHivStatus(response.data.filter((x)=> x.display!=='Lost to Follow Up' && x.display!=='ART Transfer In'));
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-    }
-    //Tracking Outcome HIV_STATUS_TXML
-    const TrackingOutcome =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/HIV_STATUS_TXML`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setTrankingOutCome(response.data);
+               setHivStatus(response.data.filter((x)=> x.display!=='Lost to Follow Up' && x.display!=='ART Transfer In' && x.display!=='ART Start' && x.display!=='ART Restart' && x.display!=='Pre-ART Transfer In' && x.display!==patientObj.currentStatus && x.display!=='HIV Exposed Status Unknown' && x.display!=='HIV Negative' && x.display!=='HIV+ non ART'));
            })
            .catch((error) => {
            //console.log(error);
@@ -138,19 +126,7 @@ const ClientStatusUpdate = (props) => {
            });
        
     }
-     const handleInputChangeOut = e => {
-
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        }
     const handleInputChange = e => {
-        console.log(e.target.value)
-        if(e.target.value==='Died (Confirmed)'){
-            setHideConfirmDeath(false)
-            setHideReturn(false)
-        }else{
-            setHideConfirmDeath(true)
-            setHideReturn(true)
-        }
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
           
@@ -205,7 +181,7 @@ const ClientStatusUpdate = (props) => {
                                 type="select"
                                 name="hivStatus"
                                 id="hivStatus"
-                                value={values.hivStatus}
+                                value={objValues.hivStatus}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -231,6 +207,7 @@ const ClientStatusUpdate = (props) => {
                                 id="statusDate"
                                 value={objValues.statusDate}
                                 onChange={handleInputChange}
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -240,20 +217,85 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+
+                        {objValues.hivStatus==='ART Transfer Out' && (
+                        <>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Tracking Outcome</Label>
+                            <Label for="">Date Transfer Out</Label>                           
+                            <Input
+                                type="date"
+                                name="dateArtTransferOut"
+                                id="dateArtTransferOut"
+                                value={objValues.dateArtTransferOut}
+                                onChange={handleInputChange}
+                                min={enrollDate}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            /> 
+                            
+                            </FormGroup>
+                        </div>
+                        
+                        </>
+                        )}
+                        {objValues.hivStatus==='Pre-ART Transfer Out' && (
+                        <>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date Transfer Out</Label>                           
+                            <Input
+                                type="date"
+                                name="datePreArtTransferOut"
+                                id="datePreArtTransferOut"
+                                value={objValues.datePreArtTransferOut}
+                                onChange={handleInputChange}
+                                min={enrollDate}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            /> 
+                            
+                            </FormGroup>
+                        </div>
+                        
+                        </>
+                        )}
+                         {objValues.hivStatus==='Stopped Treatment' && (
+                        <>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date Stopped</Label>
+                           
+                            <Input
+                                type="date"
+                                name="dateStopped"
+                                id="dateStopped"
+                                value={objValues.dateStopped}
+                                onChange={handleInputChange}
+                                min={enrollDate}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            /> 
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Reason For Stopping Treatment</Label>
                             <Input
                                 type="select"
-                                name="trackOutcome"
-                                id="trackOutcome"
-                                value={objValues.trackOutcome}
-                                onChange={handleInputChangeOut}
+                                name="reasonForStoppingTreatment"
+                                id="reasonForStoppingTreatment"
+                                value={objValues.reasonForStoppingTreatment}
+                                onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                                 >
                                 <option value=""> Select</option>
-                                {trackingOutCome.map((value) => (
+                                {causeDeath.map((value) => (
                                 <option key={value.id} value={value.display}>
                                     {value.display}
                                 </option>
@@ -264,73 +306,11 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="participant_id">Date Tracked</Label>
-                           
-                            <Input
-                                type="date"
-                                name="trackDate"
-                                id="trackDate"
-                                value={objValues.trackDate}
-                                onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            /> 
-                            {errors.trackDate !=="" ? (
-                                <span className={classes.error}>{errors.trackDate}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        {hideReturn && (
-                        <>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="participant_id">Date Agreed to Return</Label>
-                            
-                            <Input
-                                type="date"
-                                name="agreedDate"
-                                id="agreedDate"
-                                value={objValues.agreedDate}
-                                onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            /> 
-                            {errors.agreedDate !=="" ? (
-                                <span className={classes.error}>{errors.agreedDate}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Reason for Interruption</Label>
-                            <Input
-                                type="select"
-                                name="reasonForInterruption"
-                                id="reasonForInterruption"
-                                value={objValues.reasonForInterruption}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                                >
-                                <option value=""> Select</option>
-                                {reasonForInteruption.map((value) => (
-                                <option key={value.id} value={value.display}>
-                                    {value.display}
-                                </option>
-                                ))}
-                            </Input>
-                            {errors.reasonForInterruption !=="" ? (
-                                <span className={classes.error}>{errors.reasonForInterruption}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
+                        
                         </>
                         )}
-                        {!hideConfirmDeath && (
+                        {objValues.hivStatus==='Died (Confirmed)' && (
+                        <>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Cause of Death</Label>
@@ -355,6 +335,25 @@ const ClientStatusUpdate = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="participant_id">Date Confirmed Died</Label>
+                           
+                            <Input
+                                type="date"
+                                name="dateConfirmedDied"
+                                id="dateConfirmedDied"
+                                value={objValues.dateConfirmedDied}
+                                onChange={handleInputChange}
+                                min={enrollDate}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            /> 
+                            
+                            </FormGroup>
+                        </div>
+                        </>
                         )}
                     </div>
                    

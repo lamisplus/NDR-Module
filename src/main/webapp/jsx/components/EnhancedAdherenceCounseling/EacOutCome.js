@@ -3,6 +3,7 @@ import { Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
+import ButtonMui from "@material-ui/core/Button";
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
@@ -88,7 +89,11 @@ const EAC = (props) => {
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }          
+    }   
+    const BackToSession = (row, actionType) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+         props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+     }       
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
@@ -121,37 +126,34 @@ const EAC = (props) => {
     }
 
   return (      
-        <div>                   
+        <div>  
+                          
             <Card >
                 <CardBody>
+
                 <form >
                     <div className="row">
-                    <h2>Enhanced Adherence Counselling - Outcome </h2>
+                    <h2>EAC - Outcome 
+                    <ButtonMui
+                        variant="contained"
+                        color="primary"
+                        className=" float-end ms-2 mr-2 mt-2 "
+                        //startIcon={<FaUserPlus size="10"/>}
+                        //startIcon={<TiArrowBack  />}
+                        onClick={BackToSession}
+                        style={{backgroundColor:"#014D88", color:'#fff', height:'35px'}}
+
+                        >
+                            <span style={{ textTransform: "capitalize" }}>Back To EAC Session</span>
+                    </ButtonMui>
+                    </h2>
                         <br/>
                         <br/>
                         <br/>
-                        {/* <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Date of Third EAC </Label>
-                            <Input
-                                type="date"
-                                name="dateOfEac3"
-                                id="dateOfEac3"
-                                value={objValues.dateOfEac3}
-                                onChange={handleInputChange}
-                                min={objValues.dateOfEac2}
-                                //max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.dateOfEac3 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac3}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div> */}
+                        
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Last Viral Load & Date</Label>
+                                <Label >Repeat Viral Load Result</Label>
                                 <Input
                                     type="select"
                                     name="reasonForDefaulting"
@@ -171,6 +173,24 @@ const EAC = (props) => {
                                 </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date Result Recieved </Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac3"
+                                id="dateOfEac3"
+                                value={objValues.dateOfEac3}
+                                onChange={handleInputChange}
+                                min={objValues.dateOfEac2}
+                                //max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled
+                            />
+                           </FormGroup> 
+                        </div>
+                        <hr/>
+                        <h3>Outcome</h3>
+                        <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Outcome </Label>
                                 <Input
@@ -179,14 +199,11 @@ const EAC = (props) => {
                                     id="reasonForDefaulting"
                                     //value={attempt.reasonForDefaulting}
                                     //onChange={hadleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                                    
                                 >
                                  <option value="">Select</option> 
                                  <option value="Suppressed">Suppressed</option> 
-                                 <option value="Unsuppressed">Unsuppressed</option> 
-                                 <option value="Counseling (grp)">1200 m/l - 2022/09/22</option>                               
-
+                                 <option value="Unsuppressed">Unsuppressed</option>                                  
                                 </Input>
                                   
                                 </FormGroup>
@@ -208,9 +225,7 @@ const EAC = (props) => {
                                  <option value="Switch regimen">Switch regimen</option> 
                                  <option value="Substitute regimen">Substitute regimen</option>
                                  <option value="Refer to doctor for further management">Refer to doctor for further management</option>                               
-
-                                </Input>
-                                  
+                                </Input>                                 
                                 </FormGroup>
                         </div>
                         {objValues.plan==='Switch regimen' && (<>
@@ -310,7 +325,7 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Switch Regimen </Label>
+                                <Label >Substitute Regimen </Label>
                                 <Input
                                     type="select"
                                     name="reasonForDefaulting"
@@ -330,7 +345,7 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Switch Date</Label>
+                            <Label for="">Substitute Date</Label>
                             <Input
                                 type="date"
                                 name="dateOfEac1"
@@ -349,7 +364,7 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Reason for switching Regimen</Label>
+                            <Label for="">Reason for Substitute Regimen</Label>
                             <Input
                                 type="textarea"
                                 name="note"

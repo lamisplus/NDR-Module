@@ -41,7 +41,9 @@ import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
 import Biometrics from './Biometric'
 import TrackingForm from './../TrackingForm/Index'
 import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
-import FinalEAC from './../EnhancedAdherenceCounseling/FinalEAC'
+import EACOUTCOME from '../EnhancedAdherenceCounseling/EacOutCome'
+import EACSESSION from './../EnhancedAdherenceCounseling/SessionList'
+import NEWEACSESSION from './../EnhancedAdherenceCounseling/NewSessions'
 
 const styles = theme => ({
   root: {
@@ -132,7 +134,9 @@ function PatientCard(props) {
           {activeContent.route==='pharmacy-update' &&( <PharmacyRefillUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='tracking-form' &&( <TrackingForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='first-eac' &&( <FirstEacPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='final-eac' &&( <FinalEAC patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='eac-outcome' &&( <EACOUTCOME patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='eac-session' &&( <EACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='new-eac-session' &&( <NEWEACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

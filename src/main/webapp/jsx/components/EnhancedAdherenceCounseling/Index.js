@@ -29,10 +29,8 @@ const LaboratoryModule = (props) => {
                     onSelect={(k) => setKey(k)}
                     className="mb-3"
                 >
-                  <Tab eventKey="checked-in" title="EAC ">                   
-                  <ViralLoadList patientObj={patientObj} setActiveContent={props.setActiveContent}/>
-                  </Tab>
-                  <Tab eventKey="home" title="EAC SESSIONS ">                   
+                 
+                  <Tab eventKey="home" title="EAC LIST">                   
                     <ViralLoadList patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>
                                  

@@ -70,7 +70,6 @@ const ArtCommencement = (props) => {
     const patientObj = props.patientObj;
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     //let history = useHistory();
-    console.log(props.patientObj.enrollment.pregnancyStatusId)
     let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);

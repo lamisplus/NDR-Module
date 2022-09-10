@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MaterialTable from 'material-table';
 import axios from "axios";
-
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { token as token, url as baseUrl } from "./../../../api";
 import { forwardRef } from 'react';
 import 'semantic-ui-css/semantic.min.css';
@@ -138,9 +138,9 @@ const LabHistory = (props) => {
           }
       }
 
-      const onClickHome = (row, actionType) =>{  
+    const onClickHome = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
-         props.setActiveContent({...props.activeContent, route:'first-eac', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+         props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
      }
 
      const LoadDeletePage = (row) =>{  
@@ -182,7 +182,7 @@ const LabHistory = (props) => {
                 { title: "Lab Number", field: "labNumber", filtering: false },
                 { title: " Result Date ", field: "sampleCollectionDate", filtering: false },
                 { title: "Result", field: "dateAssayed", filtering: false },
-                { title: "EAC Status", field: "dateResultReceived", filtering: false },
+                { title: "Status", field: "dateResultReceived", filtering: false },
               
                 { title: "Action", field: "Action", filtering: false },
 
@@ -194,44 +194,44 @@ const LabHistory = (props) => {
                   testName: row.labTestName,
                   labNumber: row.labNumber,
                   sampleCollectionDate: row.sampleCollectionDate,    
-                  dateAssayed: row.dateAssayed,
-                  dateResultReceived: row.dateResultReceived, 
+                  dateAssayed: "1200 copies/ml",
+                  dateResultReceived: "incomplete", 
                   viralLoadIndication: row.viralLoadIndicationName,
                   Action: 
-                  // (
-                  //   <ButtonGroup variant="contained" 
-                  //       aria-label="split button"
-                  //       style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
-                  //       size="large"
-                  //       onClick={()=>onClickHome(row)}
-                  //   >
-                  //   <Button
-                  //   color="primary"
-                  //   size="small"
-                  //   aria-label="select merge strategy"
-                  //   aria-haspopup="menu"
-                  //   style={{backgroundColor:'rgb(153, 46, 98)'}}
-                  //   >
-                  //       <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
-                  //   </Button>
-                  //   </ButtonGroup>
-                  // ), 
-                  <div>
-                            <Menu.Menu position='right'  >
-                            <Menu.Item >
-                                <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
-                                <Dropdown item text='Action'>
+                  (
+                    <ButtonGroup variant="contained" 
+                        aria-label="split button"
+                        style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
+                        size="large"
+                        onClick={()=>onClickHome(row, 'view')}
+                    >
+                    <Button
+                    color="primary"
+                    size="small"
+                    aria-label="select merge strategy"
+                    aria-haspopup="menu"
+                    style={{backgroundColor:'rgb(153, 46, 98)'}}
+                    >
+                       Eac Session
+                    </Button>
+                    </ButtonGroup>
+                  ), 
+                  // <div>
+                  //           <Menu.Menu position='right'  >
+                  //           <Menu.Item >
+                  //               <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                  //               <Dropdown item text='Action'>
 
-                                <Dropdown.Menu style={{ marginTop:"10px", }}>
-                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'view')}>Enter EAC</Dropdown.Item>
-                                   {/* <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
-                                    <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item> */}
-                                </Dropdown.Menu>
-                            </Dropdown>
-                                </Button>
-                            </Menu.Item>
-                            </Menu.Menu>
-                         </div>
+                  //               <Dropdown.Menu style={{ marginTop:"10px", }}>
+                  //                  <Dropdown.Item  onClick={()=>onClickHome(row, 'view')}> EAC SESSIONS</Dropdown.Item>
+                  //                  {/* <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
+                  //                   <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item> */}
+                  //               </Dropdown.Menu>
+                  //           </Dropdown>
+                  //               </Button>
+                  //           </Menu.Item>
+                  //           </Menu.Menu>
+                  //        </div>
                   }))}
             
                         options={{
