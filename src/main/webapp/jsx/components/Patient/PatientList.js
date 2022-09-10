@@ -32,7 +32,7 @@ import { Label } from 'semantic-ui-react'
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-import { FaUserPlus } from "react-icons/fa";
+//import { FaUserPlus } from "react-icons/fa";
 import {TiArrowForward} from 'react-icons/ti'
 
 
@@ -152,20 +152,6 @@ const Patients = (props) => {
   return (
     <div>
 
-         <Link to={"register-patient"}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    className=" float-end"
-                    startIcon={<FaUserPlus size="10"/>}
-                    style={{backgroundColor:'#014d88'}}
-                >
-                    <span style={{ textTransform: "capitalize" }}>New Patient</span>
-                </Button>
-                </Link>
-                <br/><br/>
-                <br/>
-        
             <MaterialTable
             icons={tableIcons}
               title="Find Patient "
@@ -186,10 +172,34 @@ const Patients = (props) => {
               isLoading={loading}
               data={ patientList.map((row) => ({
                   //Id: manager.id,
-                    name:row.firstName + " " + row.surname,
+                    name:row.currentStatus!== "Not Enrolled" ?
+                        (
+                           <>
+                            <Link
+                            to ={{
+                                pathname: "/patient-history",
+                                state: { patientObj: row  }
+                            }}
+
+                            title={"Click to view patient dashboard"}
+                            > {row.firstName + " " + row.surname}
+                            </Link>
+                            </>
+                        ):
+                        (
+                            <>
+                             <Link
+                                to={{
+                                    pathname: "/enroll-patient",
+                                    state: { patientId : row.id, patientObj: row }
+                                }}
+ 
+                             title={"Enroll Patient"}
+                             > {row.firstName + " " + row.surname}
+                             </Link>
+                             </>
+                         ),
                     hospital_number: getHospitalNumber(row.identifier),
-                    //address: row.address,
-                   //phone_number:  row.phone,
                     gender:row && row.sex ? row.sex : "",
                     age: (row.dateOfBirth === 0 ||
                         row.dateOfBirth === undefined ||

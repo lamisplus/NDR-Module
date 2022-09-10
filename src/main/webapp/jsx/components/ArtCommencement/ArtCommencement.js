@@ -70,12 +70,14 @@ const ArtCommencement = (props) => {
     const patientObj = props.patientObj;
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     //let history = useHistory();
+    console.log(props.patientObj.enrollment.pregnancyStatusId)
     let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
     const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
     const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
     const [heightValue, setHeightValue]= useState("cm")
+
     const classes = useStyles()
     const [clinicalStage, setClinicalStage] = useState([])
     const [values, setValues] = useState([]);
@@ -399,7 +401,7 @@ const ArtCommencement = (props) => {
                                             id="visitDate"
                                             onChange={handleInputChange}
                                             value={objValues.visitDate}
-                                            min={moment(enrollDate).format("YYYY-MM-DD") }
+                                            min={enrollDate}
                                             max= {moment(new Date()).format("YYYY-MM-DD") }
                                             
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -417,6 +419,7 @@ const ArtCommencement = (props) => {
                                             type="number"
                                             name="cd4"
                                             id="cd4"
+                                            min={0}
                                             onChange={handleInputChange}
                                             value={objValues.cd4}
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -433,6 +436,7 @@ const ArtCommencement = (props) => {
                                         type="number"
                                         name="cd4Percentage"
                                         id="cd4Percentage"
+                                        min={0}
                                         onChange={handleInputChange}
                                         value={objValues.cd4Percentage}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -547,6 +551,7 @@ const ArtCommencement = (props) => {
                                     </div>
                                     </>
                                     )}
+
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >WHO Staging</Label>
@@ -601,6 +606,52 @@ const ArtCommencement = (props) => {
                                     </div>
                                     {objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-8"></div>)}
                                     {!objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-4"></div>)}
+                                    {props.patientObj.sex==="Female" ? (
+                                        <>
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >Pregnancy Status</Label>
+                                            <Input
+                                                type="select"
+                                                name="address"
+                                                id="address"
+                                                //disabled
+                                                onChange={handleInputChange}
+                                                value="72"
+                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                                required
+
+                                            >
+                                                <option value=""> Select</option>
+                        
+                                                {pregancyStatus.map((value) => (
+                                                    <option key={value.id} value={value.id}>
+                                                        {value.display}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                            </FormGroup>
+                                        </div>
+                                        {props.patientObj.enrollment && props.patientObj.enrollment.pregnancyStatusId!=='72' && (
+                                        <div className="form-group mb-3 col-md-4">
+                                            <FormGroup>
+                                            <Label >LMP</Label>
+                                            <Input
+                                                type="date"
+                                                name="LMPDate"
+                                                id="LMPDate"
+                                                onChange={handleInputChange}
+                                                value={props.patientObj.enrollment.dateOfLpm}
+                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                                required
+                                            />
+                                            </FormGroup>
+                                        </div>
+                                        )}
+                                        </>
+                                    ) :
+                                    ""
+                                    }
                                     {/* <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >TB Status</Label>
@@ -626,6 +677,7 @@ const ArtCommencement = (props) => {
                                             ) : "" }
                                         </FormGroup>
                                     </div> */}
+                                    <div className="row">
                                     <div className=" mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >Body Weight</Label>
@@ -652,8 +704,7 @@ const ArtCommencement = (props) => {
                                             <span className={classes.error}>{errors.bodyWeight}</span>
                                         ) : "" }
                                         </FormGroup>
-                                    </div>
-                                   
+                                    </div>                                   
                                     <div className="form-group mb-3 col-md-4">
                                         <FormGroup>
                                         <Label >Height</Label>
@@ -691,8 +742,7 @@ const ArtCommencement = (props) => {
                                         ) : "" }
                                         </FormGroup>
                                     </div>
-
-                                        <div className="form-group mb-3 col-md-4">
+                                    <div className="form-group mb-3 col-md-4">
                                             <FormGroup>
                                             <Label >BMI</Label>
                                             
@@ -708,8 +758,10 @@ const ArtCommencement = (props) => {
                                             />
                                             </InputGroup>                
                                             </FormGroup>
-                                        </div>
-                                    <div className="form-group mb-3 col-md-4">
+                                    </div>
+                                    </div>
+                                    <div className="row">
+                                    <div className="form-group mb-3 col-md-8">
                                         <FormGroup>
                                         <Label >Blood Pressure</Label>
                                         <InputGroup> 
@@ -724,89 +776,42 @@ const ArtCommencement = (props) => {
                                                 onKeyUp={handleInputValueCheckSystolic}
                                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
                                             />
+                                            {vitalClinicalSupport.systolic !=="" ? (
+                                            <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                                            ) : ""}
+                                            {errors.systolic !=="" ? (
+                                                <span className={classes.error}>{errors.systolic}</span>
+                                            ) : "" }
                                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                                 systolic(mmHg)
                                             </InputGroupText>
-                                        </InputGroup>
-                                        {vitalClinicalSupport.systolic !=="" ? (
-                                            <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                                        ) : ""}
-                                        {errors.systolic !=="" ? (
-                                            <span className={classes.error}>{errors.systolic}</span>
-                                        ) : "" }
-                                        </FormGroup>
-                                    </div>
-
-                                    <div className="form-group mb-3 mt-2 col-md-4">
-                                        <FormGroup>
-                                        <Label ></Label>
-                                        
-                                        <InputGroup> 
-                                            <Input 
-                                                type="text"
+                                             <Input 
+                                                type="number"
                                                 name="diastolic"
                                                 id="diastolic"
+                                                min={0}
+                                                max={140}
                                                 onChange={handleInputChangeVitalSignDto}
                                                 value={vital.diastolic}
                                                 onKeyUp={handleInputValueCheckDiastolic} 
                                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                                            />
+                                             />
+                                             {vitalClinicalSupport.diastolic !=="" ? (
+                                                <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
+                                                ) : ""}
+                                                {errors.diastolic !=="" ? (
+                                                    <span className={classes.error}>{errors.diastolic}</span>
+                                                ) : "" }
                                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                                diastolic(mmHg)
+                                            diastolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
-                                        {vitalClinicalSupport.diastolic !=="" ? (
-                                            <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                                        ) : ""}
-                                        {errors.diastolic !=="" ? (
-                                            <span className={classes.error}>{errors.diastolic}</span>
-                                        ) : "" }
+
                                         </FormGroup>
                                     </div>
-                                  
-                                    {props.patientObj.sex==="Female" ? (
-                                        <>
-                                        <div className="form-group mb-3 col-md-4">
-                                            <FormGroup>
-                                            <Label >Pregnancy Status</Label>
-                                            <Input
-                                                type="select"
-                                                name="address"
-                                                id="address"
-                                                onChange={handleInputChange}
-                                                value={objValues.address}
-                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                                required
 
-                                            >
-                                                <option value=""> Select</option>
-                        
-                                                {pregancyStatus.map((value) => (
-                                                    <option key={value.id} value={value.id}>
-                                                        {value.display}
-                                                    </option>
-                                                ))}
-                                            </Input>
-                                            </FormGroup>
-                                        </div>
-                                        <div className="form-group mb-3 col-md-4">
-                                            <FormGroup>
-                                            <Label >LMP</Label>
-                                            <Input
-                                                type="date"
-                                                name="LMPDate"
-                                                id="LMPDate"
-                                                onChange={handleInputChange}
-                                                value={values.address}
-                                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                                required
-                                            />
-                                            </FormGroup>
-                                        </div>
-                                        </>
-                                    ) :
-                                    ""
-                                    }
+                                    </div>
+
                                     <div className="form-group mb-3 col-md-12">
                                         <FormGroup>
                                         <Label >Clinical Notes</Label>

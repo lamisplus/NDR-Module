@@ -2,7 +2,6 @@ import React,{useState} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
-import ButtonMui from "@material-ui/core/Button";
 import 'semantic-ui-css/semantic.min.css';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -21,7 +20,7 @@ import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinua
 import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
 import PrEPVisit from './../PrepServices/PrEPVisit';
 import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
-import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/Index';
+import EnhancedAdherenceCounseling from '../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index'
@@ -40,8 +39,9 @@ import ThirdEac from './../EnhancedAdherenceCounseling/ViewEAC/ThirdEac'
 import ViewLaboratory from './../Laboratory/ViewLaboratory'
 import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
 import Biometrics from './Biometric'
-
-import { TiArrowBack } from 'react-icons/ti'
+import TrackingForm from './../TrackingForm/Index'
+import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
+import FinalEAC from './../EnhancedAdherenceCounseling/FinalEAC'
 
 const styles = theme => ({
   root: {
@@ -85,28 +85,19 @@ function PatientCard(props) {
     const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-    console.log(activeContent)
+    
   return (
     <div className={classes.root}>
+      <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
+			<ol className="breadcrumb">
+				<li className="breadcrumb-item active"><h4> <Link to={"/"} >HIV /</Link> Patient Dashboard</h4></li>
+			</ol>
+		  </div>
       <Card >
         <CardContent>
             <PatientCardDetail patientObj={patientObj} setArt={setArt} setActiveContent={setActiveContent}/>            
             <SubMenu patientObj={patientObj} art={art} setActiveContent={setActiveContent}/>
             <br/>
-            <Link to={"/"} >
-            <ButtonMui
-                variant="contained"
-                color="primary"
-                className=" float-end ms-2"
-                //startIcon={<FaUserPlus size="10"/>}
-                startIcon={<TiArrowBack  />}
-                style={{backgroundColor:"rgb(153, 46, 98)", color:'#fff', height:'35px'}}
-
-            >
-                <span style={{ textTransform: "capitalize" }}>Back</span>
-            </ButtonMui>
-          </Link>
-          <br/><br/>
           {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='biometrics' &&(<Biometrics patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='consultation' &&( <ClinicVisit patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
@@ -139,6 +130,9 @@ function PatientCard(props) {
           {activeContent.route==='completed-eac-history' &&( <ThirdEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='lab-view' &&( <ViewLaboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='pharmacy-update' &&( <PharmacyRefillUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='tracking-form' &&( <TrackingForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='first-eac' &&( <FirstEacPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='final-eac' &&( <FinalEAC patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

@@ -47,7 +47,6 @@ const ADR = (props) => {
        
         }
   const handAdrleInputChange = e => {
-    console.log(e.target.value)
     props.setAdrObj ({...props.adrObj,  [e.target.name]: e.target.value});
   }
    //Validations of the forms
@@ -70,14 +69,13 @@ const ADR = (props) => {
   /* Remove ADR  function **/
   const removeRelativeLocation = index => {       
       props.adrList.splice(index, 1);
-      props.setAdrList([...props.adrList]);
-     
+      props.setAdrList([...props.adrList]);     
   };
 
 
   return (
     <div>
-        <div className="row">
+      <div className="row">
         <div className="form-group mb-3 col-md-5">
             <FormGroup>
             <Label >ADR </Label>
@@ -156,7 +154,7 @@ const ADR = (props) => {
             :
             ""
         }       
-    </div>
+      </div>
     </div>
      
   );
