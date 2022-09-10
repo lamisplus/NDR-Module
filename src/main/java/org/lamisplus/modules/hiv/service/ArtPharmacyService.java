@@ -13,15 +13,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.controller.apierror.IllegalTypeException;
+import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
 import org.lamisplus.modules.hiv.domain.dto.RegimenRequestDto;
 import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenRepository;
+import org.lamisplus.modules.patient.domain.dto.EncounterResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
+import org.lamisplus.modules.patient.service.EncounterService;
+import org.lamisplus.modules.patient.service.VisitService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +47,12 @@ public class ArtPharmacyService {
 	private final CurrentUserOrganizationService organizationUtil;
 	private final HandleHIVVisitEncounter handleHIVisitEncounter;
 	
-	private  static  final String REGIMEN = "regimens";
+	private final HIVStatusTrackerService hIVStatusTrackerService;
+	
+	private final EncounterService encounterService;
+	private final VisitService visitService;
+	
+	private static final String REGIMEN = "regimens";
 	
 	public RegisterArtPharmacyDto registerArtPharmacy(RegisterArtPharmacyDto dto) throws IOException {
 		Visit visit = handleHIVisitEncounter.processAndCreateVisit(dto.getPersonId(), dto.getVisitDate());
@@ -54,7 +63,22 @@ public class ArtPharmacyService {
 		artPharmacy.setUuid(UUID.randomUUID().toString());
 		artPharmacy.setVisit(visit);
 		artPharmacy.setArchived(0);
-		return convertEntityToRegisterDto(artPharmacyRepository.save(artPharmacy));
+		ArtPharmacy save = artPharmacyRepository.save(artPharmacy);
+		processAndSaveHIVStatus(dto);
+		processAndCheckoutHivVisit(dto.getPersonId(), visit);
+		return convertEntityToRegisterDto(save);
+	}
+	
+	
+	private void processAndCheckoutHivVisit(Long personId, Visit visit) {
+		List<EncounterResponseDto> nonHIVEncounters =
+				encounterService.getAllEncounterByPerson(personId).stream()
+						.filter(e -> e.getStatus().equalsIgnoreCase("PENDING") && !(e.getServiceCode().equalsIgnoreCase("hiv-code")))
+						.collect(Collectors.toList());
+		log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: "+ visit.getId());
+		if (nonHIVEncounters.isEmpty()) {
+			visitService.checkOutVisitById(visit.getId());
+		}
 	}
 	
 	public RegisterArtPharmacyDto updateArtPharmacy(Long id, RegisterArtPharmacyDto dto) throws IOException {
@@ -196,6 +220,15 @@ public class ArtPharmacyService {
 	@NotNull
 	private EntityNotFoundException getPersonEntityNotFoundException(Long personId) {
 		return new EntityNotFoundException(Person.class, "id ", "" + personId);
+	}
+	
+	private void processAndSaveHIVStatus(RegisterArtPharmacyDto dto) {
+		HIVStatusTrackerDto statusTracker = new HIVStatusTrackerDto();
+		statusTracker.setHivStatus("ART Start");
+		statusTracker.setStatusDate(dto.getVisitDate());
+		statusTracker.setVisitId(dto.getVisitId());
+		statusTracker.setPersonId(dto.getPersonId());
+		hIVStatusTrackerService.registerHIVStatusTracker(statusTracker);
 	}
 	
 	

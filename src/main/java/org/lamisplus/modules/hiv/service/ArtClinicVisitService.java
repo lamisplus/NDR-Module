@@ -40,7 +40,6 @@ public class ArtClinicVisitService {
 	
 	private final CurrentUserOrganizationService organizationUtil;
 	
-	private final ArtCommenceService artCommenceService;
 	
 	private final VitalSignRepository vitalSignRepository;
 	
