@@ -38,6 +38,11 @@ public class HivEnrollmentController {
     public ResponseEntity<List<HivPatientDto>> getHivPatient() {
         return ResponseEntity.ok (patientService.getHivPatients ());
     }
+    
+    @GetMapping(value = "patients/iit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<HivPatientDto>> getIItHivPatient() {
+        return ResponseEntity.ok (patientService.getIITHivPatients ());
+    }
 
     @PostMapping(value = "patient", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HivEnrollmentDto> registerHivPatient(@RequestBody HivPatientEnrollmentDto hivPatientEnrollmentDto) {
