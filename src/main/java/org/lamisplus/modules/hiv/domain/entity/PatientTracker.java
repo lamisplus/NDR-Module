@@ -41,6 +41,7 @@ public class PatientTracker extends HivAuditEntity implements Serializable, Pers
 	private String causeOfDeathOthers;
 	private String reasonForLossToFollowUpOthers;
 	private Integer archived;
+	@Column(name = "uuid", nullable = false, unique = true, updatable = false)
 	private String uuid;
 	@Type(type = "jsonb")
 	@Column(columnDefinition = "jsonb", name = "attempts")
@@ -61,6 +62,7 @@ public class PatientTracker extends HivAuditEntity implements Serializable, Pers
 	@ManyToOne
 	@JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
 	private Person person;
+	
 	public boolean isNew() {
 		return id == null;
 	}
