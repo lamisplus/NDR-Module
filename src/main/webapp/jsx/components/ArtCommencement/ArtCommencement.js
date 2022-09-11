@@ -70,7 +70,6 @@ const ArtCommencement = (props) => {
     const patientObj = props.patientObj;
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     //let history = useHistory();
-    console.log(props.patientObj.enrollment.pregnancyStatusId)
     let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
@@ -632,7 +631,7 @@ const ArtCommencement = (props) => {
                                             </Input>
                                             </FormGroup>
                                         </div>
-                                        {props.patientObj.enrollment && props.patientObj.enrollment.dateOfLpm!==null && (
+                                        {props.patientObj.enrollment && props.patientObj.enrollment.pregnancyStatusId!=='72' && (
                                         <div className="form-group mb-3 col-md-4">
                                             <FormGroup>
                                             <Label >LMP</Label>

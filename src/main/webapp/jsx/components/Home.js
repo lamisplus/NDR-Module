@@ -50,7 +50,10 @@ const Home = () => {
                   <Tab eventKey="home" title="Find Patients">                   
                     <Dashboard />
                   </Tab>
-                  <Tab eventKey="checked-in" title="Data Visualisation">                   
+                  <Tab eventKey="follow-up" title="Lost To Follow Up">                   
+                    <Dashboard />
+                  </Tab>
+                  <Tab eventKey="visualization" title="Data Visualisation">                   
                     <VisualisationHome />
                   </Tab>                    
                 </Tabs>

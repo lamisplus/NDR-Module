@@ -3,6 +3,7 @@ import { Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
+import ButtonMui from "@material-ui/core/Button";
 import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
@@ -65,7 +66,8 @@ const EAC = (props) => {
                                                 note: "",
                                                 personId: props.patientObj.id,
                                                 status: "",
-                                                visitId:""
+                                                visitId:"",
+                                                plan:""
                                             })
     useEffect(() => {
         EACHistory()
@@ -87,7 +89,11 @@ const EAC = (props) => {
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }          
+    }   
+    const BackToSession = (row, actionType) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+         props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+     }       
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
@@ -103,7 +109,7 @@ const EAC = (props) => {
                   props.setHideFirst(false)                 
                   props.setEacObj(response.data)
                   toast.success(" Save successful");
-                  props.setActiveContent({...props.activeContent, route:'final-eac'})
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })
               .catch(error => {
@@ -120,20 +126,55 @@ const EAC = (props) => {
     }
 
   return (      
-        <div>                   
+        <div>  
+                          
             <Card >
                 <CardBody>
+
                 <form >
                     <div className="row">
-                    <h2>Enhanced Adherence Counselling </h2>
+                    <h2>EAC - Outcome 
+                    <ButtonMui
+                        variant="contained"
+                        color="primary"
+                        className=" float-end ms-2 mr-2 mt-2 "
+                        //startIcon={<FaUserPlus size="10"/>}
+                        //startIcon={<TiArrowBack  />}
+                        onClick={BackToSession}
+                        style={{backgroundColor:"#014D88", color:'#fff', height:'35px'}}
+
+                        >
+                            <span style={{ textTransform: "capitalize" }}>Back To EAC Session</span>
+                    </ButtonMui>
+                    </h2>
                         <br/>
                         <br/>
                         <br/>
-                        <h4>Second EAC Date {objValues.dateOfEac2}</h4>
-                        <br/>
+                        
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Repeat Viral Load Result</Label>
+                                <Input
+                                    type="select"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Education"> 1001 m/l - 2022/09/22</option> 
+                                 <option value="Counseling (ind)">1004 m/l - 2022/09/22</option> 
+                                 <option value="Counseling (grp)">1200 m/l - 2022/09/22</option>                               
+
+                                </Input>
+                                  
+                                </FormGroup>
+                        </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date of Third EAC </Label>
+                            <Label for="">Date Result Recieved </Label>
                             <Input
                                 type="date"
                                 name="dateOfEac3"
@@ -143,130 +184,85 @@ const EAC = (props) => {
                                 min={objValues.dateOfEac2}
                                 //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled
                             />
-                            {errors.dateOfEac3 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac3}</span>
-                            ) : "" }
-                            </FormGroup>
+                           </FormGroup> 
                         </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Date of EAC </Label>
-                            <Input
-                                type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
-                                onChange={handleInputChange}
-                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-
+                        <hr/>
+                        <h3>Outcome</h3>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Adherence</Label>
+                                <Label >Outcome </Label>
                                 <Input
                                     type="select"
                                     name="reasonForDefaulting"
                                     id="reasonForDefaulting"
                                     //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    //onChange={hadleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Suppressed">Suppressed</option> 
+                                 <option value="Unsuppressed">Unsuppressed</option>                                  
+                                </Input>
+                                  
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Plan </Label>
+                                <Input
+                                    type="select"
+                                    name="plan"
+                                    id="plan"
+                                    value={objValues.plan}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
                                  <option value="">Select</option> 
-                                 <option value="Good">Good</option> 
-                                 <option value="Fair">Fair</option> 
-                                 <option value="Poor">Poor</option> 
-                                 
-                                </Input>
-                                 
-                        </FormGroup>
+                                 <option value="Remain on current regimen">Remain on current regimen</option> 
+                                 <option value="Switch regimen">Switch regimen</option> 
+                                 <option value="Substitute regimen">Substitute regimen</option>
+                                 <option value="Refer to doctor for further management">Refer to doctor for further management</option>                               
+                                </Input>                                 
+                                </FormGroup>
                         </div>
-
+                        {objValues.plan==='Switch regimen' && (<>
+                        <div className="row">
+                        <h4>Switch Regimen</h4>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Any missed pharmacy drug pick-ups?</Label>
+                                <Label >Current Regimen </Label>
                                 <Input
-                                    type="select"
+                                    type="text"
                                     name="reasonForDefaulting"
                                     id="reasonForDefaulting"
                                     //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    //onChange={hadleInputChangeAttempt}
+                                    disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Yes">Yes</option> 
-                                 <option value="No">No</option> 
-                                 
-                                </Input>
+                                />
                                 
-                        </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                                <FormGroup>
-                                <Label >Adherence</Label>
-                                <Input
-                                    type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Forgot">  Forgot</option> 
-                                 <option value="Knowledge/beliefs">Knowledge/beliefs</option> 
-                                 <option value="Side effects">Side effects</option> 
-                                 <option value="Physical illness">Physical illness</option>
-                                 <option value="Substance use">Substance use</option> 
-                                 <option value="Depression">Depression</option> 
-                                 <option value="Pill burden">Pill burden</option> 
-                                 <option value="Lost/ran out">Lost/ran out</option> 
-                                 <option value="Transport">Transport</option>
-                                 <option value="Child behavior/refusing Scheduling">Child behavior/refusing Scheduling</option>
-                                 <option value="Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma">Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma</option>
-                                 <option value="Others">Others</option>
-
-                                </Input>
                                   
                                 </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Intervention Services</Label>
+                                <Label >Switch Regimen </Label>
                                 <Input
                                     type="select"
                                     name="reasonForDefaulting"
                                     id="reasonForDefaulting"
                                     //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    //onChange={hadleInputChangeAttempt}
+                                    disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
                                  <option value="">Select</option> 
-                                 <option value="Education">  Education</option> 
-                                 <option value="Counseling (ind)">Counseling (ind)</option> 
-                                 <option value="Counseling (grp)">Counseling (grp)</option> 
-                                 <option value="Peer support">Peer support</option>
-                                 <option value="Treatment buddy"> Treatment buddy</option> 
-                                 <option value="Extended Drug pick-up">Extended Drug pick-up</option> 
-                                 <option value="Community ART Group">Community ART Group</option> 
-                                 <option value="Directly Observed Therapy">Directly Observed Therapy</option> 
-                                 <option value="Transport">Transport</option>
-                                 <option value="Child behavior/refusing Scheduling">Child behavior/refusing Scheduling</option>
-                                 <option value="Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma">Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma</option>
-                                 <option value="Others">Others</option>
+                                 
 
                                 </Input>
                                   
@@ -274,20 +270,7 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Referrals</Label>
-                            <Input
-                                type="text"
-                                name="note"
-                                id="note"
-                                value={objValues.note}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            />
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Follow Up Date</Label>
+                            <Label for="">Switch Date</Label>
                             <Input
                                 type="date"
                                 name="dateOfEac1"
@@ -306,7 +289,7 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Comments</Label>
+                            <Label for="">Reason for switching Regimen</Label>
                             <Input
                                 type="textarea"
                                 name="note"
@@ -318,7 +301,104 @@ const EAC = (props) => {
                             </FormGroup>
                         </div>
                         
-                    </div>
+                        </div>
+                        </>)}
+                        {objValues.plan==='Substitute regimen' && (<>
+                        <div className="row">
+                        <h4>Substitute Regimen</h4>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Current Regimen </Label>
+                                <Input
+                                    type="text"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={hadleInputChangeAttempt}
+                                    disabled
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                />
+                                
+                                  
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Substitute Regimen </Label>
+                                <Input
+                                    type="select"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={hadleInputChangeAttempt}
+                                    disabled
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 
+
+                                </Input>
+                                  
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Substitute Date</Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
+                                onChange={handleInputChange}
+                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Reason for Substitute Regimen</Label>
+                            <Input
+                                type="textarea"
+                                name="note"
+                                id="note"
+                                value={objValues.note}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            </FormGroup>
+                        </div>
+                        
+                        </div>
+                        </>)}
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Outcome Date</Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
+                                onChange={handleInputChange}
+                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>   
+                        </div>
+                        
                     
                     {saving ? <Spinner /> : ""}
                     <br />

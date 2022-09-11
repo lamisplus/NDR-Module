@@ -49,7 +49,7 @@ function SubMenu(props) {
         
         }
 
-    const loadAnc =(row)=> {
+    const loadEAC =(row)=> {
         props.setActiveContent({...props.activeContent, route:'counseling'})
     }
     const loadStatusUpdate =(row)=> {
@@ -91,8 +91,8 @@ function SubMenu(props) {
     const loadAncAncEnrollment =(row)=> {
         props.setActiveContent({...props.activeContent, route:'anc-enrollment'})
     }
-    const onClickChildConsultation =(row)=> {
-        props.setActiveContent({...props.activeContent, route:'child-consultation'})
+    const loadTrackingForm =(row)=> {
+        props.setActiveContent({...props.activeContent, route:'tracking-form'})
     }
     const loadLabourDelivery =(row)=> {
         props.setActiveContent({...props.activeContent, route:'labour-delivery'})
@@ -118,9 +118,11 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => onClickConsultation()} disabled> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
-                    <Menu.Item onClick={() => loadAnc(patientObj)} disabled> Enhanced Adherence Counselling</Menu.Item>
+                    <Menu.Item onClick={() => loadEAC(patientObj)} disabled> EAC</Menu.Item>
                     {!patientObj.mentalStatus && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} disabled>Mental Health Screening</Menu.Item>)}
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>
+                    
+                    <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     {/* <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)} disabled> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
@@ -159,10 +161,10 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => onClickConsultation()} disabled={patientCurrentStatus}> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled={patientCurrentStatus}> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled={patientCurrentStatus}> Pharmacy</Menu.Item>
-                    <Menu.Item onClick={() => loadAnc(patientObj)} disabled={patientCurrentStatus}> EAC</Menu.Item>
+                    <Menu.Item onClick={() => loadEAC(patientObj)} disabled={patientCurrentStatus}> EAC</Menu.Item>
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} >Client Status Update</Menu.Item>
                     {!patientObj.mentalHealth && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} >Mental Health Screening</Menu.Item>)}
-                    <Dropdown text="PrEP" labeled simple className='icon link item'>
+                    {/* <Dropdown text="PrEP" labeled simple className='icon link item'>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)}> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPVisitForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Visit</span></Dropdown.Item>
@@ -170,8 +172,8 @@ function SubMenu(props) {
                                 <Dropdown.Item onClick={() => loadPrEPDiscontinuationsInterruptions(patientObj)}><span  style={{color:"#fff",}}>PrEP Discontinuations & Interruptions</span></Dropdown.Item>
                                 <Dropdown.Item onClick={() => loadPrEPCommencementForm(patientObj)}><span  style={{color:"#fff",}}>PrEP Commencement</span></Dropdown.Item>
                             </Dropdown.Menu>
-                    </Dropdown>                            
-                    {props.patientObj.sex==='Female' ? 
+                    </Dropdown>                             */}
+                    {/* {props.patientObj.sex==='Female' ? 
                         (
                             <>
                             <Dropdown text="PMTCT"   labeled simple    className='icon link item'>
@@ -186,7 +188,8 @@ function SubMenu(props) {
                             </>
                         )
                         :""
-                    }
+                    } */}
+                    <Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     
                 </Menu>

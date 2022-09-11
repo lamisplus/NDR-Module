@@ -12,8 +12,9 @@ import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
 import { Icon,Button, } from 'semantic-ui-react'
-import FirstEAC from './EnhancedAdherenceCounseling';
-import ContinueEAC from './SecondEac';
+import Select from "react-select";
+import ButtonMui from "@material-ui/core/Button";
+
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -50,19 +51,21 @@ const useStyles = makeStyles(theme => ({
     } 
 }))
 
-const EAC = (props) => {
+const NEWEACSESSION = (props) => {
     //const patientObj = props.patientObj;
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true)
     const [objValues, setObjValues]=useState({
-                                                dateOfEac1: null,
-                                                dateOfEac2: null,
-                                                dateOfEac3: null,
-                                                dateOfLastViralLoad: "",
-                                                lastViralLoad:"",
-                                                note: "",
+                                                barriers: null,
+                                                barriersOthers:"",
+                                                intervention: null,
+                                                interventionOthers:"",
+                                                comment: null,
+                                                followUpDate: "",
+                                                referral:"",
+                                                adherence: "",
                                                 personId: props.patientObj.id,
                                                 status: "",
                                                 visitId:""
@@ -87,7 +90,11 @@ const EAC = (props) => {
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }          
+    }  
+    const BackToSession = (row, actionType) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+         props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+     }        
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
@@ -120,39 +127,48 @@ const EAC = (props) => {
     }
 
   return (      
-        <div>                   
+        <div>                    
             <Card >
                 <CardBody>
                 <form >
                     <div className="row">
-                    <h2>Enhanced Adherence Counselling </h2>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <h4>Second EAC Date {objValues.dateOfEac2}</h4>
-                        <br/>
+                    <h2>New EAC Session 
+                    <ButtonMui
+                        variant="contained"
+                        color="primary"
+                        className=" float-end ms-2 mr-2 mt-2 "
+                        //startIcon={<FaUserPlus size="10"/>}
+                        //startIcon={<TiArrowBack  />}
+                        onClick={BackToSession}
+                        style={{backgroundColor:"#014D88", color:'#fff', height:'35px'}}
+
+                        >
+                            <span style={{ textTransform: "capitalize" }}>Back To EAC Session</span>
+                    </ButtonMui>
+                    </h2>
+                    <br/>
+                    <br/>
+                    <br/>
+
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date of Third EAC </Label>
+                            <Label for="">Current Viral Load Result (copies/ml)</Label>
                             <Input
-                                type="date"
+                                type="text"
                                 name="dateOfEac3"
                                 id="dateOfEac3"
                                 value={objValues.dateOfEac3}
                                 onChange={handleInputChange}
-                                min={objValues.dateOfEac2}
                                 //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled
                             />
-                            {errors.dateOfEac3 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac3}</span>
-                            ) : "" }
+                            
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date of EAC </Label>
+                            <Label for="">Date Result Recieved</Label>
                             <Input
                                 type="date"
                                 name="dateOfEac1"
@@ -162,11 +178,9 @@ const EAC = (props) => {
                                 min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled
                             />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
-                            ) : "" }
+                           
                             </FormGroup>
                         </div>
 
@@ -175,10 +189,10 @@ const EAC = (props) => {
                                 <Label >Adherence</Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    name="adherence"
+                                    id="adherence"
+                                    value={objValues.adherence}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
@@ -197,10 +211,10 @@ const EAC = (props) => {
                                 <Label >Any missed pharmacy drug pick-ups?</Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    name="missedDrug"
+                                    id="missedDrug"
+                                    value={objValues.missedDrug}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
@@ -214,13 +228,13 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Adherence</Label>
+                                <Label >Barriers</Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    name="barriers"
+                                    id="barriers"
+                                    value={objValues.barriers}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
@@ -242,15 +256,35 @@ const EAC = (props) => {
                                   
                                 </FormGroup>
                         </div>
+                        {objValues.barriers==='Others' && (<>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Intervention Services</Label>
+                                <Label >Barriers - Others</Label>
+                                <Input
+                                    type="text"
+                                    name="barriersOthers"
+                                    id="barriersOthers"
+                                    value={objValues.barriersOthers}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                               
+                                </Input>
+                                
+                        </FormGroup>
+                        </div>
+                        
+                        </>)}
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Intervention</Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    name="intervention"
+                                    id="intervention"
+                                    value={objValues.intervention}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
@@ -266,20 +300,41 @@ const EAC = (props) => {
                                  <option value="Transport">Transport</option>
                                  <option value="Child behavior/refusing Scheduling">Child behavior/refusing Scheduling</option>
                                  <option value="Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma">Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma</option>
+                                 <option value="Tools Pill box Calendar">Tools Pill box Calendar</option>
+                                 <option value="Incentive calendar (peds) ARV swallowing instruction Written instructions Phone calls SMS">Incentive calendar (peds) ARV swallowing instruction Written instructions Phone calls SMS</option>
                                  <option value="Others">Others</option>
 
                                 </Input>
                                   
                                 </FormGroup>
                         </div>
+                        {objValues.intervention==='Others' && (<>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Intervention - Others</Label>
+                                <Input
+                                    type="text"
+                                    name="interventionOthers"
+                                    id="interventionOthers"
+                                    value={objValues.interventionOthers}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                               
+                                </Input>
+                                
+                        </FormGroup>
+                        </div>
+                        </>)}
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">Referrals</Label>
                             <Input
                                 type="text"
-                                name="note"
-                                id="note"
-                                value={objValues.note}
+                                name="referral"
+                                id="referral"
+                                value={objValues.referral}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
@@ -290,18 +345,16 @@ const EAC = (props) => {
                             <Label for="">Follow Up Date</Label>
                             <Input
                                 type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
+                                name="followUpDate"
+                                id="followUpDate"
+                                value={objValues.followUpDate}
                                 onChange={handleInputChange}
-                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
-                            ) : "" }
+                           
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
@@ -309,9 +362,9 @@ const EAC = (props) => {
                             <Label for="">Comments</Label>
                             <Input
                                 type="textarea"
-                                name="note"
-                                id="note"
-                                value={objValues.note}
+                                name="comment"
+                                id="comment"
+                                value={objValues.comment}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
@@ -346,4 +399,4 @@ const EAC = (props) => {
   );
 }
 
-export default EAC;
+export default NEWEACSESSION;

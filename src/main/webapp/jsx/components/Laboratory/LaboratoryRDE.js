@@ -172,7 +172,14 @@ const Laboratory = (props) => {
     }
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        setTests ({...tests,  [e.target.name]: e.target.value});               
+        //tests.labNumber
+        if(e.target.name==='labNumber'){
+            const onlyPositiveNumber = e.target.value //Math.abs(e.target.value)
+            setTests ({...tests,  [e.target.name]: Math.abs(onlyPositiveNumber)});
+        }else{
+            setTests ({...tests,  [e.target.name]: e.target.value}); 
+        }
+                      
     }
     const handleInputChangeTest = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
@@ -289,6 +296,7 @@ const Laboratory = (props) => {
                                     type="number"
                                     name="labNumber"
                                     id="labNumber"
+                                    //min={0}
                                     value={tests.labNumber}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -299,49 +307,6 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                        <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="encounterDate">Date Result Received</Label>
-                                <Input
-                                    type="date"
-                                    name="dateResultReceived"
-                                    id="dateResultReceived"
-                                    value={tests.dateResultReceived}
-                                    min={tests.sampleCollectionDate}
-                                    onChange={handleInputChange}
-                                    //min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD") }
-                                    max= {moment(new Date()).format("YYYY-MM-DD") }
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                />
-                                {errors.dateResultReceived !=="" ? (
-                                    <span className={classes.error}>{errors.dateResultReceived}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </Col>
-                        <Col md={6} className="form-group mb-3">
-                        {tests.dateResultReceived!=="" ? (
-                            <FormGroup>
-                                <Label for="encounterDate">Date Assey *</Label>
-                                <Input
-                                    type="date"
-                                    name="dateAssayed"
-                                    id="dateAssayed"
-                                    value={tests.dateAssayed}
-                                    min={tests.sampleCollectionDate}
-                                    onChange={handleInputChange}
-                                    //min={tests.sampleCollectionDate}
-                                    max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                />
-                                {errors.dateAssayed !=="" ? (
-                                    <span className={classes.error}>{errors.dateAssayed}</span>
-                                ) : "" }
-                            </FormGroup>
-                        ): ""}
-                        </Col>
-                        
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="testGroup">Select Test Group*</Label>
@@ -390,6 +355,50 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
+                        <Col md={6} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Date Result Received</Label>
+                                <Input
+                                    type="date"
+                                    name="dateResultReceived"
+                                    id="dateResultReceived"
+                                    value={tests.dateResultReceived}
+                                    min={tests.sampleCollectionDate}
+                                    onChange={handleInputChange}
+                                    //min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD") }
+                                    max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.dateResultReceived !=="" ? (
+                                    <span className={classes.error}>{errors.dateResultReceived}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </Col>
+                        <Col md={6} className="form-group mb-3">
+                        {tests.dateResultReceived!=="" ? (
+                            <FormGroup>
+                                <Label for="encounterDate">Date Assay *</Label>
+                                <Input
+                                    type="date"
+                                    name="dateAssayed"
+                                    id="dateAssayed"
+                                    value={tests.dateAssayed}
+                                    min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                    onChange={handleInputChange}
+                                    //min={tests.sampleCollectionDate}
+                                    max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.dateAssayed !=="" ? (
+                                    <span className={classes.error}>{errors.dateAssayed}</span>
+                                ) : "" }
+                            </FormGroup>
+                        ): ""}
+                        </Col>
+                        
+
                         {tests.dateResultReceived!=="" ? (
                         <Col md={6} className="form-group mb-3">
                             <FormGroup>
