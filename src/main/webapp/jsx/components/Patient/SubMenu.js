@@ -110,7 +110,7 @@ function SubMenu(props) {
 
     return (
         <div>
-            {!props.art && patientObj.commenced!==true ?
+            {(!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) ?
                 (
                 <Menu size="mini" color={"grey"} inverted >
                     <Menu.Item onClick={() => onClickHome()} disabled> Home</Menu.Item>
@@ -119,7 +119,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
                     <Menu.Item onClick={() => loadEAC(patientObj)} disabled> EAC</Menu.Item>
-                    {!patientObj.mentalStatus && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} disabled>Mental Health Screening</Menu.Item>)}
+                    {!patientObj.mentalHealth && patientObj.enrollment.targetGroupId!==473 && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} disabled>Mental Health Screening</Menu.Item>)}
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                    
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     {/* <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
@@ -163,7 +163,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadEAC(patientObj)} disabled={patientCurrentStatus}> EAC</Menu.Item>
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} >Client Status Update</Menu.Item>
                     {patientObj.currentStatus && patientObj.currentStatus==='IIT' && (<Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>)}
-                    {!patientObj.mentalHealth && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} >Mental Health Screening</Menu.Item>)}
+                    {!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==473) && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} >Mental Health Screening</Menu.Item>)}
                     {/* <Dropdown text="PrEP" labeled simple className='icon link item'>
                             <Dropdown.Menu style={{backgroundColor:"#000", color:"#fff", fontColor:"#fff"}}>
                                 <Dropdown.Item onClick={() => loadPrEPRegistrationForm(patientObj)}> <span  style={{color:"#fff",}}>PrEP Registration</span></Dropdown.Item>

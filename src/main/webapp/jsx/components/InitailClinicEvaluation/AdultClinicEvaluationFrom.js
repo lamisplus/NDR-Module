@@ -1921,7 +1921,14 @@ console.log(props.patientObj)
                                     //onKeyUp={handleInputValueCheckHeight} 
                                     style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 />
-                                    
+                                {/* <InputGroupText
+                                    addonType="append"
+                                    isOpen={dropdownOpen}
+                                    toggle={toggleDropDown}
+                                    style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
+                                >
+                                    {vital.height!=='' ? (vital.height/100).toFixed(1) + "m" : "m"}
+                                </InputGroupText>    */}
                             </InputGroup>
                             
                             </FormGroup>
