@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -82,6 +83,16 @@ public class HivPatientService {
                 .stream ()
                 .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
                 .map (p -> convertPersonHivPatientDto (p.getId ()))
+                .collect (Collectors.toList ());
+    }
+    
+    public List<HivPatientDto> getIITHivPatients() {
+        return personService.getAllPerson()
+                .stream()
+                .sorted(Comparator.comparing(PersonResponseDto::getId).reversed())
+                .map(p -> convertPersonHivPatientDto(p.getId()))
+                .filter(Objects::nonNull)
+                .filter(p -> p.getCurrentStatus().equalsIgnoreCase("IIT"))
                 .collect (Collectors.toList ());
     }
 

@@ -23,7 +23,6 @@ public class HIVEac extends HivAuditEntity implements Serializable, Persistable<
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
     private Person person;
