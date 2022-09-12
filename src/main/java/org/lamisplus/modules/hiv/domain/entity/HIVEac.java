@@ -29,23 +29,17 @@ public class HIVEac extends HivAuditEntity implements Serializable, Persistable<
     @ManyToOne
     @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
     private Visit visit;
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate dateOfEac1;
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate dateOfEac2;
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate dateOfEac3;
     private Double lastViralLoad;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfLastViralLoad;
     @Column(name = "uuid", nullable = false, unique = true, updatable = false)
     private String uuid;
-    private String note;
     private String status;
-    private int archived;
+    private int  archived;
+    private Long testResultId;
+    private String testGroup;
+    private String testName;
+    private String labNumber;
     @Override
     public boolean isNew() {
         return id == null;
