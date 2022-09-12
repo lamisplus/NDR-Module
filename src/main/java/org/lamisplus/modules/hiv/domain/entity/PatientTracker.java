@@ -46,7 +46,7 @@ public class PatientTracker extends HivAuditEntity implements Serializable, Pers
 	@Type(type = "jsonb")
 	@Column(columnDefinition = "jsonb", name = "attempts")
 	private JsonNode attempts;
-	private Long durationOnART;
+	private String durationOnART;
 	@Convert(converter = LocalDateConverter.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate dateLastAppointment;

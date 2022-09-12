@@ -23,7 +23,7 @@ public class PatientTrackingDto {
 	private String causeOfDeathOthers;
 	private String reasonForLossToFollowUpOthers;
 	private JsonNode attempts;
-	private Long durationOnART;
+	private String  durationOnART;
 	private Long id;
 	@Convert(converter = LocalDateConverter.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
