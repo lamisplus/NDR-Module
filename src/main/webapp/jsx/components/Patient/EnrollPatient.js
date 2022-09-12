@@ -102,7 +102,7 @@ const UserRegistration = (props) => {
                 district:"",
                 landmark:"",
                 sexId:"",
-                nin:""
+                ninNumber:""
 
             }
     )
@@ -461,9 +461,9 @@ const UserRegistration = (props) => {
             const name = alphabetOnly(e.target.value)
             setBasicInfo ({...basicInfo,  [e.target.name]: name});
         }
-        if(e.target.name==='nin' && e.target.value!==''){
-            const ninNumber = checkNINLimit(e.target.value)
-            setBasicInfo ({...basicInfo,  [e.target.name]: ninNumber});
+        if(e.target.name==='ninNumber' && e.target.value!==''){
+            const ninNumberValue = checkNINLimit(e.target.value)
+            setBasicInfo ({...basicInfo,  [e.target.name]: ninNumberValue});
         }
                    
     } 
@@ -611,7 +611,8 @@ const UserRegistration = (props) => {
                     educationId: basicInfo.educationId,
                     employmentStatusId: basicInfo.employmentStatusId,
                     dateOfRegistration: basicInfo.dateOfRegistration,
-                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true
+                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true,
+                    ninNumber:basicInfo.ninNumber
                 };
                 const phone = {
                     "type": "phone",
@@ -1100,14 +1101,13 @@ const UserRegistration = (props) => {
                                             </div>
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="patientId">National Identity Number (NIN)  </Label>
+                                                    <Label for="ninNumber">National Identity Number (NIN)  </Label>
                                                     <input
                                                         className="form-control"
                                                         type="number"
-                                                        name="nin"
-                                                        id="nin"
-                                                        
-                                                        //onChange={handleInputChangeBasic}
+                                                        name="ninNumber"
+                                                        id="ninNumber"
+                                                        onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
                                                     />
                                                    

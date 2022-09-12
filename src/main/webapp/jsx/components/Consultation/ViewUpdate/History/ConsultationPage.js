@@ -182,7 +182,7 @@ const ClinicVisit = (props) => {
           )
           .then((response) => {
               setLoading(false)
-              setClinicVisitList(response.data);              
+              setClinicVisitList(response.data.filter((x)=> x.isCommencement!==true));              
           })
           .catch((error) => {  
               setLoading(false)  

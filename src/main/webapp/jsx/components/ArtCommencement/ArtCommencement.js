@@ -311,30 +311,11 @@ const ArtCommencement = (props) => {
             return Object.values(temp).every(x => x == "")
         }
 
-        const  heightFunction =(e)=>{
-            if(e==='cm'){
-                setHeightValue('cm')
-                if(vital.height!==""){
-                    const newHeightValue= (vital.height * 100)
-                    setVitalSignDto ({...vital,  height: newHeightValue});
-                }
-            }else if(e==='m'){
-                setHeightValue('m')
-                if(vital.height!==""){
-                    const newHeightValue= (vital.height/100)
-                    setVitalSignDto ({...vital,  height: newHeightValue});
-                }
-                
-            }
-
-        }
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {                  
             e.preventDefault(); 
             if(validate()){ 
-            if(heightValue==='m'){//If height is meter convert to centi meter
-                vital.height= (vital.height/100).toFixed(2)
-            }                   
+                   
             objValues.personId = props.patientObj.id
             vital.encounterDate = objValues.visitDate
             vital.personId=props.patientObj.id
@@ -614,11 +595,11 @@ const ArtCommencement = (props) => {
                                                 type="select"
                                                 name="address"
                                                 id="address"
-                                                //disabled
+                                                disabled
                                                 onChange={handleInputChange}
                                                 value="72"
                                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                                required
+                                                
 
                                             >
                                                 <option value=""> Select</option>
@@ -642,7 +623,7 @@ const ArtCommencement = (props) => {
                                                 onChange={handleInputChange}
                                                 value={props.patientObj.enrollment.dateOfLpm}
                                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                                required
+                                                disabled
                                             />
                                             </FormGroup>
                                         </div>
@@ -708,6 +689,14 @@ const ArtCommencement = (props) => {
                                         <FormGroup>
                                         <Label >Height</Label>
                                         <InputGroup> 
+                                        <InputGroupText
+                                                addonType="append"
+                                                isOpen={dropdownOpen}
+                                                toggle={toggleDropDown}
+                                                style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
+                                                >
+                                                cm
+                                        </InputGroupText>
                                             <Input 
                                                 type="number"
                                                 name="height"
@@ -719,19 +708,14 @@ const ArtCommencement = (props) => {
                                                 onKeyUp={handleInputValueCheckHeight} 
                                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                             />
-                                             <InputGroupButtonDropdown
+                                             <InputGroupText
                                                 addonType="append"
                                                 isOpen={dropdownOpen}
                                                 toggle={toggleDropDown}
-                                                style={{ backgroundColor:"#014D88"}}
+                                                style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
                                                 >
-                                                <DropdownToggle caret style={{ backgroundColor:"#014D88"}}>{heightValue ==='cm'? 'cm' : 'm'}</DropdownToggle>
-                                                <DropdownMenu>
-                                              
-                                                    <DropdownItem onClick={()=>heightFunction(heightValue ==='cm'? 'm' : 'cm')}>{heightValue ==='cm'? 'm' : 'cm'}</DropdownItem>
-                                                       
-                                                </DropdownMenu>
-                                                </InputGroupButtonDropdown>
+                                                {vital.height!=='' ? (vital.height/100).toFixed(1) + "m" : "m"}
+                                            </InputGroupText>
                                         </InputGroup>
                                         {vitalClinicalSupport.height !=="" ? (
                                             <span className={classes.error}>{vitalClinicalSupport.height}</span>
@@ -775,12 +759,7 @@ const ArtCommencement = (props) => {
                                                 onKeyUp={handleInputValueCheckSystolic}
                                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
                                             />
-                                            {vitalClinicalSupport.systolic !=="" ? (
-                                            <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                                            ) : ""}
-                                            {errors.systolic !=="" ? (
-                                                <span className={classes.error}>{errors.systolic}</span>
-                                            ) : "" }
+                                           
                                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                                 systolic(mmHg)
                                             </InputGroupText>
@@ -795,17 +774,23 @@ const ArtCommencement = (props) => {
                                                 onKeyUp={handleInputValueCheckDiastolic} 
                                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                              />
-                                             {vitalClinicalSupport.diastolic !=="" ? (
-                                                <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                                                ) : ""}
-                                                {errors.diastolic !=="" ? (
-                                                    <span className={classes.error}>{errors.diastolic}</span>
-                                                ) : "" }
+                                            
                                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                             diastolic(mmHg)
                                             </InputGroupText>
                                         </InputGroup>
-
+                                        {vitalClinicalSupport.systolic !=="" ? (
+                                        <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                                        ) : ""}
+                                        {errors.systolic !=="" ? (
+                                            <span className={classes.error}>{errors.systolic}</span>
+                                        ) : "" }  
+                                        {vitalClinicalSupport.diastolic !=="" ? (
+                                        <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
+                                        ) : ""}
+                                        {errors.diastolic !=="" ? (
+                                            <span className={classes.error}>{errors.diastolic}</span>
+                                        ) : "" }          
                                         </FormGroup>
                                     </div>
 
