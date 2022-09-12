@@ -1901,7 +1901,15 @@ console.log(props.patientObj)
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label >Height</Label>
-                            <InputGroup> 
+                            <InputGroup>
+                            <InputGroupText
+                                    addonType="append"
+                                    isOpen={dropdownOpen}
+                                    toggle={toggleDropDown}
+                                    style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    >
+                                    cm
+                            </InputGroupText> 
                                 <Input 
                                     type="number"
                                     name="height"
@@ -1913,19 +1921,7 @@ console.log(props.patientObj)
                                     //onKeyUp={handleInputValueCheckHeight} 
                                     style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 />
-                                    <InputGroupButtonDropdown
-                                    addonType="append"
-                                    isOpen={dropdownOpen}
-                                    toggle={toggleDropDown}
-                                    style={{ backgroundColor:"#014D88"}}
-                                    >
-                                    <DropdownToggle caret style={{ backgroundColor:"#014D88"}}>{'cm'}</DropdownToggle>
-                                    <DropdownMenu>
                                     
-                                        <DropdownItem >{'cm'}</DropdownItem>
-                                            
-                                    </DropdownMenu>
-                                    </InputGroupButtonDropdown>
                             </InputGroup>
                             
                             </FormGroup>

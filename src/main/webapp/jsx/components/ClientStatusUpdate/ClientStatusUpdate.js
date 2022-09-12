@@ -51,8 +51,9 @@ const ClientStatusUpdate = (props) => {
 
     const patientObj = props.patientObj;
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
-    //let history = useHistory();
-    console.log(patientObj)
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
+    let temp = { ...errors }
     const classes = useStyles()
     const [hivStatus, setHivStatus] = useState([]);
     const [reasonForInteruption, setReasonForInteruption] = useState([]);
@@ -72,8 +73,7 @@ const ClientStatusUpdate = (props) => {
                                                 datePreArtTransferOut:"",
                                                 visitId: null
                                             });
-    const [saving, setSaving] = useState(false);
-    const [errors, setErrors] = useState({});
+
     useEffect(() => {
         CauseDeath();
         ReasonForInteruption();
@@ -127,14 +127,24 @@ const ClientStatusUpdate = (props) => {
        
     }
     const handleInputChange = e => {
+        setErrors({...temp, [e.target.name]:""})
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        }
-          
+    }
+    //Validations of the forms
+    const validate = () => {        
+        temp.hivStatus = objValues.hivStatus ? "" : "This field is required"
+        temp.statusDate = objValues.statusDate ? "" : "This field is required"
+        
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+        }     
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
-        e.preventDefault();        
+        e.preventDefault(); 
+        if(validate()){       
           objValues.personId= patientObj.id
-
           setSaving(true);
           axios.post(`${baseUrl}hiv/status/`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
@@ -155,7 +165,8 @@ const ClientStatusUpdate = (props) => {
                   else{
                     toast.error("Something went wrong. Please try again...");
                   }
-              });          
+              });  
+            }        
     }
 
   return (      
@@ -168,8 +179,7 @@ const ClientStatusUpdate = (props) => {
                     <div className="col-md-6">
                     <h2> Client Status Update </h2>
                     </div>
-                    
-                    <br/>
+
                     <br/>
                     <br/>
                     <br/>
@@ -301,9 +311,7 @@ const ClientStatusUpdate = (props) => {
                                 </option>
                                 ))}
                             </Input>
-                            {errors.trackOutcome !=="" ? (
-                                <span className={classes.error}>{errors.trackOutcome}</span>
-                            ) : "" }
+                           
                             </FormGroup>
                         </div>
                         

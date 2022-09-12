@@ -107,7 +107,7 @@ const Tracking = (props) => {
         setAttempt ({...attempt,  [e.target.name]: e.target.value});
     }
     //Validations of the forms
-   const validate = () => {        
+    const validate = () => {        
     temp.durationOnART = objValues.durationOnART ? "" : "This field is required"
     temp.dsdStatus = objValues.dsdStatus ? "" : "This field is required"
     {objValues.dsdStatus==='Devolved' && (temp.dsdModel = objValues.dsdModel ? "" : "This field is required")}
@@ -130,9 +130,9 @@ const Tracking = (props) => {
         ...temp
     })
     return Object.values(temp).every(x => x == "")
-  }
-  //Validations of the forms
-  const validateAttempt = () => {        
+    }
+    //Validations of the forms
+    const validateAttempt = () => {        
     temp.attemptDate = attempt.attemptDate ? "" : "This field is required"
     temp.whoAttemptedContact = attempt.whoAttemptedContact ? "" : "This field is required"
     temp.modeOfConatct = attempt.modeOfConatct ? "" : "This field is required"
