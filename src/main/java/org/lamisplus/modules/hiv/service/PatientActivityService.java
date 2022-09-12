@@ -74,6 +74,7 @@ public class PatientActivityService {
 	public List<PatientActivity> getActivities(Long id) {
 		return Objects.requireNonNull(getActivitiesFor(id))
 				.stream()
+				.filter(Objects::nonNull)
 				.sorted(Comparator.comparing(PatientActivity::getName))
 				.sorted((a1, a2) -> a2.getDate().compareTo(a1.getDate()))
 				.collect(toList());
