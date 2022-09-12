@@ -693,7 +693,7 @@ const UserRegistration = (props) => {
     //Get list of KP
     const KP =()=>{
         axios
-        .get(`${baseUrl}application-codesets/v2/KP_TYPE`,
+        .get(`${baseUrl}application-codesets/v2/TARGET_GROUP`,
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {

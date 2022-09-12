@@ -118,14 +118,14 @@ const Tracking = (props) => {
     temp.careInFacilityDiscountinued = objValues.careInFacilityDiscountinued ? "" : "This field is required"
     {objValues.careInFacilityDiscountinued==='Yes' && (temp.dateOfDiscontinuation = objValues.dateOfDiscontinuation ? "" : "This field is required")}
     {objValues.careInFacilityDiscountinued==='Yes' && (temp.reasonForDiscountinuation = objValues.reasonForDiscountinuation ? "" : "This field is required")}
-    temp.reasonForLossToFollowUp = objValues.reasonForLossToFollowUp ? "" : "This field is required"
+    {objValues.reasonForDiscountinuation==='Loss to follow-up' && (temp.reasonForLossToFollowUp = objValues.reasonForLossToFollowUp ? "" : "This field is required")}
     {objValues.reasonForDiscountinuation==='Death' && (temp.causeOfDeath = objValues.causeOfDeath ? "" : "This field is required")}
     temp.dateReturnToCare = objValues.dateReturnToCare ? "" : "This field is required"
     temp.referredFor = objValues.referredFor ? "" : "This field is required"
     {objValues.referredFor==='Others' && (temp.referredForOthers = objValues.referredForOthers ? "" : "This field is required")}
     {objValues.reasonForTracking==='Others' && (temp.reasonForTrackingOthers = objValues.reasonForTrackingOthers ? "" : "This field is required")}
-    temp.causeOfDeathOthers = objValues.causeOfDeathOthers ? "" : "This field is required"
-    temp.reasonForLossToFollowUpOthers = objValues.reasonForLossToFollowUpOthers ? "" : "This field is required"
+    {objValues.causeOfDeath==='Unknown' || objValues.causeOfDeath==='Other cause of death' || objValues.causeOfDeath==='Suspected Opportunistic Infection' && (temp.causeOfDeathOthers = objValues.causeOfDeathOthers ? "" : "This field is required")}
+    {objValues.reasonForLossToFollowUp==='Others' && ( temp.reasonForLossToFollowUpOthers = objValues.reasonForLossToFollowUpOthers ? "" : "This field is required")}
     setErrors({
         ...temp
     })
@@ -164,32 +164,36 @@ const Tracking = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();
         if(validate()){
-          objValues.attempts=attemptList
-          observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
-          observation.personId =patientObj.id
-          observation.data=objValues        
-          setSaving(true);
-          axios.post(`${baseUrl}patient-tracker`,objValues,
-           { headers: {"Authorization" : `Bearer ${token}`}},
-          
-          )
-              .then(response => {
-                  setSaving(false);
-                  toast.success(" Save successful");
-                  props.setActiveContent({...props.activeContent, route:'recent-history'})
-                  //props.setActiveContent('recent-history')
+            if(attemptList.length >0){
+                objValues.attempts=attemptList
+                observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+                observation.personId =patientObj.id
+                observation.data=objValues        
+                setSaving(true);
+                axios.post(`${baseUrl}patient-tracker`,objValues,
+                { headers: {"Authorization" : `Bearer ${token}`}},
+                
+                )
+                    .then(response => {
+                        setSaving(false);
+                        toast.success(" Save successful");
+                        props.setActiveContent({...props.activeContent, route:'recent-history'})
+                        //props.setActiveContent('recent-history')
 
-              })
-              .catch(error => {
-                setSaving(false);
-                if(error.response && error.response.data){
-                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                    toast.error(errorMessage);
-                  }
-                  else{
-                    toast.error("Something went wrong. Please try again...");
-                  }
-              });
+                    })
+                    .catch(error => {
+                        setSaving(false);
+                        if(error.response && error.response.data){
+                            let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                            toast.error(errorMessage);
+                        }
+                        else{
+                            toast.error("Something went wrong. Please try again...");
+                        }
+                    });
+                }else{
+                    toast.error("Attempt to Contact can not be empty");
+                }
             }  
     }
 
