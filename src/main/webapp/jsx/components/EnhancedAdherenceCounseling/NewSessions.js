@@ -14,6 +14,8 @@ import { Spinner } from "reactstrap";
 import { Icon,Button, } from 'semantic-ui-react'
 import Select from "react-select";
 import ButtonMui from "@material-ui/core/Button";
+import DualListBox from "react-dual-listbox";
+import 'react-dual-listbox/lib/react-dual-listbox.css';
 
 
 const useStyles = makeStyles(theme => ({
@@ -57,6 +59,8 @@ const NEWEACSESSION = (props) => {
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true)
+    const [selectedBarriers,setSelectedBarriers] = useState([]);
+    const [selectedInterventions,setSelectedInterventions] = useState([]);
     const [objValues, setObjValues]=useState({
                                                 barriers: null,
                                                 barriersOthers:"",
@@ -70,6 +74,37 @@ const NEWEACSESSION = (props) => {
                                                 status: "",
                                                 visitId:""
                                             })
+        const optionsForBarriers = [
+            { value: 'Forgot', label: 'Forgot' },
+            { value: 'Knowledge/beliefs', label: 'Knowledge/beliefs' },
+            { value: 'Side effects', label: 'Side effects' },
+            { value: 'Physical illness', label: 'Physical illness' },
+            { value: 'Substance use', label: 'Substance use' },
+            { value: 'Depression', label: 'Depression' },
+            { value: 'Pill burden', label: 'Pill burden' },
+            { value: 'Lost/ran out', label: 'Lost/ran out' },
+            { value: 'Transport', label: 'Transport' },
+            { value: 'Child behavior/refusing Scheduling', label: 'Child behavior/refusing Scheduling' },
+            { value: 'Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma', label: 'Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma' },
+            { value: 'Others', label: 'Others' },
+        ];
+        const optionsForInterventions = [
+            { value: 'Education', label: 'Education' },
+            { value: 'Counseling (ind)', label: 'Counseling (ind)' },
+            { value: 'Counseling (grp)', label: 'Counseling (grp)' },
+            { value: 'Peer support', label: 'Peer support' },
+            { value: 'Treatment buddy', label: 'Treatment buddy' },
+            { value: 'Extended Drug pick-up', label: 'Extended Drug pick-up' },
+            { value: 'Community ART Group', label: 'Community ART Group' },
+            { value: 'Directly Observed Therapy', label: 'Directly Observed Therapy' },
+            { value: 'Transport', label: 'Transport' },
+            { value: 'Child behavior/refusing Scheduling', label: 'Child behavior/refusing Scheduling' },
+            { value: 'Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma', label: 'Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma' },
+            { value: 'Tools Pill box Calendar', label: 'Tools Pill box Calendar' },
+            { value: 'Incentive calendar (peds) ARV swallowing instruction Written instructions Phone calls SMS', label: 'Incentive calendar (peds) ARV swallowing instruction Written instructions Phone calls SMS' },
+            { value: 'Others', label: 'Others' },
+        ];
+
     useEffect(() => {
         EACHistory()
     }, [props.patientObj.id]);
@@ -90,7 +125,13 @@ const NEWEACSESSION = (props) => {
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }  
+    }
+    const onBarriersSelect = (selectedValues) => {
+        setSelectedBarriers(selectedValues);
+    };
+    const onInterventionsSelect = (selectedValues) => {
+        setSelectedInterventions(selectedValues);
+    };
     const BackToSession = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
          props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
@@ -226,7 +267,7 @@ const NEWEACSESSION = (props) => {
                                 
                         </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-6">
+                        {/* <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Barriers</Label>
                                 <Input
@@ -255,8 +296,19 @@ const NEWEACSESSION = (props) => {
                                 </Input>
                                   
                                 </FormGroup>
+                        </div> */}
+                        <div className="form-group mb-12 col-md-12">
+                        <FormGroup>
+                            <Label for="permissions" style={{color:'#014d88',fontWeight:'bolder'}}>Barriers</Label>
+                            <DualListBox
+                                //canFilter
+                                options={optionsForBarriers}
+                                onChange={onBarriersSelect}
+                                selected={selectedBarriers}
+                            />
+                        </FormGroup>
                         </div>
-                        {objValues.barriers==='Others' && (<>
+                        {selectedBarriers.includes('Others') && (<>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Barriers - Others</Label>
@@ -276,7 +328,18 @@ const NEWEACSESSION = (props) => {
                         </div>
                         
                         </>)}
-                        <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-12 col-md-12">
+                        <FormGroup>
+                            <Label for="permissions" style={{color:'#014d88',fontWeight:'bolder'}}>Intervention</Label>
+                            <DualListBox
+                                //canFilter
+                                options={optionsForInterventions}
+                                onChange={onInterventionsSelect}
+                                selected={selectedInterventions}
+                            />
+                        </FormGroup>
+                        </div>
+                        {/* <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Intervention</Label>
                                 <Input
@@ -307,8 +370,8 @@ const NEWEACSESSION = (props) => {
                                 </Input>
                                   
                                 </FormGroup>
-                        </div>
-                        {objValues.intervention==='Others' && (<>
+                        </div> */}
+                        {selectedInterventions.includes('Others') && (<>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Intervention - Others</Label>
@@ -326,6 +389,7 @@ const NEWEACSESSION = (props) => {
                                 
                         </FormGroup>
                         </div>
+                        <div className="form-group mb-3 col-md-6"></div>
                         </>)}
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>

@@ -90,9 +90,11 @@ const Tracking = (props) => {
             reasonForTrackingOthers:"",
             causeOfDeathOthers:"",
             reasonForLossToFollowUpOthers:"",
-            attempts:""
+            attempts:"",
+            patientId:props.patientObj.id
             })
     const handleInputChange = e => {
+        setErrors({...temp, [e.target.name]:""})
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }  
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
@@ -106,6 +108,31 @@ const Tracking = (props) => {
     }
     //Validations of the forms
    const validate = () => {        
+    temp.durationOnART = objValues.durationOnART ? "" : "This field is required"
+    temp.dsdStatus = objValues.dsdStatus ? "" : "This field is required"
+    {objValues.dsdStatus==='Devolved' && (temp.dsdModel = objValues.dsdModel ? "" : "This field is required")}
+    temp.reasonForTracking = objValues.reasonForTracking ? "" : "This field is required"
+    temp.dateLastAppointment = objValues.dateLastAppointment ? "" : "This field is required"
+    temp.dateMissedAppointment = objValues.dateMissedAppointment ? "" : "This field is required"
+
+    temp.careInFacilityDiscountinued = objValues.careInFacilityDiscountinued ? "" : "This field is required"
+    {objValues.careInFacilityDiscountinued==='Yes' && (temp.dateOfDiscontinuation = objValues.dateOfDiscontinuation ? "" : "This field is required")}
+    {objValues.careInFacilityDiscountinued==='Yes' && (temp.reasonForDiscountinuation = objValues.reasonForDiscountinuation ? "" : "This field is required")}
+    temp.reasonForLossToFollowUp = objValues.reasonForLossToFollowUp ? "" : "This field is required"
+    {objValues.reasonForDiscountinuation==='Death' && (temp.causeOfDeath = objValues.causeOfDeath ? "" : "This field is required")}
+    temp.dateReturnToCare = objValues.dateReturnToCare ? "" : "This field is required"
+    temp.referredFor = objValues.referredFor ? "" : "This field is required"
+    {objValues.referredFor==='Others' && (temp.referredForOthers = objValues.referredForOthers ? "" : "This field is required")}
+    {objValues.reasonForTracking==='Others' && (temp.reasonForTrackingOthers = objValues.reasonForTrackingOthers ? "" : "This field is required")}
+    temp.causeOfDeathOthers = objValues.causeOfDeathOthers ? "" : "This field is required"
+    temp.reasonForLossToFollowUpOthers = objValues.reasonForLossToFollowUpOthers ? "" : "This field is required"
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
+  }
+  //Validations of the forms
+  const validateAttempt = () => {        
     temp.attemptDate = attempt.attemptDate ? "" : "This field is required"
     temp.whoAttemptedContact = attempt.whoAttemptedContact ? "" : "This field is required"
     temp.modeOfConatct = attempt.modeOfConatct ? "" : "This field is required"
@@ -117,7 +144,7 @@ const Tracking = (props) => {
     return Object.values(temp).every(x => x == "")
   }
     const addAttempt = e => {
-        if(validate()){ 
+        if(validateAttempt()){ 
             setAttemptList([...attemptList, attempt])
             setAttempt({attemptDate: "", whoAttemptedContact: "", 
                         modeOfConatct: "", personContacted: "", 
@@ -131,16 +158,18 @@ const Tracking = (props) => {
     const removeAttempt = index => {       
         attemptList.splice(index, 1);
         setAttemptList([...attemptList]);        
-    };        
+    }; 
+    
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();
+        if(validate()){
           objValues.attempts=attemptList
           observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
           observation.personId =patientObj.id
           observation.data=objValues        
           setSaving(true);
-          axios.post(`${baseUrl}observation`,objValues,
+          axios.post(`${baseUrl}patient-tracker`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
@@ -161,7 +190,7 @@ const Tracking = (props) => {
                     toast.error("Something went wrong. Please try again...");
                   }
               });
-          
+            }  
     }
 
   return (      
@@ -173,6 +202,7 @@ const Tracking = (props) => {
                     <h2>Client Tracking & Discontinuation Form</h2>
                         <br/>
                         <br/>
+                        <div className="row">
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label for="">Duration on ART</Label>
@@ -188,7 +218,9 @@ const Tracking = (props) => {
                                     <option value="<3months">{"<"} 3 months</option>
                                     <option value=">=3months">{">="} 3 months</option>
                                 </Input>
-                            
+                                {errors.durationOnART !=="" ? (
+                                    <span className={classes.error}>{errors.durationOnART}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-4">
@@ -201,13 +233,16 @@ const Tracking = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.dsdStatus} 
                                 >
-                                    <option value=""></option>
+                                   <option value="Not devolved">Not devolved</option>
                                     <option value="Devolved">Devolved</option>
-                                    <option value="Not devolved">Not devolved</option>
+                                    
                                 </Input>
-                            
+                                {errors.dsdStatus !=="" ? (
+                                    <span className={classes.error}>{errors.dsdStatus}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
+                        {objValues.dsdStatus==='Devolved' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label for="">DSD Model</Label>
@@ -223,8 +258,12 @@ const Tracking = (props) => {
                                     <option value="FBM">FBM</option>
                                     <option value="CBM">CBM</option>
                                 </Input>
-                            
+                                {errors.dsdModel !=="" ? (
+                                    <span className={classes.error}>{errors.dsdModel}</span>
+                                ) : "" }
                             </FormGroup>
+                        </div>
+                        )}
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
@@ -244,7 +283,9 @@ const Tracking = (props) => {
                                     <option value="Missed Appointment">Lost to follow-up</option>
                                     <option value="Others">Others</option>
                                 </Input>
-                            
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         {objValues.reasonForTracking==='Others' && (
@@ -259,7 +300,9 @@ const Tracking = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.reasonForTrackingOthers} 
                                 />
-                                 
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
                             
                             </FormGroup>
                         </div>
@@ -278,7 +321,9 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                            
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-4">
@@ -295,7 +340,9 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                            
+                            {errors.dateMissedAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateMissedAppointment}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         <div className="row">
@@ -423,7 +470,9 @@ const Tracking = (props) => {
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 />
-                                
+                                {errors.reasonForDefaultingOthers !=="" ? (
+                                <span className={classes.error}>{errors.reasonForDefaultingOthers}</span>
+                                ) : "" }
                                 </FormGroup>
                             </div>
                             )}
@@ -480,7 +529,9 @@ const Tracking = (props) => {
                                     <option value="Yes">Yes</option>
                                     <option value="No">No</option>
                                 </Input>
-                            
+                                {errors.careInFacilityDiscountinued !=="" ? (
+                                <span className={classes.error}>{errors.careInFacilityDiscountinued}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         {objValues.careInFacilityDiscountinued==='Yes' && (<>
@@ -498,7 +549,9 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                            
+                            {errors.dateOfDiscontinuation !=="" ? (
+                                <span className={classes.error}>{errors.dateOfDiscontinuation}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
@@ -519,6 +572,9 @@ const Tracking = (props) => {
                                 <option value="Loss to follow-up">Loss to follow-up</option>
                                 <option value="Self-transfer to another facility">Self-transfer to another facility</option>
                             </Input>
+                            {errors.reasonForDiscountinuation !=="" ? (
+                                <span className={classes.error}>{errors.reasonForDiscountinuation}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         </>)}
@@ -545,6 +601,9 @@ const Tracking = (props) => {
                                 <option value="Other cause of death">Other cause of death</option>
                                 <option value="Unknown">Unknown</option>
                             </Input>
+                            {errors.causeOfDeath !=="" ? (
+                                <span className={classes.error}>{errors.causeOfDeath}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         )}
@@ -561,6 +620,9 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
+                            {errors.causeOfDeathOthers !=="" ? (
+                                <span className={classes.error}>{errors.causeOfDeathOthers}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         )}
@@ -585,6 +647,9 @@ const Tracking = (props) => {
                                 <option value="Distance/Economic reasons">Distance/Economic reasons</option>
                                 <option value="Others">Others</option>
                             </Input>
+                            {errors.reasonForLossToFollowUp !=="" ? (
+                                <span className={classes.error}>{errors.reasonForLossToFollowUp}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         )}
@@ -593,7 +658,7 @@ const Tracking = (props) => {
                             <FormGroup>
                             <Label for="">Reason for Loss to follow-up - Others specify</Label>
                             <Input
-                                type="text"
+                                type="textarea"
                                 name="reasonForLossToFollowUpOthers"
                                 id="reasonForLossToFollowUpOthers"
                                 onChange={handleInputChange}
@@ -619,7 +684,9 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                            
+                            {errors.dateReturnToCare !=="" ? (
+                                <span className={classes.error}>{errors.dateReturnToCare}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
@@ -638,6 +705,9 @@ const Tracking = (props) => {
                                 <option value="Adherence Counselling">Adherence Counselling</option>
                                 <option value="Others">Others</option>
                             </Input>
+                            {errors.referredFor !=="" ? (
+                                <span className={classes.error}>{errors.referredFor}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
                         {objValues.referredFor==='Others' && (
@@ -645,7 +715,7 @@ const Tracking = (props) => {
                             <FormGroup>
                             <Label for="">Referred for - (Others specify ) </Label>
                             <Input
-                                type="text"
+                                type="textarea"
                                 name="referredForOthers"
                                 id="referredForOthers"
                                 onChange={handleInputChange}
@@ -653,7 +723,9 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                              
+                             {errors.referredForOthers !=="" ? (
+                                <span className={classes.error}>{errors.referredForOthers}</span>
+                                ) : "" } 
                             </FormGroup>
                         </div>
                       )}

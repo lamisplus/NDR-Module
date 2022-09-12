@@ -65,11 +65,14 @@ const Laboratory = (props) => {
                                         visitId:"" 
                                     })
     useEffect(() => {
-            TestGroup();
-            PriorityOrder();
-            ViraLoadIndication();
-            PatientVisit();
+           
             CheckLabModule();
+            if(moduleStatus==="1"){
+                TestGroup();
+                PriorityOrder();
+                ViraLoadIndication();
+                PatientVisit();
+            }
         }, [props.patientObj.id]);
     //Get list of Test Group
     const TestGroup =()=>{

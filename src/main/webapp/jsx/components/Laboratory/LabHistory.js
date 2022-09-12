@@ -30,7 +30,8 @@ import "@reach/menu-button/styles.css";
 import 'semantic-ui-css/semantic.min.css';
 import "react-widgets/dist/css/react-widgets.css";
 import { toast} from "react-toastify";
-import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
+import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react';
+import {Alert } from "react-bootstrap";
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -99,9 +100,15 @@ const useStyles = makeStyles(theme => ({
 const LabHistory = (props) => {    
     const [orderList, setOrderList] = useState([])
     const [loading, setLoading] = useState(true)
+    const [moduleStatus, setModuleStatus]= useState("0")
+    const [buttonHidden, setButtonHidden]= useState(false);
 
     useEffect(() => {
+      CheckLabModule();
+      if(moduleStatus==="1"){
         LabOrders()
+      }
+
       }, [props.patientObj.id]);
     //GET LIST OF Patients
     async function LabOrders() {
@@ -118,7 +125,27 @@ const LabHistory = (props) => {
                 setLoading(false)  
             });        
     }
-
+  //Check if Module Exist
+  const CheckLabModule =()=>{
+    axios
+        .get(`${baseUrl}modules/check?moduleName=laboratory`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            if(response.data===true){
+            setModuleStatus("1")
+            setButtonHidden(false)
+            }
+            else{
+                setModuleStatus("2")
+                //toast.error("Laboratory module is not install")
+                setButtonHidden(true)
+            }
+        }).catch((error) => {
+        //console.log(error);
+        });
+    
+  }
     const labStatus =(status)=> {
         console.log(status)
           if(status===0){
@@ -162,93 +189,105 @@ const LabHistory = (props) => {
           }); 
    }
 
+
   return (
     <div>
             <br/>
-        
-            <MaterialTable
-            icons={tableIcons}
-              title="Laboratory Order History"
-              columns={[
-              // { title: " ID", field: "Id" },
-                {
-                  title: "Test Group",
-                  field: "testGroup",
-                },
-                { title: "Test Name", field: "testName", filtering: false },
-                { title: "Lab Number", field: "labNumber", filtering: false },
-                { title: "Date Sample Collected", field: "sampleCollectionDate", filtering: false },
-                { title: "Date Assayed", field: "dateAssayed", filtering: false },
-                { title: "Date Result Received", field: "dateResultReceived", filtering: false },
-                { title: "VL Indication", field: "viralLoadIndication", filtering: false },
-                { title: "Action", field: "Action", filtering: false },
+            {moduleStatus==="1" && (
+              <MaterialTable
+              icons={tableIcons}
+                title="Laboratory Order History"
+                columns={[
+                // { title: " ID", field: "Id" },
+                  {
+                    title: "Test Group",
+                    field: "testGroup",
+                  },
+                  { title: "Test Name", field: "testName", filtering: false },
+                  { title: "Lab Number", field: "labNumber", filtering: false },
+                  { title: "Date Sample Collected", field: "sampleCollectionDate", filtering: false },
+                  { title: "Date Assayed", field: "dateAssayed", filtering: false },
+                  { title: "Date Result Received", field: "dateResultReceived", filtering: false },
+                  { title: "VL Indication", field: "viralLoadIndication", filtering: false },
+                  { title: "Action", field: "Action", filtering: false },
 
-              ]}
-              isLoading={loading}
-              data={ orderList.map((row) => ({
-                  //Id: manager.id,
-                  testGroup:row.labTestGroupName,
-                  testName: row.labTestName,
-                  labNumber: row.labNumber,
-                  sampleCollectionDate: row.sampleCollectionDate,    
-                  dateAssayed: row.dateAssayed,
-                  dateResultReceived: row.dateResultReceived, 
-                  viralLoadIndication: row.viralLoadIndicationName,
-                  Action: 
-                  // (
-                  //   <ButtonGroup variant="contained" 
-                  //       aria-label="split button"
-                  //       style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
-                  //       size="large"
-                  //       onClick={()=>onClickHome(row)}
-                  //   >
-                  //   <Button
-                  //   color="primary"
-                  //   size="small"
-                  //   aria-label="select merge strategy"
-                  //   aria-haspopup="menu"
-                  //   style={{backgroundColor:'rgb(153, 46, 98)'}}
-                  //   >
-                  //       <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
-                  //   </Button>
-                  //   </ButtonGroup>
-                  // ), 
-                  <div>
-                            <Menu.Menu position='right'  >
-                            <Menu.Item >
-                                <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
-                                <Dropdown item text='Action'>
+                ]}
+                isLoading={loading}
+                data={ orderList.map((row) => ({
+                    //Id: manager.id,
+                    testGroup:row.labTestGroupName,
+                    testName: row.labTestName,
+                    labNumber: row.labNumber,
+                    sampleCollectionDate: row.sampleCollectionDate,    
+                    dateAssayed: row.dateAssayed,
+                    dateResultReceived: row.dateResultReceived, 
+                    viralLoadIndication: row.viralLoadIndicationName,
+                    Action: 
+                    // (
+                    //   <ButtonGroup variant="contained" 
+                    //       aria-label="split button"
+                    //       style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
+                    //       size="large"
+                    //       onClick={()=>onClickHome(row)}
+                    //   >
+                    //   <Button
+                    //   color="primary"
+                    //   size="small"
+                    //   aria-label="select merge strategy"
+                    //   aria-haspopup="menu"
+                    //   style={{backgroundColor:'rgb(153, 46, 98)'}}
+                    //   >
+                    //       <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
+                    //   </Button>
+                    //   </ButtonGroup>
+                    // ), 
+                    <div>
+                              <Menu.Menu position='right'  >
+                              <Menu.Item >
+                                  <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                                  <Dropdown item text='Action'>
 
-                                <Dropdown.Menu style={{ marginTop:"10px", }}>
-                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'view')}><Icon name='eye' />View</Dropdown.Item>
-                                   <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
-                                    <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                                </Button>
-                            </Menu.Item>
-                            </Menu.Menu>
-                         </div>
-                  }))}
+                                  <Dropdown.Menu style={{ marginTop:"10px", }}>
+                                    <Dropdown.Item  onClick={()=>onClickHome(row, 'view')}><Icon name='eye' />View</Dropdown.Item>
+                                    <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
+                                      <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                              </Dropdown>
+                                  </Button>
+                              </Menu.Item>
+                              </Menu.Menu>
+                          </div>
+                    }))}
+              
+                          options={{
+                            headerStyle: {
+                                backgroundColor: "#014d88",
+                                color: "#fff",
+                            },
+                            searchFieldStyle: {
+                                width : '200%',
+                                margingLeft: '250px',
+                            },
+                            filtering: false,
+                            exportButton: false,
+                            searchFieldAlignment: 'left',
+                            pageSizeOptions:[10,20,100],
+                            pageSize:10,
+                            debounceInterval: 400
+                        }}
+              />
+            )}
+            {moduleStatus==="2" && (
+              <>
+              <Alert
+                  variant="warning"
+                  className="alert-dismissible solid fade show"
+              >
+                  <p>Laboratory Module is not install</p>
+              </Alert>
             
-                        options={{
-                          headerStyle: {
-                              backgroundColor: "#014d88",
-                              color: "#fff",
-                          },
-                          searchFieldStyle: {
-                              width : '200%',
-                              margingLeft: '250px',
-                          },
-                          filtering: false,
-                          exportButton: false,
-                          searchFieldAlignment: 'left',
-                          pageSizeOptions:[10,20,100],
-                          pageSize:10,
-                          debounceInterval: 400
-                      }}
-            />
-       
+              </>
+              )} 
     </div>
   );
 }
