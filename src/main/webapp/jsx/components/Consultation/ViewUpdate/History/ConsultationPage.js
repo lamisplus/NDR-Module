@@ -168,7 +168,7 @@ const ClinicVisit = (props) => {
     GetPatientObj();
     ClinicVisitListHistory();
     if(props.activeContent.id!==null){
-      console.log(props.activeContent.id)
+     
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
@@ -398,9 +398,9 @@ const ClinicVisit = (props) => {
     )
       .then(response => {
         setSaving(false);
-        toast.success("Clinic Visit save successful");
+        toast.success("Clinic Visit updated successful");
         GetVisitById(visitId)
-        //props.setActiveContent('recent-history')
+        props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
       })
       .catch(error => {
         setSaving(false);

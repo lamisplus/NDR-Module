@@ -245,6 +245,10 @@ const UserRegistration = (props) => {
             const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))
             basicInfo.age=patientAge
             setfemaleStatus(patientObj.sex==='Female'? true : false)
+            if(patientObj.age<=14){
+                setOvcEnrolled(true)
+            }
+            basicInfo.ninNumber=patientObj.ninNumber
 
         }
         
@@ -1107,6 +1111,7 @@ const UserRegistration = (props) => {
                                                         type="number"
                                                         name="ninNumber"
                                                         id="ninNumber"
+                                                        value={basicInfo.ninNumber}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
                                                     />
@@ -1829,6 +1834,7 @@ const UserRegistration = (props) => {
                                     </FormGroup>
                                 </div>
                                 ) : ""}
+                                {basicInfo.age <=14 && (
                                 <div className="form-group mb-3 col-md-3">
                                     
                                     <div className="form-check custom-checkbox ml-1 ">
@@ -1847,7 +1853,8 @@ const UserRegistration = (props) => {
                                         </label>
                                     </div>
                                 </div>
-                                <div className="form-group mb-3 col-md-3">
+                                )}
+                                {/* <div className="form-group mb-3 col-md-3">
                                     {ovcEnrolled===true ? 
                                         (
                                         <FormGroup>
@@ -1867,7 +1874,7 @@ const UserRegistration = (props) => {
                                         :
                                         ""
                                     }
-                                </div>
+                                </div> */}
                                 
                                 {ovcEnrolled===true && 
                                 (
