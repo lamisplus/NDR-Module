@@ -399,8 +399,8 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         toast.success("Clinic Visit updated successful");
-        GetVisitById(visitId)
-        props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
+        //GetVisitById(visitId)
+        //props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
       })
       .catch(error => {
         setSaving(false);
