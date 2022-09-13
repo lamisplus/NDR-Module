@@ -73,7 +73,9 @@ let checkUrl=""
 const CaptureBiometric = (props) => {
     const classes = useStyles()
     const biometricDevices = props.biometricDevices
-    const [objValues, setObjValues]= useState({biometricType: "FINGERPRINT", patientId:props.patientId, templateType:"", device:""})
+    const patientID= props && props.patientId ? props.patientId : ""
+    
+    const [objValues, setObjValues]= useState({biometricType: "FINGERPRINT", patientId:patientID, templateType:"", device:""})
     const [fingerType, setFingerType] = useState([]);
     const [devices, setDevices] = useState(props.biometricDevices);
     const [loading, setLoading] = React.useState(false);
@@ -81,7 +83,9 @@ const CaptureBiometric = (props) => {
     const [tryAgain, setTryAgain] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
     const [errors, setErrors] = useState({});
+   // const [responseImage, setResponseImage] = useState("")
     const [capturedFingered, setCapturedFingered]= useState([])
+     console.log(biometricDevices)
     const buttonSx = {
       ...(success && {
         bgcolor: green[500],
@@ -118,6 +122,7 @@ const CaptureBiometric = (props) => {
         const deviceName =e.target.value;
         const selectedDevice=biometricDevices.find((x)=> x.name ===deviceName )
         checkUrl= selectedDevice.url===null? baseUrl : selectedDevice.url
+        console.log(checkUrl)
         setObjValues({...objValues, device:deviceName})
         axios
            .get(`${checkUrl}biometrics/secugen/boot?reader=${deviceName}`,
@@ -207,223 +212,229 @@ const CaptureBiometric = (props) => {
             toast.error("You can't save less than 2 finger");
         }
   }  
-
+    
+ // console.log(capturedFingered)
 
     return (
         <div >
-            <Modal isOpen={props.modalstatus} toggle={props.togglestatus} className={props.className} size="lg" backdrop="static">
-                <Form >
-                    <ModalHeader toggle={props.togglestatus}>capture Biometric</ModalHeader>
-                    <ModalBody>
-                        <Card>
-                        {/* <CardHeader>
-                            Capture Biometrics
-                        </CardHeader> */}
-                            <CardBody>
-                            <Row form>
-                            <ToastContainer />
-                                <Col md={4}>
-                                    <FormGroup>
-                                        <Label for='device'>Select Device </Label>
-                                        <Input
-                                            type="select"
-                                            name="device"
-                                            id="device"
-                                            onChange={checkDevice}
-                                            value={objValues.device}
-                                            required
-                                        >
-                                        <option value="">Select Device </option>
-                                        {biometricDevices.map(({ id, name }) => (
-                                            <option key={id} value={name}>
-                                                {name}
-                                            </option>
-                                        ))}
+            <Card >
+                <CardBody>
+                    <Modal isOpen={props.modalstatus} toggle={props.togglestatus} className={props.className} size="lg">
+                        <Form >
+                            <ModalHeader toggle={props.togglestatus}>capture Biometric</ModalHeader>
+                            <ModalBody>
+                                <Card>
+                                {/* <CardHeader>
+                                    Capture Biometrics
+                                </CardHeader> */}
+                                    <CardBody>
+                                    <Row form>
+                                    <ToastContainer />
+                                        <Col md={4}>
+                                            <FormGroup>
+                                                <Label for='device'>Select Device </Label>
+                                                <Input
+                                                    type="select"
+                                                    name="device"
+                                                    id="device"
+                                                    onChange={checkDevice}
+                                                    value={objValues.device}
+                                                    required
+                                                >
+                                                <option value="">Select Device </option>
+                                                {biometricDevices.map(({ id, name }) => (
+                                                    <option key={id} value={name}>
+                                                        {name}
+                                                    </option>
+                                                ))}
+                                              
+                                            </Input>
+                                            {errors.device !=="" ? (
+                                                <span className={classes.error}>{errors.device}</span>
+                                            ) : "" }
+                                            </FormGroup>
+                                        </Col>
+                                        {showCapture ? (
+                                        <>
+                                            <Col md={4}>
+                                            <FormGroup>
+                                                <Label for='device'>Select Finger</Label>
+                                                <Input
+                                                    type="select"
+                                                    name="templateType"
+                                                    id="templateType"
+                                                    onChange={handleInputChange}
+                                                    value={objValues.templateType}
+                                                    required
+                                                >
+                                                <option value="">Select Finger </option>
+
+                                                {fingerType.map((value) => (
+                                                    <option key={value.id} value={value.display}>
+                                                        {value.display}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                            {errors.templateType !=="" ? (
+                                                <span className={classes.error}>{errors.templateType}</span>
+                                            ) : "" }
+                                            </FormGroup>
+                                        </Col>
                                         
-                                    </Input>
-                                    {errors.device !=="" ? (
-                                        <span className={classes.error}>{errors.device}</span>
-                                    ) : "" }
-                                    </FormGroup>
-                                </Col>
-                                {showCapture ? (
-                                <>
-                                    <Col md={4}>
-                                    <FormGroup>
-                                        <Label for='device'>Select Finger</Label>
-                                        <Input
-                                            type="select"
-                                            name="templateType"
-                                            id="templateType"
-                                            onChange={handleInputChange}
-                                            value={objValues.templateType}
-                                            required
-                                        >
-                                        <option value="">Select Finger </option>
 
-                                        {fingerType.map((value) => (
-                                            <option key={value.id} value={value.display}>
-                                                {value.display}
-                                            </option>
-                                        ))}
-                                    </Input>
-                                    {errors.templateType !=="" ? (
-                                        <span className={classes.error}>{errors.templateType}</span>
-                                    ) : "" }
-                                    </FormGroup>
-                                </Col>
-                                
-
-                                <Col md={4}>
-                                
-                                <MatButton
-                                    type='button'
-                                    variant='contained'
-                                    color='primary'
-                                    onClick={captureFinger}
-                                    className={'mt-4'}
-                                    startIcon={<FingerprintIcon />}
-                                >
-                                    Capture Finger
-                                </MatButton>
-
-                                </Col>
-                                <br/>
-                                
-                                </>
-                                )
-                                :
-                                ""
-                                }
-                                {/* <img width='500' height='200' src={responseImage}/> */}
-                                <Col sm="12" md={{ size: 6, offset: 3 }}>
-                                
-                                {loading && (
-                                <>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Box sx={{ m: 1, position: 'relative' }}>
-                                        <Fab
-                                        aria-label="save"
-                                        color="secondary"
-                                        sx={buttonSx}
+                                        <Col md={4}>
                                         
+                                        <MatButton
+                                            type='button'
+                                            variant='contained'
+                                            color='primary'
+                                            onClick={captureFinger}
+                                            className={'mt-4'}
+                                            startIcon={<FingerprintIcon />}
                                         >
-                                        {success ? <CheckIcon /> : <FingerprintIcon />}
-                                        </Fab>
-                                        {loading && (
-                                        <CircularProgress
-                                            size={68}
-                                            sx={{
-                                            color: green[500],
-                                            position: 'absolute',
-                                            top: -6,
-                                            left: -6,
-                                            zIndex: 1,
-                                            }}
-                                        />
-                                        )}
-                                    </Box>
-                                    <Typography variant="h6" gutterBottom component="div">
-                                    {success ?` your  ${objValues.templateType} Finger captured.` : `Please place your  ${objValues.templateType} Finger on scanner.`}
-                                    </Typography>
-                                </Box>
-                                </>
-                                )
-                                } 
-                                {tryAgain && (
-                                <>
-                                
+                                            Capture Finger
+                                        </MatButton>
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Box sx={{ m: 1, position: 'relative' }}>
-                                        <Fab
-                                        aria-label="save"
-                                        color="secondary"
-                                        sx={buttonSx}
+                                        </Col>
+                                        <br/>
                                         
-                                        >
-                                            <FingerprintIcon />
-                                        </Fab>
+                                        </>
+                                        )
+                                        :
+                                        ""
+                                        }
+                                        {/* <img width='500' height='200' src={responseImage}/> */}
+                                        <Col sm="12" md={{ size: 6, offset: 3 }}>
+                                       
+                                     {loading && (
+                                        <>
+                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <Box sx={{ m: 1, position: 'relative' }}>
+                                                <Fab
+                                                aria-label="save"
+                                                color="secondary"
+                                                sx={buttonSx}
+                                                
+                                                >
+                                                {success ? <CheckIcon /> : <FingerprintIcon />}
+                                                </Fab>
+                                                {loading && (
+                                                <CircularProgress
+                                                    size={68}
+                                                    sx={{
+                                                    color: green[500],
+                                                    position: 'absolute',
+                                                    top: -6,
+                                                    left: -6,
+                                                    zIndex: 1,
+                                                    }}
+                                                />
+                                                )}
+                                            </Box>
+                                            <Typography variant="h6" gutterBottom component="div">
+                                            {success ?` your  ${objValues.templateType} Finger captured.` : `Please place your  ${objValues.templateType} Finger on scanner.`}
+                                            </Typography>
+                                        </Box>
+                                        </>
+                                        )
+                                        } 
                                         {tryAgain && (
-                                        <CircularProgress
-                                            size={68}
-                                            sx={{
-                                            color: red[500],
-                                            position: 'absolute',
-                                            top: -6,
-                                            left: -6,
-                                            zIndex: 1,
-                                            }}
-                                        />
-                                        )}
-                                    </Box>
-                                    <Typography variant="h6" gutterBottom component="div">
-                                    Click to Recapture Again
-                                    </Typography>
-                                </Box>
-                                </>
-                                )
-                                } 
-                                {/*  */}
-                                </Col>
-                                
-                                    
-                                </Row>
+                                        <>
+                                        
 
-                            <Row>
-                            {capturedFingered.length >=1 ? (  
-                                <>                               
-                            <Col md={12} >
-                                <h3>Captured Fingerprints</h3>
-                            </Col>
-                            <Col md={12} style={{marginTop:"20px"}}>
-                                <List celled horizontal>
-                                    {capturedFingered.map((x) => (
-                                        <List.Item>
-                                            {/* <List.Header><Icon name='cancel'  color='red' /> </List.Header> */}
-                                            <List.Content> <FingerprintIcon style={{color:"#2E7D32", fontSize: 40}}/>{x.templateType}</List.Content>
-                                        </List.Item>
-                                    ))}
+                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <Box sx={{ m: 1, position: 'relative' }}>
+                                                <Fab
+                                                aria-label="save"
+                                                color="secondary"
+                                                sx={buttonSx}
+                                                
+                                                >
+                                                 <FingerprintIcon />
+                                                </Fab>
+                                                {tryAgain && (
+                                                <CircularProgress
+                                                    size={68}
+                                                    sx={{
+                                                    color: red[500],
+                                                    position: 'absolute',
+                                                    top: -6,
+                                                    left: -6,
+                                                    zIndex: 1,
+                                                    }}
+                                                />
+                                                )}
+                                            </Box>
+                                            <Typography variant="h6" gutterBottom component="div">
+                                            Click to Recapture Again
+                                            </Typography>
+                                        </Box>
+                                        </>
+                                        )
+                                        } 
+                                        {/*  */}
+                                        </Col>
+                                       
+                                            
+                                        </Row>
 
-                                </List>
+                                    <Row>
+                                 {capturedFingered.length >=1 ? (  
+                                     <>                               
+                                    <Col md={12} >
+                                        <h3>Captured Fingerprints</h3>
+                                    </Col>
+                                    <Col md={12} style={{marginTop:"20px"}}>
+                                        <List celled horizontal>
+                                            {capturedFingered.map((x) => (
+                                                <List.Item>
+                                                    {/* <List.Header><Icon name='cancel'  color='red' /> </List.Header> */}
+                                                    <List.Content> <FingerprintIcon style={{color:"#2E7D32", fontSize: 40}}/>{x.templateType}</List.Content>
+                                                </List.Item>
+                                            ))}
 
-                            </Col>
-                            {/* <Col md={6} style={{marginTop:"20px"}}>
-                                <List celled horizontal>
-                                    {[1,2,3].map((x) => (
-                                        <List.Item>
-                                            <List.Header><Icon name='checkmark' color='green'/> </List.Header>
-                                            <List.Content > <FingerprintIcon style={{color:"#2E7D32", fontSize: 40}} /> Finger Type</List.Content>
-                                        </List.Item>
-                                    ))}
+                                        </List>
 
-                                </List>
+                                    </Col>
+                                    {/* <Col md={6} style={{marginTop:"20px"}}>
+                                        <List celled horizontal>
+                                            {[1,2,3].map((x) => (
+                                                <List.Item>
+                                                    <List.Header><Icon name='checkmark' color='green'/> </List.Header>
+                                                    <List.Content > <FingerprintIcon style={{color:"#2E7D32", fontSize: 40}} /> Finger Type</List.Content>
+                                                </List.Item>
+                                            ))}
 
-                            </Col> */}
-                            <br/><br/><br/><br/><br/><br/>
-                                <Col md={12} >
-                                    <MatButton
-                                        type='button'
-                                        variant='contained'
-                                        color='primary'
-                                        onClick={saveBiometrics}
-                                        // className={classes.button}
-                                        startIcon={<SaveIcon/>}
-                                    >
-                                        Save Capture
-                                    </MatButton>
-                                </Col>
-                            </> 
-                            )
-                                :
-                                ""
-                            }
-                            </Row>
-                            </CardBody>
-                        </Card>
-                    </ModalBody>
-                </Form>
-            </Modal>                
+                                        </List>
+
+                                    </Col> */}
+                                    <br/><br/><br/><br/><br/><br/>
+                                        <Col md={12} >
+                                            <MatButton
+                                                type='button'
+                                                variant='contained'
+                                                color='primary'
+                                                onClick={saveBiometrics}
+                                                // className={classes.button}
+                                                startIcon={<SaveIcon/>}
+                                            >
+                                                Save Capture
+                                            </MatButton>
+                                        </Col>
+                                    </> 
+                                    )
+                                        :
+                                        ""
+                                    }
+                                    </Row>
+                                    </CardBody>
+                                </Card>
+                            </ModalBody>
+                        </Form>
+
+                    </Modal>
+                </CardBody>
+            </Card>
         </div>
     );
 };

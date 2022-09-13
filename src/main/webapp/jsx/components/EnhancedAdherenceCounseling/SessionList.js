@@ -204,9 +204,9 @@ const LabHistory = (props) => {
                   field: "testGroup",
                 },
                 { title: "Follow Up Date", field: "testName", filtering: false },
-                { title: " Result Date ", field: "sampleCollectionDate", filtering: false },
-                { title: "Result", field: "dateAssayed", filtering: false },
-                { title: "EAC Status", field: "dateResultReceived", filtering: false },
+                { title: " Barriers ", field: "sampleCollectionDate", filtering: false },
+                { title: "Interventions", field: "dateAssayed", filtering: false },
+                // { title: "EAC Status", field: "dateResultReceived", filtering: false },
 
 
               ]}
@@ -216,8 +216,8 @@ const LabHistory = (props) => {
                   testGroup:row.labTestGroupName,
                   testName: row.labTestName,
                   labNumber: row.labNumber,
-                  sampleCollectionDate: row.sampleCollectionDate,    
-                  dateAssayed: row.dateAssayed,
+                  sampleCollectionDate: "",    
+                //   dateAssayed: row.dateAssayed,
                  
                   }))}
             
