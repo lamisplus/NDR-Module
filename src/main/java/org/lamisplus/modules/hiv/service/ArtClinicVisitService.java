@@ -91,6 +91,7 @@ public class ArtClinicVisitService {
 		artClinical.setHivEnrollment(existArtClinical.getHivEnrollment());
 		artClinical.setPerson(existArtClinical.getPerson());
 		artClinical.setId(existArtClinical.getId());
+		artClinical.setArchived(0);
 		return convertToClinicVisitDto(artClinicalRepository.save(artClinical));
 	}
 	
@@ -181,6 +182,7 @@ public class ArtClinicVisitService {
 		VitalSign vitalSign = getVitalSign(vitalSignId);
 		artClinical.setVitalSign(vitalSign);
 		artClinical.setFacilityId(organizationUtil.getCurrentUserOrganization());
+		artClinical.setArchived(0);
 		log.info("converted entity 1 {}", artClinical);
 		return artClinical;
 	}

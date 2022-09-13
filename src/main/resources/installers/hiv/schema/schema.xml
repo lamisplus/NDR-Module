@@ -628,7 +628,7 @@
                 follow_up_date      date,
                 referral            VARCHAR(255),
                 adherence           VARCHAR(255),
-                uuid                VARCHAR(255)                            NOT NULL
+                uuid                VARCHAR(255)                            NOT NULL,
                 status              VARCHAR(255),
                 CONSTRAINT pk_hiv_eac_session PRIMARY KEY (id)
             );

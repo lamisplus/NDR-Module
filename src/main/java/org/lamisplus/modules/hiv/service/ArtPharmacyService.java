@@ -24,6 +24,7 @@ import org.lamisplus.modules.patient.domain.dto.EncounterResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
+import org.lamisplus.modules.patient.repository.VisitRepository;
 import org.lamisplus.modules.patient.service.EncounterService;
 import org.lamisplus.modules.patient.service.VisitService;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,8 @@ public class ArtPharmacyService {
 	
 	private final EncounterService encounterService;
 	private final VisitService visitService;
+	
+	private final VisitRepository visitRepository;
 	
 	private static final String REGIMEN = "regimens";
 	
@@ -78,6 +82,9 @@ public class ArtPharmacyService {
 		log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: "+ visit.getId());
 		if (nonHIVEncounters.isEmpty()) {
 			visitService.checkOutVisitById(visit.getId());
+			LocalDateTime visitStartDate = visit.getVisitStartDate();
+			visit.setVisitEndDate(visitStartDate.plusHours(24));
+			visitRepository.save(visit);
 		}
 	}
 	

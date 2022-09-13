@@ -69,6 +69,7 @@ public class HivEnrollmentService {
 		hivEnrollment.setId(existHivEnrollment.getId());
 		hivEnrollment.setPerson(existHivEnrollment.getPerson());
 		hivEnrollment.setVisit(existHivEnrollment.getVisit());
+		hivEnrollment.setArchived(0);
 		return convertToDto(hivEnrollmentRepository.save(hivEnrollment));
 	}
 	

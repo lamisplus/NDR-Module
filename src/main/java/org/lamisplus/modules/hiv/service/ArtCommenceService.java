@@ -19,7 +19,6 @@ import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
-import org.lamisplus.modules.patient.service.PersonService;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
@@ -124,6 +123,8 @@ public class ArtCommenceService {
 	
 	public ARTClinicalCommenceDto updateArtCommence(Long id, ARTClinicalCommenceDto artClinicalCommenceDto) {
 		ARTClinical existArtClinical = getExistArt(id);
+		VitalSignDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
+		vitalSignService.updateVitalSign(existArtClinical.getVitalSign().getId(), vitalSignDto);
 		ARTClinical artClinical = convertDtoToART(artClinicalCommenceDto, artClinicalCommenceDto.getVitalSignId());
 		artClinical.setId(existArtClinical.getId());
 		artClinical.setCreatedBy(existArtClinical.getCreatedBy());
@@ -132,6 +133,8 @@ public class ArtCommenceService {
 		artClinical.setVisit(existArtClinical.getVisit());
 		artClinical.setPerson(existArtClinical.getPerson());
 		artClinical.setVitalSign(existArtClinical.getVitalSign());
+		artClinical.setIsCommencement(existArtClinical.getIsCommencement());
+		artClinical.setArchived(0);
 		return convertArtToResponseDto(artClinicalRepository.save(artClinical));
 	}
 	
