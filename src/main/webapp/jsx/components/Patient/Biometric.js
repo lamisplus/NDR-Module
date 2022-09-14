@@ -339,9 +339,7 @@ function Biometrics(props) {
                     toast.success("Biometric save successful");
                     setCapturedFingered([])
                     getPersonBiometrics();
-                    props.patientObj.biometricStatus=true
-                    props.setActiveContent({...props.activeContent, route:'recent-history'})
-                    //props.updatePatientBiometricStatus(true);
+                    props.updatePatientBiometricStatus(true);
                 })
                 .catch(error => {
                     toast.error("Something went wrong saving biometrics");
@@ -449,7 +447,8 @@ function Biometrics(props) {
                         </>
                     }
                 </div>
-
+                {/*{permissions.includes('capture_patient_biometrics')|| permissions.includes("all_permission")?*/}
+                {permissions.includes('capture_patient_biometrics')|| permissions.includes("all_permission") ?
                     <div style={{flex:"3",padding:'5px',marginLeft:'5px',border:'1px solid rgba(99, 99, 99, 0.2)',boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'}}>
                         <div className="col-12">
                             <ToastContainer />
@@ -566,7 +565,10 @@ function Biometrics(props) {
                         </div>
                     </div>
 
-                   
+                    :""
+
+                }
+
             </div>
 
 

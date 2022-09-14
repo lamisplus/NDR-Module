@@ -3,7 +3,7 @@ name: HivModule
 dependencies: {PatientModule: 1.0.0, TriageModule: 1.0.0 }
 store: true
 menus:
-  - icon:
+  - icon: fa-solid fa-shield-virus
     disabled: false
     name: HIV
     state: hiv

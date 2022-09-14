@@ -367,6 +367,7 @@ const UserRegistration = (props) => {
      //fetch province
      const getProvinces = e => {
             const stateId = e.target.value;
+            setErrors({...errors, [e.target.name]: ""})
             setBasicInfo({ ...basicInfo, stateId: e.target.value });
             axios
             .get(`${baseUrl}organisation-units/parent-organisation-units/${stateId}`,
@@ -446,8 +447,39 @@ const UserRegistration = (props) => {
         setBasicInfo({...basicInfo, age: Math.abs(e.target.value)});
     }
     //End of Date of Birth and Age handling 
+     /*****  Validation  */
+     const validate = () => {
+        let temp = { ...errors }
+            temp.firstName = basicInfo.firstName ? "" : "First Name is required"
+            temp.hospitalNumber = basicInfo.hospitalNumber ? "" : "Hospital Number  is required."
+            //temp.middleName = basicInfo.middleName ? "" : "Middle is required."
+            //temp.landmark = basicInfo.landmark ? "" : "This field is required."
+            temp.lastName = basicInfo.lastName ? "" : "Last Name  is required."
+            temp.sexId = basicInfo.sexId ? "" : "Sex is required."
+            temp.dateOfRegistration1 = basicInfo.dateOfRegistration ? "" : "Date of Registration is required."
+            temp.educationId = basicInfo.educationId ? "" : "Education is required."
+            temp.address = basicInfo.address ? "" : "Address is required."
+            temp.phoneNumber = basicInfo.phoneNumber ? "" : "Phone Number  is required."
+            temp.countryId = basicInfo.countryId ? "" : "Country is required."    
+            temp.stateId = basicInfo.stateId ? "" : "State is required."  
+            temp.district = basicInfo.district ? "" : "Province/LGA is required." 
+            //HIV FORM VALIDATION
+            temp.targetGroupId = objValues.targetGroupId ? "" : "Target group is required."
+            temp.dateConfirmedHiv = objValues.dateConfirmedHiv ? "" : "date confirm HIV is required."
+            temp.sourceOfReferrer = objValues.sourceOfReferrer ? "" : "Source of referrer is required."
+            temp.enrollmentSettingId = objValues.enrollmentSettingId ? "" : "Enrollment Setting Number  is required."
+            temp.tbStatusId = objValues.tbStatusId ? "" : "TB status is required."    
+            temp.statusAtRegistrationId = objValues.statusAtRegistrationId ? "" : "Status at Registration is required."  
+            temp.entryPointId = objValues.entryPointId ? "" : "Care Entry Point is required." 
+            temp.dateOfRegistration = objValues.dateOfRegistration ? "" : "Date of Registration is required."  
+            temp.uniqueId = objValues.uniqueId ? "" : "Unique ID is required."
+            
+                setErrors({ ...temp })
+        return Object.values(temp).every(x => x == "")
+    }
     //Handle Input Change for Basic Infor
-    const handleInputChangeBasic = e => {        
+    const handleInputChangeBasic = e => { 
+        setErrors({...errors, [e.target.name]: ""})        
         setBasicInfo ({...basicInfo,  [e.target.name]: e.target.value}); 
         //manupulate inpute fields base on gender/sex 
         if(e.target.name==='sexId' && e.target.value==='Female') {
@@ -471,6 +503,7 @@ const UserRegistration = (props) => {
         }
                    
     } 
+    
     const checkNINLimit=(e)=>{
         const limit = 11;        
         const acceptedNumber= e.slice(0, limit)
@@ -517,141 +550,7 @@ const UserRegistration = (props) => {
     const handleInputChangeRelatives = e => {        
         setRelatives ({...relatives,  [e.target.name]: e.target.value});               
     }
-    /*****  Validation  */
-    const validate = () => {
-        let temp = { ...errors }
-            temp.firstName = basicInfo.firstName ? "" : "First Name is required"
-            temp.hospitalNumber = basicInfo.hospitalNumber ? "" : "Hospital Number  is required."
-            //temp.middleName = basicInfo.middleName ? "" : "Middle is required."
-            //temp.landmark = basicInfo.landmark ? "" : "This field is required."
-            temp.lastName = basicInfo.lastName ? "" : "Last Name  is required."
-            temp.sexId = basicInfo.sexId ? "" : "Sex is required."
-            temp.dateOfRegistration1 = basicInfo.dateOfRegistration ? "" : "Date of Registration is required."
-            temp.educationId = basicInfo.educationId ? "" : "Education is required."
-            temp.address = basicInfo.address ? "" : "Address is required."
-            temp.phoneNumber = basicInfo.phoneNumber ? "" : "Phone Number  is required."
-            temp.countryId = basicInfo.countryId ? "" : "Country is required."    
-            temp.stateId = basicInfo.stateId ? "" : "State is required."  
-            temp.district = basicInfo.district ? "" : "Province/LGA is required." 
-            //HIV FORM VALIDATION
-            temp.targetGroupId = objValues.targetGroupId ? "" : "Target group is required."
-            temp.dateConfirmedHiv = objValues.dateConfirmedHiv ? "" : "date confirm HIV is required."
-            temp.sourceOfReferrer = objValues.sourceOfReferrer ? "" : "Source of referrer is required."
-            temp.enrollmentSettingId = objValues.enrollmentSettingId ? "" : "Enrollment Setting Number  is required."
-            temp.tbStatusId = objValues.tbStatusId ? "" : "TB status is required."    
-            temp.statusAtRegistrationId = objValues.statusAtRegistrationId ? "" : "Status at Registration is required."  
-            temp.entryPointId = objValues.entryPointId ? "" : "Care Entry Point is required." 
-            temp.dateOfRegistration = objValues.dateOfRegistration ? "" : "Date of Registration is required."  
-            temp.uniqueId = objValues.uniqueId ? "" : "Unique ID is required."
-            
-                setErrors({ ...temp })
-        return Object.values(temp).every(x => x == "")
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault(); 
-
-        const getSexId=  genders.find((x)=> x.display===basicInfo.sexId)//get patient sex ID by filtering the request
-        basicInfo.sexId=getSexId.id
-        let newConatctsInfo=[]
-            //Manipulate relatives contact  address:"",
-            const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
-                
-                const contactInfo = { 
-                address: {
-                    line: [
-                        x.address
-                    ],
-                },
-                contactPoint: {
-                    type: "phone",
-                    value: x.phone
-                },
-                firstName: x.firstName,
-                fullName: x.firstName + " " + x.middleName + " " + x.lastName,
-                relationshipId: x.relationshipId,
-                surname: x.lastName,
-                otherName: x.middleName
-            }
-            
-            newConatctsInfo.push(contactInfo)
-            })
-         if(validate()){
-            try {
-                const patientForm = {
-                    id:"",
-                    active: true,
-                    address: [
-                        {
-                            "city": basicInfo.address,
-                            "countryId": basicInfo.countryId,
-                            "district": basicInfo.district,
-                            "line": [
-                                basicInfo.landmark
-                            ],
-                            "organisationUnitId": 0,
-                            "postalCode": "",
-                            "stateId": basicInfo.stateId
-                        }
-                    ],
-                    contact: newConatctsInfo,
-                    contactPoint: [],
-                    dateOfBirth: basicInfo.dob,
-                    deceased: false,
-                    deceasedDateTime: null,
-                    firstName: basicInfo.firstName,
-                    genderId: basicInfo.sexId,
-                    sexId: basicInfo.sexId,
-                    identifier: [
-                        {
-                            "assignerId": 1,
-                            "type": "HospitalNumber",
-                            "value": basicInfo.hospitalNumber
-                        }
-                    ],
-                    otherName: basicInfo.middleName,
-                    maritalStatusId: basicInfo.maritalStatusId,
-                    surname: basicInfo.lastName,
-                    educationId: basicInfo.educationId,
-                    employmentStatusId: basicInfo.employmentStatusId,
-                    dateOfRegistration: basicInfo.dateOfRegistration,
-                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true,
-                    ninNumber:basicInfo.ninNumber
-                };
-                const phone = {
-                    "type": "phone",
-                    "value": basicInfo.phoneNumber
-                };
-                if (basicInfo.email) {
-                    const email = {
-                        "type": "email",
-                        "value": basicInfo.email
-                    }
-                    patientForm.contactPoint.push(email);
-                }
-                if (basicInfo.altPhonenumber) {
-                    const altPhonenumber = {
-                        "type": "altphone",
-                        "value": basicInfo.altPhonenumber
-                    }
-                    patientForm.contactPoint.push(altPhonenumber);
-                }
-                patientForm.contactPoint.push(phone);
-                patientForm.id = patientId;
-                patientDTO.person=patientForm;
-                patientDTO.hivEnrollment=objValues;
-                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
-                toast.success("Patient Register successful");
-                history.push('/');
-            } catch (error) {                
-                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "An error occured while registering a patient !";
-                    toast.error(errorMessage, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-            }
-        }
-
-    }
+    
     const alphabetOnly=(value)=>{
         const result = value.replace(/[^a-z]/gi, '');
         return result
@@ -754,7 +653,8 @@ const UserRegistration = (props) => {
         //console.log(error);
         });    
     }
-    const handleInputChange = e => {        
+    const handleInputChange = e => { 
+        setErrors({...errors, [e.target.name]: ""})       
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
         if(e.target.name ==="entryPointId" ){
             if(e.target.value==="21"){
@@ -764,7 +664,6 @@ const UserRegistration = (props) => {
             }
         }  
         if(e.target.name ==="pregnancyStatusId" ){
-            console.log(e.target.value)
             if(e.target.value==="72"){
                 setTransferIn(true)
             }else{
@@ -779,7 +678,7 @@ const UserRegistration = (props) => {
     }
     const checkPhoneNumberBasic=(e, inputName)=>{
         const limit = 10;
-
+        setErrors({...errors, [inputName]: ""})    
             setBasicInfo({...basicInfo,  [inputName]: e.slice(0, limit)});     
     } 
     //Handle CheckBox 
@@ -792,6 +691,109 @@ const UserRegistration = (props) => {
     }
     const handleCancel =()=>{
         history.push({ pathname: '/' });
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault(); 
+        const getSexId=  genders.find((x)=> x.display===basicInfo.sexId)//get patient sex ID by filtering the request
+        basicInfo.sexId=getSexId && getSexId.id ? getSexId.id : ""
+        let newConatctsInfo=[]
+            //Manipulate relatives contact  address:"",
+            const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
+                
+                const contactInfo = { 
+                address: {
+                    line: [
+                        x.address
+                    ],
+                },
+                contactPoint: {
+                    type: "phone",
+                    value: x.phone
+                },
+                firstName: x.firstName,
+                fullName: x.firstName + " " + x.middleName + " " + x.lastName,
+                relationshipId: x.relationshipId,
+                surname: x.lastName,
+                otherName: x.middleName
+            }
+            
+            newConatctsInfo.push(contactInfo)
+            })
+         if(validate()){
+            try {
+                const patientForm = {
+                    id:"",
+                    active: true,
+                    address: [
+                        {
+                            "city": basicInfo.address,
+                            "countryId": basicInfo.countryId,
+                            "district": basicInfo.district,
+                            "line": [
+                                basicInfo.landmark
+                            ],
+                            "organisationUnitId": 0,
+                            "postalCode": "",
+                            "stateId": basicInfo.stateId
+                        }
+                    ],
+                    contact: newConatctsInfo,
+                    contactPoint: [],
+                    dateOfBirth: basicInfo.dob,
+                    deceased: false,
+                    deceasedDateTime: null,
+                    firstName: basicInfo.firstName,
+                    genderId: basicInfo.sexId,
+                    sexId: basicInfo.sexId,
+                    identifier: [
+                        {
+                            "assignerId": 1,
+                            "type": "HospitalNumber",
+                            "value": basicInfo.hospitalNumber
+                        }
+                    ],
+                    otherName: basicInfo.middleName,
+                    maritalStatusId: basicInfo.maritalStatusId,
+                    surname: basicInfo.lastName,
+                    educationId: basicInfo.educationId,
+                    employmentStatusId: basicInfo.employmentStatusId,
+                    dateOfRegistration: basicInfo.dateOfRegistration,
+                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true,
+                    ninNumber:basicInfo.ninNumber
+                };
+                const phone = {
+                    "type": "phone",
+                    "value": basicInfo.phoneNumber
+                };
+                if (basicInfo.email) {
+                    const email = {
+                        "type": "email",
+                        "value": basicInfo.email
+                    }
+                    patientForm.contactPoint.push(email);
+                }
+                if (basicInfo.altPhonenumber) {
+                    const altPhonenumber = {
+                        "type": "altphone",
+                        "value": basicInfo.altPhonenumber
+                    }
+                    patientForm.contactPoint.push(altPhonenumber);
+                }
+                patientForm.contactPoint.push(phone);
+                patientForm.id = patientId;
+                patientDTO.person=patientForm;
+                patientDTO.hivEnrollment=objValues;
+                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                toast.success("Patient Register successful");
+                history.push('/');
+            } catch (error) {                
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "An error occured while registering a patient !";
+                    toast.error(errorMessage, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+            }
+        }
+
     }
 
     return (
@@ -963,9 +965,9 @@ const UserRegistration = (props) => {
                                                             <option key={gender.id} value={gender.display}>{gender.display}</option>
                                                             ))}
                                                         </select>
-                                                        {errors.sexId !=="" ? (
-                                                    <span className={classes.error}>{errors.sexId}</span>
-                                                    ) : "" }
+                                                        {(errors.sexId !=="" || errors.sexId !==null) ? (
+                                                        <span className={classes.error}>{errors.sexId}</span>
+                                                        ) : "" }
                                                 </FormGroup>
                                             </div>
                                             <div className="form-group mb-2 col-md-2">
@@ -1146,7 +1148,7 @@ const UserRegistration = (props) => {
                                                     onChange={(e)=>{checkPhoneNumberBasic(e,'phoneNumber')}}
                                                     
                                                 />
-                                                {errors.phoneNumber !=="" ? (
+                                                {(errors.phoneNumber !=="" || errors.phoneNumber !==null) ? (
                                                     <span className={classes.error}>{errors.phoneNumber}</span>
                                                     ) : "" }
                                             </FormGroup>
