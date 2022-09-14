@@ -168,7 +168,7 @@ const ClinicVisit = (props) => {
     GetPatientObj();
     ClinicVisitListHistory();
     if(props.activeContent.id!==null){
-      console.log(props.activeContent.id)
+     
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
@@ -182,7 +182,7 @@ const ClinicVisit = (props) => {
           )
           .then((response) => {
               setLoading(false)
-              setClinicVisitList(response.data);              
+              setClinicVisitList(response.data.filter((x)=> x.isCommencement!==true));              
           })
           .catch((error) => {  
               setLoading(false)  
@@ -398,9 +398,9 @@ const ClinicVisit = (props) => {
     )
       .then(response => {
         setSaving(false);
-        toast.success("Clinic Visit save successful");
-        GetVisitById(visitId)
-        //props.setActiveContent('recent-history')
+        toast.success("Clinic Visit updated successful");
+        //GetVisitById(visitId)
+        //props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
       })
       .catch(error => {
         setSaving(false);
@@ -555,7 +555,14 @@ const ClinicVisit = (props) => {
                             <FormGroup>
                             <FormLabelName >Height</FormLabelName>
                             <InputGroup>
-                                
+                            <InputGroupText
+                                    addonType="append"
+                                    isOpen={dropdownOpen}
+                                    toggle={toggleDropDown}
+                                    style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    >
+                                    cm
+                            </InputGroupText>
                                 <Input
                                 type="number"
                                 name="height"
@@ -568,20 +575,15 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 disabled={!enableUpdate}
                                 />
-                                <InputGroupButtonDropdown
-                                    addonType="append"
-                                    isOpen={dropdownOpen}
-                                    toggle={toggleDropDown}
-                                    style={{ backgroundColor:"#014D88"}}
-                                    disabled={!enableUpdate}
-                                    >
-                                    <DropdownToggle caret style={{ backgroundColor:"#014D88"}}>{heightValue ==='cm'? 'cm' : 'm'}</DropdownToggle>
-                                    <DropdownMenu>
                                 
-                                        <DropdownItem onClick={()=>heightFunction(heightValue ==='cm'? 'm' : 'cm')}>{heightValue ==='cm'? 'm' : 'cm'}</DropdownItem>
-                                            
-                                    </DropdownMenu>
-                                </InputGroupButtonDropdown>
+                                <InputGroupText
+                                addonType="append"
+                                isOpen={dropdownOpen}
+                                toggle={toggleDropDown}
+                                style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
+                                >
+                                {vital.height!=='' ? (vital.height/100).toFixed(1) + "m" : "m"}
+                            </InputGroupText>
                             </InputGroup>
                             {vitalClinicalSupport.height !=="" ? (
                                 <span className={classes.error}>{vitalClinicalSupport.height}</span>
@@ -632,12 +634,7 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 disabled={!enableUpdate}
                                 />
-                               {vitalClinicalSupport.systolic !=="" ? (
-                                <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                              ) : ""}
-                              {errors.systolic !=="" ? (
-                                  <span className={classes.error}>{errors.systolic}</span>
-                              ) : "" }
+                              
                               <Input
                                 type="text"
                                 name="diastolic"
@@ -648,17 +645,23 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 disabled={!enableUpdate}
                                 />
-                                {vitalClinicalSupport.diastolic !=="" ? (
-                                <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                                  ) : ""}
-                                  {errors.diastolic !=="" ? (
-                                      <span className={classes.error}>{errors.diastolic}</span>
-                                  ) : "" }
+                               
                                 <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 diastolic(mmHg)
                                 </InputGroupText>
                             </InputGroup>
-                           
+                            {vitalClinicalSupport.systolic !=="" ? (
+                                <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                              ) : ""}
+                              {errors.systolic !=="" ? (
+                                  <span className={classes.error}>{errors.systolic}</span>
+                              ) : "" }
+                              {vitalClinicalSupport.diastolic !=="" ? (
+                              <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
+                                ) : ""}
+                                {errors.diastolic !=="" ? (
+                                    <span className={classes.error}>{errors.diastolic}</span>
+                                ) : "" }       
                             </FormGroup>
                         </div>
                         </div>

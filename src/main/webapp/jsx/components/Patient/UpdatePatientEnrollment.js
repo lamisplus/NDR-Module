@@ -101,7 +101,8 @@ const UserRegistration = (props) => {
                 stateId:"",
                 district:"",
                 landmark:"",
-                sexId:""
+                sexId:"",
+                ninNumber:""
 
             }
     )
@@ -141,7 +142,10 @@ const UserRegistration = (props) => {
      //HIV INFORMATION
      const [femaleStatus, setfemaleStatus]= useState(false)
      //const [values, setValues] = useState([]);
-     const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrerId:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:""});
+     const [objValues, setObjValues] = useState({id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",dateConfirmedHiv:"",sourceOfReferrerId:"",enrollmentSettingId:"",pregnancyStatusId:"",dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:"",
+     householdNumber:"", referredToOVCPartner:"", dateReferredToOVCPartner:"",
+     referredFromOVCPartner:"", dateReferredFromOVCPartner:"",
+     careEntryPointOther:""});
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
      const [hivStatus, setHivStatus] = useState([]);
@@ -233,6 +237,7 @@ const UserRegistration = (props) => {
             const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))
             basicInfo.age=patientAge
             setfemaleStatus(patientObj.sex==='Female'? true : false)
+            basicInfo.ninNumber=patientObj.ninNumber
 
         }
        
@@ -580,7 +585,8 @@ const UserRegistration = (props) => {
                     educationId: basicInfo.educationId,
                     employmentStatusId: basicInfo.employmentStatusId,
                     dateOfRegistration: basicInfo.dateOfRegistration,
-                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true
+                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true,
+                    ninNumber: basicInfo.ninNumber
                 };
                 const phone = {
                     "type": "phone",
@@ -693,7 +699,7 @@ const UserRegistration = (props) => {
     //Get list of KP
     const KP =()=>{
         axios
-        .get(`${baseUrl}application-codesets/v2/KP_TYPE`,
+        .get(`${baseUrl}application-codesets/v2/TARGET_GROUP`,
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
@@ -1077,7 +1083,7 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="nin"
                                                         id="nin"
-                                                        
+                                                        value={basicInfo.ninNumber}
                                                         //onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
                                                     />
@@ -1826,7 +1832,27 @@ const UserRegistration = (props) => {
                                         </label>
                                     </div>
                                 </div>
+                                {basicInfo.age <=14 && (
                                 <div className="form-group mb-3 col-md-3">
+                                    
+                                    <div className="form-check custom-checkbox ml-1 ">
+                                        <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        name="ovc_enrolled"
+                                        id="ovc_enrolled"                                        
+                                        onChange={handleCheckBox}
+                                        />
+                                        <label
+                                        className="form-check-label"
+                                        htmlFor="basic_checkbox_1"
+                                        >
+                                        Enrolled into OVC?
+                                        </label>
+                                    </div>
+                                </div>
+                                )}
+                                {/* <div className="form-group mb-3 col-md-3">
                                     {ovcEnrolled===true ? 
                                         (
                                         <FormGroup>
@@ -1839,7 +1865,6 @@ const UserRegistration = (props) => {
                                             onChange={handleInputChange}
                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                             value={objValues.ovcNumber}
-                                            //disabled={locationState.actionType==='update'? false : true}
                                             
                                         />
                                         </FormGroup>
@@ -1847,8 +1872,99 @@ const UserRegistration = (props) => {
                                         :
                                         ""
                                     }
-                                </div>
+                                </div> */}
                                 
+                                {ovcEnrolled===true && 
+                                (
+                                <>        
+                                <div className="row">
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >Household Unique Number</Label>
+                                        <Input
+                                            type="text"
+                                            name="householdNumber"
+                                            id="householdNumber"
+                                            required={ovcEnrolled}
+                                            onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            value={objValues.householdNumber}
+                                            
+                                        />
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-6"></div>
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >Referred To OVC Partner</Label>
+                                        <Input
+                                            type="text"
+                                            name="referredToOVCPartner"
+                                            id="referredToOVCPartner"
+                                            required={ovcEnrolled}
+                                            onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            value={objValues.referredToOVCPartner}
+                                            
+                                        />
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >Date Referred To OVC Partner</Label>
+                                        <Input
+                                            type="date"
+                                            name="dateReferredToOVCPartner"
+                                            id="dateReferredToOVCPartner"
+                                            min={basicInfo.dob}
+                                            max={objValues.dateOfRegistration }
+                                            onChange={handleInputChange}
+                                            value={objValues.dateReferredToOVCPartner}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            
+                                        /> 
+                                        {/* {errors.dateConfirmedHiv !=="" ? (
+                                            <span className={classes.error}>{errors.dateConfirmedHiv}</span>
+                                            ) : "" }  */}
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >Referred From OVC Partner</Label>
+                                        <Input
+                                            type="text"
+                                            name="referredFromOVCPartner"
+                                            id="referredFromOVCPartner"
+                                            required={ovcEnrolled}
+                                            onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            value={objValues.referredFromOVCPartner}
+                                            
+                                        />
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >Date Referred From OVC Partner</Label>
+                                        <Input
+                                            type="date"
+                                            name="dateReferredFromOVCPartner"
+                                            id="dateReferredFromOVCPartner"
+                                            min={basicInfo.dob}
+                                            max={objValues.dateOfRegistration }
+                                            onChange={handleInputChange}
+                                            value={objValues.dateReferredFromOVCPartner}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            
+                                        /> 
+                                        {/* {errors.dateConfirmedHiv !=="" ? (
+                                            <span className={classes.error}>{errors.dateConfirmedHiv}</span>
+                                            ) : "" }  */}
+                                        </FormGroup>
+                                    </div>
+                                </div>
+                                </>
+                                )}
                             
                             </div>
                                 </div>

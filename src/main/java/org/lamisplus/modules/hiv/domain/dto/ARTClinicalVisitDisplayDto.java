@@ -22,50 +22,49 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class ARTClinicalVisitDisplayDto implements Serializable {
-    @Type(type = "jsonb")
-    JsonNode adverseDrugReactions;
-    private Long id;
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate visitDate;
-    private Long cd4;
-    private Long cd4Percentage;
-    @JsonIgnore
-    private Boolean isCommencement;
-    private Long functionalStatusId;
-    private String clinicalNote;
-    private String uuid;
-    private Long hivEnrollmentId;
-    private String artStatus;
-    private String whoStaging;
-    @NotNull
-    private VitalSignDto vitalSignDto;
-    @NotNull
-    private Long facilityId;
-    @NotNull
-    private Long personId;
-    @NotNull
-    private Long clinicalStageId;
-    private String oiScreened;
-    private String stiIds;
-    private String stiTreated;
-    @Type(type = "jsonb")
-    private JsonNode adheres;
-    private String adrScreened;
-    private String adherenceLevel;
-    @Type(type = "jsonb")
-    private JsonNode opportunisticInfections;
-    @Type(type = "jsonb")
-    private JsonNode tbScreen;
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @PastOrPresent
-    private LocalDate nextAppointment;
-    @PastOrPresent
-    @Convert(converter = LocalDateConverter.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate lmpDate;
-    @NotNull
-    private Long visitId;
-
+	@Type(type = "jsonb")
+	JsonNode adverseDrugReactions;
+	private Long id;
+	@Convert(converter = LocalDateConverter.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate visitDate;
+	private Long cd4;
+	private Long cd4Percentage;
+	private Boolean isCommencement;
+	private Long functionalStatusId;
+	private String clinicalNote;
+	private String uuid;
+	private Long hivEnrollmentId;
+	private String artStatus;
+	private String whoStaging;
+	@NotNull
+	private VitalSignDto vitalSignDto;
+	@NotNull
+	private Long facilityId;
+	@NotNull
+	private Long personId;
+	@NotNull
+	private Long clinicalStageId;
+	private String oiScreened;
+	private String stiIds;
+	private String stiTreated;
+	@Type(type = "jsonb")
+	private JsonNode adheres;
+	private String adrScreened;
+	private String adherenceLevel;
+	@Type(type = "jsonb")
+	private JsonNode opportunisticInfections;
+	@Type(type = "jsonb")
+	private JsonNode tbScreen;
+	@Convert(converter = LocalDateConverter.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@PastOrPresent
+	private LocalDate nextAppointment;
+	@PastOrPresent
+	@Convert(converter = LocalDateConverter.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate lmpDate;
+	@NotNull
+	private Long visitId;
+	
 }

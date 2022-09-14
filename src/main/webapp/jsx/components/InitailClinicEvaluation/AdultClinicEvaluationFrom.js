@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {Card,CardBody, FormGroup, Label, Input, InputGroup} from 'reactstrap';
+import {Card,CardBody, FormGroup, Label, Input, InputGroup,
+    InputGroupText,
+    InputGroupButtonDropdown,
+    InputGroupAddon,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
@@ -59,6 +66,9 @@ const ClinicEvaluationFrom = (props) => {
     const patientObj = props.patientObj;
     //let history = useHistory();
     const classes = useStyles()
+    const [dropdownOpen, setDropdownOpen] = React.useState(false);
+    const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
+    const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
     //const [values, setValues] = useState([]);
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -117,6 +127,8 @@ const ClinicEvaluationFrom = (props) => {
     const [genitalia, setGenitalia] = useState({});
     const [respiratory, setRespiratory] = useState({});
     const [gastrointestinal, setGastrointestinal] = useState({});
+    const [neurological, setNeurological] = useState({});
+    const [mentalStatus, setMentalStatus] = useState({});
     const [assesment, setAssesment] = useState({});
     const [who, setWho] = useState({stage:"", value:""});
     const [regimen, setRegimen] = useState({regimenLine:"", regimen:""});
@@ -143,7 +155,11 @@ const ClinicEvaluationFrom = (props) => {
     const [hideGenitalia, setHideGenitalia] = useState(false);
     const [hideRespiratory, setHideRespiratory] = useState(false);
     const [hideGastrointestinal, setHideGastrointestinal] = useState(false);
-
+    const [hideNeurological, setHideNeurological] = useState(false);
+    const [handlementalstatus, setHideMentalStatus] = useState(false);
+    const [hidecd4CountQuantitative, setHidecd4CountQuantitative] = useState(false);
+    const [hidecd4CountFlow, setHidecd4CountFlow] = useState(false);
+    
     const handleInputChangeobjValues = e => {            
         setobjValues ({...objValues,  [e.target.name]: e.target.value});
     }
@@ -167,7 +183,10 @@ const ClinicEvaluationFrom = (props) => {
                 regimen:"",
                 enroll:"",
                 planArt:"" ,
-                next_appointment:""           
+                next_appointment:"",
+                neurological:"",
+                mentalstatus:"",
+                visitDate:""           
         },
         dateOfObservation: null,
         facilityId: null,
@@ -297,6 +316,28 @@ const ClinicEvaluationFrom = (props) => {
         setGastrointestinal({...gastrointestinal, [e.target.name]: e.target.value})
        
     }
+    const handleNeurological =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideNeurological(true)
+            }else{
+                setHideNeurological(false)
+            }
+        }
+        setNeurological({...neurological, [e.target.name]: e.target.value})
+       
+    }
+    const handleMentalStatus =e =>{
+        if(e.target.name==='nsf'){
+            if(e.target.checked){
+                setHideMentalStatus(true)
+            }else{
+                setHideMentalStatus(false)
+            }
+        }
+        setMentalStatus({...mentalStatus, [e.target.name]: e.target.value})
+       
+    }
     const handleAssessment =e =>{
         setAssesment({...assesment, [e.target.name]: e.target.value})
         
@@ -335,8 +376,19 @@ const ClinicEvaluationFrom = (props) => {
     }
 
     const handlePlan =e =>{
+        if(e.target.name==='cd4Count' && e.target.value==='Semi-Quantitative'){ 
+                        
+                setHidecd4CountQuantitative(true)
+        }else{
+            setHidecd4CountQuantitative(false)
+        }
+        if(e.target.name==='cd4Count' && e.target.value==='Flow Cyteometry'){          
+            setHidecd4CountFlow(true)
+        }else{
+            setHidecd4CountFlow(false)
+        }
         setPlan({...plan, [e.target.name]: e.target.value})
-        console.log(plan)
+        //console.log(plan)
     }
     const handleRegimen =e =>{
         if(e.target.value==='first line'){
@@ -386,6 +438,8 @@ const ClinicEvaluationFrom = (props) => {
         observation.data.breast=breast
         observation.data.cardiovascular= cardiovascular
         observation.data.genitalia=genitalia
+        observation.data.neurological=neurological
+        observation.data.mentalstatus=mentalStatus
         observation.data.respiratory=respiratory
         observation.data.gastrointestinal = gastrointestinal
         observation.data.assesment = assesment
@@ -427,7 +481,25 @@ console.log(props.patientObj)
             <form >
                 <div className="row">
                     <h2>Adult- Initial Clinical Evaluation </h2>
-                    <h3>Medical History</h3>
+                    <div className="row">
+                    <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label >Visit Date</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="date"
+                                    max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    name="visitDate"
+                                    id="visitDate"
+                                    value={objValues.visitDate}
+                                    onChange={handleInputChangeobjValues} 
+                                />
+                            </InputGroup>                                        
+                            </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-8"></div>   
+                    </div>
+                    <h4>Medical History</h4>
                     {/* Medical History form inputs */}
                         <div className="form-group mb-3 col-md-2"> 
                             <label
@@ -930,6 +1002,7 @@ console.log(props.patientObj)
                         </div>
 
                     {/* end of medical form inputs */}
+                    <br/>
                      {/* TB Screening section */}
                      <div className="form-group mb-3 col-md-6">
                             <FormGroup>
@@ -1019,76 +1092,78 @@ console.log(props.patientObj)
                             </FormGroup>
                     </div>
                     {/* end of Drug Allergies  */}
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Current Pregnant</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="select"
-                                    name="current_pregnant"
-                                    id="current_pregnant"
-                                    onChange={handleMedicalHistory} 
-                                >
-                                <option value="">Select</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                <option value="Uncertain">Uncertain</option>
-                                </Input>
+                    {props.patientObj.sex==='Female' && (<>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Current Pregnant</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="select"
+                                        name="current_pregnant"
+                                        id="current_pregnant"
+                                        onChange={handleMedicalHistory} 
+                                    >
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                    <option value="Uncertain">Uncertain</option>
+                                    </Input>
 
-                            </InputGroup>
-                        
-                            </FormGroup>
-                     </div>
-                     <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Last menstrual period</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="date"
-                                    name="last_menstrual_period"
-                                    id="last_menstrual_period"
-                                    onChange={handleMedicalHistory}  
-                                />
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Last menstrual period</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="date"
+                                        name="last_menstrual_period"
+                                        id="last_menstrual_period"
+                                        onChange={handleMedicalHistory}  
+                                    />
 
-                            </InputGroup>
-                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Gestational Age (weeks)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="gestational_age"
-                                    id="gestational_age"
-                                    onChange={handleMedicalHistory} 
-                                />
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Gestational Age (weeks)</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="text"
+                                        name="gestational_age"
+                                        id="gestational_age"
+                                        onChange={handleMedicalHistory} 
+                                    />
 
-                            </InputGroup>
-                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Current BreastFeeding</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="select"
-                                    name="current_breastfeeding"
-                                    id="current_breastfeeding"
-                                    onChange={handleMedicalHistory}  
-                                >
-                                <option value="">Select</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                <option value="Uncertain">Uncertain</option>
-                                </Input>
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Current BreastFeeding</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="select"
+                                        name="current_breastfeeding"
+                                        id="current_breastfeeding"
+                                        onChange={handleMedicalHistory}  
+                                    >
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                    <option value="Uncertain">Uncertain</option>
+                                    </Input>
 
-                            </InputGroup>
-                        
-                            </FormGroup>
-                     </div>
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                    </>)}
                      <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Previous ARV exposure</Label>
@@ -1113,12 +1188,7 @@ console.log(props.patientObj)
                      <div className="form-group mb-3 col-md-4">
                                     
                         <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Early ARV but not transfer in
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1126,18 +1196,19 @@ console.log(props.patientObj)
                             id="early_arv_but_not_transfer_in"
                             onChange={handleMedicalHistory} 
                             />
-                            
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
-                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                        <label
+                            <label
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            PMTCT only
+                            Early ARV but not transfer in
                         </label>
+                        </div>
+                    </div>
+                    {props.patientObj.sex==='Female' && (
+                    <div className="form-group mb-3 col-md-4">
+                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1145,18 +1216,19 @@ console.log(props.patientObj)
                             id="pmtct_only"
                             onChange={handleMedicalHistory} 
                             />
-                            
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
-                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                        <label
+                           <label
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            As never receive ARVs
-                        </label>
+                            PMTCT only
+                        </label> 
+                        </div>
+                    </div>
+                    )}
+                    <div className="form-group mb-3 col-md-4">
+                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                       
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1164,7 +1236,12 @@ console.log(props.patientObj)
                             id="as_never_receive_arvs"
                             onChange={handleMedicalHistory} 
                             />
-                            
+                             <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            As never receive ARVs
+                            </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-4">
@@ -1172,7 +1249,7 @@ console.log(props.patientObj)
                             <Label >Name of the Facility</Label>
                             <InputGroup> 
                                 <Input 
-                                    type="date"
+                                    type="text"
                                     name="name_of_the_facility"
                                     id="name_of_the_facility"
                                     onChange={handleMedicalHistory} 
@@ -1216,12 +1293,7 @@ console.log(props.patientObj)
                     <hr/>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            None
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1230,19 +1302,19 @@ console.log(props.patientObj)
                             
                             onChange={handleCurrentMedicalHistory} 
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            None
+                        </label>
                         </div>
                     </div>
                     {!hideOtherCurrentMedication && ( 
                     <>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            ART
-                        </label>
+                       
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1250,17 +1322,17 @@ console.log(props.patientObj)
                             id="ART"
                             onChange={handleCurrentMedicalHistory} 
                             />
-                            
+                             <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            ART
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            CTX
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1268,17 +1340,17 @@ console.log(props.patientObj)
                             id="CTX"
                             onChange={handleCurrentMedicalHistory} 
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            CTX
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Anti-TB drugs
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1286,7 +1358,12 @@ console.log(props.patientObj)
                             id="ant_tb_drugs"
                             onChange={handleCurrentMedicalHistory} 
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Anti-TB drugs
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-4">
@@ -1310,12 +1387,7 @@ console.log(props.patientObj)
                    <hr/>
                    <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            No one
-                        </label>
+                       
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1323,19 +1395,19 @@ console.log(props.patientObj)
                             id="no_one"
                             onChange={handleDisclosure}
                             />
-                            
+                             <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            No one
+                            </label>
                         </div>
                     </div>
                     {!hideOtherPatientDisclosure && ( 
                     <>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Family member
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1343,17 +1415,17 @@ console.log(props.patientObj)
                             id="family_member"
                             onChange={handleDisclosure}
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Family member
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Friend
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1361,17 +1433,17 @@ console.log(props.patientObj)
                             id="friend"
                             onChange={handleDisclosure}
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Friend
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Spouse
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1379,17 +1451,17 @@ console.log(props.patientObj)
                             id="spouse"
                             onChange={handleDisclosure}
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Spouse
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
                     <div className="form-check custom-checkbox ml-1 ">
-                        <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Spiritual leader
-                        </label>
+                        
                             <input
                             type="checkbox"
                             className="form-check-input"                            
@@ -1397,7 +1469,12 @@ console.log(props.patientObj)
                             id="spiritual_leader"
                             onChange={handleDisclosure}
                             />
-                            
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Spiritual leader
+                        </label>
                         </div>
                     </div>
                     <div className="form-group mb-3 col-md-2">
@@ -1788,507 +1865,565 @@ console.log(props.patientObj)
                     </>
                     )}
                     <hr/>
+                    <h4>Physical exam</h4>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Physical exam</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="physical_exam"
-                                    id="physical_exam"
-                                    onChange={handlePastArv} 
-                                />
-                            </InputGroup> 
+                            <Label ></Label>
+                           
                             <span >(note: NSF = no significant findings)</span>                                       
                             </FormGroup>
 
                     </div>
                     <div className="form-group mb-3 col-md-6"></div>
-                    <div className="form-group mb-3 col-md-4">
+                    <div className="row">
+                        <div className=" mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Temperature(<sup>o</sup>C)</Label>
+                            <Label >Body Weight</Label>
                             <InputGroup> 
                                 <Input 
-                                    type="text"
-                                    name="temperature"
-                                    id="temperature"
-                                    onChange={handlePastArv} 
+                                    type="number"
+                                    name="bodyWeight"
+                                    id="bodyWeight"
+                                    onChange={handlePastArv}
+                                    min="3"
+                                    max="150"
+                                    //value={vital.bodyWeight}
+                                    //onKeyUp={handleInputValueCheckBodyWeight} 
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 />
-                            </InputGroup>                                        
+                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                    kg
+                                </InputGroupText>
+                            </InputGroup>
+                            
                             </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
+                        </div>                                   
+                        <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Blood Presure(mm/Hg)</Label>
-                            <InputGroup> 
+                            <Label >Height</Label>
+                            <InputGroup>
+                            <InputGroupText
+                                    addonType="append"
+                                    isOpen={dropdownOpen}
+                                    toggle={toggleDropDown}
+                                    style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    >
+                                    cm
+                            </InputGroupText> 
                                 <Input 
-                                    type="text"
-                                    name="blood_presure"
-                                    id="blood_presure"
-                                    onChange={handlePastArv} 
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Weight(kg)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="weight"
-                                    id="weight"
-                                    onChange={handlePastArv} 
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Height(m)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
+                                    type="number"
                                     name="height"
                                     id="height"
-                                    onChange={handlePastArv} 
+                                    onChange={handlePastArv}
+                                    //value={vital.height}
+                                    min="48.26"
+                                    max="216.408"
+                                    //onKeyUp={handleInputValueCheckHeight} 
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                 />
-                            </InputGroup>                                        
+                                {/* <InputGroupText
+                                    addonType="append"
+                                    isOpen={dropdownOpen}
+                                    toggle={toggleDropDown}
+                                    style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
+                                >
+                                    {vital.height!=='' ? (vital.height/100).toFixed(1) + "m" : "m"}
+                                </InputGroupText>    */}
+                            </InputGroup>
+                            
                             </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                                <FormGroup>
+                                <Label >BMI</Label>
+                                
+                                <InputGroup> 
+                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                    BMI
+                                </InputGroupText>                   
+                                <Input
+                                type="number"
+                                disabled
+                                //value={Math.round(vital.bodyWeight/(vital.height/100))}
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                />
+                                </InputGroup>                
+                                </FormGroup>
+                        </div>
                     </div>
-                    <div className="form-group mb-3 col-md-4"></div>
-                    <hr/>
+                    <div className="row">
+                        <div className="form-group mb-3 col-md-8">
+                            <FormGroup>
+                            <Label >Blood Pressure</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="number"
+                                    name="systolic"
+                                    id="systolic"
+                                    min="90"
+                                    max="2240"
+                                    onChange={handlePastArv}
+                                    //value={vital.systolic}
+                                    //onKeyUp={handleInputValueCheckSystolic}
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
+                                />
+                                
+                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                    systolic(mmHg)
+                                </InputGroupText>
+                                    <Input 
+                                    type="number"
+                                    name="diastolic"
+                                    id="diastolic"
+                                    min={0}
+                                    max={140}
+                                    onChange={handlePastArv}
+                                    //value={vital.diastolic}
+                                    //onKeyUp={handleInputValueCheckDiastolic} 
+                                    style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                    />
+                                
+                                <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                diastolic(mmHg)
+                                </InputGroupText>
+                            </InputGroup>
+
+                            </FormGroup>
+                        </div>
+                    </div>
+                    <div className="row">                    
+                    <div className="form-group mb-3 col-md-3">
                     <h3>General Appearance</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="nsf"
-                            id="nsf"
-                            onChange={handleGeneralApperance}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            NSF
-                            </label>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="nsf"
+                                id="nsf"
+                                onChange={handleGeneralApperance}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                NSF
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    {!hideGeneralApperance && (
-                        <>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="pallor"
-                            id="pallor"
-                            onChange={handleGeneralApperance}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Pallor
-                            </label>
+                        {!hideGeneralApperance && (
+                            <>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="pallor"
+                                id="pallor"
+                                onChange={handleGeneralApperance}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Pallor
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="febrile"
-                            id="febrile"
-                            onChange={handleGeneralApperance}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Febrile
-                            </label>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="febrile"
+                                id="febrile"
+                                onChange={handleGeneralApperance}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Febrile
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="dehydrated"
-                            id="dehydrated"
-                            onChange={handleGeneralApperance}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Dehydrated
-                            </label>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="dehydrated"
+                                id="dehydrated"
+                                onChange={handleGeneralApperance}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Dehydrated
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="peripheral"
-                            id="peripheral"
-                            onChange={handleGeneralApperance}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Peripheral edema
-                            </label>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="peripheral"
+                                id="peripheral"
+                                onChange={handleGeneralApperance}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Peripheral edema
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Other (specify)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="other"
-                                    id="other"
-                                    onChange={handleGeneralApperance} 
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-6"></div>
-                    </>
-                    )}
-                    <hr/>
-                    <h3>Skin</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="nsf"
-                            id="nsf"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            NSF
-                            </label>
+                        <div className="form-group mb-3 col-md-12">
+                                <FormGroup>
+                                <Label >Other (specify)</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="text"
+                                        name="other"
+                                        id="other"
+                                        onChange={handleGeneralApperance} 
+                                    />
+                                </InputGroup>                                        
+                                </FormGroup>
                         </div>
+                        </>
+                        )}
                     </div>
-                    {!hideSkin && (
-                    <>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="pruritic"
-                            id="pruritic"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Pruritic paplar dermatitis
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="abscesses"
-                            id="abscesses"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Abscesses
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="herpes"
-                            id="herpes"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Herpes zoster
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="kaposi"
-                            id="kaposi"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Kaposi's lesions
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="suborrheic"
-                            id="suborrheic"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Suborrheic dermatitis
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="fungal"
-                            id="fungal"
-                            onChange={handleSkin}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Fungal infections
-                            </label>
-                        </div>
-                    </div>
+                    
+                    <div className="form-group mb-3 col-md-3">
 
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Other (specify)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="other"
-                                    id="other"
-                                    onChange={handleSkin}
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-6"></div>
-                    </>
-                    )}
-                    <hr/>
-                    <h3>Head/Eye/ENT</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="nsf"
-                            id="nsf"
-                            onChange={handleEye}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            NSF
-                            </label>
-                        </div>
-                    </div>
-                    {!hideEye && (
-                        <>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="icterus"
-                            id="icterus"
-                            onChange={handleEye}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Icterus
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="thrush"
-                            id="thrush"
-                            onChange={handleEye}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Thrush
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="oral"
-                            id="oral"
-                            onChange={handleEye}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Oral KS
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="abnormal"
-                            id="abnormal"
-                            onChange={handleEye}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Abnormal fundoscopy
-                            </label>
-                        </div>
-                    </div>
+                        <h3>Skin</h3>
 
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Other (specify)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="other"
-                                    id="other"
-                                    onChange={handleEye}
-                                     
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="nsf"
+                                id="nsf"
+                                onChange={handleSkin}
                                 />
-                            </InputGroup>                                        
-                            </FormGroup>
-                    </div>
-                    <div className="form-group mb-3 col-md-6"></div>
-                    </>
-                    )}
-                    <hr/>
-                    <h3>Breasts</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="nsf"
-                            id="nsf"
-                            onChange={handleBreast}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            NSF
-                            </label>
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                NSF
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    {!hideBreast && (
+                        {!hideSkin && (
                         <>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="lumps"
-                            id="lumps"
-                            onChange={handleBreast}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Lumps, masses
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="discharge"
-                            id="discharge"
-                            onChange={handleBreast}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Discharge
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Other (specify)</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="other"
-                                    id="other"
-                                    onChange={handleBreast} 
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="pruritic"
+                                id="pruritic"
+                                onChange={handleSkin}
                                 />
-                            </InputGroup>                                        
-                            </FormGroup>
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Pruritic paplar dermatitis
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="abscesses"
+                                id="abscesses"
+                                onChange={handleSkin}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Abscesses
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="herpes"
+                                id="herpes"
+                                onChange={handleSkin}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Herpes zoster
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="kaposi"
+                                id="kaposi"
+                                onChange={handleSkin}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Kaposi's lesions
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="suborrheic"
+                                id="suborrheic"
+                                onChange={handleSkin}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Suborrheic dermatitis
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="fungal"
+                                id="fungal"
+                                onChange={handleSkin}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Fungal infections
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="form-group mb-3 col-md-12">
+                                <FormGroup>
+                                <Label >Other (specify)</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="text"
+                                        name="other"
+                                        id="other"
+                                        onChange={handleSkin}
+                                    />
+                                </InputGroup>                                        
+                                </FormGroup>
+                        </div>
+                        
+                        </>
+                        )}
                     </div>
-                    <div className="form-group mb-3 col-md-6"></div>
-                    </>
-                    )}
-                    <hr/>
+                    <div className="form-group mb-3 col-md-3">
+                        <h3>Head/Eye/ENT</h3>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="nsf"
+                                id="nsf"
+                                onChange={handleEye}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                NSF
+                                </label>
+                            </div>
+                        </div>
+                        {!hideEye && (
+                            <>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="icterus"
+                                id="icterus"
+                                onChange={handleEye}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Icterus
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="thrush"
+                                id="thrush"
+                                onChange={handleEye}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Thrush
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="oral"
+                                id="oral"
+                                onChange={handleEye}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Oral KS
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="abnormal"
+                                id="abnormal"
+                                onChange={handleEye}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Abnormal fundoscopy
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="form-group mb-3 col-md-12">
+                                <FormGroup>
+                                <Label >Other (specify)</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="text"
+                                        name="other"
+                                        id="other"
+                                        onChange={handleEye}
+                                        
+                                    />
+                                </InputGroup>                                        
+                                </FormGroup>
+                        </div>
+
+                        </>
+                        )}
+                    </div>
+                    <div className="form-group mb-3 col-md-3">
+                        <h3>Breasts</h3>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="nsf"
+                                id="nsf"
+                                onChange={handleBreast}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                NSF
+                                </label>
+                            </div>
+                        </div>
+                        {!hideBreast && (
+                            <>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="lumps"
+                                id="lumps"
+                                onChange={handleBreast}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Lumps, masses
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">                                    
+                            <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                           
+                                name="discharge"
+                                id="discharge"
+                                onChange={handleBreast}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Discharge
+                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">
+                                <FormGroup>
+                                <Label >Other (specify)</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="text"
+                                        name="other"
+                                        id="other"
+                                        onChange={handleBreast} 
+                                    />
+                                </InputGroup>                                        
+                                </FormGroup>
+                        </div>
+                        </>
+                        )}
+                    </div>
+                    <div className="form-group mb-3 col-md-3">
                     <h3>Cardiovascular</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2307,7 +2442,7 @@ console.log(props.patientObj)
                     </div>
                     {!hideCardiovascular && (
                     <>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2324,7 +2459,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-12">
                             <FormGroup>
                             <Label >Other (specify)</Label>
                             <InputGroup> 
@@ -2337,13 +2472,12 @@ console.log(props.patientObj)
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-6"></div>
                     </>
                     )}
-                    <hr/>
+                    </div>
+                    <div className="form-group mb-3 col-md-3">
                     <h3>Genitalia</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2363,7 +2497,7 @@ console.log(props.patientObj)
                     {!hideGenitalia && (
                     <>
                    
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2380,7 +2514,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2397,7 +2531,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2414,7 +2548,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>                 
-                    <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-12">
                             <FormGroup>
                             <Label >Other (specify)</Label>
                             <InputGroup> 
@@ -2427,13 +2561,12 @@ console.log(props.patientObj)
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-6"></div>
                     </>
                      )}
-                    <hr/>
+                    </div>
+                    <div className="form-group mb-3 col-md-3">
                     <h3>Respiratory</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2452,7 +2585,7 @@ console.log(props.patientObj)
                     </div>
                     {!hideRespiratory && (
                         <>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <label
                             className="form-check-label"
@@ -2471,7 +2604,7 @@ console.log(props.patientObj)
                             
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2488,7 +2621,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2505,7 +2638,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2522,7 +2655,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2539,7 +2672,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2556,7 +2689,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-12">
                             <FormGroup>
                             <Label >Other (specify)</Label>
                             <InputGroup> 
@@ -2569,13 +2702,13 @@ console.log(props.patientObj)
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-6"></div>
+                   
                     </>
                     )}
-                    <hr/>
-                    <h3>Gastrointestinal</h3>
-                    <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    </div>
+                    <div className="form-group mb-3 col-md-3">                 
+                    <h3>Gastrointestinal</h3>                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2594,7 +2727,7 @@ console.log(props.patientObj)
                     </div>
                     {!hideGastrointestinal && (
                         <>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2611,7 +2744,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2628,7 +2761,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2645,7 +2778,7 @@ console.log(props.patientObj)
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -2663,7 +2796,7 @@ console.log(props.patientObj)
                         </div>
                     </div>
 
-                    <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-12">
                             <FormGroup>
                             <Label >Other (specify)</Label>
                             <InputGroup> 
@@ -2676,10 +2809,311 @@ console.log(props.patientObj)
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-6"></div>
+                    
                     </>
                     )}
-                    <hr/>
+                    </div>
+
+                    <div className="form-group mb-3 col-md-3">                 
+                    <h3>Neurological</h3>                    
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            NSF
+                            </label>
+                        </div>
+                    </div>
+                    {!hideNeurological && (
+                        <>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="orientation"
+                            id="orientation"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Orientation to TPP
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="speechSlurs"
+                            id="speechSlurs"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Speech slurs
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="neckStiffness"
+                            id="neckStiffness"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Neck stiffness
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="blindness"
+                            id="blindness"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Blindness 1/2 eyes
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="paresis"
+                            id="paresis"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Hemiplegia/paresis
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="numbness"
+                            id="numbness"
+                            onChange={handleNeurological}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Numbness of extremities
+                            </label>
+                        </div>
+                    </div>   
+                    <div className="form-group mb-3 col-md-12">
+                            <FormGroup>
+                            <Label >Other (specify)</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="text"
+                                    name="other"
+                                    id="other"
+                                    onChange={handleNeurological}
+                                />
+                            </InputGroup>                                        
+                            </FormGroup>
+                    </div>
+                    
+                    </>
+                    )}
+                    </div>
+                    <div className="form-group mb-3 col-md-3">                 
+                    <h3>Mental Status</h3>                    
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="nsf"
+                            id="nsf"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            NSF
+                            </label>
+                        </div>
+                    </div>
+                    {!handlementalstatus && (
+                        <>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="mentation"
+                            id="mentation"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Slow mentation
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="memoryloss"
+                            id="memoryloss"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Memory loss
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="moodSwings"
+                            id="moodSwings"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Mood swings
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="depression"
+                            id="depression"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Depression
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="anxiety"
+                            id="anxiety"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Anxiety
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="ideation"
+                            id="ideation"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Suicidal ideation
+                            </label>
+                        </div>
+                    </div>
+                    <div className="form-group mb-3 col-md-12">                                    
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="tenderness"
+                            id="tenderness"
+                            onChange={handleMentalStatus}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Tenderness
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="form-group mb-3 col-md-12">
+                            <FormGroup>
+                            <Label >Other (specify)</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="text"
+                                    name="other"
+                                    id="other"
+                                    onChange={handleMentalStatus}
+                                />
+                            </InputGroup>                                        
+                            </FormGroup>
+                    </div>
+                    
+                    </>
+                    )}
+                    </div>
+                    </div>
+        
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Additional and detailed findings</Label>
@@ -2864,6 +3298,64 @@ console.log(props.patientObj)
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
+                    <div className="form-group  col-md-5">
+                                <FormGroup>
+                                    <Label>CD4 Count </Label>
+                                    <select
+                                        className="form-control"
+                                        name="cd4Count"
+                                        id="cd4Count"
+                                        //value={cd4Count.cd4Count}
+                                        onChange={handlePlan}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    >
+                                        <option value={""}></option>
+                                        <option value="Semi-Quantitative">Semi-Quantitative</option>
+                                        <option value="Flow Cyteometry">Flow Cyteometry</option>
+                                        
+                                    </select>
+                                    
+                                </FormGroup>
+                            </div>
+                            {hidecd4CountQuantitative ==='Semi-Quantitative' && (
+                            <div className="form-group  col-md-5">
+                                <FormGroup>
+                                    <Label>CD4 Count Value</Label>
+                                    <select
+                                        className="form-control"
+                                        name="cd4SemiQuantitative"
+                                        id="cd4SemiQuantitative"
+                                        //value={cd4Count.cd4SemiQuantitative}
+                                        onChange={handlePlan}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    >
+                                        <option value={""}></option>
+                                        <option value="Semi-Quantitative">{"<200"}</option>
+                                        <option value="Flow Cyteometry">{">=200"}</option>
+                                        
+                                    </select>
+                                    
+                                </FormGroup>
+                            </div>
+                            )}
+                            {hidecd4CountFlow ==='Flow Cyteometry' && (
+                            <div className="form-group mb-3 col-md-4">
+                                <FormGroup>
+                                <Label for="">CD4 Count Value</Label>
+                                <Input
+                                    type="number"
+                                    min={1}
+                                    name="cd4FlowCyteometry"
+                                    id="cd4FlowCyteometry"
+                                    //value={cd4Count.cd4FlowCyteometry}
+                                    onChange={handlePlan}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                />
+                                 
+                                </FormGroup>
+                            </div>
+                            )}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >CD4 count evaluation</Label>                       
@@ -3060,79 +3552,28 @@ console.log(props.patientObj)
                     </div>
                     <hr/>
                     <h3>Enroll in</h3>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-5">                                    
                         <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="follow_up"
-                            id="follow_up"
-                            onChange={handleEnroll}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
+                            <Input 
+                                type="select"
+                                name="enrollIn"
+                                id="enrollIn"
+                                onChange={handleEnroll}  
                             >
-                            General medical follow-up
-                            </label>
+                            <option value="">Select</option>
+                            <option value="General medical follow-up">General medical follow-up</option>
+                            <option value="ARV therapy">ARV therapy</option>
+                            <option value="AHD management">AHD management</option>
+                            <option value="Pending lab results">Pending lab results</option>
+                            </Input>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="arv_therapy"
-                            id="arv_therapy"
-                            onChange={handleEnroll}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            ARV therapy
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="ahd_management"
-                            id="ahd_management"
-                            onChange={handleEnroll}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            AHD management
-                            </label>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="pending_lab"
-                            id="pending_lab"
-                            onChange={handleEnroll}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Pending lab results
-                            </label>
-                        </div>
-                    </div>
+                    <div className="form-group mb-3 col-md-7">  </div>
                     <hr/>
                     <h3>Plan for Antiretroviral Therapy (ART)</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Ongoin Monitoring </Label>
+                            <Label>Ongoing Monitoring </Label>
                             <Input 
                                     type="select"
                                     name="previous_arv_exposure"
@@ -3144,7 +3585,7 @@ console.log(props.patientObj)
                                 <option value="Start new treatment">Start new treatment</option>
                                 <option value="Stop treatment">Stop treatment </option>
                                 <option value="Change treatment">Change treatment </option>
-                                <option value="ARV TX postpond for clinical reason">ARV TX postpond for clinical reason</option>
+                                <option value="ARV TX postponed for clinical reason">ARV TX postponed for clinical reason</option>
                                 </Input>
                         </FormGroup>
                     </div>

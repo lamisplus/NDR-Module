@@ -2,6 +2,7 @@ import React, {useState, Fragment } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import Dashboard from './Patient/PatientList'
 import VisualisationHome from './Visualisation/Index'
+import LostToFollowUp from './Patient/PatientListIit'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
 import { FaUserPlus } from "react-icons/fa";
@@ -50,7 +51,10 @@ const Home = () => {
                   <Tab eventKey="home" title="Find Patients">                   
                     <Dashboard />
                   </Tab>
-                  <Tab eventKey="checked-in" title="Data Visualisation">                   
+                  <Tab eventKey="follow-up" title="Lost To Follow Up">                   
+                    <LostToFollowUp />
+                  </Tab>
+                  <Tab eventKey="visualization" title="Data Visualisation">                   
                     <VisualisationHome />
                   </Tab>                    
                 </Tabs>

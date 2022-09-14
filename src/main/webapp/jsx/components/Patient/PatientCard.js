@@ -163,7 +163,7 @@ function PatientCard(props) {
     }
     const capturePatientBiometric =(row)=> {
       //props.setActiveContent('biometrics')
-      props.setActiveContent({...props.activeContent, route:'biometrics'})
+      props.setActiveContent({...props.activeContent, route:'biometrics', obj:row})
     }
     const loadArtCommencement =(row)=> {
       props.setActiveContent('art-commencement')
@@ -279,7 +279,7 @@ function PatientCard(props) {
                                           <>
                                              
                                                   <>
-                                                  <Label as='a' color='teal' onClick={() => capturePatientBiometric(patientObj.id)} tag>
+                                                  <Label as='a' color='teal' onClick={() => capturePatientBiometric(patientObj)} tag>
                                                       Capture Now
                                                   </Label>
                                                   </>

@@ -20,7 +20,7 @@ import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinua
 import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
 import PrEPVisit from './../PrepServices/PrEPVisit';
 import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
-import EnhancedAdherenceCounseling from './../EnhancedAdherenceCounseling/Index';
+import EnhancedAdherenceCounseling from '../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index'
@@ -39,7 +39,11 @@ import ThirdEac from './../EnhancedAdherenceCounseling/ViewEAC/ThirdEac'
 import ViewLaboratory from './../Laboratory/ViewLaboratory'
 import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
 import Biometrics from './Biometric'
-
+import TrackingForm from './../TrackingForm/Index'
+import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
+import EACOUTCOME from '../EnhancedAdherenceCounseling/EacOutCome'
+import EACSESSION from './../EnhancedAdherenceCounseling/SessionList'
+import NEWEACSESSION from './../EnhancedAdherenceCounseling/NewSessions'
 
 const styles = theme => ({
   root: {
@@ -83,7 +87,7 @@ function PatientCard(props) {
     const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
     const { classes } = props;
     const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-    console.log(activeContent)
+    
   return (
     <div className={classes.root}>
       <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
@@ -128,6 +132,11 @@ function PatientCard(props) {
           {activeContent.route==='completed-eac-history' &&( <ThirdEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='lab-view' &&( <ViewLaboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='pharmacy-update' &&( <PharmacyRefillUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='tracking-form' &&( <TrackingForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='first-eac' &&( <FirstEacPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='eac-outcome' &&( <EACOUTCOME patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='eac-session' &&( <EACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='new-eac-session' &&( <NEWEACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

@@ -150,7 +150,173 @@ const EAC = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Date of EAC </Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
+                                onChange={handleInputChange}
+                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
 
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Adherence</Label>
+                                <Input
+                                    type="select"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Good">Good</option> 
+                                 <option value="Fair">Fair</option> 
+                                 <option value="Poor">Poor</option> 
+                                 
+                                </Input>
+                                 
+                        </FormGroup>
+                        </div>
+
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Any missed pharmacy drug pick-ups?</Label>
+                                <Input
+                                    type="select"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Yes">Yes</option> 
+                                 <option value="No">No</option> 
+                                 
+                                </Input>
+                                
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Adherence</Label>
+                                <Input
+                                    type="select"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Forgot">  Forgot</option> 
+                                 <option value="Knowledge/beliefs">Knowledge/beliefs</option> 
+                                 <option value="Side effects">Side effects</option> 
+                                 <option value="Physical illness">Physical illness</option>
+                                 <option value="Substance use">Substance use</option> 
+                                 <option value="Depression">Depression</option> 
+                                 <option value="Pill burden">Pill burden</option> 
+                                 <option value="Lost/ran out">Lost/ran out</option> 
+                                 <option value="Transport">Transport</option>
+                                 <option value="Child behavior/refusing Scheduling">Child behavior/refusing Scheduling</option>
+                                 <option value="Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma">Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma</option>
+                                 <option value="Others">Others</option>
+
+                                </Input>
+                                  
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Intervention Services</Label>
+                                <Input
+                                    type="select"
+                                    name="reasonForDefaulting"
+                                    id="reasonForDefaulting"
+                                    //value={attempt.reasonForDefaulting}
+                                    //onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Education">  Education</option> 
+                                 <option value="Counseling (ind)">Counseling (ind)</option> 
+                                 <option value="Counseling (grp)">Counseling (grp)</option> 
+                                 <option value="Peer support">Peer support</option>
+                                 <option value="Treatment buddy"> Treatment buddy</option> 
+                                 <option value="Extended Drug pick-up">Extended Drug pick-up</option> 
+                                 <option value="Community ART Group">Community ART Group</option> 
+                                 <option value="Directly Observed Therapy">Directly Observed Therapy</option> 
+                                 <option value="Transport">Transport</option>
+                                 <option value="Child behavior/refusing Scheduling">Child behavior/refusing Scheduling</option>
+                                 <option value="Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma">Fear disclosure Family/partner Food insecurity Drug stock out Long wait Stigma</option>
+                                 <option value="Others">Others</option>
+
+                                </Input>
+                                  
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Referrals</Label>
+                            <Input
+                                type="text"
+                                name="note"
+                                id="note"
+                                value={objValues.note}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Follow Up Date</Label>
+                            <Input
+                                type="date"
+                                name="dateOfEac1"
+                                id="dateOfEac1"
+                                value={objValues.dateOfEac1}
+                                onChange={handleInputChange}
+                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.dateOfEac1 !=="" ? (
+                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Comments</Label>
+                            <Input
+                                type="textarea"
+                                name="note"
+                                id="note"
+                                value={objValues.note}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            </FormGroup>
+                        </div>
                         
                     </div>
                     
