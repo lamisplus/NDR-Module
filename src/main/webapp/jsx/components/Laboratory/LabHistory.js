@@ -105,9 +105,8 @@ const LabHistory = (props) => {
 
     useEffect(() => {
       CheckLabModule();
-      if(moduleStatus==="1"){
+
         LabOrders()
-      }
 
       }, [props.patientObj.id]);
     //GET LIST OF Patients
