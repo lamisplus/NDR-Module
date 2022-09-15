@@ -29,5 +29,6 @@ public class HIVEacDto implements Serializable {
 	private Long testResultId;
 	private String testGroup;
 	private String testName;
+	private String reasonStopped;
 	private String labNumber;
 }

@@ -25,6 +25,7 @@ public class HIVEacSession extends HivAuditEntity implements Serializable, Persi
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@ManyToOne
+	@JoinColumn(name = "eac_id", referencedColumnName = "uuid", nullable = false)
 	private  HIVEac eac;
 	@ManyToOne
 	@JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
@@ -48,6 +49,7 @@ public class HIVEacSession extends HivAuditEntity implements Serializable, Persi
 	private String status;
 	@Column(name = "uuid", nullable = false, unique = true, updatable = false)
 	private String uuid;
+	private int  archived;
 	@Override
 	public boolean isNew() {
 		return id == null;

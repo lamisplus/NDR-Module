@@ -1,6 +1,5 @@
 package org.lamisplus.modules.hiv.service;
 
-import com.querydsl.core.util.BeanUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.audit4j.core.util.Log;
@@ -16,7 +15,6 @@ import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import reactor.util.UUIDUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +29,6 @@ public class HIVEacService {
 	
 	private final HandleHIVVisitEncounter handleHIVisitEncounter;
 	
-	private final CurrentUserOrganizationService currentUserOrganizationService;
 	
 	private final ModuleService moduleService;
 	
@@ -48,6 +45,7 @@ public class HIVEacService {
 							.labNumber(labEacInfo.getLabNumber())
 							.dateOfLastViralLoad(labEacInfo.getResultDate())
 							.testGroup(labEacInfo.getTestGroup())
+							.testName(labEacInfo.getTestName())
 							.lastViralLoad(Double.valueOf(labEacInfo.getResult()))
 							.testResultId(labEacInfo.getPatientId())
 							.status("NOT COMMENCED")
@@ -114,6 +112,7 @@ public class HIVEacService {
 		hIVEacDto.setTestGroup(entity.getTestGroup());
 		hIVEacDto.setTestName(entity.getTestName());
 		hIVEacDto.setLabNumber(entity.getLabNumber());
+		hIVEacDto.setReasonStopped(entity.getReasonToStopEac());
 		return hIVEacDto;
 		
 	}
@@ -123,4 +122,10 @@ public class HIVEacService {
 	}
 	
 	
+	public void deleteEac(Long id) {
+		HIVEac hivEac = hivEacRepository
+				.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException(HIVEac.class, "id", String.valueOf(id)));
+		hivEac.setArchived(1);
+	}
 }
