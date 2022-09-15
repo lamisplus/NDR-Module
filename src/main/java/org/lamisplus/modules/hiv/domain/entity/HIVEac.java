@@ -39,6 +39,7 @@ public class HIVEac extends HivAuditEntity implements Serializable, Persistable<
     private String testGroup;
     private String testName;
     private String labNumber;
+    private String reasonToStopEac;
     @Override
     public boolean isNew() {
         return id == null;
