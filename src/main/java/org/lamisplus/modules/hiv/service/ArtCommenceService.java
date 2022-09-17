@@ -114,7 +114,8 @@ public class ArtCommenceService {
 		VitalSignRequestDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
 		vitalSignDto.setVisitId(artClinicalCommenceDto.getVisitId());
 		vitalSignDto.setFacilityId(organizationUtil.getCurrentUserOrganization());
-		vitalSignDto.setCaptureDate(artClinicalCommenceDto.getVisitDate().toString());
+		String captureDate = artClinicalCommenceDto.getVisitDate().toString();
+		vitalSignDto.setCaptureDate(captureDate.concat("T12:00:00"));
 		Log.info("vitalSign dto {}", vitalSignDto);
 		VitalSignDto saveVitalSignDto = vitalSignService.registerVitalSign(vitalSignDto);
 		return saveVitalSignDto.getId();
