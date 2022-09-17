@@ -120,7 +120,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
                     <Menu.Item onClick={() => loadEAC(patientObj)} disabled> EAC</Menu.Item>
-                    {  patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} >Mental Health Screening</Menu.Item>)}
+                    { patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} >Mental Health Screening</Menu.Item>)}
                     <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                    
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     {/* <Dropdown text="PrEP" labeled simple className='icon link item' disabled>
