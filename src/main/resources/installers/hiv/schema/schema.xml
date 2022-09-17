@@ -555,6 +555,7 @@
                 test_group              VARCHAR(255),
                 test_name               VARCHAR(255),
                 lab_number              VARCHAR(255),
+                reason_to_stop_eac      VARCHAR(255),
                 CONSTRAINT pk_hiv_eac PRIMARY KEY (id)
             );
             ALTER TABLE hiv_eac
@@ -630,6 +631,7 @@
                 adherence           VARCHAR(255),
                 uuid                VARCHAR(255)                            NOT NULL,
                 status              VARCHAR(255),
+                archived             INTEGER,
                 CONSTRAINT pk_hiv_eac_session PRIMARY KEY (id)
             );
             ALTER TABLE hiv_eac_session

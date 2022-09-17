@@ -1,7 +1,8 @@
 package org.lamisplus.modules.hiv.domain.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Builder;
 import lombok.Data;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
  */
 
 @Data
+@Builder
 public class HIVEacSessionDto implements Serializable {
 	private final Long facilityId;
 	private final Long id;

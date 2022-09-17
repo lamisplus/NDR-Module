@@ -15,6 +15,7 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.domain.dto.VitalSignRequestDto;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
 import org.lamisplus.modules.triage.service.VitalSignService;
@@ -84,7 +85,7 @@ public class ArtClinicVisitService {
 	
 	public ARTClinicVisitDto updateClinicVisit(Long id, ARTClinicVisitDto artClinicVisitDto) {
 		ARTClinical existArtClinical = getExistClinicVisit(id);
-		VitalSignDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
+		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
 		vitalSignService.updateVitalSign(existArtClinical.getVitalSign().getId(), vitalSignDto);
 		ARTClinical artClinical = convertDtoToART(artClinicVisitDto, existArtClinical.getVitalSign().getId());
 		artClinical.setVisit(existArtClinical.getVisit());
@@ -165,9 +166,11 @@ public class ArtClinicVisitService {
 	@NotNull
 	public ARTClinicVisitDto convertToClinicVisitDto(ARTClinical artClinical) {
 		VitalSignDto vitalSignDto = vitalSignService.getVitalSignById(artClinical.getVitalSign().getId());
+		VitalSignRequestDto requestDto = new VitalSignRequestDto();
+		BeanUtils.copyProperties(vitalSignDto, requestDto);
 		ARTClinicVisitDto artClinicVisitDto = new ARTClinicVisitDto();
 		BeanUtils.copyProperties(artClinical, artClinicVisitDto);
-		artClinicVisitDto.setVitalSignDto(vitalSignDto);
+		artClinicVisitDto.setVitalSignDto(requestDto);
 		log.info("converted artClinicVisitDto {}", artClinicVisitDto);
 		return artClinicVisitDto;
 		

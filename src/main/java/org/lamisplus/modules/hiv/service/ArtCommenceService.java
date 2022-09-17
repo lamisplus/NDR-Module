@@ -20,6 +20,7 @@ import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.triage.domain.dto.VitalSignDto;
+import org.lamisplus.modules.triage.domain.dto.VitalSignRequestDto;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.lamisplus.modules.triage.repository.VitalSignRepository;
 import org.lamisplus.modules.triage.service.VitalSignService;
@@ -110,10 +111,10 @@ public class ArtCommenceService {
 	
 	
 	public Long processAndSaveVitalSign(ARTClinicalCommenceDto artClinicalCommenceDto) {
-		VitalSignDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
+		VitalSignRequestDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
 		vitalSignDto.setVisitId(artClinicalCommenceDto.getVisitId());
 		vitalSignDto.setFacilityId(organizationUtil.getCurrentUserOrganization());
-		vitalSignDto.setEncounterDate(artClinicalCommenceDto.getVisitDate());
+		vitalSignDto.setCaptureDate(artClinicalCommenceDto.getVisitDate().toString());
 		Log.info("vitalSign dto {}", vitalSignDto);
 		VitalSignDto saveVitalSignDto = vitalSignService.registerVitalSign(vitalSignDto);
 		return saveVitalSignDto.getId();
@@ -123,7 +124,7 @@ public class ArtCommenceService {
 	
 	public ARTClinicalCommenceDto updateArtCommence(Long id, ARTClinicalCommenceDto artClinicalCommenceDto) {
 		ARTClinical existArtClinical = getExistArt(id);
-		VitalSignDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
+		VitalSignRequestDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
 		vitalSignService.updateVitalSign(existArtClinical.getVitalSign().getId(), vitalSignDto);
 		ARTClinical artClinical = convertDtoToART(artClinicalCommenceDto, artClinicalCommenceDto.getVitalSignId());
 		artClinical.setId(existArtClinical.getId());
@@ -181,14 +182,37 @@ public class ArtCommenceService {
 	
 	@NotNull
 	public ARTClinicalCommenceDto convertArtToResponseDto(ARTClinical artClinical) {
-		VitalSignDto vitalSignDto = vitalSignService.getVitalSignById(artClinical.getVitalSign().getId());
+		VitalSignDto vitalSignDto =
+				vitalSignService.getVitalSignById(artClinical.getVitalSign().getId());
+		VitalSignRequestDto requestDto = new VitalSignRequestDto();
+		BeanUtils.copyProperties(vitalSignDto, requestDto);
+		//convertVitalSignDtoToRequestDto(vitalSignDto, requestDto);
+		
+		
 		ARTClinicalCommenceDto artClinicalCommenceDto = new ARTClinicalCommenceDto();
 		BeanUtils.copyProperties(artClinical, artClinicalCommenceDto);
 		artClinicalCommenceDto.setVitalSignId(vitalSignDto.getId());
-		artClinicalCommenceDto.setVitalSignDto(vitalSignDto);
+		artClinicalCommenceDto.setVitalSignDto(requestDto);
 		artClinicalCommenceDto.setPersonId(artClinical.getPerson().getId());
 		artClinicalCommenceDto.setVisitId(artClinical.getVisit().getId());
 		return artClinicalCommenceDto;
+	}
+	
+	private static void convertVitalSignDtoToRequestDto(VitalSignDto vitalSignDto, VitalSignRequestDto requestDto) {
+		requestDto.setId(vitalSignDto.getId());
+		requestDto.setBodyWeight(vitalSignDto.getBodyWeight());
+		requestDto.setDiastolic(vitalSignDto.getDiastolic());
+		requestDto.setCaptureDate(vitalSignDto.getCaptureDate().toString());
+		requestDto.setHeight(vitalSignDto.getHeight());
+		requestDto.setPersonId(vitalSignDto.getId());
+		requestDto.setVisitId(vitalSignDto.getVisitId());
+		requestDto.setSystolic(vitalSignDto.getSystolic());
+		requestDto.setUuid(vitalSignDto.getUuid());
+		requestDto.setTemperature(vitalSignDto.getTemperature());
+		requestDto.setPulse(vitalSignDto.getPulse());
+		requestDto.setRespiratoryRate(vitalSignDto.getRespiratoryRate());
+		requestDto.setArchived(vitalSignDto.getArchived());
+		requestDto.setFacilityId(vitalSignDto.getFacilityId());
 	}
 	
 	
