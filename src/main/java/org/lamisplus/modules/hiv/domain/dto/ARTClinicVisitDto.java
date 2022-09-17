@@ -1,13 +1,13 @@
 package org.lamisplus.modules.hiv.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.triage.domain.dto.VitalSignRequestDto;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
