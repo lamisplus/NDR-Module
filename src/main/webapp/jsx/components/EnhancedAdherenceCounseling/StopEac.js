@@ -68,7 +68,7 @@ const StopEAC = (props) => {
     let temp = { ...errors }
 
     const [objValues, setObjValues] = useState({
-                                                //personId:props.patientObj.id,
+                                                id:props.eacObj.id,
                                                 reason: "",
                                                 });
 
@@ -93,7 +93,7 @@ const StopEAC = (props) => {
             if(validate()){ 
             
             setSaving(true);
-            axios.put(`${baseUrl}hiv/eac/stop/${props.eacObj.id}?reason=${objValues.reason}`,
+            axios.put(`${baseUrl}hiv/eac/stop/${props.eacObj.id}`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
@@ -103,7 +103,7 @@ const StopEAC = (props) => {
                   //props.patientObj.commenced=true
                   toast.success("EAC stop successful");
                   props.toggle()
-                  //props.PatientCurrentStatus()
+                  props.setActiveContent({...props.activeContent, route:'counseling'})
 
               })
               .catch(error => {

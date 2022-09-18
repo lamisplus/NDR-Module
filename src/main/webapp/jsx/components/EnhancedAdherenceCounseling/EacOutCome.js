@@ -59,14 +59,16 @@ const EAC = (props) => {
     const [loading, setLoading] = useState(true)
     const [objValues, setObjValues]=useState({
                                                 currentRegimen: "",
-                                                
+                                                planAction:"",
                                                 eacId: "",
                                                 id: "",
                                                 outComeDate: "",
                                                 outcome: "",
+                                                repeatViralLoader:"",
                                                 personId: props.patientObj.id,
                                                 plan: "",
-                                                visitId: ""
+                                                visitId: "",
+                                                switchRegimen:""
                                             })
     const [switchs, setSwitchs]=useState({
             currentRegimen: "",

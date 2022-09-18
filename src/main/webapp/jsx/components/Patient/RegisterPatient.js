@@ -311,6 +311,9 @@ const UserRegistration = (props) => {
                 if(basicInfo.age!=='' && basicInfo.age>=60){
                     toggle()
                 }
+                if(basicInfo.dateOfRegistration < basicInfo.dob){ 
+                    toast.error("Date of Registration can not be greater than Date of birth")
+                }
            
     }
     const handleDateOfBirthChange = (e) => {
@@ -338,6 +341,9 @@ const UserRegistration = (props) => {
             //setBasicInfo({...basicInfo, dob: moment(dobNew).format("YYYY-MM-DD")});
             basicInfo.dob =moment(dobNew).format("YYYY-MM-DD")
 
+        }
+        if(basicInfo.dateOfRegistration < basicInfo.dob){ 
+            toast.error("Date of Registration can not be greater than Date of birth")
         }
         setBasicInfo({...basicInfo, age: Math.abs(e.target.value)});
     }
