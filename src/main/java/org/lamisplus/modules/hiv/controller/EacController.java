@@ -3,6 +3,7 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.lamisplus.modules.hiv.domain.dto.EACStopDto;
 import org.lamisplus.modules.hiv.domain.dto.EacOutComeDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacSessionDto;
@@ -35,8 +36,8 @@ public class EacController {
 	
 	@PutMapping(value = "/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HIVEacDto> stopEac(@PathVariable("id") Long id,
-	                                         @RequestParam("reason") String reason) {
-		return ResponseEntity.ok(hIVEacService.stopEac(id, reason));
+	                                         @RequestBody EACStopDto data) {
+		return ResponseEntity.ok(hIVEacService.stopEac(id, data));
 	}
 	
 	
@@ -46,7 +47,9 @@ public class EacController {
 	}
 	
 	@PostMapping(value = "/out-come", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<EacOutComeDto> registerEacOut(@RequestParam("eacId") Long id, @RequestBody EacOutComeDto data) {
+	public ResponseEntity<EacOutComeDto> registerEacOut(
+			@RequestParam("eacId") Long id,
+			@RequestBody EacOutComeDto data) {
 		return ResponseEntity.ok(eacOutComeService.registerEACOutcome(id, data));
 	}
 	
@@ -58,17 +61,18 @@ public class EacController {
 	@PutMapping(value = "/session/edit/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HIVEacSessionDto> updateEacSession(
 			@PathVariable("id") Long id,
-			HIVEacSessionDto data) {
+			@RequestBody HIVEacSessionDto data) {
 		return ResponseEntity.ok(hIVEacSessionService.updateEacSession(id, data));
 	}
 	
 	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> deleteEac(@PathVariable("id") Long id){
+	public ResponseEntity<String> deleteEac(@PathVariable("id") Long id) {
 		hIVEacService.deleteEac(id);
 		return ResponseEntity.ok("success");
 	}
+	
 	@DeleteMapping(value = "session/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> deleteEacSession(@PathVariable("id") Long id){
+	public ResponseEntity<String> deleteEacSession(@PathVariable("id") Long id) {
 		hIVEacSessionService.deleteEacSessionById(id);
 		return ResponseEntity.ok("success");
 	}

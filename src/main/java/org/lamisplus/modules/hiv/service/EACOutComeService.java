@@ -21,9 +21,9 @@ public class EACOutComeService {
 	private final EacOutComeRepository eacOutComeRepository;
 	private final HIVEacRepository hivEacRepository;
 	
-	private  final HIVEacSessionRepository hivEacSessionRepository;
+	private final HIVEacSessionRepository hivEacSessionRepository;
 	
-	private  final  HandleHIVVisitEncounter hivVisitEncounter;
+	private final HandleHIVVisitEncounter hivVisitEncounter;
 	
 	
 	public EacOutComeDto registerEACOutcome(Long id, EacOutComeDto dto) {
@@ -35,12 +35,12 @@ public class EACOutComeService {
 		Visit visit = hivVisitEncounter.processAndCreateVisit(eac.getPerson().getId(), dto.getOutComeDate());
 		eacOutCome.setVisit(visit);
 		List<HIVEacSession> eacSessionList = hivEacSessionRepository.getHIVEacSesByEac(eac);
-		if(!eacSessionList.isEmpty() && eacSessionList.size() >= 3) {
-		EacOutCome outcome = eacOutComeRepository.save(eacOutCome);
-		eac.setStatus("COMPLETED");
-		hivEacRepository.save(eac);
-		return mapEntityDto(outcome);
-		} else throw  new IllegalArgumentException("You must have at least 3 EAC sessions");
+		if (!eacSessionList.isEmpty() && eacSessionList.size() >= 3) {
+			EacOutCome outcome = eacOutComeRepository.save(eacOutCome);
+			eac.setStatus("COMPLETED");
+			hivEacRepository.save(eac);
+			return mapEntityDto(outcome);
+		} else throw new IllegalArgumentException("You must have at least 3 EAC sessions");
 	}
 	
 	private HIVEac getEac(Long eacId) {
@@ -61,11 +61,7 @@ public class EACOutComeService {
 				.plan(entity.getPlan())
 				.currentRegimen(entity.getCurrentRegimen())
 				.switchRegimen(entity.getSwitchRegimen())
-				.reasonSwitched(entity.getReasonSwitched())
-				.reasonSubstituted(entity.getReasonSubstituted())
-				.substituteRegimen(entity.getSubstituteRegimen())
-				.dateSubstituted(entity.getDateSubstituted())
-				.dateSwitched(entity.getDateSwitched())
+				.planAction(entity.getPlanAction())
 				.build();
 		
 	}
@@ -73,17 +69,12 @@ public class EACOutComeService {
 	private EacOutCome mapDtoEntity(EacOutComeDto dto) {
 		EacOutCome eacOutCome = new EacOutCome();
 		eacOutCome.setId(dto.getId());
-		
 		eacOutCome.setRepeatViralLoader(dto.getRepeatViralLoader());
 		eacOutCome.setOutcome(dto.getOutcome());
 		eacOutCome.setPlan(dto.getPlan());
 		eacOutCome.setCurrentRegimen(dto.getCurrentRegimen());
 		eacOutCome.setSwitchRegimen(dto.getSwitchRegimen());
-		eacOutCome.setReasonSwitched(dto.getReasonSwitched());
-		eacOutCome.setReasonSubstituted(dto.getReasonSubstituted());
-		eacOutCome.setSubstituteRegimen(dto.getSubstituteRegimen());
-		eacOutCome.setDateSubstituted(dto.getDateSubstituted());
-		eacOutCome.setDateSwitched(dto.getDateSwitched());
+		eacOutCome.setPlanAction(dto.getPlanAction());
 		eacOutCome.setArchived(0);
 		return eacOutCome;
 		

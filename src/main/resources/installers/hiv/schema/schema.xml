@@ -664,13 +664,10 @@
                 repeat_viral_loader DOUBLE PRECISION,
                 outcome             VARCHAR(255),
                 plan                VARCHAR(255),
+                plan_action         JSONB,
                 current_regimen     VARCHAR(255),
                 switch_regimen      VARCHAR(255),
-                reason_switched     VARCHAR(255),
-                reason_substituted  VARCHAR(255),
                 substitute_regimen  VARCHAR(255),
-                date_substituted    date,
-                date_switched       date,
                 archived            INTEGER,
                 CONSTRAINT pk_hiv_eac_out_come PRIMARY KEY (id)
             );

@@ -133,7 +133,7 @@ public class ArtPharmacyService {
 	}
 	
 	
-	public String getCurrentRegimenByPersonId(Long personId) {
+	public Regimen getCurrentRegimenByPersonId(Long personId) {
 		Person person = getPerson(personId);
 		Optional<Set<Regimen>> regimen =
 				artPharmacyRepository.getArtPharmaciesByPersonAndArchived(person, 0)
@@ -147,11 +147,8 @@ public class ArtPharmacyService {
 							.filter(regimen3 -> regimen3.getRegimenType().getDescription().contains("ART")
 									|| regimen3.getRegimenType().getDescription().contains("Third Line"))
 							.findAny();
-			if (currentRegimen.isPresent()) {
-				return currentRegimen.get().getDescription();
-			}
-		}
-		return "";
+			return currentRegimen.orElse(null);
+		} else throw new IllegalArgumentException("No current regimen found");
 	}
 	
 	
@@ -163,9 +160,7 @@ public class ArtPharmacyService {
 			
 			if (extra.hasNonNull(REGIMEN)) {
 				JsonNode jsonNode = extra.get(REGIMEN);
-				Iterator<JsonNode> iterator = jsonNode.iterator();
-				while (iterator.hasNext()) {
-					JsonNode regimen = iterator.next();
+				for (JsonNode regimen : jsonNode) {
 					if (regimen.hasNonNull("id")) {
 						JsonNode regimenId = regimen.get("id");
 						long id = regimenId.asLong();

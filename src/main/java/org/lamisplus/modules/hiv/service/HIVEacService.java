@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.audit4j.core.util.Log;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.module.ModuleService;
+import org.lamisplus.modules.hiv.domain.dto.EACStopDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
 import org.lamisplus.modules.hiv.domain.dto.LabEacInfo;
 import org.lamisplus.modules.hiv.domain.entity.HIVEac;
@@ -63,16 +64,15 @@ public class HIVEacService {
 				.collect(Collectors.toList());
 	}
 	
-	public  HIVEacDto  stopEac(Long id, String reason){
-		HIVEac exists = hivEacRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(HIVEac.class, "id", String.valueOf(id)));
-		exists.setReasonToStopEac(reason);
+	public HIVEacDto stopEac(Long id, EACStopDto data) {
+		HIVEac exists = hivEacRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException(HIVEac.class, "id", String.valueOf(id)));
+		exists.setReasonToStopEac(data.getReason());
 		exists.setStatus("STOPPED");
 		hivEacRepository.save(exists);
-		return  mapEntityDto(exists);
+		return mapEntityDto(exists);
 		
 	}
-	
-	
 	
 	
 	private HIVEac mapDtoEntity(HIVEacDto dto) {
