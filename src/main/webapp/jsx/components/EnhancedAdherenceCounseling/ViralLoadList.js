@@ -119,24 +119,6 @@ const LabHistory = (props) => {
             });        
     }
 
-    const labStatus =(status)=> {
-        console.log(status)
-          if(status===0){
-            return "blue"
-          }else if(status===1){
-            return "teal"
-          }else if(status===2){
-            return "green"
-          }else if(status===3){
-            return "red"
-          }else if(status===4){
-            return "orange"
-          }else if(status===5){
-            return "dark"
-          }else {
-            return "grey"
-          }
-      }
 
     const onClickHome = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})

@@ -56,11 +56,16 @@ const EAC = (props) => {
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const [currentViralLoad, setCurrentViralLoad] = useState({});
+    const [currentRegimen, setCurrentRegimen] = useState({});
     const [loading, setLoading] = useState(true)
+    const [regimenType, setRegimenType] = useState([]);
+    const [regimenLine, setRegimenLine] = useState([]);
+    const [regimenLineLineType, setRegimenLineLineType] = useState([]);
     const [objValues, setObjValues]=useState({
                                                 currentRegimen: "",
                                                 planAction:"",
-                                                eacId: "",
+                                                eacId: props.activeContent.obj.id,
                                                 id: "",
                                                 outComeDate: "",
                                                 outcome: "",
@@ -75,6 +80,8 @@ const EAC = (props) => {
             switchRegimen: "",
             dateSwitched: "",
             reasonSwitched: "",
+            switchRegimenLine:"",
+            switchRegimenLineType:""
             
         })
     const [Substitutes, setSubstitutes]=useState({
@@ -85,18 +92,83 @@ const EAC = (props) => {
         
     })  
     useEffect(() => {
-        EACHistory()
+        //EACHistory()
+        CurrentLabResult()
+        CurrentRegimen()
+        RegimenLine()
     }, [props.patientObj.id]);
     ///GET LIST OF EAC
-    const EACHistory =()=>{
+    // const EACHistory =()=>{
+    //     setLoading(true)
+    //     axios
+    //         .get(`${baseUrl}hiv/eac/out-come?eacId=${props.activeContent.obj.id}`,
+    //             { headers: {"Authorization" : `Bearer ${token}`} }
+    //         )
+    //         .then((response) => {
+    //         setLoading(false)
+    //         //setObjValues(response.data)
+    //         })
+    //         .catch((error) => {
+    //         //console.log(error);
+    //         });    
+    // }
+    ///GET CURRENT LAB RESULT
+    const CurrentLabResult =()=>{
         setLoading(true)
         axios
-            .get(`${baseUrl}hiv/eac/out-come?eacId=${props.activeContent.obj.id}`,
+            .get(`${baseUrl}laboratory/rde-orders/latest-viral-loads/${props.patientObj.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
             setLoading(false)
-            setObjValues(response.data)
+            setCurrentViralLoad(response.data)
+            })
+            .catch((error) => {
+            //console.log(error);
+            });    
+    }
+    ///GET CURRENT LAB RESULT
+    const RegimenLine =()=>{
+        setLoading(true)
+        axios
+            .get(`${baseUrl}hiv/regimen/types`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+            setLoading(false)
+            const filterRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
+            console.log(filterRegimen)
+            setRegimenLine(filterRegimen)
+            })
+            .catch((error) => {
+            //console.log(error);
+            });    
+    }
+    ///GET CURRENT Regimen
+    const CurrentRegimen =()=>{
+        setLoading(true)
+        axios
+            .get(`${baseUrl}hiv/art/pharmacy/patient/current-regimen/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+            setLoading(false)
+            setCurrentRegimen(response.data)
+            if(response.data){
+                const regimenTypeID=response.data && response.data.regimenType ? response.data.regimenType.id :""
+                axios
+                    .get(`${baseUrl}hiv/regimen/types/${regimenTypeID}`,
+                        { headers: {"Authorization" : `Bearer ${token}`} }
+                    )
+                    .then((response) => {
+                    setLoading(false)
+                    setRegimenType(response.data)
+                    
+                    })
+                    .catch((error) => {
+                    //console.log(error);
+                    }); 
+            }
             })
             .catch((error) => {
             //console.log(error);
@@ -114,13 +186,44 @@ const EAC = (props) => {
     const BackToSession = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
          props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
-     }       
+     } 
+     const handleSelectedRegimen = e => {
+        const regimenId= e.target.value
+        if(regimenId!==""){
+            RegimenType(regimenId)
+            //setShowRegimen(true)
+        }else{
+            setRegimenType([])
+            //setShowRegimen(false)
+        }
+    } 
+    function RegimenType(id) {
+        async function getCharacters() {
+            try{
+            const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            if(response.data.length >0){
+                setRegimenLineLineType(response.data)
+                    
+            }
+            }catch(e) {
+
+            }
+        }
+        getCharacters();
+    }     
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
-          objValues.status='Third'
-          axios.post(`${baseUrl}observation/eac`,objValues,
+          objValues.currentRegimen=currentRegimen && currentRegimen.description ? currentRegimen.description :""
+          if(objValues.plan==='Substitute regimen'){
+            objValues.planAction=Substitutes
+          }
+          if(objValues.plan==='Switch regimen'){
+            objValues.planAction=switchs
+          }
+          axios.post(`${baseUrl}hiv/eac/out-come?eacId=${props.activeContent.obj.id}`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
@@ -142,6 +245,7 @@ const EAC = (props) => {
               });
           
     }
+
 
   return (      
         <div>  
@@ -171,25 +275,26 @@ const EAC = (props) => {
                         
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Repeat Viral Load Result</Label>
+                                <Label >Current Viral Load Result</Label>
                                 <Input
                                     type="text"
                                     name="viralLoadResult"
                                     id="viralLoadResult"
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    value={currentViralLoad && currentViralLoad.result ? currentViralLoad.result :""}
                                />
                                  
                                 </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Date Result Recieved </Label>
+                            <Label for="">Current Viral Load Result Date </Label>
                             <Input
                                 type="date"
                                 name="dateResultReceived"
                                 id="dateResultReceived"
                                 value={objValues.dateResultReceived}
+                                value={currentViralLoad && currentViralLoad.dateResultReceived ? currentViralLoad.dateResultReceived :""}
                                 //onChange={handleInputChange}
                                 //min={objValues.dateOfEac2}
                                 //max= {moment(new Date()).format("YYYY-MM-DD") }
@@ -199,7 +304,7 @@ const EAC = (props) => {
                            </FormGroup> 
                         </div>
                         <hr/>
-                        <h3>Outcome</h3>
+                        <h2>Outcome</h2>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Outcome </Label>
@@ -248,7 +353,7 @@ const EAC = (props) => {
                                     type="text"
                                     name="currentRegimen"
                                     id="currentRegimen"
-                                    value={objValues.currentRegimen}
+                                    value={currentRegimen && currentRegimen.description ? currentRegimen.description :""}
                                     onChange={handleInputChange}
                                     disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -258,19 +363,46 @@ const EAC = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Switch Regimen </Label>
+                                <Label >Switch Regimen Line </Label>
                                 <Input
                                     type="select"
-                                    name="switchRegimen"
-                                    id="switchRegimen"
-                                    value={objValues.switchRegimen}
-                                    onChange={handleInputSwitchChange}
-                                    disabled
+                                    name="switchRegimenLine"
+                                    id="switchRegimenLine"
+                                    value={switchs.switchRegimenLine}
+                                    onChange={handleSelectedRegimen}
+                                    
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
                                  <option value="">Select</option> 
-
+                                 {regimenLine.filter((x)=>x.id!==currentRegimen.regimenType.id).map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                    ))}
+                                </Input>
+                                  
+                                </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Switch Regimen Type</Label>
+                                <Input
+                                    type="select"
+                                    name="switchRegimenLineType"
+                                    id="switchRegimenLineType"
+                                    value={switchs.switchRegimenLineType}
+                                    onChange={handleSelectedRegimen}
+                                    
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 {regimenLineLineType.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                    ))}
                                 </Input>
                                   
                                 </FormGroup>
@@ -282,9 +414,9 @@ const EAC = (props) => {
                                 type="date"
                                 name="dateSwitched"
                                 id="dateSwitched"
-                                value={objValues.dateSwitched}
+                                value={switchs.dateSwitched}
                                 onChange={handleInputSwitchChange}
-                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                // min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -301,7 +433,7 @@ const EAC = (props) => {
                                 type="textarea"
                                 name="reasonSwitched"
                                 id="reasonSwitched"
-                                value={objValues.reasonSwitched}
+                                value={switchs.reasonSwitched}
                                 onChange={handleInputSwitchChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
@@ -320,7 +452,7 @@ const EAC = (props) => {
                                     type="text"
                                     name="currentRegimen"
                                     id="currentRegimen"
-                                    value={objValues.currentRegimen}
+                                    value={currentRegimen && currentRegimen.description ? currentRegimen.description :""}
                                      onChange={handleInputChange}
                                     disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -337,14 +469,17 @@ const EAC = (props) => {
                                     type="select"
                                     name="substituteRegimen"
                                     id="substituteRegimen"
-                                    value={objValues.substituteRegimen}
+                                    value={Substitutes.substituteRegimen}
                                     onChange={handleInputSubstituteChange}
-                                    disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
                                  <option value="">Select</option> 
-                                 
+                                 {regimenType.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                    ))}
 
                                 </Input>
                                   
@@ -357,9 +492,9 @@ const EAC = (props) => {
                                 type="date"
                                 name="dateSubstituted"
                                 id="dateSubstituted"
-                                value={objValues.dateSubstituted}
+                                value={Substitutes.dateSubstituted}
                                 onChange={handleInputSubstituteChange}
-                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                // min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -376,7 +511,7 @@ const EAC = (props) => {
                                 type="textarea"
                                 name="reasonSubstituted"
                                 id="reasonSubstituted"
-                                value={objValues.reasonSubstituted}
+                                value={Substitutes.reasonSubstituted}
                                 onChange={handleInputSubstituteChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />

@@ -144,6 +144,7 @@ const LabHistory = (props) => {
    
   return (
     <div>
+            {props.activeContent.obj.status!=='COMPLETED' && (
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -156,7 +157,8 @@ const LabHistory = (props) => {
             >
                 <span style={{ textTransform: "capitalize" }}>Stop EAC</span>
             </ButtonMui>
-            {sessionList.length>=3  && props.activeContent.obj.status!=='STOPPED' && (
+            )}
+            {sessionList.length>=3  && props.activeContent.obj.status!=='STOPPED' && props.activeContent.obj.status!=='COMPLETED' && (
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -170,6 +172,7 @@ const LabHistory = (props) => {
                 <span style={{ textTransform: "capitalize" }}>Outcome</span>
             </ButtonMui>
             )}
+             {props.activeContent.obj.status!=='COMPLETED' && (
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -182,6 +185,7 @@ const LabHistory = (props) => {
             >
                 <span style={{ textTransform: "capitalize" }}>Add Session</span>
             </ButtonMui>
+             )}
             <br/> <br/> <br/>
         
             <MaterialTable

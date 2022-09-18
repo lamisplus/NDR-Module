@@ -103,7 +103,7 @@ const StopEAC = (props) => {
                   //props.patientObj.commenced=true
                   toast.success("EAC stop successful");
                   props.toggle()
-                  props.setActiveContent({...props.activeContent, route:'counseling'})
+                  props.setActiveContent({...props.activeContent, route:'eac-session'})
 
               })
               .catch(error => {
