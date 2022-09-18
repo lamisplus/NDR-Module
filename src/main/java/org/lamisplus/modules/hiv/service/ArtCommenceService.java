@@ -63,7 +63,7 @@ public class ArtCommenceService {
 		HivEnrollment hivEnrollment =
 				hivEnrollmentRepository
 						.findById(hivEnrollmentId)
-						.orElseThrow(() -> new EntityNotFoundException(HivEnrollment.class, "id", "" + hivEnrollmentId));
+						.orElseThrow(() -> new EntityNotFoundException(HivEnrollment.class, "id", String.valueOf(hivEnrollmentId)));
 		boolean isEnrollmentDateAfterArtCommence = hivEnrollment.getDateOfRegistration().isAfter(artClinicalCommenceDto.getVisitDate());
 		
 		if (isEnrollmentDateAfterArtCommence) {
@@ -114,8 +114,8 @@ public class ArtCommenceService {
 		VitalSignRequestDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
 		vitalSignDto.setVisitId(artClinicalCommenceDto.getVisitId());
 		vitalSignDto.setFacilityId(organizationUtil.getCurrentUserOrganization());
-		String captureDate = artClinicalCommenceDto.getVisitDate().toString();
-		vitalSignDto.setCaptureDate(captureDate.concat("T12:00:00"));
+		String captureDate = artClinicalCommenceDto.getVisitDate().toString().concat(" 12:00");
+		vitalSignDto.setCaptureDate(captureDate);
 		Log.info("vitalSign dto {}", vitalSignDto);
 		VitalSignDto saveVitalSignDto = vitalSignService.registerVitalSign(vitalSignDto);
 		return saveVitalSignDto.getId();

@@ -3,8 +3,10 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.lamisplus.modules.hiv.domain.dto.EacOutComeDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacSessionDto;
+import org.lamisplus.modules.hiv.service.EACOutComeService;
 import org.lamisplus.modules.hiv.service.HIVEacService;
 import org.lamisplus.modules.hiv.service.HIVEacSessionService;
 import org.springframework.http.MediaType;
@@ -23,6 +25,8 @@ public class EacController {
 	
 	private final HIVEacSessionService hIVEacSessionService;
 	
+	private final EACOutComeService eacOutComeService;
+	
 	
 	@GetMapping(value = "/patient/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HIVEacDto>> getPatientEacs(@PathVariable("id") Long id) {
@@ -39,6 +43,11 @@ public class EacController {
 	@PostMapping(value = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HIVEacSessionDto> registerEacSession(@RequestBody HIVEacSessionDto data) {
 		return ResponseEntity.ok(hIVEacSessionService.createEacSession(data));
+	}
+	
+	@PostMapping(value = "/out-come", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<EacOutComeDto> registerEacOut(@RequestParam("eacId") Long id, @RequestBody EacOutComeDto data) {
+		return ResponseEntity.ok(eacOutComeService.registerEACOutcome(id, data));
 	}
 	
 	@GetMapping(value = "/session/eac/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
