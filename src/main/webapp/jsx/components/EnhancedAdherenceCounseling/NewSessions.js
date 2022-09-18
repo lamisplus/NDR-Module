@@ -106,23 +106,23 @@ const NEWEACSESSION = (props) => {
         ];
 
     useEffect(() => {
-        EACHistory()
+        //EACHistory()
     }, [props.patientObj.id]);
     ///GET LIST OF EAC
-    const EACHistory =()=>{
-        setLoading(true)
-        axios
-            .get(`${baseUrl}observation/eac/person/current-eac/${props.patientObj.id}`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-            setLoading(false)
-            setObjValues(response.data)
-            })
-            .catch((error) => {
-            //console.log(error);
-            });    
-    }
+    // const EACHistory =()=>{
+    //     setLoading(true)
+    //     axios
+    //         .get(`${baseUrl}hiv/eac/session`, objValues,
+    //             { headers: {"Authorization" : `Bearer ${token}`} }
+    //         )
+    //         .then((response) => {
+    //         setLoading(false)
+    //         setObjValues(response.data)
+    //         })
+    //         .catch((error) => {
+    //         //console.log(error);
+    //         });    
+    // }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }
@@ -140,18 +140,16 @@ const NEWEACSESSION = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
-          objValues.status='Third'
-          axios.post(`${baseUrl}observation/eac`,objValues,
+          objValues.barriers=selectedBarriers
+          objValues.interventionOthers=selectedInterventions
+          axios.post(`${baseUrl}hiv/eac/session`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
           )
               .then(response => {
                   setSaving(false);
-                  props.setHideThird(false)
-                  props.setHideFirst(false)                 
-                  props.setEacObj(response.data)
-                  toast.success(" Save successful");
-                  props.setActiveContent({...props.activeContent, route:'final-eac'})
+                  toast.success("EAC session successful");
+                  props.setActiveContent({...props.activeContent, route:'eac-session'})
 
               })
               .catch(error => {

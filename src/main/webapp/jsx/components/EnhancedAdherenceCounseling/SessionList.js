@@ -98,24 +98,24 @@ const useStyles = makeStyles(theme => ({
 
 
 const LabHistory = (props) => {    
-    const [orderList, setOrderList] = useState([])
+    const [sessionList, setSessionList] = useState([])
     const [loading, setLoading] = useState(true)
     const [artModal, setArtModal] = useState(false);
     const Arttoggle = () => setArtModal(!artModal);
 
     useEffect(() => {
         LabOrders()
-      }, [props.patientObj.id]);
+      }, [props.activeContent]);
     //GET LIST OF Patients
     async function LabOrders() {
         setLoading(true)
         axios
-            .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
+            .get(`${baseUrl}hiv/eac/session/eac/${props.activeContent.obj.id}`,
             { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
                 setLoading(false)
-                setOrderList(response.data);                
+                setSessionList(response.data);                
             })
             .catch((error) => {  
                 setLoading(false)  
@@ -152,7 +152,7 @@ const LabHistory = (props) => {
      const loadEacStop =()=> {
             setArtModal(!artModal)
     }
-   const LabObj = [{"id":16,"orderId":13,"patientId":9,"visitId":0,"labTestGroupId":4,"labTestGroupName":"Others","labTestId":16,"labTestName":"Viral Load","labNumber":"788","sampleCollectionDate":"2022-09-08","dateAssayed":"2022-09-09","result":"78","dateResultReceived":"2022-09-09","comments":"good","viralLoadIndication":297,"viralLoadIndicationName":"Targeted Monitoring"}]
+   //const LabObj = [{"id":16,"orderId":13,"patientId":9,"visitId":0,"labTestGroupId":4,"labTestGroupName":"Others","labTestId":16,"labTestName":"Viral Load","labNumber":"788","sampleCollectionDate":"2022-09-08","dateAssayed":"2022-09-09","result":"78","dateResultReceived":"2022-09-09","comments":"good","viralLoadIndication":297,"viralLoadIndicationName":"Targeted Monitoring"}]
    
   return (
     <div>
@@ -201,23 +201,23 @@ const LabHistory = (props) => {
               // { title: " ID", field: "Id" },
                 {
                   title: "Session Date",
-                  field: "testGroup",
+                  field: "sessionDate",
                 },
-                { title: "Follow Up Date", field: "testName", filtering: false },
-                { title: " Barriers ", field: "sampleCollectionDate", filtering: false },
-                { title: "Interventions", field: "dateAssayed", filtering: false },
-                // { title: "EAC Status", field: "dateResultReceived", filtering: false },
+                { title: "Follow Up Date", field: "followupDate", filtering: false },
+                { title: " Barriers ", field: "barriers", filtering: false },
+                { title: "Interventions", field: "intervention", filtering: false },
+                { title: "Status", field: "status", filtering: false },
 
 
               ]}
               isLoading={loading}
-              data={ LabObj.map((row) => ({
+              data={ sessionList.map((row) => ({
                   //Id: manager.id,
-                  testGroup:row.labTestGroupName,
-                  testName: row.labTestName,
-                  labNumber: row.labNumber,
-                  sampleCollectionDate: "",    
-                //   dateAssayed: row.dateAssayed,
+                  sessionDate:row.followUpDate,
+                  followupDate: row.labTestName,
+                  barriers: row.barriers? "As Barreier" : "No Barrier",
+                  intervention: row.intervention ? "As Intervention" : "No Intervention",    
+                  status: row.status,
                  
                   }))}
             
