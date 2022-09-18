@@ -1,6 +1,8 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
+import org.hibernate.annotations.Type;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 
@@ -31,13 +33,12 @@ public class EacOutCome extends HivAuditEntity {
 	private Double repeatViralLoader;
 	private String outcome;
 	private String plan;
+	@Type(type = "jsonb")
+	@Column(columnDefinition = "jsonb")
+	private JsonNode planAction;
 	private String currentRegimen;
 	private String switchRegimen;
-	private String reasonSwitched;
-	private String reasonSubstituted;
 	private String substituteRegimen;
-	private LocalDate dateSubstituted;
-	private LocalDate dateSwitched;
 	private Integer archived;
 }
 	

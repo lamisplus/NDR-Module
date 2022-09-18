@@ -3,6 +3,7 @@ package org.lamisplus.modules.hiv.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
+import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.service.ArtPharmacyService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class ArtPharmacyController {
         return ResponseEntity.ok (artPharmacyService.getPharmacyById (id));
     }
     @GetMapping(value = "/patient/current-regimen/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<String> getCurrentRegimen(@PathVariable("id") Long id)  {
+    ResponseEntity<Regimen> getCurrentRegimen(@PathVariable("id") Long id)  {
         return ResponseEntity.ok (artPharmacyService.getCurrentRegimenByPersonId(id));
     }
 

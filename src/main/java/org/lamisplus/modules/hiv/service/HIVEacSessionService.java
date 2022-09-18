@@ -1,5 +1,6 @@
 package org.lamisplus.modules.hiv.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,7 @@ public class HIVEacSessionService {
 				.stream()
 				.filter(e -> e.getArchived() != 1)
 				.map(this::mapEntityToDto)
+				.sorted(Comparator.comparing(HIVEacSessionDto ::getEacId).reversed())
 				.collect(Collectors.toList());
 	}
 	
