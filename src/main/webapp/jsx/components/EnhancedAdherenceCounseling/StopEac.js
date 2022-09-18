@@ -69,7 +69,7 @@ const ArtCommencement = (props) => {
 
     const [objValues, setObjValues] = useState({
                                                 //personId:props.patientObj.id,
-                                                clinicalNote: "",
+                                                reason: "",
                                                 });
 
 
@@ -93,17 +93,17 @@ const ArtCommencement = (props) => {
             if(validate()){ 
             
             setSaving(true);
-            axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
+            axios.put(`${baseUrl}hiv/eac/stop/{}?reason=${objValues.reason}`,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
               .then(response => {
                   setSaving(false);
-                  props.setArt(true)
-                  props.patientObj.commenced=true
-                  toast.success("Record save successful");
+                  //props.setArt(true)
+                  //props.patientObj.commenced=true
+                  toast.success("EAC stop successful");
                   props.toggle()
-                  props.PatientCurrentStatus()
+                  //props.PatientCurrentStatus()
 
               })
               .catch(error => {
@@ -145,11 +145,11 @@ const ArtCommencement = (props) => {
                                         <Label >Reason to stop EAC</Label>
                                         <Input
                                             type="textarea"
-                                            name="clinicalNote"
+                                            name="reason"
                                             rows="5" cols="100"
-                                            id="clinicalNote"
+                                            id="reason"
                                             onChange={handleInputChange}
-                                            value={objValues.clinicalNote}
+                                            value={objValues.reason}
                                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                             required
                                         />

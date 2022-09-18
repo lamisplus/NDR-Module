@@ -107,7 +107,7 @@ const LabHistory = (props) => {
     async function LabOrders() {
         setLoading(true)
         axios
-            .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
+            .get(`${baseUrl}hiv/eac/patient/${props.patientObj.id}`,
             { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
@@ -162,7 +162,7 @@ const LabHistory = (props) => {
           }); 
    }
 
-   const LabObj = [{"id":16,"orderId":13,"patientId":9,"visitId":0,"labTestGroupId":4,"labTestGroupName":"Others","labTestId":16,"labTestName":"Viral Load","labNumber":"788","sampleCollectionDate":"2022-09-08","dateAssayed":"2022-09-09","result":"78","dateResultReceived":"2022-09-09","comments":"good","viralLoadIndication":297,"viralLoadIndicationName":"Targeted Monitoring"}]
+   //const LabObj = [{"id":16,"orderId":13,"patientId":9,"visitId":0,"labTestGroupId":4,"labTestGroupName":"Others","labTestId":16,"labTestName":"Viral Load","labNumber":"788","sampleCollectionDate":"2022-09-08","dateAssayed":"2022-09-09","result":"78","dateResultReceived":"2022-09-09","comments":"good","viralLoadIndication":297,"viralLoadIndicationName":"Targeted Monitoring"}]
 
 
   return (
@@ -182,20 +182,20 @@ const LabHistory = (props) => {
                 { title: "Lab Number", field: "labNumber", filtering: false },
                 // { title: " Result Date ", field: "sampleCollectionDate", filtering: false },
                 // { title: "Result", field: "dateAssayed", filtering: false },
-                { title: "Status", field: "dateResultReceived", filtering: false },
+                { title: "Status", field: "status", filtering: false },
               
                 { title: "Action", field: "Action", filtering: false },
 
               ]}
               isLoading={loading}
-              data={ LabObj.map((row) => ({
+              data={ orderList.map((row) => ({
                   //Id: manager.id,
-                  testGroup:row.labTestGroupName,
-                  testName: row.labTestName,
+                  testGroup:row.testGroup,
+                  testName: row.testName,
                   labNumber: row.labNumber,
                   // sampleCollectionDate: row.sampleCollectionDate,    
                   // dateAssayed: "1200 copies/ml",
-                  dateResultReceived: "No Session", 
+                  status: row.status, 
                   viralLoadIndication: row.viralLoadIndicationName,
                   Action: 
                   (

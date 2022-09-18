@@ -31,7 +31,7 @@ const LaboratoryModule = (props) => {
                 >
                  
                   <Tab eventKey="home" title="EAC LIST">                   
-                    <ViralLoadList patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                    <ViralLoadList patientObj={patientObj} setActiveContent={props.setActiveContent} activeContent={props.activeContent}/>
                   </Tab>
                                  
                 </Tabs>
