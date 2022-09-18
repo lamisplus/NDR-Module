@@ -33,8 +33,12 @@ public class ArtPharmacyController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<RegisterArtPharmacyDto> getPharmacyById(@PathVariable("id") Long id) throws IOException {
+    ResponseEntity<RegisterArtPharmacyDto> getPharmacyById(@PathVariable("id") Long id)  {
         return ResponseEntity.ok (artPharmacyService.getPharmacyById (id));
+    }
+    @GetMapping(value = "/patient/current-regimen/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<String> getCurrentRegimen(@PathVariable("id") Long id)  {
+        return ResponseEntity.ok (artPharmacyService.getCurrentRegimenByPersonId(id));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE )

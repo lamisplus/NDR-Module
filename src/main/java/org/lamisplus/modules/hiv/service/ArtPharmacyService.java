@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.audit4j.core.util.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
@@ -79,7 +80,7 @@ public class ArtPharmacyService {
 				encounterService.getAllEncounterByPerson(personId).stream()
 						.filter(e -> e.getStatus().equalsIgnoreCase("PENDING") && !(e.getServiceCode().equalsIgnoreCase("hiv-code")))
 						.collect(Collectors.toList());
-		log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: "+ visit.getId());
+		log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: " + visit.getId());
 		if (nonHIVEncounters.isEmpty()) {
 			visitService.checkOutVisitById(visit.getId());
 			LocalDateTime visitStartDate = visit.getVisitStartDate();
@@ -130,6 +131,29 @@ public class ArtPharmacyService {
 		}
 		return new ArrayList<>();
 	}
+	
+	
+	public String getCurrentRegimenByPersonId(Long personId) {
+		Person person = getPerson(personId);
+		Optional<Set<Regimen>> regimen =
+				artPharmacyRepository.getArtPharmaciesByPersonAndArchived(person, 0)
+						.stream().max(Comparator.comparing(ArtPharmacy::getVisitDate))
+						.map(ArtPharmacy::getRegimens);
+		if (regimen.isPresent()) {
+			Set<Regimen> regimen1 = regimen.get();
+			Log.info("regimen: {}", regimen1.size());
+			Optional<Regimen> currentRegimen =
+					regimen1.stream()
+							.filter(regimen3 -> regimen3.getRegimenType().getDescription().contains("ART")
+									|| regimen3.getRegimenType().getDescription().contains("Third Line"))
+							.findAny();
+			if (currentRegimen.isPresent()) {
+				return currentRegimen.get().getDescription();
+			}
+		}
+		return "";
+	}
+	
 	
 	@Nullable
 	private RegisterArtPharmacyDto getRegisterArtPharmacyDtoWithName(ArtPharmacy artPharmacy) {
