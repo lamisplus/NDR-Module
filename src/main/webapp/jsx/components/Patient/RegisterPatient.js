@@ -468,102 +468,106 @@ const UserRegistration = (props) => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); 
-         if(validate()){
-            let newConatctsInfo=[]
-            //Manipulate relatives contact  address:"",
-            const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
+        e.preventDefault();
+        if(basicInfo.dateOfRegistration >= basicInfo.dob){ 
+            if(validate()){
+                let newConatctsInfo=[]
+                //Manipulate relatives contact  address:"",
+                const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
+                    
+                    const contactInfo = { 
+                    address: {
+                        line: [
+                            x.address
+                        ],
+                    },
+                    contactPoint: {
+                        type: "phone",
+                        value: x.phone
+                    },
+                    firstName: x.firstName,
+                    fullName: x.firstName + " " + x.middleName + " " + x.lastName,
+                    relationshipId: x.relationshipId,
+                    surname: x.lastName,
+                    otherName: x.middleName
+                }
                 
-                const contactInfo = { 
-                address: {
-                    line: [
-                        x.address
-                    ],
-                },
-                contactPoint: {
-                    type: "phone",
-                    value: x.phone
-                },
-                firstName: x.firstName,
-                fullName: x.firstName + " " + x.middleName + " " + x.lastName,
-                relationshipId: x.relationshipId,
-                surname: x.lastName,
-                otherName: x.middleName
-            }
-            
-            newConatctsInfo.push(contactInfo)
-            })
-            try {
-                const patientForm = {
-                    active: true,
-                    address: [
-                        {
-                            "city": basicInfo.address,
-                            "countryId": basicInfo.countryId,
-                            "district": basicInfo.district,
-                            "line": [
-                                basicInfo.landmark
-                            ],
-                            "organisationUnitId": 0,
-                            "postalCode": "",
-                            "stateId": basicInfo.stateId
+                newConatctsInfo.push(contactInfo)
+                })
+                try {
+                    const patientForm = {
+                        active: true,
+                        address: [
+                            {
+                                "city": basicInfo.address,
+                                "countryId": basicInfo.countryId,
+                                "district": basicInfo.district,
+                                "line": [
+                                    basicInfo.landmark
+                                ],
+                                "organisationUnitId": 0,
+                                "postalCode": "",
+                                "stateId": basicInfo.stateId
+                            }
+                        ],
+                        contact: newConatctsInfo,
+                        contactPoint: [],
+                        dateOfBirth: basicInfo.dob,
+                        deceased: false,
+                        deceasedDateTime: null,
+                        firstName: basicInfo.firstName,
+                        genderId: basicInfo.sexId,
+                        sexId: basicInfo.sexId,
+                        identifier: [
+                            {
+                                "assignerId": 1,
+                                "type": "HospitalNumber",
+                                "value": basicInfo.hospitalNumber
+                            }
+                        ],
+                        otherName: basicInfo.middleName,
+                        maritalStatusId: basicInfo.maritalStatusId,
+                        surname: basicInfo.lastName,
+                        educationId: basicInfo.educationId,
+                        employmentStatusId: basicInfo.employmentStatusId,
+                        dateOfRegistration: basicInfo.dateOfRegistration,
+                        isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true,
+                        ninNumber:basicInfo.ninNumber
+                    };
+                    const phone = {
+                        "type": "phone",
+                        "value": basicInfo.phoneNumber
+                    };
+                    if (basicInfo.email) {
+                        const email = {
+                            "type": "email",
+                            "value": basicInfo.email
                         }
-                    ],
-                    contact: newConatctsInfo,
-                    contactPoint: [],
-                    dateOfBirth: basicInfo.dob,
-                    deceased: false,
-                    deceasedDateTime: null,
-                    firstName: basicInfo.firstName,
-                    genderId: basicInfo.sexId,
-                    sexId: basicInfo.sexId,
-                    identifier: [
-                        {
-                            "assignerId": 1,
-                            "type": "HospitalNumber",
-                            "value": basicInfo.hospitalNumber
+                        patientForm.contactPoint.push(email);
+                    }
+                    if (basicInfo.altPhonenumber) {
+                        const altPhonenumber = {
+                            "type": "altphone",
+                            "value": basicInfo.altPhonenumber
                         }
-                    ],
-                    otherName: basicInfo.middleName,
-                    maritalStatusId: basicInfo.maritalStatusId,
-                    surname: basicInfo.lastName,
-                    educationId: basicInfo.educationId,
-                    employmentStatusId: basicInfo.employmentStatusId,
-                    dateOfRegistration: basicInfo.dateOfRegistration,
-                    isDateOfBirthEstimated: basicInfo.dateOfBirth == "Actual" ? false : true,
-                    ninNumber:basicInfo.ninNumber
-                };
-                const phone = {
-                    "type": "phone",
-                    "value": basicInfo.phoneNumber
-                };
-                if (basicInfo.email) {
-                    const email = {
-                        "type": "email",
-                        "value": basicInfo.email
+                        patientForm.contactPoint.push(altPhonenumber);
                     }
-                    patientForm.contactPoint.push(email);
-                }
-                if (basicInfo.altPhonenumber) {
-                    const altPhonenumber = {
-                        "type": "altphone",
-                        "value": basicInfo.altPhonenumber
+                    patientForm.contactPoint.push(phone);
+                    patientForm.id = patientId;
+                    patientDTO.person=patientForm;
+                    patientDTO.hivEnrollment=objValues;
+                    const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                    toast.success("Patient Register successful");
+                    history.push('/');
+                } catch (error) {                
+                    if(error.response && error.response.data){
+                        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                        toast.error(errorMessage); 
                     }
-                    patientForm.contactPoint.push(altPhonenumber);
-                }
-                patientForm.contactPoint.push(phone);
-                patientForm.id = patientId;
-                patientDTO.person=patientForm;
-                patientDTO.hivEnrollment=objValues;
-                const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
-                toast.success("Patient Register successful");
-                history.push('/');
-            } catch (error) {                
-                if(error.response && error.response.data){
-                    let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                    toast.error(errorMessage); 
                 }
             }
+        }else{
+            toast.error("Date of Registration can not be greater than Date of birth");
         }
 
     }
@@ -571,7 +575,6 @@ const UserRegistration = (props) => {
         const result = value.replace(/[^a-z]/gi, '');
         return result
     }
-   
     const CareEntryPoint =()=>{
             axios
                 .get(`${baseUrl}application-codesets/v2/POINT_ENTRY`,
@@ -696,7 +699,6 @@ const UserRegistration = (props) => {
         const limit = 10;
             setBasicInfo({...basicInfo,  [inputName]: e.slice(0, limit)});     
     } 
-
     const checkNINLimit=(e)=>{
         const limit = 11;        
         const acceptedNumber= e.slice(0, limit)

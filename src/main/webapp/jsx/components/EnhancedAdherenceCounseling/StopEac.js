@@ -59,8 +59,8 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const ArtCommencement = (props) => {
-    console.log(props)
+const StopEAC = (props) => {
+    console.log(props.eacObj)
     //const patientObj = props.patientObj;
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
@@ -93,7 +93,7 @@ const ArtCommencement = (props) => {
             if(validate()){ 
             
             setSaving(true);
-            axios.put(`${baseUrl}hiv/eac/stop/{}?reason=${objValues.reason}`,
+            axios.put(`${baseUrl}hiv/eac/stop/${props.eacObj.id}?reason=${objValues.reason}`,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
@@ -196,4 +196,4 @@ const ArtCommencement = (props) => {
   );
 }
 
-export default ArtCommencement;
+export default StopEAC;

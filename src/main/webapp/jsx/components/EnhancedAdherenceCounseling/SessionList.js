@@ -101,8 +101,8 @@ const LabHistory = (props) => {
     const [sessionList, setSessionList] = useState([])
     const [loading, setLoading] = useState(true)
     const [artModal, setArtModal] = useState(false);
+    const [showOutComeButton, setShowOutComeButton] = useState(false);
     const Arttoggle = () => setArtModal(!artModal);
-
     useEffect(() => {
         LabOrders()
       }, [props.activeContent]);
@@ -115,38 +115,26 @@ const LabHistory = (props) => {
             )
             .then((response) => {
                 setLoading(false)
-                setSessionList(response.data);                
+                setSessionList(response.data);  
+                if(sessionList.length>=3){
+                    setShowOutComeButton(true)
+                }
+                //console.log(ThirdEac)             
             })
             .catch((error) => {  
                 setLoading(false)  
             });        
     }
 
-    const labStatus =(status)=> {
-        console.log(status)
-          if(status===0){
-            return "blue"
-          }else if(status===1){
-            return "teal"
-          }else if(status===2){
-            return "green"
-          }else if(status===3){
-            return "red"
-          }else if(status===4){
-            return "orange"
-          }else if(status===5){
-            return "dark"
-          }else {
-            return "grey"
-          }
-      }
-
-    const AddNewSession = (row, actionType) =>{  
+    const AddNewSession = () =>{  
+        const row= props.activeContent.obj
+        const actionType ="history"
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
          props.setActiveContent({...props.activeContent, route:'new-eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
      }
-     const LoadEacOutCome = (row, actionType) =>{  
-        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+     const LoadEacOutCome = () =>{  
+         const row= props.activeContent.obj
+         const actionType ="history"
          props.setActiveContent({...props.activeContent, route:'eac-outcome', id:row.id, activeTab:"history", actionType:actionType, obj:row})
      }
      const loadEacStop =()=> {
@@ -168,6 +156,7 @@ const LabHistory = (props) => {
             >
                 <span style={{ textTransform: "capitalize" }}>Stop EAC</span>
             </ButtonMui>
+            {sessionList.length>=3  && props.activeContent.obj.status!=='STOPPED' && (
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -180,6 +169,7 @@ const LabHistory = (props) => {
             >
                 <span style={{ textTransform: "capitalize" }}>Outcome</span>
             </ButtonMui>
+            )}
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -198,14 +188,11 @@ const LabHistory = (props) => {
             icons={tableIcons}
               title="EAC Sessions"
               columns={[
-              // { title: " ID", field: "Id" },
-                {
-                  title: "Session Date",
-                  field: "sessionDate",
-                },
+              
                 { title: "Follow Up Date", field: "followupDate", filtering: false },
                 { title: " Barriers ", field: "barriers", filtering: false },
                 { title: "Interventions", field: "intervention", filtering: false },
+                { title: "Comment", field: "comment", filtering: false },
                 { title: "Status", field: "status", filtering: false },
 
 
@@ -213,10 +200,11 @@ const LabHistory = (props) => {
               isLoading={loading}
               data={ sessionList.map((row) => ({
                   //Id: manager.id,
-                  sessionDate:row.followUpDate,
-                  followupDate: row.labTestName,
+                  
+                  followupDate: row.followUpDate,
                   barriers: row.barriers? "As Barreier" : "No Barrier",
-                  intervention: row.intervention ? "As Intervention" : "No Intervention",    
+                  intervention: row.intervention ? "As Intervention" : "No Intervention",
+                  comment:row.comment,   
                   status: row.status,
                  
                   }))}
@@ -238,7 +226,7 @@ const LabHistory = (props) => {
                           debounceInterval: 400
                       }}
             />
-       <StopEac  toggle={Arttoggle} showModal={artModal}  />
+       <StopEac  toggle={Arttoggle} showModal={artModal}  eacObj={props.activeContent.obj}/>
     </div>
   );
 }

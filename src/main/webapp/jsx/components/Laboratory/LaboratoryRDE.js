@@ -71,7 +71,7 @@ const Laboratory = (props) => {
                 TestGroup();
                 PriorityOrder();
                 ViraLoadIndication();
-                PatientVisit();
+                //PatientVisit();
             
         }, [props.patientObj.id]);
     //Get list of Test Group
@@ -124,28 +124,28 @@ const Laboratory = (props) => {
         
     }
     //Get Patiet Visit 
-    const PatientVisit =()=>{
-        axios
-            .get(`${baseUrl}patient/visit/visit-detail/${props.patientObj.id}`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                const lastVisit = response.data[response.data.length - 1]
-                if(lastVisit.status==="PENDING"){
-                    visitId= lastVisit.id
-                    //setCurrentVisit(true)
-                    setButtonHidden(false)
-                }else{
-                    toast.error("Patient do not have any active visit")
-                    setButtonHidden(true)
-                    //setCurrentVisit(false)
-                }
+    // const PatientVisit =()=>{
+    //     axios
+    //         .get(`${baseUrl}patient/visit/visit-detail/${props.patientObj.id}`,
+    //             { headers: {"Authorization" : `Bearer ${token}`} }
+    //         )
+    //         .then((response) => {
+    //             const lastVisit = response.data[response.data.length - 1]
+    //             if(lastVisit.status==="PENDING"){
+    //                 visitId= lastVisit.id
+    //                 //setCurrentVisit(true)
+    //                 setButtonHidden(false)
+    //             }else{
+    //                 toast.error("Patient do not have any active visit")
+    //                 setButtonHidden(true)
+    //                 //setCurrentVisit(false)
+    //             }
 
-            })
-            .catch((error) => {
-            //console.log(error);
-            });        
-    }
+    //         })
+    //         .catch((error) => {
+    //         //console.log(error);
+    //         });        
+    // }
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios

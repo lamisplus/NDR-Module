@@ -180,10 +180,9 @@ const LabHistory = (props) => {
                 },
                 { title: "Test Name", field: "testName", filtering: false },
                 { title: "Lab Number", field: "labNumber", filtering: false },
-                // { title: " Result Date ", field: "sampleCollectionDate", filtering: false },
-                // { title: "Result", field: "dateAssayed", filtering: false },
-                { title: "Status", field: "status", filtering: false },
-              
+                { title: "Viral Load", field: "lastViralLoad", filtering: false },
+                { title: "Result Date", field: "dateOfLastViralLoad", filtering: false },
+                { title: "Status", field: "status", filtering: false },              
                 { title: "Action", field: "Action", filtering: false },
 
               ]}
@@ -193,8 +192,8 @@ const LabHistory = (props) => {
                   testGroup:row.testGroup,
                   testName: row.testName,
                   labNumber: row.labNumber,
-                  // sampleCollectionDate: row.sampleCollectionDate,    
-                  // dateAssayed: "1200 copies/ml",
+                  lastViralLoad: row.lastViralLoad,    
+                  dateOfLastViralLoad: row.dateOfLastViralLoad,
                   status: row.status, 
                   viralLoadIndication: row.viralLoadIndicationName,
                   Action: 

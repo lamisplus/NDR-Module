@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const NEWEACSESSION = (props) => {
-    //const patientObj = props.patientObj;
+
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -72,7 +72,8 @@ const NEWEACSESSION = (props) => {
                                                 adherence: "",
                                                 personId: props.patientObj.id,
                                                 status: "",
-                                                visitId:""
+                                                visitId:"",
+                                                eacId:""
                                             })
         const optionsForBarriers = [
             { value: 'Forgot', label: 'Forgot' },
@@ -107,7 +108,7 @@ const NEWEACSESSION = (props) => {
 
     useEffect(() => {
         //EACHistory()
-    }, [props.patientObj.id]);
+    }, [props.activeContent]);
     ///GET LIST OF EAC
     // const EACHistory =()=>{
     //     setLoading(true)
@@ -140,8 +141,9 @@ const NEWEACSESSION = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();        
           setSaving(true);
-          objValues.barriers=selectedBarriers
-          objValues.interventionOthers=selectedInterventions
+          objValues.barriers=Object.assign({}, selectedBarriers); // {0:"a", 1:"b", 2:"c"}
+          objValues.intervention=Object.assign({}, selectedInterventions)
+          objValues.eacId=props.activeContent.obj.id
           axios.post(`${baseUrl}hiv/eac/session`,objValues,
            { headers: {"Authorization" : `Bearer ${token}`}},
           
@@ -189,39 +191,6 @@ const NEWEACSESSION = (props) => {
                     <br/>
                     <br/>
 
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Current Viral Load Result (copies/ml)</Label>
-                            <Input
-                                type="text"
-                                name="dateOfEac3"
-                                id="dateOfEac3"
-                                value={objValues.dateOfEac3}
-                                onChange={handleInputChange}
-                                //max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled
-                            />
-                            
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Date Result Recieved</Label>
-                            <Input
-                                type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
-                                onChange={handleInputChange}
-                                min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled
-                            />
-                           
-                            </FormGroup>
-                        </div>
 
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>

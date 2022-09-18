@@ -58,17 +58,30 @@ const EAC = (props) => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true)
     const [objValues, setObjValues]=useState({
-                                                dateOfEac1: null,
-                                                dateOfEac2: null,
-                                                dateOfEac3: null,
-                                                dateOfLastViralLoad: "",
-                                                lastViralLoad:"",
-                                                note: "",
+                                                currentRegimen: "",
+                                                
+                                                eacId: "",
+                                                id: "",
+                                                outComeDate: "",
+                                                outcome: "",
                                                 personId: props.patientObj.id,
-                                                status: "",
-                                                visitId:"",
-                                                plan:""
+                                                plan: "",
+                                                visitId: ""
                                             })
+    const [switchs, setSwitchs]=useState({
+            currentRegimen: "",
+            switchRegimen: "",
+            dateSwitched: "",
+            reasonSwitched: "",
+            
+        })
+    const [Substitutes, setSubstitutes]=useState({
+        reasonSubstituted: "",
+        substituteRegimen: "",
+        dateSubstituted: "",
+        reasonSwitched: "",
+        
+    })  
     useEffect(() => {
         EACHistory()
     }, [props.patientObj.id]);
@@ -76,7 +89,7 @@ const EAC = (props) => {
     const EACHistory =()=>{
         setLoading(true)
         axios
-            .get(`${baseUrl}observation/eac/person/current-eac/${props.patientObj.id}`,
+            .get(`${baseUrl}hiv/eac/out-come?eacId=${props.activeContent.obj.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
@@ -87,9 +100,15 @@ const EAC = (props) => {
             //console.log(error);
             });    
     }
+    const handleInputSwitchChange = e => {
+        setSwitchs ({...switchs,  [e.target.name]: e.target.value});
+    }
+    const handleInputSubstituteChange = e => {
+        setSubstitutes ({...Substitutes,  [e.target.name]: e.target.value});
+    } 
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }   
+    }    
     const BackToSession = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
          props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
@@ -105,11 +124,8 @@ const EAC = (props) => {
           )
               .then(response => {
                   setSaving(false);
-                  props.setHideThird(false)
-                  props.setHideFirst(false)                 
-                  props.setEacObj(response.data)
-                  toast.success(" Save successful");
-                  props.setActiveContent({...props.activeContent, route:'recent-history'})
+                  toast.success("EAC outcome Save successful");
+                  props.setActiveContent({...props.activeContent, route:'eac-session'})
 
               })
               .catch(error => {
@@ -155,21 +171,13 @@ const EAC = (props) => {
                                 <FormGroup>
                                 <Label >Repeat Viral Load Result</Label>
                                 <Input
-                                    type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={handleInputChangeAttempt}
+                                    type="text"
+                                    name="viralLoadResult"
+                                    id="viralLoadResult"
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Education"> 1001 m/l - 2022/09/22</option> 
-                                 <option value="Counseling (ind)">1004 m/l - 2022/09/22</option> 
-                                 <option value="Counseling (grp)">1200 m/l - 2022/09/22</option>                               
-
-                                </Input>
-                                  
+                               />
+                                 
                                 </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
@@ -177,11 +185,11 @@ const EAC = (props) => {
                             <Label for="">Date Result Recieved </Label>
                             <Input
                                 type="date"
-                                name="dateOfEac3"
-                                id="dateOfEac3"
-                                value={objValues.dateOfEac3}
-                                onChange={handleInputChange}
-                                min={objValues.dateOfEac2}
+                                name="dateResultReceived"
+                                id="dateResultReceived"
+                                value={objValues.dateResultReceived}
+                                //onChange={handleInputChange}
+                                //min={objValues.dateOfEac2}
                                 //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 disabled
@@ -195,10 +203,10 @@ const EAC = (props) => {
                                 <Label >Outcome </Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={hadleInputChangeAttempt}
+                                    name="outcome"
+                                    id="outcome"
+                                    value={objValues.outcome}
+                                    onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                                    
                                 >
                                  <option value="">Select</option> 
@@ -236,16 +244,14 @@ const EAC = (props) => {
                                 <Label >Current Regimen </Label>
                                 <Input
                                     type="text"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={hadleInputChangeAttempt}
+                                    name="currentRegimen"
+                                    id="currentRegimen"
+                                    value={objValues.currentRegimen}
+                                    onChange={handleInputChange}
                                     disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
-                                />
-                                
-                                  
+                                /> 
                                 </FormGroup>
                         </div>
                         <div className="form-group mb-3 col-md-6">
@@ -253,16 +259,15 @@ const EAC = (props) => {
                                 <Label >Switch Regimen </Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={hadleInputChangeAttempt}
+                                    name="switchRegimen"
+                                    id="switchRegimen"
+                                    value={objValues.switchRegimen}
+                                    onChange={handleInputSwitchChange}
                                     disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
                                  <option value="">Select</option> 
-                                 
 
                                 </Input>
                                   
@@ -273,17 +278,17 @@ const EAC = (props) => {
                             <Label for="">Switch Date</Label>
                             <Input
                                 type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
-                                onChange={handleInputChange}
+                                name="dateSwitched"
+                                id="dateSwitched"
+                                value={objValues.dateSwitched}
+                                onChange={handleInputSwitchChange}
                                 min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            {errors.dateSwitched !=="" ? (
+                                <span className={classes.error}>{errors.dateSwitched}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -292,10 +297,10 @@ const EAC = (props) => {
                             <Label for="">Reason for switching Regimen</Label>
                             <Input
                                 type="textarea"
-                                name="note"
-                                id="note"
-                                value={objValues.note}
-                                onChange={handleInputChange}
+                                name="reasonSwitched"
+                                id="reasonSwitched"
+                                value={objValues.reasonSwitched}
+                                onChange={handleInputSwitchChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             </FormGroup>
@@ -311,10 +316,10 @@ const EAC = (props) => {
                                 <Label >Current Regimen </Label>
                                 <Input
                                     type="text"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={hadleInputChangeAttempt}
+                                    name="currentRegimen"
+                                    id="currentRegimen"
+                                    value={objValues.currentRegimen}
+                                     onChange={handleInputChange}
                                     disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
@@ -328,10 +333,10 @@ const EAC = (props) => {
                                 <Label >Substitute Regimen </Label>
                                 <Input
                                     type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    //value={attempt.reasonForDefaulting}
-                                    //onChange={hadleInputChangeAttempt}
+                                    name="substituteRegimen"
+                                    id="substituteRegimen"
+                                    value={objValues.substituteRegimen}
+                                    onChange={handleInputSubstituteChange}
                                     disabled
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
@@ -348,17 +353,17 @@ const EAC = (props) => {
                             <Label for="">Substitute Date</Label>
                             <Input
                                 type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
-                                onChange={handleInputChange}
+                                name="dateSubstituted"
+                                id="dateSubstituted"
+                                value={objValues.dateSubstituted}
+                                onChange={handleInputSubstituteChange}
                                 min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            {errors.dateSubstituted !=="" ? (
+                                <span className={classes.error}>{errors.dateSubstituted}</span>
                             ) : "" }
                             </FormGroup>
                         </div>
@@ -367,10 +372,10 @@ const EAC = (props) => {
                             <Label for="">Reason for Substitute Regimen</Label>
                             <Input
                                 type="textarea"
-                                name="note"
-                                id="note"
-                                value={objValues.note}
-                                onChange={handleInputChange}
+                                name="reasonSubstituted"
+                                id="reasonSubstituted"
+                                value={objValues.reasonSubstituted}
+                                onChange={handleInputSubstituteChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             </FormGroup>
@@ -383,17 +388,17 @@ const EAC = (props) => {
                             <Label for="">Outcome Date</Label>
                             <Input
                                 type="date"
-                                name="dateOfEac1"
-                                id="dateOfEac1"
-                                value={objValues.dateOfEac1}
+                                name="outComeDate"
+                                id="outComeDate"
+                                value={objValues.outComeDate}
                                 onChange={handleInputChange}
                                 min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.dateOfEac1 !=="" ? (
-                                <span className={classes.error}>{errors.dateOfEac1}</span>
+                            {errors.outComeDate !=="" ? (
+                                <span className={classes.error}>{errors.outComeDate}</span>
                             ) : "" }
                             </FormGroup>
                         </div>   
