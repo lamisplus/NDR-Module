@@ -98,6 +98,7 @@ const useStyles = makeStyles(theme => ({
 
 
 const LabHistory = (props) => {    
+    //console.log(props.activeContent)
     const [sessionList, setSessionList] = useState([])
     const [loading, setLoading] = useState(true)
     const [artModal, setArtModal] = useState(false);
@@ -144,7 +145,7 @@ const LabHistory = (props) => {
    
   return (
     <div>
-            {props.activeContent.obj.status!=='COMPLETED' && (
+            {props.activeContent.obj.status!=='COMPLETED' && props.activeContent.obj.status!=='STOPPED' && (
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -172,7 +173,7 @@ const LabHistory = (props) => {
                 <span style={{ textTransform: "capitalize" }}>Outcome</span>
             </ButtonMui>
             )}
-             {props.activeContent.obj.status!=='COMPLETED' && (
+             {props.activeContent.obj.status!=='COMPLETED' && props.activeContent.obj.status!=='STOPPED' && (
             <ButtonMui
                 variant="contained"
                 color="primary"
@@ -230,7 +231,7 @@ const LabHistory = (props) => {
                           debounceInterval: 400
                       }}
             />
-       <StopEac  toggle={Arttoggle} showModal={artModal}  eacObj={props.activeContent.obj}/>
+       <StopEac  toggle={Arttoggle} showModal={artModal}  eacObj={props.activeContent.obj} activeContent={props.activeContent} setActiveContent={props.setActiveContent}/>
     </div>
   );
 }

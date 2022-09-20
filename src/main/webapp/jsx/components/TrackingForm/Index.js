@@ -351,7 +351,7 @@ const Tracking = (props) => {
                         </div>
                         <div className="row">
                         <hr/>
-                        <h4>Attempt to Contact</h4>
+                        <h3>Attempted to Contact</h3>
                         <div className="form-group mb-3 col-md-3">        
                             <FormGroup>
                                 <Label >Attempt Date</Label>

@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const StopEAC = (props) => {
-    console.log(props.eacObj)
+
     //const patientObj = props.patientObj;
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
@@ -103,7 +103,7 @@ const StopEAC = (props) => {
                   //props.patientObj.commenced=true
                   toast.success("EAC stop successful");
                   props.toggle()
-                  props.setActiveContent({...props.activeContent, route:'eac-session'})
+                  props.setActiveContent({...props.activeContent, route:'counseling', activeTab:"home"})
 
               })
               .catch(error => {
@@ -111,9 +111,13 @@ const StopEAC = (props) => {
                   if(error.response && error.response.data){
                     let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                     toast.error(errorMessage);
+                    props.toggle()
+                    //props.setActiveContent({...props.activeContent, route:'counseling', activeTab:"home"})
                   }
                   else{
                     toast.error("Something went wrong. Please try again...");
+                    props.toggle()
+                    //props.setActiveContent({...props.activeContent, route:'counseling', activeTab:"home"})
                   }
               });
             }

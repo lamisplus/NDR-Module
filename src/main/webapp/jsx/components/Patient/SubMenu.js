@@ -107,15 +107,19 @@ function SubMenu(props) {
     const loadPatientHistory = ()=>{
         props.setActiveContent({...props.activeContent, route:'patient-history'})
     }
+    const loadArtCommencement = ()=>{
+        props.setActiveContent({...props.activeContent, route:'art-commencementPage'})
+    }
 
     return (
          <div>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
-            {!props.art && patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )?
+            {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )?
                 (
                 <Menu size="mini" color={"grey"} inverted >
                     <Menu.Item onClick={() => onClickHome()} disabled> Home</Menu.Item>
                     {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} > Initial Evaluation</Menu.Item>)}
+                    {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} >Art Commencement</Menu.Item>)}
                     <Menu.Item onClick={() => onClickConsultation()} disabled> Clinic Visit</Menu.Item>
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>

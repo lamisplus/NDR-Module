@@ -359,13 +359,13 @@ function PatientCard(props) {
                     </>
                   ) :""           
                 } */}
-               {patientObj.commenced!==true && (
+               {/* {patientObj.commenced!==true && (
                 <div className={classes.column} style={{paddingLeft:"20px"}}>
                 {" "}<Button primary onClick={() => loadArt(patientObj)} ><span style={{fontSize:"11px"}}>ART Commencement </span></Button>
                 </div>
                 )
                }
-                    
+                     */}
                 </ExpansionPanelDetails>
                 <Divider />
                 <ExpansionPanelActions expandIcon={<ExpandMoreIcon />}>

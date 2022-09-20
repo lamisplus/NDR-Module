@@ -714,7 +714,7 @@ const ArtCommencement = (props) => {
                                                 toggle={toggleDropDown}
                                                 style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
                                                 >
-                                                {vital.height!=='' ? (vital.height/100).toFixed(1) + "m" : "m"}
+                                                {vital.height!=='' ? (vital.height/100).toFixed(2) + "m" : "m"}
                                             </InputGroupText>
                                         </InputGroup>
                                         {vitalClinicalSupport.height !=="" ? (
@@ -736,7 +736,7 @@ const ArtCommencement = (props) => {
                                             <Input
                                             type="number"
                                             disabled
-                                            value={Math.round(vital.bodyWeight/(vital.height/100))}
+                                            value={Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
                                             style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                                             />
                                             </InputGroup>                

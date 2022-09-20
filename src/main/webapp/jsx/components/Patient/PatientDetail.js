@@ -29,6 +29,7 @@ import MentalHealthScreening from '../MentalHealthScreening/index'
 import LabHistory from './../Laboratory/LabHistory'
 import PatientHistory from './../History/PatientHistory'
 import ArtCommencement from './../ArtCommencement/ArtCommencement'
+import ArtCommencementPage from './../ArtCommencement/ArtCommencementPage'
 //History of patient
 import ViewMentalHealthScreening from './../MentalHealthScreening/ViewMhs'
 import ViewAdultClinicEvaluationFrom from './../InitailClinicEvaluation/ViewAdultClinicEvaluationFrom'
@@ -123,6 +124,7 @@ function PatientCard(props) {
           {activeContent.route==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent} />)}
           {activeContent.route==='patient-history' &&( <PatientHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='art-commencement' &&( <ArtCommencement patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='art-commencementPage' &&( <ArtCommencementPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {/* History Pages */}
           {activeContent.route==='mental-health-view' &&( <ViewMentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='adult-clinic-eveluation-view' &&( <ViewAdultClinicEvaluationFrom patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}

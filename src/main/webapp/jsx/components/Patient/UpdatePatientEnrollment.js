@@ -240,9 +240,11 @@ const UserRegistration = (props) => {
             basicInfo.ninNumber=patientObj.ninNumber
 
         }
-       
+        if(basicInfo.dateOfRegistration < basicInfo.dob){
+            alert('Date of registration can not be earlier than date of birth')
+        }
         
-    }, [patientObj, patientId]);
+    }, [patientObj, patientId, basicInfo.dateOfRegistration]);
 
     const loadGenders = useCallback(async () => {
         try {

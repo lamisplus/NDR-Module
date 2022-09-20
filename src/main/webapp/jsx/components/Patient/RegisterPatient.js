@@ -186,8 +186,12 @@ const UserRegistration = (props) => {
         KP();
         PregnancyStatus();
         GetCountry();
-        
-    }, []);
+    
+        if(basicInfo.dateOfRegistration < basicInfo.dob){
+            alert('Date of registration can not be earlier than date of birth')
+        }
+          
+    }, [basicInfo.dateOfRegistration ]);
 
     const loadGenders = useCallback(async () => {
         try {
@@ -384,7 +388,8 @@ const UserRegistration = (props) => {
             }
         }
         getHosiptalNumber();
-        }           
+        } 
+                
     } 
     //Function to show relatives 
     const handleAddRelative = () => {

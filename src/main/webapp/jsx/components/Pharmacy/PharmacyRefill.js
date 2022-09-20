@@ -425,7 +425,7 @@ console.log(selectedOption)
                 </div>
             )}
             <hr/>
-            <div className="form-group mb-3 col-md-12">
+            <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                 <Label >Select Regimen Line *</Label>
                 <Input
@@ -449,7 +449,7 @@ console.log(selectedOption)
                 </FormGroup>
             </div>
             {showRegimen && (
-            <div className="form-group mb-3 col-md-12">
+            <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                 <Label >Regimen *</Label>
                 <Select
@@ -516,6 +516,7 @@ console.log(selectedOption)
                        
                         </CardBody>
                         </Card>
+                        <br/>
                         <br/>
                     </>                  
                     )

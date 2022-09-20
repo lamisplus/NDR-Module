@@ -21,6 +21,7 @@ import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import { Spinner } from "reactstrap";
+import { DateTimePicker } from "react-widgets";
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -67,15 +68,15 @@ const useStyles = makeStyles(theme => ({
 
 const ArtCommencement = (props) => {
     const patientObj = props.patientObj;
-    //let history = useHistory();
-    //console.log(props.activeContent.id)
-    let gender=""
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    //let history = useHistory();
+    let gender=""
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
     const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
     const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
     const [heightValue, setHeightValue]= useState("cm")
+
     const classes = useStyles()
     const [clinicalStage, setClinicalStage] = useState([])
     const [values, setValues] = useState([]);
@@ -90,7 +91,7 @@ const ArtCommencement = (props) => {
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [objValues, setObjValues] = useState({
                                                 personId:props.patientObj.id,
-                                                visitDate: "",
+                                                visitDate: null,
                                                 viralLoad: "",
                                                 whoStagingId:"",
                                                 clinicalStageId:"",
@@ -103,10 +104,10 @@ const ArtCommencement = (props) => {
                                                 vitalSignDto:"",
                                                 facilityId:1,
                                                 regimenTypeId: 0,
-                                                regimenId:0,
+                                                regimenId:0 ,
                                                 viralLoadAtStartOfArt:"",
                                                 isViralLoadAtStartOfArt :null,
-                                                dateOfViralLoadAtStartOfArt: null                                                    
+                                                dateOfViralLoadAtStartOfArt: null                                                  
 
                                                 });
 
@@ -121,7 +122,7 @@ const ArtCommencement = (props) => {
                                                 systolic:"",
                                                 pulse:"",
                                                 temperature:"",
-                                                respiratoryRate:""  
+                                                respiratoryRate:"" 
                                             })
       //Vital signs clinical decision support 
     const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
@@ -131,7 +132,7 @@ const ArtCommencement = (props) => {
                                                                         systolic: "",
                                                                         pulse:"",
                                                                         temperature:"",
-                                                                        respiratoryRate:"" 
+                                                                        respiratoryRate:""
                                                                     })
 
     useEffect(() => {
@@ -140,29 +141,8 @@ const ArtCommencement = (props) => {
         TBStatus();
         PreganacyStatus();
         RegimenLine();
-        GetARTCommencement();
-        gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
-      }, [props.activeContent.id]);
-          //Get Mental Health Object
-    const GetARTCommencement =()=>{
-        axios
-           .get(`${baseUrl}hiv/art/commencement/${props.activeContent.id}`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => { 
-                //console.log(response.data)           
-                setObjValues(response.data)
-                if(response.data.isViralLoadAtStartOfArt===true){
-                    setViraLoadStart(true)
-                }
-                RegimenType(response.data.regimenTypeId)
-                setVitalSignDto(response.data.vitalSignDto)
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-        }
+         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
+      }, [props.patientObj]);
       //Get list of WhoStaging
       const WhoStaging =()=>{
         axios
@@ -256,15 +236,15 @@ const ArtCommencement = (props) => {
         const handleInputChange = e => {
             setErrors({...temp, [e.target.name]:""})
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
-            if(e.target.name==='isViralLoadAtStartOfArt' && e.target.value!==""){
-                if(e.target.value==='true'){
-                    setViraLoadStart(true)
-                    setObjValues ({...objValues,  [e.target.name]: true});
-                }else{
-                    setObjValues({...objValues, [e.target.name]:false})
-                    setViraLoadStart(false)
+                if(e.target.name==='isViralLoadAtStartOfArt' && e.target.value!==""){
+                    if(e.target.value==='true'){
+                        setViraLoadStart(true)
+                        setObjValues ({...objValues,  [e.target.name]: true});
+                    }else{
+                        setObjValues({...objValues, [e.target.name]:false})
+                        setViraLoadStart(false)
+                    }
                 }
-            }
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})           
@@ -333,15 +313,15 @@ const ArtCommencement = (props) => {
             setVitalClinicalSupport({...vitalClinicalSupport, temperature:""})
             }
         }
-        const handleInputChangeVitalStart =(e)=>{
-            if(e.target.value==="YES" ){
-                setViraLoadStart(true)
-                setObjValues({...objValues, viralLoad:e.target.value})
-            }else{
-                setObjValues({...objValues, viralLoad:e.target.value})
-                setViraLoadStart(false)
-            }
-        }
+        // const handleInputChangeVitalStart =(e)=>{
+        //     if(e.target.value===true ){
+        //         setViraLoadStart(true)
+        //         setObjValues({...objValues, isViralLoadAtStartOfArt:true})
+        //     }else{
+        //         setObjValues({...objValues, isViralLoadAtStartOfArt:false})
+        //         setViraLoadStart(false)
+        //     }
+        // }
 
         //FORM VALIDATION
         const validate = () => {
@@ -361,47 +341,31 @@ const ArtCommencement = (props) => {
             return Object.values(temp).every(x => x == "")
         }
 
-        const  heightFunction =(e)=>{
-            if(e==='cm'){
-                setHeightValue('cm')
-                if(vital.height!==""){
-                    const newHeightValue= (vital.height * 100)
-                    setVitalSignDto ({...vital,  height: newHeightValue});
-                }
-            }else if(e==='m'){
-                setHeightValue('m')
-                if(vital.height!==""){
-                    const newHeightValue= (vital.height/100)
-                    setVitalSignDto ({...vital,  height: newHeightValue});
-                }
-                
-            }
-
-        }
         /**** Submit Button Processing  */
         const handleSubmit = (e) => {                  
             e.preventDefault(); 
-            if(validate()){                    
+            if(validate()){ 
+                   
             objValues.personId = props.patientObj.id
             vital.encounterDate = objValues.visitDate
             vital.personId=props.patientObj.id
             objValues.vitalSignDto= vital
             objValues.hivEnrollmentId= props.patientObj.enrollment.id
             objValues.clinicalStageId = objValues.whoStagingId 
-            if(heightValue==='m'){//If height is meter convert to centi meter
-                vital.height= (vital.height/100).toFixed(2)
-            } 
+           
             setSaving(true);
-            axios.put(`${baseUrl}hiv/art/commencement/${props.activeContent.id}`,objValues,
+            axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
               .then(response => {
                   setSaving(false);
-                  props.setArt(true)
+                  //props.setArt(true)
                   props.patientObj.commenced=true
                   toast.success("Record save successful");
                   props.setActiveContent({...props.activeContent, route:'recent-history'})
+                  //props.toggle()
+                  //props.PatientCurrentStatus()
 
               })
               .catch(error => {
@@ -422,255 +386,302 @@ const ArtCommencement = (props) => {
 
   return (      
       <div >
-                  
-            <Card >
-                <CardBody>
-                <form >
-                    <div className="row">
-                    <div className="col-md-6">
-                        <h2>ART Commencement</h2>
-                    </div>
-                    <div className="col-md-6"></div>
-                    <br/>
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for="artDate">ART Start Date  * </Label>
-                            <Input
-                                type="date"
-                                name="visitDate"
-                                id="visitDate"
-                                onChange={handleInputChange}
-                                value={objValues.visitDate}
-                                min={enrollDate}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                            />
-                                {errors.visitDate !=="" ? (
-                                <span className={classes.error}>{errors.visitDate}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for="cd4">CD4 at start of ART </Label>
-                            <Input
-                                type="number"
-                                name="cd4"
-                                id="cd4"
-                                onChange={handleInputChange}
-                                value={objValues.cd4}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                            />
-                            
-                            </FormGroup>
-                        </div>
-                    
-                        <div className="form-group mb-3 col-md-4">
+        <div className="col-md-6">
+            <h2>ART Commencement</h2>
+        </div>
+        <div className="col-md-6"></div>
+        <br/>         
+        <Card >
+            <CardBody>
+            <form >
+                <div className="row">
+                
+                    <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label for="cd4Percentage">CD4%</Label>
+                        <Label for="artDate">ART Start Date  * </Label>
+                        <Input
+                            type="date"
+                            name="visitDate"
+                            id="visitDate"
+                            onChange={handleInputChange}
+                            value={objValues.visitDate}
+                            min={enrollDate}
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                        />
+                            {errors.visitDate !=="" ? (
+                            <span className={classes.error}>{errors.visitDate}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label for="cd4">CD4 at start of ART </Label>
                         <Input
                             type="number"
-                            name="cd4Percentage"
-                            id="cd4Percentage"
+                            name="cd4"
+                            id="cd4"
+                            min={0}
                             onChange={handleInputChange}
-                            value={objValues.cd4Percentage}
+                            value={objValues.cd4}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            disabled={props.activeContent.actionType==='update' ? false :true}
+                            
                         />
                         
                         </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-4">
-                        <FormGroup>
-                        <Label >Original Regimen Line  </Label>
-                        <Input
-                                type="select"
-                                name="regimenId"
-                                id="regimenId"
-                                value={objValues.regimenId}
-                                onChange={handleSelecteRegimen}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                >
-                                    <option value=""> Select</option>
-            
-                                    {regimenLine.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.description}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.regimenId !=="" ? (
-                                <span className={classes.error}>{errors.regimenId}</span>
-                                ) : "" }
-                        </FormGroup>
-                        </div>
+                    </div>
+                
+                    <div className="form-group mb-3 col-md-4">
+                    <FormGroup>
+                    <Label for="cd4Percentage">CD4%</Label>
+                    <Input
+                        type="number"
+                        name="cd4Percentage"
+                        id="cd4Percentage"
+                        min={0}
+                        onChange={handleInputChange}
+                        value={objValues.cd4Percentage}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         
-                        <div className="form-group mb-3 col-md-4">
-                        <FormGroup>
-                        <Label >Original Regimen</Label>
-                        <Input
-                                type="select"
-                                name="regimenTypeId"
-                                id="regimenTypeId"
-                                value={objValues.regimenTypeId}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                >
-                                    <option value=""> Select</option>
-            
-                                    {regimenType.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.description}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.regimenTypeId !=="" ? (
-                                <span className={classes.error}>{errors.regimenTypeId}</span>
-                                ) : "" }
-                        </FormGroup>
-                        </div>
+                    />
                     
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Viral Load at Start of ART </Label>
-                            <Input
-                                type="select"
-                                name="isViralLoadAtStartOfArt"
-                                id="isViralLoadAtStartOfArt"
-                                onChange={handleInputChange}                                            
-                                value={objValues.isViralLoadAtStartOfArt}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                
+                    </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-4">
+                    <FormGroup>
+                    <Label >Original Regimen Line  </Label>
+                    <Input
+                            type="select"
+                            name="regimenId"
+                            id="regimenId"
+                            value={objValues.regimenId}
+                            onChange={handleSelecteRegimen}
+                            required
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             >
                                 <option value=""> Select</option>
-                                <option value="true"> YES</option>
-                                <option value="false"> NO</option>
-                            </Input>
-                            
-                            </FormGroup>
-                        </div>
-                        {viraLoadStart && (
+        
+                                {regimenLine.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.regimenId !=="" ? (
+                            <span className={classes.error}>{errors.regimenId}</span>
+                            ) : "" }
+                    </FormGroup>
+                    </div>
+                    
+                    <div className="form-group mb-3 col-md-4">
+                    <FormGroup>
+                    <Label >Original Regimen</Label>
+                    <Input
+                            type="select"
+                            name="regimenTypeId"
+                            id="regimenTypeId"
+                            value={objValues.regimenTypeId}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>
+        
+                                {regimenType.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.regimenTypeId !=="" ? (
+                            <span className={classes.error}>{errors.regimenTypeId}</span>
+                            ) : "" }
+                    </FormGroup>
+                    </div>
+                
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Viral Load at Start of ART </Label>
+                        <Input
+                            type="select"
+                            name="isViralLoadAtStartOfArt"
+                            id="isViralLoadAtStartOfArt"
+                            onChange={handleInputChange}                                            
+                            value={objValues.isViralLoadAtStartOfArt}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                        >
+                            <option value=""> Select</option>
+                            <option value="true"> YES</option>
+                            <option value="false"> NO</option>
+                        </Input>
+                        
+                        </FormGroup>
+                    </div>
+                    {viraLoadStart && (
+                    <>
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Viral Load at Start of ART Result</Label>
+                        <Input
+                            type="number"
+                            name="viralLoadAtStartOfArt"
+                            id="viralLoadAtStartOfArt"
+                            onChange={handleInputChange}
+                            value={objValues.viralLoadAtStartOfArt}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                        />
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Date of Viral Load at Start of ART</Label>
+                        <Input
+                            type="date"
+                            name="dateOfViralLoadAtStartOfArt"
+                            id="dateOfViralLoadAtStartOfArt"
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            onChange={handleInputChange}
+                            value={objValues.dateOfViralLoadAtStartOfArt}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                        />
+                        
+                        </FormGroup>
+                    </div>
+                    </>
+                    )}
+
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >WHO Staging</Label>
+                        <Input
+                            type="select"
+                            name="whoStagingId"
+                            id="whoStagingId"
+                            value={objValues.whoStagingId}
+                            onChange={handleInputChange}
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>
+        
+                                {clinicalStage.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.whoStagingId !=="" ? (
+                            <span className={classes.error}>{errors.whoStagingId}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </div>
+                    
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Functional Status</Label>
+                        <Input
+                            type="select"
+                            name="functionalStatusId"
+                            id="functionalStatusId"
+                            value={objValues.functionalStatusId}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>
+        
+                                {functionalStatus.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.functionalStatusId !=="" ? (
+                            <span className={classes.error}>{errors.functionalStatusId}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </div>
+                    {objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-8"></div>)}
+                    {!objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-4"></div>)}
+                    {props.patientObj.sex==="Female" ? (
                         <>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Viral Load at Start of ART Result</Label>
+                            <Label >Pregnancy Status</Label>
                             <Input
-                                type="number"
-                                name="viralLoadAtStartOfArt"
-                                id="viralLoadAtStartOfArt"
+                                type="select"
+                                name="address"
+                                id="address"
+                                disabled
                                 onChange={handleInputChange}
-                                value={objValues.viralLoadAtStartOfArt}
+                                value="72"
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
                                 
-                            />
-                            
+
+                            >
+                                <option value=""> Select</option>
+        
+                                {pregancyStatus.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
+                            </Input>
                             </FormGroup>
                         </div>
+                        {props.patientObj.enrollment && props.patientObj.enrollment.pregnancyStatusId!=='72' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Date of Viral Load at Start of ART</Label>
+                            <Label >LMP</Label>
                             <Input
                                 type="date"
-                                name="dateOfViralLoadAtStartOfArt"
-                                id="dateOfViralLoadAtStartOfArt"
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                name="LMPDate"
+                                id="LMPDate"
                                 onChange={handleInputChange}
-                                value={objValues.dateOfViralLoadAtStartOfArt}
+                                value={props.patientObj.enrollment.dateOfLpm}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled
                             />
-                            
                             </FormGroup>
                         </div>
-                        </>
                         )}
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >WHO Staging</Label>
-                            <Input
-                                type="select"
-                                name="whoStagingId"
-                                id="whoStagingId"
-                                value={objValues.whoStagingId}
-                                onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                
-                                >
-                                    <option value=""> Select</option>
-            
-                                    {clinicalStage.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.whoStagingId !=="" ? (
-                                <span className={classes.error}>{errors.whoStagingId}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Functional Status</Label>
-                            <Input
-                                type="select"
-                                name="functionalStatusId"
-                                id="functionalStatusId"
-                                value={objValues.functionalStatusId}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                
-                                >
-                                    <option value=""> Select</option>
-            
-                                    {functionalStatus.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.functionalStatusId !=="" ? (
-                                <span className={classes.error}>{errors.functionalStatusId}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        {/* <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >TB Status</Label>
-                            <Input
-                                type="select"
-                                name="tbStatusId"
-                                id="tbStatusId"
-                                value={objValues.tbStatusId}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                                >
-                                    <option value=""> Select</option>
-            
-                                    {tbStatus.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.tbStatusId !=="" ? (
-                                <span className={classes.error}>{errors.tbStatusId}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div> */}
-                        <div className="row">
+                        </>
+                    ) :
+                    ""
+                    }
+                    {/* <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >TB Status</Label>
+                        <Input
+                            type="select"
+                            name="tbStatusId"
+                            id="tbStatusId"
+                            value={objValues.tbStatusId}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>
+        
+                                {tbStatus.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.tbStatusId !=="" ? (
+                            <span className={classes.error}>{errors.tbStatusId}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </div> */}
+                    <div className="row">
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
                         <Label >Pulse</Label>
@@ -786,8 +797,7 @@ const ArtCommencement = (props) => {
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
-                                isOpen={dropdownOpen}
-                                toggle={toggleDropDown}
+                               
                                 style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
                                 >
                                 cm
@@ -805,8 +815,7 @@ const ArtCommencement = (props) => {
                             />
                                 <InputGroupText
                                 addonType="append"
-                                isOpen={dropdownOpen}
-                                toggle={toggleDropDown}
+                                
                                 style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
                                 >
                                 {vital.height!=='' ? (vital.height/100).toFixed(2) + "m" : "m"}
@@ -823,7 +832,7 @@ const ArtCommencement = (props) => {
                     <div className="form-group mb-3 mt-2 col-md-4">
                         {vital.bodyWeight!=="" && vital.height!=='' && (
                             <FormGroup>
-                            <Label > {" "}</Label>
+                            <Label > </Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 BMI : {Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
@@ -886,104 +895,55 @@ const ArtCommencement = (props) => {
                     </div>
 
                     </div>
-                        {gender==="Female" || gender==="Transgebder(Female)"? (
-                            <>
-                            <div className="form-group mb-3 col-md-4">
-                                <FormGroup>
-                                <Label >Pregnancy Status</Label>
-                                <Input
-                                    type="select"
-                                    name="address"
-                                    id="address"
-                                    onChange={handleInputChange}
-                                    value={objValues.address}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                    disabled={props.activeContent.actionType==='update' ? false :true}
 
-                                >
-                                    <option value=""> Select</option>
-            
-                                    {pregancyStatus.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                                </Input>
-                                </FormGroup>
-                            </div>
-                            <div className="form-group mb-3 col-md-4">
-                                <FormGroup>
-                                <Label >LMP</Label>
-                                <Input
-                                    type="date"
-                                    name="LMPDate"
-                                    id="LMPDate"
-                                    onChange={handleInputChange}
-                                    value={values.address}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                    disabled={props.activeContent.actionType==='update' ? false :true}
-                                />
-                                </FormGroup>
-                            </div>
-                            </>
-                        ) :
-                        ""
-                        }
-                        <div className="form-group mb-3 col-md-12">
-                            <FormGroup>
-                            <Label >Clinical Notes</Label>
-                            <Input
-                                type="textarea"
-                                name="clinicalNote"
-                                rows="3" cols="50"
-                                id="clinicalNote"
-                                onChange={handleInputChange}
-                                value={objValues.clinicalNote}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                            />
-                            </FormGroup>
-                        </div>
+                    <div className="form-group mb-3 col-md-12">
+                        <FormGroup>
+                        <Label >Clinical Notes</Label>
+                        <Input
+                            type="textarea"
+                            name="clinicalNote"
+                            rows="3" cols="50"
+                            id="clinicalNote"
+                            onChange={handleInputChange}
+                            value={objValues.clinicalNote}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                        />
+                        </FormGroup>
                     </div>
-                    
-                    {saving ? <Spinner /> : ""}
-                    <br />
-                        {props.activeContent.actionType==='update' ? (
-                            <>
-                            <MatButton
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            startIcon={<SaveIcon />}
-                            onClick={handleSubmit}
-                            style={{backgroundColor:"#014d88"}}
-                            >
-                                {!saving ? (
-                                <span style={{ textTransform: "capitalize" }}>Update</span>
-                                ) : (
-                                <span style={{ textTransform: "capitalize" }}>Updating...</span>
-                                )}
-                            </MatButton>
-{/*                         
-                            <MatButton
-                                variant="contained"
-                                className={classes.button}
-                                startIcon={<CancelIcon style={{color:'#fff'}}/>}  
-                                style={{backgroundColor:'#992E62'}}                              
-                            >
-                                <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                            </MatButton> */}
-                            </>
-                            ):""}
+                </div>
                 
-                </form>
-                </CardBody>
-            </Card> 
-                    
+                {saving ? <Spinner /> : ""}
+            <br />
+            
+                <MatButton
+                type="submit"
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                startIcon={<SaveIcon />}
+                onClick={handleSubmit}
+                style={{backgroundColor:"#014d88"}}
+                >
+                    {!saving ? (
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    ) : (
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    )}
+                </MatButton>
+            
+                <MatButton
+                    variant="contained"
+                    className={classes.button}
+                    startIcon={<CancelIcon style={{color:'#fff'}}/>}  
+                    style={{backgroundColor:'#992E62'}}                              
+                >
+                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                </MatButton>
+            
+            </form>
+            </CardBody>
+        </Card>                    
     </div>
   );
 }

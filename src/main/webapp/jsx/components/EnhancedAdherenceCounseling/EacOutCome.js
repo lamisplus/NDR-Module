@@ -73,7 +73,8 @@ const EAC = (props) => {
                                                 personId: props.patientObj.id,
                                                 plan: "",
                                                 visitId: "",
-                                                switchRegimen:""
+                                                switchRegimen:"",
+                                                comment:""
                                             })
     const [switchs, setSwitchs]=useState({
             currentRegimen: "",
@@ -230,7 +231,7 @@ const EAC = (props) => {
               .then(response => {
                   setSaving(false);
                   toast.success("EAC outcome Save successful");
-                  props.setActiveContent({...props.activeContent, route:'eac-session'})
+                  props.setActiveContent({...props.activeContent, route:'counseling', activeTab:"home"})
 
               })
               .catch(error => {
@@ -540,7 +541,19 @@ const EAC = (props) => {
                             </FormGroup>
                         </div>   
                         </div>
-                        
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Comments</Label>
+                            <Input
+                                type="textarea"
+                                name="comment"
+                                id="comment"
+                                value={objValues.comment}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            </FormGroup>
+                        </div>
                     
                     {saving ? <Spinner /> : ""}
                     <br />
