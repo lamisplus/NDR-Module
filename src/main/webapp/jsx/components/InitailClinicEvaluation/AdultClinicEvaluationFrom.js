@@ -251,7 +251,7 @@ const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                     setHideOtherPastArv(false)
                 }
         }
-        setPastArvMedicalMedical({...pastArvMedical, [e.target.name]: e.target.value})
+    setPastArvMedicalMedical({...pastArvMedical, [e.target.name]: e.target.value})
     }
             //to check the input value for clinical decision 
             const handleInputValueCheckHeight =(e)=>{
@@ -2277,7 +2277,6 @@ console.log(props.patientObj)
                     </div>
                     
                     <div className="form-group mb-3 col-md-3">
-
                         <h3>Skin</h3>
 
                         <div className="form-group mb-3 col-md-12">                                    

@@ -23,7 +23,8 @@ import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
 import EnhancedAdherenceCounseling from '../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
-import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index'
+//import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index__'
+import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/Index'
 import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
 import MentalHealthScreening from '../MentalHealthScreening/index'
 import LabHistory from './../Laboratory/LabHistory'
