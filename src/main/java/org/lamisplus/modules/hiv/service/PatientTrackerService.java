@@ -37,7 +37,7 @@ public class PatientTrackerService {
 	
 	
 	public List<PatientTrackingDto> getPatientTrackerByPatientId(Long patientId) {
-		return patientTrackerRepository.getPatientTrackerByPerson(getPatient(patientId))
+		return patientTrackerRepository.getPatientTrackerByPersonAndArchived(getPatient(patientId), 0)
 				.stream()
 				.map(this::mapEntityDto)
 				.collect(Collectors.toList());
