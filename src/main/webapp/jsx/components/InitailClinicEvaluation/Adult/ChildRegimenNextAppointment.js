@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const BasicInfo = (props) => {
+const ChildRegimenNextAppointment = (props) => {
     //console.log(props.activeContent)
     const [errors, setErrors] = useState({});
     let temp = { ...errors } 
@@ -183,12 +183,19 @@ return (
                                     value={regimen.regimen}  
                                 >
                                 <option value="">Select</option>
+                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option>
                                 <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
-                                <option value="TDF + FTC + DTG">TDF + FTC + DTG</option>
-                                <option value="TDF + 3TC + EFV400">TDF + 3TC + EFV400</option>
-                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option> 
-                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option> 
-                                <option value="AZT + 3TC + EFV400">AZT + 3TC + EFV400</option>                              
+                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option>
+                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option> 
+                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option> 
+                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL</option> 
+                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
+                                <option value="ABC + 3TC + EFV">ABC + 3TC + EFV</option>                             
+                                <option value="ABC + 3TC + NVP">ABC + 3TC + NVP</option>
+                                <option value="AZT + 3TC + EFV">AZT + 3TC + EFV</option>
+                                <option value="AZT + 3TC + NVP">AZT + 3TC + NVP</option>
+                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
+                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>                              
                             </Input>
                         </FormGroup>
                     </div>
@@ -205,20 +212,12 @@ return (
                                     value={regimen.regimen}   
                                 >
                                 <option value="">Select</option>
-                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
                                 <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
-                                <option value="AZT + FTC + ATV/r">AZT + FTC + ATV/r</option>
-                                <option value="AZT + FTC + LPV/r">AZT + FTC + LPV/r</option>  
-                                <option value="TDF + 3TC + ATV/r">TDF + 3TC + ATV/r </option>
-                                <option value="TDF + 3TC + LPV/r">TDF + 3TC + LPV/r </option>
-                                <option value="TDF +  FTC + ATV/r">TDF +  FTC + ATV/r</option>  
-                                <option value="TDF + FTC + LPV/r">TDF + FTC + LPV/r</option>
-                                <option value="AZT + 3TC + DRV/r">AZT + 3TC + DRV/r</option>   
-                                <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                       
-                                <option value="AZT + 3TC + DTG">AZT + 3TC + DTG</option>
-                                <option value="AZT +  FTC + DTG">AZT +  FTC + DTG</option>
-                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
-                                <option value="TDF +  FTC + DTG">TDF +  FTC + DTG</option>
+                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
+                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option>
+                                <option value="ABC + 3TC +  ATV/r">ABC + 3TC +  ATV/r</option>  
+                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL </option>
+                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
                             </Input>
                         </FormGroup>
                     </div>
@@ -235,18 +234,10 @@ return (
                                     value={regimen.regimen}    
                                 >
                                 <option value="">Select</option>
-                                <option value="TDF + 3TC + DRV/r + DTG">TDF + 3TC + DRV/r + DTG</option>
-                                <option value="TDF + 3TC + DRV/r + DTG + ETV">TDF + 3TC + DRV/r + DTG + ETV</option>
-                                <option value="TDF + FTC + DRV/r + DTG">TDF + FTC + DRV/r + DTG</option>
-                                <option value="TDF + FTC + DRV/r + DTG + ETV">TDF + FTC + DRV/r + DTG + ETV</option>  
-                                <option value="AZT + 3TC + DRV/r + ETV + DTG">AZT + 3TC + DRV/r + ETV + DTG</option>
-                                <option value="AZT + FTC + DRV/r + ETV + DTG">AZT + FTC + DRV/r + ETV + DTG </option>
-                                <option value="AZT + 3TC + DRV/r + ETV">AZT + 3TC + DRV/r + ETV</option>  
-                                <option value="AZT + FTC + DRV/r + ETV">AZT + FTC + DRV/r + ETV</option>
-                                <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r + DTG</option>   
-                                <option value="AZT + 3TC + DRV/r + DTG">AZT + FTC + DRV/r + DTG</option> 
-                                <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r</option> 
-                                <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                        
+                                <option value="DTG + DRV/r + ABC + 3TC">DTG + DRV/r + ABC + 3TC</option>
+                                <option value="DTG + DRV/r + AZT + 3TC">DTG + DRV/r + AZT + 3TC</option>
+                                <option value="RAL + DRV/r + ABC + 3TC">RAL + DRV/r + ABC + 3TC</option>
+                                <option value="RAL + DRV/r + AZT + 3TC">RAL + DRV/r + AZT + 3TC</option>                    
                             </Input>
                         </FormGroup>
                     </div>
@@ -282,4 +273,4 @@ return (
     );
 };
 
-export default BasicInfo
+export default ChildRegimenNextAppointment

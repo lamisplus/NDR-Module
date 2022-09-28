@@ -3,7 +3,6 @@ import {Card,CardBody, FormGroup, Label, Input, InputGroup} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl, token } from "../../../api";
@@ -216,7 +215,7 @@ const ClinicEvaluationFrom = (props) => {
        });
    
     }
-    console.log(medicalHistory)
+
     //Handle CheckBox 
     const handleMedicalHistory =e =>{
         setMedicalHistory({...medicalHistory, [e.target.name]: e.target.value})

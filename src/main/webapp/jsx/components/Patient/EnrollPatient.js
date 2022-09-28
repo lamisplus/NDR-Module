@@ -883,8 +883,8 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="emrNumber"
                                                         id="emrNumber"
-                                                        //disabled='true'
-                                                        value={Math.floor(Math.random() * 1094328)}
+                                                        disabled='true'
+                                                        value={1094328}
                                                         //onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
                                                     />
