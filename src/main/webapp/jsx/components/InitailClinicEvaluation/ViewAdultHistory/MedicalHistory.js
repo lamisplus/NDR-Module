@@ -74,8 +74,11 @@ const MedicalHistory = (props) => {
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory)           
         }
+        // else{
+        //     console.log(props.observation)
+        // }
     }, [props.observation.data]);
-    const [visit, setVisit] = useState({visitDate:""})
+    const [visit, setVisit] = useState({visitDate:props.observation ? props.observation.dateOfObservation :""})
     const [objValues, setobjValues] = useState({Nausea:"", 
                                                 Nausea_fever:"",
                                                 as_never_receive_arvs:"",
@@ -134,7 +137,6 @@ const MedicalHistory = (props) => {
     const [hideOtherCurrentMedication, setHideOtherCurrentMedication]=useState(false)
     //Handle CheckBox 
     const handleMedicalHistory =e =>{
-        setErrors({...errors, [e.target.name]: ""}) 
         if(e.target.name==='disclosureNoOne'){
             if(e.target.checked){
             setHideOtherPatientDisclosure(true)
@@ -152,8 +154,7 @@ const MedicalHistory = (props) => {
         }        
         setobjValues({...objValues, [e.target.name]: e.target.value})
     }
-    const handleInputChangeobjValues = e => { 
-        setErrors({...errors, [e.target.name]: ""})           
+    const handleInputChangeobjValues = e => {            
         setVisit ({...visit,  [e.target.name]: e.target.value});
     }
     const handleItemClick =(page, completedMenu)=>{
@@ -182,11 +183,10 @@ const MedicalHistory = (props) => {
         e.preventDefault(); 
         if(validate()){
             props.observation.dateOfObservation= visit.visitDate 
+            props.observation.dateOfObservation= visit.visitDate
             props.observation.data.medicalHistory=objValues   
             //toast.success("Medical history save successful");
             handleItemClick('past-arv', 'medical-history' ) 
-        }else{
-            toast.error("All fields are required");
         }                 
     }
 

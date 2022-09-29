@@ -119,19 +119,18 @@ const BasicInfo = (props) => {
         props.observation.data.regimen= regimen
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
-        axios.post(`${baseUrl}observation`, props.observation,
+        axios.put(`${baseUrl}observation/${props.observation.id}`, props.observation,
         { headers: {"Authorization" : `Bearer ${token}`}},            
         )
           .then(response => {
               setSaving(false);
               handleItemClick('', 'regimen' ) 
               props.patientObj.clinicalEvaluation=true
-              toast.success("Initial Clinic Evaluation successful");
+              toast.success("Initial Clinic Evaluation save successful");
               props.setActiveContent({...props.activeContent, route:'recent-history'})
           })
           .catch(error => {
               setSaving(false);
-              //console.log(error.response)
               if(error.response && error.response.data){
                 let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                 toast.error(errorMessage); 
