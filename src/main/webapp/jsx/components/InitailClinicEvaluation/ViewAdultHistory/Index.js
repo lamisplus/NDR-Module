@@ -114,9 +114,9 @@ const UserRegistration = (props) => {
                     age_now--;
                 }
             if (age_now === 0) {
-                    return m + " month(s)";
+                    return 0;
                 }
-                return age_now + " year(s)";
+                return age_now ;
       };
       console.log(observation);
 
