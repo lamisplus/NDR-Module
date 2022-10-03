@@ -55,10 +55,35 @@ const useStyles = makeStyles(theme => ({
   },
 
   root: {
-    '& > *': {
-      margin: theme.spacing(1)
+    marginBottom: 20,
+    flexGrow: 1,
+    "& .card-title":{
+        color:'#fff',
+        fontWeight:'bold'
+    },
+    "& .form-control":{
+        borderRadius:'0.25rem',
+        height:'41px'
+    },
+    "& .card-header:first-child": {
+        borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+    },
+    "& .dropdown-toggle::after": {
+        display: " block !important"
+    },
+    "& select":{
+        "-webkit-appearance": "listbox !important"
+    },
+    "& p":{
+        color:'red'
+    },
+    "& label":{
+        fontSize:'14px',
+        color:'#014d88',
+        fontWeight:'bold'
     }
-  },
+
+},
   input: {
     display: 'none'
   },
@@ -482,7 +507,7 @@ const handleInputValueCheckTemperature =(e)=>{
 
 
   return (
-    <div>
+    <div className={classes.root}>
         <div className="row">
             <div className="col-xl-3 col-xxl-3 col-lg-3" >
                 <div className="card" style={{ height: "500px" }}>
@@ -525,7 +550,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     </div>
                     <div className="card-body">
                     <Grid columns='equal'>
-                    <Grid.Column >
+                    <Grid.Column className={classes.root}>
                     <Segment>
                     <Label as='a' color='black' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}> Visit Date - {vital.encounterDate}</h4>
@@ -554,7 +579,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         <div className="form-group mb-3 col-md-6">
 
                         </div>
-                        <div className="row">
+                    <div className="row">
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
                         <FormLabelName >Pulse</FormLabelName>

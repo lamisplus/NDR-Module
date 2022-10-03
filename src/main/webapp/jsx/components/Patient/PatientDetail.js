@@ -47,6 +47,7 @@ import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
 import EACOUTCOME from '../EnhancedAdherenceCounseling/EacOutCome'
 import EACSESSION from './../EnhancedAdherenceCounseling/SessionList'
 import NEWEACSESSION from './../EnhancedAdherenceCounseling/NewSessions'
+import ChronicCare from './../ChronicCare/Index'
 
 const styles = theme => ({
   root: {
@@ -141,6 +142,7 @@ function PatientCard(props) {
           {activeContent.route==='eac-outcome' &&( <EACOUTCOME patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='eac-session' &&( <EACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='new-eac-session' &&( <NEWEACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='chronic-care' &&( <ChronicCare patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

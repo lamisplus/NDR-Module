@@ -58,7 +58,31 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        maxWidth: 752,
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
+        }
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -218,11 +242,11 @@ const UserRegistration = (props) => {
             basicInfo.middleName=patientObj.otherName
             basicInfo.lastName=patientObj.surname
             basicInfo.hospitalNumber=hospitalNumber ? hospitalNumber.value : ''
-            basicInfo.maritalStatusId=patientObj.maritalStatus.id
-            basicInfo.employmentStatusId=patientObj.employmentStatus.id
+            basicInfo.maritalStatusId=patientObj && patientObj.maritalStatus ? patientObj.maritalStatus.id :""
+            basicInfo.employmentStatusId=patientObj && patientObj.employmentStatus ? patientObj.employmentStatus.id :""
             basicInfo.genderId=patientObj.gender ? patientObj.gender.id : null
-            basicInfo.sexId=patientObj.sex 
-            basicInfo.educationId=patientObj.education.id
+            basicInfo.sexId=patientObj && patientObj.sex ? patientObj.sex  :""
+            basicInfo.educationId=patientObj && patientObj.education ?  patientObj.education.id :""
             basicInfo.phoneNumber=phone && phone.value ? phone.value : ""
             basicInfo.altPhonenumber= altphone && altphone.value ? altphone.value : ""
             basicInfo.email=email && email.value ? email.value : ""
@@ -767,7 +791,7 @@ const UserRegistration = (props) => {
     return (
         <>
             <ToastContainer autoClose={3000} hideProgressBar />
-            <Card className={classes.cardBottom}>
+            <Card className={classes.root}>
                 <CardContent>
                 <Link
                     to={{

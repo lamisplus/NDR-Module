@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import { useHistory, } from "react-router-dom";
 // import {TiArrowBack} from 'react-icons/ti'
-import {token, url as baseUrl } from "../../../../api";
+import {token, url as baseUrl } from "../../../api";
 import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
@@ -50,31 +50,7 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        "& .card-title":{
-            color:'#fff',
-            fontWeight:'bold'
-        },
-        "& .form-control":{
-            borderRadius:'0.25rem',
-            height:'41px'
-        },
-        "& .card-header:first-child": {
-            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
-        },
-        "& .dropdown-toggle::after": {
-            display: " block !important"
-        },
-        "& select":{
-            "-webkit-appearance": "listbox !important"
-        },
-        "& p":{
-            color:'red'
-        },
-        "& label":{
-            fontSize:'14px',
-            color:'#014d88',
-            fontWeight:'bold'
-        }
+        maxWidth: 752,
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -94,17 +70,12 @@ const MedicalHistory = (props) => {
     const history = useHistory();
     const [errors, setErrors] = useState({});
     
-    const [visit, setVisit] = useState({visitDate:""})
     useEffect(() => { 
         if(props.observation.data && props.observation.data.medicalHistory){
-            setobjValues(props.observation.data.medicalHistory) 
-            visit.visitDate=moment(props.observation.dateOfObservation).format("YYYY-MM-DD")          
+            setobjValues(props.observation.data.medicalHistory)           
         }
-        // else{
-        //     console.log(props.observation)
-        // }
     }, [props.observation.data]);
-    console.log(visit.visitDate)
+    const [visit, setVisit] = useState({visitDate:""})
     const [objValues, setobjValues] = useState({Nausea:"", 
                                                 Nausea_fever:"",
                                                 as_never_receive_arvs:"",
@@ -157,22 +128,13 @@ const MedicalHistory = (props) => {
                                                 currentCTX:"", 
                                                 currentAntiTbDdrugs :"",
                                                 currentOthers:"",
-                                                childMotherAlive:"", 
-                                                motherName:"", 
-                                                motherAddress:"", 
-                                                childFatherAlive:"", 
-                                                immunisationComplete:"",
-                                                fatherName:"", 
-                                                fatherAddress:"", 
-                                                parentChildMarriageStatus:"",  
-                                                howManySibiling:"", 
-                                                immunisationComplete:"",
                                                 });
     let temp = { ...errors }
     const [hideOtherPatientDisclosure, setHideOtherPatientDisclosure]=useState(false)
     const [hideOtherCurrentMedication, setHideOtherCurrentMedication]=useState(false)
     //Handle CheckBox 
     const handleMedicalHistory =e =>{
+        setErrors({...errors, [e.target.name]: ""}) 
         if(e.target.name==='disclosureNoOne'){
             if(e.target.checked){
             setHideOtherPatientDisclosure(true)
@@ -190,7 +152,8 @@ const MedicalHistory = (props) => {
         }        
         setobjValues({...objValues, [e.target.name]: e.target.value})
     }
-    const handleInputChangeobjValues = e => {            
+    const handleInputChangeobjValues = e => { 
+        setErrors({...errors, [e.target.name]: ""})           
         setVisit ({...visit,  [e.target.name]: e.target.value});
     }
     const handleItemClick =(page, completedMenu)=>{
@@ -219,10 +182,11 @@ const MedicalHistory = (props) => {
         e.preventDefault(); 
         if(validate()){
             props.observation.dateOfObservation= visit.visitDate 
-            props.observation.dateOfObservation= visit.visitDate
             props.observation.data.medicalHistory=objValues   
             //toast.success("Medical history save successful");
             handleItemClick('past-arv', 'medical-history' ) 
+        }else{
+            toast.error("All fields are required");
         }                 
     }
 
@@ -230,9 +194,9 @@ const MedicalHistory = (props) => {
     return (
         <>  
         
-            <Card className={classes.root}>
+            <Card >
                 <CardBody>   
-                <h2 style={{color:'#000'}}>Medical History</h2>
+                <h2 style={{color:'#000'}}>Detail</h2>
                 <br/>
                     <form >
      
@@ -257,177 +221,6 @@ const MedicalHistory = (props) => {
                     </div>
                     <div className="form-group mb-3 col-md-8"></div>   
                     </div>
-                    {props.patientAge<=14 && (
-                    <div className="row">
-                    <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Is mother of the child alive ?</Label>
-                            <Input 
-                                    type="select"
-                                    name="childMotherAlive"
-                                    id="childMotherAlive"
-                                    onChange={handleMedicalHistory}  
-                                    value={objValues.childMotherAlive} 
-                                >
-                                <option value="">Select</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                </Input>
-                               
-                                                                  
-                            </FormGroup>
-                            
-                    </div>
-                    {objValues.childMotherAlive==='Yes' && (
-                        <>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Mother Name</Label>
-                            <Input 
-                                    type="text"
-                                    name="motherName"
-                                    id="motherName"
-                                    value={visit.motherName}
-                                    onChange={handleInputChangeobjValues} 
-                                />
-                            </FormGroup>
-                           
-                     </div>
-                     <div className="form-group mb-3 col-md-6">
-                        <FormGroup>
-                        <Label >Mother Address</Label>
-                        <Input 
-                                type="text"
-                                name="motherAddress"
-                                id="motherAddress"
-                                value={objValues.motherAddress}
-                                onChange={handleInputChangeobjValues} 
-                            />
-                        </FormGroup>
-                        
-                        </div>
-                    </> 
-                     )}
-                     <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Is father of the child alive ?</Label>
-                            <Input 
-                                    type="select"
-                                    name="childFatherAlive"
-                                    id="childFatherAlive"
-                                    onChange={handleMedicalHistory}  
-                                    value={objValues.childFatherAlive} 
-                                >
-                                <option value="">Select</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                </Input> 
-                                                                  
-                            </FormGroup>
-                            
-                    </div> 
-                    {objValues.childFatherAlive==='Yes' && (
-                        <>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Father Name</Label>
-                            <Input 
-                                    type="text"
-                                    name="fatherName"
-                                    id="fatherName"
-                                    value={objValues.fatherName}
-                                    onChange={handleInputChangeobjValues} 
-                                />
-                            </FormGroup>
-                           
-                     </div>
-                     <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Father Address</Label>
-                            <Input 
-                                    type="text"
-                                    name="fatherAddress"
-                                    id="fatherAddress"
-                                    value={objValues.fatherAddress}
-                                    onChange={handleInputChangeobjValues} 
-                                />
-                            </FormGroup>
-                            
-                    </div>
-                        </>
-                     )}
-
-                    <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Child's parents/caregivers are</Label>
-                            <Input 
-                                    type="select"
-                                    name="parentChildMarriageStatus"
-                                    id="parentChildMarriageStatus"
-                                    onChange={handleMedicalHistory}  
-                                    value={objValues.parentChildMarriageStatus} 
-                                >
-                                <option value="">Select</option>
-                                <option value="Married">Married</option>
-                                <option value="Co-habiting">Co-habiting</option>
-                                <option value="Signle">Signle</option>
-                                </Input> 
-                                                                  
-                            </FormGroup>
-                            
-                    </div>
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >How many sibiling does the child have ?</Label>
-                            <Input 
-                                    type="number"
-                                    name="howManySibiling"
-                                    id="howManySibiling"
-                                    value={objValues.howManySibiling}
-                                    onChange={handleInputChangeobjValues} 
-                                />
-                            </FormGroup>
-                            
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Immunisation: Complete for Age</Label>
-                            <Input 
-                                    type="select"
-                                    name="immunisationComplete"
-                                    id="immunisationComplete"
-                                    onChange={handleMedicalHistory}  
-                                    value={objValues.immunisationComplete} 
-                                >
-                                <option value="">Select</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                </Input> 
-                                                                  
-                            </FormGroup>
-                            
-                    </div>
-                    <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Mode of infant({"<=6"} months) feeding </Label>
-                            <Input 
-                                    type="select"
-                                    name="immunisationComplete"
-                                    id="immunisationComplete"
-                                    onChange={handleMedicalHistory}  
-                                    value={objValues.immunisationComplete} 
-                                >
-                                <option value="">Select</option>
-                                <option value="EBF">EBF</option>
-                                <option value="EBMS">EBMS</option>
-                                <option value="Mixed">Mixed</option>
-                                </Input> 
-                                                                  
-                            </FormGroup>
-                            
-                    </div>
-                    </div>
-                    )}
                     <h4>Medical History</h4>
                     {/* Medical History form inputs */}
                     <div className="row">
@@ -1069,7 +862,7 @@ const MedicalHistory = (props) => {
                     {/* end of Drug Allergies  */}
                     <div className="row">
                     {props.patientObj.sex==='Female' && (<>
-                        {props.patientAge>14 && (
+                    {props.patientAge>14 && (
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
                                 <Label >Currently Pregnant</Label>

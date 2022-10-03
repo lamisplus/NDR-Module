@@ -2,9 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import { Button} from 'semantic-ui-react'
 import {Card, CardBody} from "reactstrap";
 import {makeStyles} from "@material-ui/core/styles";
-import axios from "axios";
-import { toast} from "react-toastify";
-import { url as baseUrl, token } from "../../../../api";
+import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import {Link, useHistory, useLocation} from "react-router-dom";
@@ -19,8 +17,10 @@ import PhysicalExamination from './PhysicalExamination'
 import Appearance from './Appearance'
 import WhoStaging from './WhoStaging'
 import Plan from './Plan'
-import ChildRegimenNextAppointment from './ChildRegimenNextAppointment'
 import AdultRegimenNextAppointment from './AdultRegimenNextAppointment'
+import ChildRegimenNextAppointment from './ChildRegimenNextAppointment'
+
+// import RecencyTesting from './NewRegistration/RecencyTesting'
 import moment from "moment";
 
 
@@ -44,7 +44,7 @@ const UserRegistration = (props) => {
     const [saving, setSaving] = useState(false);
     const [activeItem, setactiveItem] = useState('medical-history');
     const [completed, setCompleted] = useState([]);
-    const [patientObj, setPatientObj] = useState(props && props.patientObj ? props.patientObj : "");
+    const [patientObj, setPatientObj] = useState("");
     const [observation, setObservation]=useState({
         data: {
                 medicalHistory:"",
@@ -73,7 +73,7 @@ const UserRegistration = (props) => {
         },
         dateOfObservation: null,
         facilityId: null,
-        personId: props.patientObj.id,
+        personId: patientObj.id,
         type: "Clinical evaluation",
         visitId: null
     })
@@ -81,28 +81,11 @@ const UserRegistration = (props) => {
         setactiveItem(activeItem)
         //setCompleted({...completed, ...completedMenu})
     }
-    useEffect(() => {
-        GetInitialEvaluation();
-    }, [props.activeContent.id]);
-    const GetInitialEvaluation =()=>{
-        axios
-           .get(`${baseUrl}observation/${props.activeContent.id}`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {  
-
-                //const newmedicalHistory=response.data.data.medicalHistory
-                // observation.dateOfObservation =  response.data.dateOfObservation 
-                // observation.facilityId =  response.data.facilityId
-                // observation.type =  response.data.type
-                setObservation(response.data)  
-                //setPatientObj(response.data)
-           })
-           .catch((error) => {
-           //console.log(response.data.data);
-           });
-       
+    useEffect(() => { 
+        if(locationState && locationState.patientObj){
+            setPatientObj(locationState.patientObj)           
         }
+    }, []);
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
@@ -114,12 +97,11 @@ const UserRegistration = (props) => {
                     age_now--;
                 }
             if (age_now === 0) {
-                    return 0;
+                    return m;
                 }
-                return age_now ;
-      };
-      const patientAge=calculate_age(moment(props.patientObj.dateOfBirth).format("DD-MM-YYYY"));
-      console.log(props)
+                return age_now;
+    };
+    const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
 
     return (
         <>
@@ -129,15 +111,9 @@ const UserRegistration = (props) => {
                 <CardBody>
               
                     <div className="row">
-                    {calculate_age(moment(props.patientObj.dateOfBirth).format("DD-MM-YYYY"))<=14 ? (
-                        <h2>Pediatric- Initial Clinical Evaluation ssd</h2>
-                        )
-                        :
-                        (
-                            <h2>Adult- Initial Clinical Evaluation </h2> 
-                        )
-                
-                    }
+                    
+                        <h2>Chronic Care </h2> 
+                       
                         <br/>
                         <br/>
                         <form >
@@ -150,7 +126,7 @@ const UserRegistration = (props) => {
                                 style={{backgroundColor:activeItem === 'medical-history' ? '#000': ""}}
                                 disabled={activeItem !== 'medical-history' ? true : false}
                             >               
-                                <span style={{color:'#fff'}}> Medical History
+                                <span style={{color:'#fff'}}>Patient Detail
                                 {completed.includes('medical-history') && (
                                     <Icon name='check' color='green' />
                                 )}
@@ -165,7 +141,7 @@ const UserRegistration = (props) => {
                                 style={{backgroundColor:activeItem === 'past-arv' ? '#000': ""}}
                                 disabled={activeItem !== 'past-arv' ? true : false}
                             >               
-                                <span style={{color:'#fff'}}>Past/Current ARV 
+                                <span style={{color:'#fff'}}>Co-trimoxazole Eligibility Assessment
                                 {completed.includes('past-arv') && (
                                     <Icon name='check' color='green' />
                                 )}
@@ -181,7 +157,7 @@ const UserRegistration = (props) => {
                                 disabled={activeItem !== 'physical-examination' ? true : false}
                             >
                             {/* <Label>4</Label> */}
-                            <span style={{color:'#fff'}}>Physical Examination
+                            <span style={{color:'#fff'}}>TB Screening
                             {completed.includes('physical-examination') && (
                                 <Icon name='check' color='green' />
                             )}</span>
@@ -196,7 +172,7 @@ const UserRegistration = (props) => {
                                 disabled={activeItem !== 'appearance' ? true : false}
                             >
                             {/* <Label>4</Label> */}
-                            <span style={{color:'#fff'}}>Apperance
+                            <span style={{color:'#fff'}}>Nutritional Assessment
                             {completed.includes('appearance') && (
                                 <Icon name='check' color='green' />
                             )}
@@ -211,7 +187,7 @@ const UserRegistration = (props) => {
                                 disabled={activeItem !== 'who' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
-                                <span style={{color:'#fff'}}>Assessment & WHO 
+                                <span style={{color:'#fff'}}>Gender Based Violence Screening 
                                     {completed.includes('who') && (
                                         <Icon name='check' color='green' />
                                     )}
@@ -225,7 +201,7 @@ const UserRegistration = (props) => {
                                 disabled={activeItem !== 'plan' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
-                                <span style={{color:'#fff'}}>Plan & Enroll In
+                                <span style={{color:'#fff'}}>Screening for Chronic Conditions
                                     {completed.includes('plan') && (
                                         <Icon name='check' color='green' />
                                     )}
@@ -237,10 +213,24 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'regimen'}
                                 onClick={()=>handleItemClick('regimen')}
                                 style={{backgroundColor:activeItem === 'regimen' ? '#000': ""}}
-                                disabled={activeItem !== 'regimen' ? true : false}
+                                //disabled={activeItem !== 'regimen' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
-                                <span style={{color:'#fff'}}>Regimen & <br/>Next Appointment 
+                                <span style={{color:'#fff'}}>Positive Health Dignity and Prevention(PHDP)
+                                    {completed.includes('regimen') && (
+                                        <Icon name='check' color='green' />
+                                    )}
+                                </span>                            
+                            </Menu.Item>
+                            <Menu.Item
+                                name='spam'
+                                active={activeItem === 'regimen'}
+                                onClick={()=>handleItemClick('regimen')}
+                                style={{backgroundColor:activeItem === 'regimen' ? '#000': ""}}
+                                //disabled={activeItem !== 'regimen' ? true : false}
+                            >
+                                {/* <Label>4</Label> */}
+                                <span style={{color:'#fff'}}>Reproductive Intentions
                                     {completed.includes('regimen') && (
                                         <Icon name='check' color='green' />
                                     )}
@@ -256,18 +246,17 @@ const UserRegistration = (props) => {
                             {activeItem==='who' && (<WhoStaging handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
                             {activeItem==='plan' && (<Plan  handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
                             {activeItem==='regimen' && (
-                                 <>
-                                 {calculate_age(moment(props.patientObj.dateOfBirth).format("DD-MM-YYYY"))<=14 ? 
-                                 (
-                                     <ChildRegimenNextAppointment handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} activeContent={props.activeContent} setActiveContent={props.setActiveContent} patientAge={patientAge}/>
-                                 )
-                                 :
-                                 (
-                                     <AdultRegimenNextAppointment handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} activeContent={props.activeContent} setActiveContent={props.setActiveContent} patientAge={patientAge}/>
-                                 )}
-                             </>  
+                                <>
+                                {patientAge<=14 ? 
+                                (
+                                    <ChildRegimenNextAppointment handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} activeContent={props.activeContent} setActiveContent={props.setActiveContent}/>
+                                )
+                                :
+                                (
+                                    <AdultRegimenNextAppointment handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} activeContent={props.activeContent} setActiveContent={props.setActiveContent}/>
+                                )}
+                            </>  
                             )}
-                            
                         </div>  
                         </form>                                 
                     </div>

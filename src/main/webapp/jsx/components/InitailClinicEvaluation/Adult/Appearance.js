@@ -51,7 +51,31 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        maxWidth: 752,
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
+        },
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -379,14 +403,14 @@ const handleSubmit = (e) => {
     props.observation.data.mentalstatus=mentalStatus
     props.observation.data.respiratory=respiratory
     props.observation.data.gastrointestinal = gastrointestinal   
-    toast.success("Medical history save successful");
+    //toast.success("Medical history save successful");
     handleItemClick('who', 'appearance' )                  
 }
         
 return (
         <>  
         
-            <Card >
+            <Card className={classes.root}>
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Appearance</h2>
                 <br/>
@@ -776,6 +800,7 @@ return (
                             )}
                      
                     </div>
+                    {props.patientAge>14 && props.patientObj.sex==='Female' &&(
                     <div className="row">
                         <LabelRibbon as='a' color='orange' style={{width:'106%', height:'35px'}} ribbon>
                             <h3 style={{color:'#fff'}} >Breasts</h3>
@@ -853,6 +878,7 @@ return (
                             </>
                             )}
                     </div>
+                    )}
                     <div className="row">   
                         <LabelRibbon as='a' color='green' style={{width:'106%', height:'35px'}} ribbon>
                             <h3 style={{color:'#fff'}} >Cardiovascular</h3>

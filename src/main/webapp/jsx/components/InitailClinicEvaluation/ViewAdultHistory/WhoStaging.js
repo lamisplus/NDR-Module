@@ -53,7 +53,31 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        maxWidth: 752,
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
+        }
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -69,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const BasicInfo = (props) => {
-
+    const classes = useStyles()
     const [errors, setErrors] = useState({});
     let temp = { ...errors } 
     useEffect(() => { 
@@ -131,14 +155,14 @@ const BasicInfo = (props) => {
         e.preventDefault();  
         props.observation.data.assesment = assesment
         props.observation.data.who=who  
-        toast.success("Record save successful");
+        //toast.success("Record save successful");
         handleItemClick('plan', 'who' )                  
     }
         
 return (
         <>  
         
-            <Card >
+            <Card className={classes.root}>
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Physical Examination</h2>
                 <br/>

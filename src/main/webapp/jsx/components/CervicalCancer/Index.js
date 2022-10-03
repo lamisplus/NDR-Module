@@ -43,6 +43,31 @@ const useStyles = makeStyles(theme => ({
     root: {
         '& > *': {
             margin: theme.spacing(1)
+        },
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
         }
     },
     input: {
@@ -70,7 +95,7 @@ const CervicalCancer = (props) => {
     const [regimenLine, setRegimenLine] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
     const [objValues, setObjValues] = useState({
-                                                    personId:"",
+                                                    personId:patientObj.id,
                                                     screeningResult:"",
                                                     screenMethod:"",
                                                     screenType:"",
@@ -79,9 +104,9 @@ const CervicalCancer = (props) => {
                                                 });
     const [observation, setObservation]=useState({
             data: {},
-            dateOfObservation: "yyyy-MM-dd",
+            dateOfObservation: "",
             facilityId: null,
-            personId: 0,
+            personId: patientObj.id,
             type: "Cervical cancer",
             visitId: null
     })
@@ -140,7 +165,6 @@ const CervicalCancer = (props) => {
                });
            
          }
-
         const handleInputChange = e => {
             setObjValues ({...objValues,  [e.target.name]: e.target.value});
         }
@@ -163,34 +187,26 @@ const CervicalCancer = (props) => {
             observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
             observation.personId =patientObj.id
             observation.data=objValues
-            axios.post(`${baseUrl}observation`,objValues,
+            axios.post(`${baseUrl}observation`,observation,
             { headers: {"Authorization" : `Bearer ${token}`}},
             
             )
               .then(response => {
                   setSaving(false);
-                  props.patientObj.commenced=true
                   toast.success("Record save successful");
-                  props.toggle()
-                  props.PatientCurrentStatus()
-
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
               })
               .catch(error => {
-                  setSaving(false);
-                  if(error.apierror){
-                    toast.error(error.apierror.message);
-                  }else{
-                    toast.error("Something went wrong. Please try again...");
-                  }
-                  
-                 
+                setSaving(false);
+                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage);
               });
           
         }
 
   return (      
          <div>                 
-            <Card >
+            <Card className={classes.root}>
                 <CardBody>
                 <form >
                     <div className="row">

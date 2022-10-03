@@ -51,7 +51,37 @@ const useStyles = makeStyles(theme => ({
   root: {
     '& > *': {
       margin: theme.spacing(1)
-    }
+    },
+    "& .card-title":{
+      color:'#fff',
+      fontWeight:'bold'
+  },
+  "& .form-control":{
+      borderRadius:'0.25rem',
+      height:'41px'
+  },
+  "& .card-header:first-child": {
+      borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+  },
+  "& .dropdown-toggle::after": {
+      display: " block !important"
+  },
+  "& select":{
+      "-webkit-appearance": "listbox !important"
+  },
+  "& p":{
+      color:'red'
+  },
+  "& FormLabelName":{
+      fontSize:'14px',
+      color:'#014d88',
+      fontWeight:'bold'
+  },
+  "& label":{
+    fontSize:'14px',
+    color:'#014d88',
+    fontWeight:'bold'
+}
   },
   input: {
     display: 'none'
@@ -456,7 +486,7 @@ const handleInputValueCheckTemperature =(e)=>{
 
 
   return (
-    <div>
+    <div className={classes.root}>
     <div className="row">
 
       <div className="col-md-6">
@@ -615,7 +645,7 @@ const handleInputValueCheckTemperature =(e)=>{
          </Segment>
          
         </Grid.Column>
-        <Grid.Column width={11}>
+        <Grid.Column width={11} className={classes.root}>
           <Segment>
             <Label as='a' color='blue'  style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>VITAL  SIGNS</h4>

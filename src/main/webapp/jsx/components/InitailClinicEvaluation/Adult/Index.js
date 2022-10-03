@@ -97,10 +97,11 @@ const UserRegistration = (props) => {
                     age_now--;
                 }
             if (age_now === 0) {
-                    return 0 ;
+                    return m;
                 }
                 return age_now;
     };
+    const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
 
     return (
         <>
@@ -110,7 +111,7 @@ const UserRegistration = (props) => {
                 <CardBody>
               
                     <div className="row">
-                    {calculate_age(moment(props.patientObj.dateOfBirth).format("DD-MM-YYYY"))<=14 ? (
+                    {patientAge<=14 ? (
                         <h2>Pediatric- Initial Clinical Evaluation </h2>
                         )
                         :
@@ -230,15 +231,15 @@ const UserRegistration = (props) => {
                         </Menu>
                         </div>
                         <div className="col-md-9 float-end" style={{ backgroundColor:"#fff", }}>
-                            {activeItem==='medical-history' && (<MedicalHistory handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation}/>)}
-                            {activeItem==='past-arv' && (<PastArv handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation}/>)}
-                            {activeItem==='physical-examination' && (<PhysicalExamination handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation}/>)}
-                            {activeItem==='appearance' && (<Appearance handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation}/>)}
-                            {activeItem==='who' && (<WhoStaging handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation}/>)}
-                            {activeItem==='plan' && (<Plan  handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation}/>)}
+                            {activeItem==='medical-history' && (<MedicalHistory handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
+                            {activeItem==='past-arv' && (<PastArv handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
+                            {activeItem==='physical-examination' && (<PhysicalExamination handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
+                            {activeItem==='appearance' && (<Appearance handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
+                            {activeItem==='who' && (<WhoStaging handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
+                            {activeItem==='plan' && (<Plan  handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
                             {activeItem==='regimen' && (
                                 <>
-                                {calculate_age(moment(props.patientObj.dateOfBirth).format("DD-MM-YYYY"))<=14 ? 
+                                {patientAge<=14 ? 
                                 (
                                     <ChildRegimenNextAppointment handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} activeContent={props.activeContent} setActiveContent={props.setActiveContent}/>
                                 )

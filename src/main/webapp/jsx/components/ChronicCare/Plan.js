@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import { useHistory, } from "react-router-dom";
 // import {TiArrowBack} from 'react-icons/ti'
-import {token, url as baseUrl } from "../../../../api";
+import {token, url as baseUrl } from "../../../api";
 import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
@@ -53,31 +53,7 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        "& .card-title":{
-            color:'#fff',
-            fontWeight:'bold'
-        },
-        "& .form-control":{
-            borderRadius:'0.25rem',
-            height:'41px'
-        },
-        "& .card-header:first-child": {
-            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
-        },
-        "& .dropdown-toggle::after": {
-            display: " block !important"
-        },
-        "& select":{
-            "-webkit-appearance": "listbox !important"
-        },
-        "& p":{
-            color:'red'
-        },
-        "& label":{
-            fontSize:'14px',
-            color:'#014d88',
-            fontWeight:'bold'
-        }
+        maxWidth: 752,
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -103,7 +79,7 @@ const BasicInfo = (props) => {
             setEnrollIn(props.observation.data.enroll)  
         }
     }, [props.observation.data]);
-    const [planArt, setPlanArt] = useState({previousArvExposure:"", reasonForChange:"", reasonForChangeOther:""});
+    const [planArt, setPlanArt] = useState({previousArvExposure:""});
     const [enroll, setEnrollIn] = useState({enrollIn:""});
     const [hidecd4CountQuantitative, setHidecd4CountQuantitative] = useState(false);
     const [hidecd4CountFlow, setHidecd4CountFlow] = useState(false);
@@ -163,14 +139,14 @@ const BasicInfo = (props) => {
         props.observation.data.planArt = planArt
         props.observation.data.plan = plan
         props.observation.data.enroll=enroll  
-        //toast.success("Record save successful");
+        toast.success("Record save successful");
         handleItemClick('regimen', 'plan' )                  
     }
         
 return (
         <>  
         
-            <Card className={classes.root}>
+            <Card >
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Enroll In & Plan</h2>
                 <br/>
@@ -215,52 +191,6 @@ return (
                                 </Input>
                         </FormGroup>
                     </div>
-                    {props.patientAge<=14 && (
-                    <>
-                        {planArt.previousArvExposure==='Stop treatment' || planArt.previousArvExposure ==='Change treatment' && (
-                        <div className="form-group mb-3 col-md-6">                                    
-                            <FormGroup>
-                                <Label>Code for reason for change/stop ART</Label>
-                                <Input 
-                                        type="select"
-                                        name="reasonForChange"
-                                        id="reasonForChange"
-                                        value={planArt.reasonForChange}
-                                        onChange={handlePlanArt}  
-                                    >
-                                    <option value="">Select</option>
-                                    <option value="Can't adhere to schedule"> Can't adhere to schedule</option>
-                                    <option value="Patient refusal/preference">Patient refusal/preference</option>
-                                    <option value="Doctor's Instruction">Doctor's Instruction </option>
-                                    <option value="Ran out of medicine">Ran out of medicine</option>
-                                    <option value="Drugs not available">Drugs not available</option>
-                                    <option value="Toxicity">Toxicity</option>
-                                    <option value="Virologic failure"> Virologic failure</option>
-                                    <option value="Clinical failure">Clinical failure </option>
-                                    <option value="Drug interaction">Drug interaction</option>
-                                    <option value="Immunologic failure">Immunologic failure</option>
-                                    <option value="Other">Other</option>
-                                    </Input>
-                            </FormGroup>
-                        </div>
-                        )}
-                        {planArt.reasonForChange ==='other' && (
-                        <div className="form-group mb-3 col-md-6">                                    
-                            <FormGroup>
-                                <Label>Code for reason for change/stop ART</Label>
-                                <Input 
-                                        type="text"
-                                        name="reasonForChangeOther"
-                                        id="reasonForChangeOther"
-                                        value={planArt.reasonForChangeOther}
-                                        onChange={handlePlanArt}  
-                                />
-
-                            </FormGroup>
-                        </div>
-                        )}
-                    </>
-                    )}
                     <div className="form-group mb-3 col-md-6"> </div>
                     <h3> Plan (specify orders on requisition)</h3>
                     <div className="form-group mb-3 col-md-6">

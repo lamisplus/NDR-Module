@@ -42,8 +42,31 @@ const useStyles = makeStyles(theme => ({
     },
 
     root: {
-        '& > *': {
-            margin: theme.spacing(1)
+        flexGrow: 1,
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
         }
     },
     input: {
@@ -251,7 +274,7 @@ const EAC = (props) => {
   return (      
         <div>  
                           
-            <Card >
+            <Card className={classes.root}>
                 <CardBody>
 
                 <form >
@@ -294,7 +317,7 @@ const EAC = (props) => {
                                 type="date"
                                 name="dateResultReceived"
                                 id="dateResultReceived"
-                                value={objValues.dateResultReceived}
+                                //value={objValues.dateResultReceived}
                                 value={currentViralLoad && currentViralLoad.dateResultReceived ? currentViralLoad.dateResultReceived :""}
                                 //onChange={handleInputChange}
                                 //min={objValues.dateOfEac2}

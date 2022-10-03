@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import { useHistory, } from "react-router-dom";
 // import {TiArrowBack} from 'react-icons/ti'
-import {token, url as baseUrl } from "../../../../api";
+import {token, url as baseUrl } from "../../../api";
 import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
@@ -119,18 +119,19 @@ const BasicInfo = (props) => {
         props.observation.data.regimen= regimen
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
-        axios.put(`${baseUrl}observation/${props.observation.id}`, props.observation,
+        axios.post(`${baseUrl}observation`, props.observation,
         { headers: {"Authorization" : `Bearer ${token}`}},            
         )
           .then(response => {
               setSaving(false);
               handleItemClick('', 'regimen' ) 
               props.patientObj.clinicalEvaluation=true
-              toast.success("Initial Clinic Evaluation save successful");
+              toast.success("Initial Clinic Evaluation successful");
               props.setActiveContent({...props.activeContent, route:'recent-history'})
           })
           .catch(error => {
               setSaving(false);
+              //console.log(error.response)
               if(error.response && error.response.data){
                 let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                 toast.error(errorMessage); 
@@ -144,7 +145,7 @@ const BasicInfo = (props) => {
 return (
         <>  
         
-            <Card className={classes.root}>
+            <Card >
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Regimen & Next Appointment</h2>
                 <br/>

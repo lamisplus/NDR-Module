@@ -53,7 +53,31 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        maxWidth: 752,
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
+        }
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -74,8 +98,8 @@ const BasicInfo = (props) => {
     const [errors, setErrors] = useState({});
     let temp = { ...errors }   
     useEffect(() => { 
-        if(props.observation.data ){
-            setVitalSignDto(props.observation.data.physicalExamination)           
+        if(props.observation.data && props.observation.data.physicalExamination){
+            setVitalSignDto( props.observation.data.physicalExamination)           
         }
     }, [props.observation.data]); 
     const [vital, setVitalSignDto]= useState({
@@ -173,14 +197,15 @@ const BasicInfo = (props) => {
     const handleSubmit = (e) => { 
         e.preventDefault();  
         props.observation.data.physicalExamination=vital   
-        toast.success("Medical history save successful");
+        //toast.success("Medical history save successful");
         handleItemClick('appearance', 'physical-examination' )                  
     }
+    console.log(props.observation.data)
     
 return (
         <>  
         
-            <Card >
+            <Card className={classes.root}>
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Physical Examination</h2>
                 <br/>
@@ -400,6 +425,73 @@ return (
                         </FormGroup>
                     </div>
                     </div>
+                    {props.patientAge<=14 && (
+                    <div className="row">
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Head circumference </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="number"
+                                name="headCircumference"
+                                id="headCircumference"
+                                onChange={handleInputChangeVitalSignDto}
+                                min="35"
+                                max="47"
+                                value={vital.headCircumference}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Surface Area </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="surfaceArea"
+                                id="surfaceArea"
+                                onChange={handleInputChangeVitalSignDto}
+                                value={vital.surfaceArea}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm<sup>3</sup>
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >MUAC</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="select"
+                                        name="muac"
+                                        id="muac"
+                                        onChange={handleInputChangeVitalSignDto} 
+                                        value={vital.muac} 
+                                    >
+                                    <option value="">Select</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Under">Under</option>
+                                    <option value="Over">Over</option>
+                                    </Input>
+
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                    </div>
+                    )}
                     </div>
                     <br/>
                     <Button content='Back' icon='left arrow' labelPosition='left' style={{backgroundColor:"#992E62", color:'#fff'}} onClick={()=>handleItemClick('past-arv', 'past-arv')}/>

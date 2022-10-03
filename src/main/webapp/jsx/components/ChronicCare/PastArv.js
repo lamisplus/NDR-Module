@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import { useHistory, } from "react-router-dom";
 // import {TiArrowBack} from 'react-icons/ti'
-import {token, url as baseUrl } from "../../../../api";
+import {token, url as baseUrl } from "../../../api";
 import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
@@ -50,31 +50,7 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        "& .card-title":{
-            color:'#fff',
-            fontWeight:'bold'
-        },
-        "& .form-control":{
-            borderRadius:'0.25rem',
-            height:'41px'
-        },
-        "& .card-header:first-child": {
-            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
-        },
-        "& .dropdown-toggle::after": {
-            display: " block !important"
-        },
-        "& select":{
-            "-webkit-appearance": "listbox !important"
-        },
-        "& p":{
-            color:'red'
-        },
-        "& label":{
-            fontSize:'14px',
-            color:'#014d88',
-            fontWeight:'bold'
-        }
+        maxWidth: 752,
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -154,7 +130,7 @@ const BasicInfo = (props) => {
     return (
         <>  
         
-            <Card className={classes.root}>
+            <Card >
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Past or current ARV or other medication's side effect</h2>
                 <br/>

@@ -53,7 +53,31 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         flexGrow: 1,
-        maxWidth: 752,
+        "& .card-title":{
+            color:'#fff',
+            fontWeight:'bold'
+        },
+        "& .form-control":{
+            borderRadius:'0.25rem',
+            height:'41px'
+        },
+        "& .card-header:first-child": {
+            borderRadius: "calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0"
+        },
+        "& .dropdown-toggle::after": {
+            display: " block !important"
+        },
+        "& select":{
+            "-webkit-appearance": "listbox !important"
+        },
+        "& p":{
+            color:'red'
+        },
+        "& label":{
+            fontSize:'14px',
+            color:'#014d88',
+            fontWeight:'bold'
+        }
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -69,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const ChildRegimenNextAppointment = (props) => {
-    //console.log(props.activeContent)
+    const classes = useStyles()
     const [errors, setErrors] = useState({});
     let temp = { ...errors } 
     useEffect(() => { 
@@ -119,6 +143,7 @@ const ChildRegimenNextAppointment = (props) => {
         props.observation.data.regimen= regimen
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
+        console.log(props.observation)
         axios.post(`${baseUrl}observation`, props.observation,
         { headers: {"Authorization" : `Bearer ${token}`}},            
         )
@@ -145,7 +170,7 @@ const ChildRegimenNextAppointment = (props) => {
 return (
         <>  
         
-            <Card >
+            <Card className={classes.root}>
                 <CardBody>   
                 <h2 style={{color:'#000'}}>Regimen & Next Appointment</h2>
                 <br/>
