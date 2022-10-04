@@ -290,10 +290,16 @@ const ArtCommencement = (props) => {
                     setViraLoadStart(false)
                 }
             }
+            if(e.target.name==='cd4Percentage' && e.target.value!==""){
+                setObjValues ({...objValues,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            }
+            if(e.target.name==='cd4' && e.target.value!==""){
+                setObjValues ({...objValues,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            }
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})           
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
@@ -480,7 +486,7 @@ const ArtCommencement = (props) => {
                             <FormGroup>
                             <Label for="cd4">CD4 at start of ART </Label>
                             <Input
-                                type="number"
+                                type="text"
                                 name="cd4"
                                 id="cd4"
                                 onChange={handleInputChange}
@@ -496,7 +502,7 @@ const ArtCommencement = (props) => {
                         <FormGroup>
                         <Label for="cd4Percentage">CD4%</Label>
                         <Input
-                            type="number"
+                            type="text"
                             name="cd4Percentage"
                             id="cd4Percentage"
                             onChange={handleInputChange}
@@ -695,13 +701,59 @@ const ArtCommencement = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </div> */}
-                        <div className="row">
+                        {props.patientObj.sex==="Female" ? (
+                        <>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label >Pregnancy Status</Label>
+                            <Input
+                                type="select"
+                                name="address"
+                                id="address"
+                                disabled
+                                onChange={handleInputChange}
+                                value="72"
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+
+                            >
+                                <option value=""> Select</option>
+        
+                                {pregancyStatus.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
+                            </Input>
+                            </FormGroup>
+                        </div>
+                        {props.patientObj.enrollment && props.patientObj.enrollment.pregnancyStatusId==='72' && (
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label >LMP</Label>
+                            <Input
+                                type="date"
+                                name="LMPDate"
+                                id="LMPDate"
+                                onChange={handleInputChange}
+                                value={props.patientObj.enrollment.dateOfLpm}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled
+                            />
+                            </FormGroup>
+                        </div>
+                        )}
+                        </>
+                    ) :
+                    ""
+                    }
+                    <div className="row">
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
                         <Label >Pulse</Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -728,7 +780,7 @@ const ArtCommencement = (props) => {
                         <Label >Respiratory Rate </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -755,7 +807,7 @@ const ArtCommencement = (props) => {
                         <Label >Temperature </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -783,7 +835,7 @@ const ArtCommencement = (props) => {
                         <Label >Body Weight</Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -818,7 +870,7 @@ const ArtCommencement = (props) => {
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="number"
+                                type="text"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -851,7 +903,7 @@ const ArtCommencement = (props) => {
                             <Label > {" "}</Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
+                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                
@@ -868,7 +920,7 @@ const ArtCommencement = (props) => {
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -913,15 +965,16 @@ const ArtCommencement = (props) => {
                     </div>
                         {gender==="Female" || gender==="Transgebder(Female)"? (
                             <>
+                            <div className="row">
                             <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
                                 <Label >Pregnancy Status</Label>
                                 <Input
                                     type="select"
-                                    name="address"
-                                    id="address"
+                                    name="pregnantStatus"
+                                    id="pregnantStatus"
                                     onChange={handleInputChange}
-                                    value={objValues.address}
+                                    value={objValues.pregnantStatus}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                     disabled={props.activeContent.actionType==='update' ? false :true}
@@ -945,12 +998,13 @@ const ArtCommencement = (props) => {
                                     name="LMPDate"
                                     id="LMPDate"
                                     onChange={handleInputChange}
-                                    value={values.address}
+                                    value={values.LMPDate}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                     disabled={props.activeContent.actionType==='update' ? false :true}
                                 />
                                 </FormGroup>
+                            </div>
                             </div>
                             </>
                         ) :

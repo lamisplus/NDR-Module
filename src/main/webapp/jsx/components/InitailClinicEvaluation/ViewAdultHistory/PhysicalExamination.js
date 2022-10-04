@@ -193,12 +193,25 @@ const BasicInfo = (props) => {
             props.setCompleted([...props.completed, completedMenu])
         }
     }  
+    const validate = () => {        
+        temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+        temp.height = vital.height ? "" : "This field is required" 
+        temp.temperature = vital.temperature ? "" : "This field is required"
+        temp.pulse = vital.pulse ? "" : "This field is required"   
+       
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+        }
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
         props.observation.data.physicalExamination=vital   
         //toast.success("Medical history save successful");
-        handleItemClick('appearance', 'physical-examination' )                  
+        if(validate()){
+            handleItemClick('appearance', 'physical-examination' ) 
+        }                 
     }
     console.log(props.observation.data)
     
@@ -349,7 +362,7 @@ return (
 
                                 style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
                                 >
-                                {vital.height!=='' ? (vital.height/100).toFixed(2) + "m" : "m"}
+                                {vital.height ? (vital.height/100).toFixed(2) + "m" : "m"}
                             </InputGroupText>
                         </InputGroup>
                         {vitalClinicalSupport.height !=="" ? (
@@ -361,12 +374,12 @@ return (
                         </FormGroup>
                     </div>
                     <div className="form-group mb-3 mt-2 col-md-4">
-                        {vital.bodyWeight!=="" && vital.height!==''&&(
+                        {vital.bodyWeight && vital.height &&(
                             <FormGroup>
                             <Label > {" "}</Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
+                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                
@@ -383,7 +396,7 @@ return (
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -397,7 +410,7 @@ return (
                             diastolic(mmHg)
                             </InputGroupText>
                                 <Input 
-                                type="number"
+                                type="text"
                                 name="diastolic"
                                 id="diastolic"
                                 min={0}
@@ -432,7 +445,7 @@ return (
                         <Label >Head circumference </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="headCircumference"
                                 id="headCircumference"
                                 onChange={handleInputChangeVitalSignDto}

@@ -163,7 +163,7 @@ const BasicInfo = (props) => {
         props.observation.data.planArt = planArt
         props.observation.data.plan = plan
         props.observation.data.enroll=enroll  
-        toast.success("Record save successful");
+        //toast.success("Record save successful");
         handleItemClick('regimen', 'plan' )                  
     }
         

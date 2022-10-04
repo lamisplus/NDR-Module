@@ -324,7 +324,7 @@ const Laboratory = (props) => {
                             <FormGroup>
                                 <Label for="encounterDate">laboratory Number</Label>
                                 <Input
-                                    type="number"
+                                    type="text"
                                     name="labNumber"
                                     id="labNumber"
                                     //min={0}

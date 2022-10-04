@@ -155,7 +155,7 @@ const BasicInfo = (props) => {
         e.preventDefault();  
         props.observation.data.assesment = assesment
         props.observation.data.who=who  
-        toast.success("Record save successful");
+        //toast.success("Record save successful");
         handleItemClick('plan', 'who' )                  
     }
         

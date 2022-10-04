@@ -270,10 +270,17 @@ const ArtCommencement = (props) => {
                         setViraLoadStart(false)
                     }
                 }
+                if(e.target.name==='cd4Percentage' && e.target.value!==""){
+                    setObjValues ({...objValues,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+                }
+                if(e.target.name==='cd4' && e.target.value!==""){
+                    setObjValues ({...objValues,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+                }
+                
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})           
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
@@ -445,7 +452,7 @@ const ArtCommencement = (props) => {
                         <FormGroup>
                         <Label for="cd4">CD4 at start of ART </Label>
                         <Input
-                            type="number"
+                            type="text"
                             name="cd4"
                             id="cd4"
                             min={0}
@@ -462,7 +469,7 @@ const ArtCommencement = (props) => {
                     <FormGroup>
                     <Label for="cd4Percentage">CD4%</Label>
                     <Input
-                        type="number"
+                        type="text"
                         name="cd4Percentage"
                         id="cd4Percentage"
                         min={0}
@@ -661,7 +668,7 @@ const ArtCommencement = (props) => {
                             </Input>
                             </FormGroup>
                         </div>
-                        {props.patientObj.enrollment && props.patientObj.enrollment.pregnancyStatusId!=='72' && (
+                        {props.patientObj.enrollment && props.patientObj.enrollment.pregnancyStatusId==='72' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label >LMP</Label>
@@ -712,7 +719,7 @@ const ArtCommencement = (props) => {
                         <Label >Pulse</Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -739,7 +746,7 @@ const ArtCommencement = (props) => {
                         <Label >Respiratory Rate </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -766,7 +773,7 @@ const ArtCommencement = (props) => {
                         <Label >Temperature </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -794,7 +801,7 @@ const ArtCommencement = (props) => {
                         <Label >Body Weight</Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -828,7 +835,7 @@ const ArtCommencement = (props) => {
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="number"
+                                type="text"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -860,7 +867,7 @@ const ArtCommencement = (props) => {
                             <Label > </Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
+                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                
@@ -877,7 +884,7 @@ const ArtCommencement = (props) => {
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -891,7 +898,7 @@ const ArtCommencement = (props) => {
                             diastolic(mmHg)
                             </InputGroupText>
                                 <Input 
-                                type="number"
+                                type="text"
                                 name="diastolic"
                                 id="diastolic"
                                 min={0}

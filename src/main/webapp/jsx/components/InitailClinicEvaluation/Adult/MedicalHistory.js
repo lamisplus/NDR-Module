@@ -93,7 +93,7 @@ const MedicalHistory = (props) => {
     const classes = useStyles();
     const history = useHistory();
     const [errors, setErrors] = useState({});
-    
+
     useEffect(() => { 
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory)           
@@ -241,6 +241,7 @@ const MedicalHistory = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="date"
+                                    min={props.patientObj && props.patientObj.enrollment ? props.patientObj.enrollment.dateOfRegistration :""}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     name="visitDate"
                                     id="visitDate"
@@ -285,8 +286,8 @@ const MedicalHistory = (props) => {
                                     type="text"
                                     name="motherName"
                                     id="motherName"
-                                    value={visit.motherName}
-                                    onChange={handleInputChangeobjValues} 
+                                    value={objValues.motherName}
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                            
@@ -299,12 +300,12 @@ const MedicalHistory = (props) => {
                                 name="motherAddress"
                                 id="motherAddress"
                                 value={objValues.motherAddress}
-                                onChange={handleInputChangeobjValues} 
+                                onChange={handleMedicalHistory} 
                             />
                         </FormGroup>
                         
                         </div>
-                    </>
+                    </>       
                      )}
                      <div className="form-group mb-3 col-md-4">
                             <FormGroup>
@@ -334,7 +335,7 @@ const MedicalHistory = (props) => {
                                     name="fatherName"
                                     id="fatherName"
                                     value={objValues.fatherName}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                            
@@ -347,7 +348,7 @@ const MedicalHistory = (props) => {
                                     name="fatherAddress"
                                     id="fatherAddress"
                                     value={objValues.fatherAddress}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                             
@@ -382,7 +383,7 @@ const MedicalHistory = (props) => {
                                     name="howManySibiling"
                                     id="howManySibiling"
                                     value={objValues.howManySibiling}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                             

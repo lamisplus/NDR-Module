@@ -353,11 +353,12 @@ const UserRegistration = (props) => {
         }
     }
     const handleAgeChange = (e) => {
-        if (!ageDisabled && e.target.value) {
-            if(e.target.value!=='' && e.target.value>=60){
+        const ageNumber = e.target.value.replace(/\D/g, '')
+        if (!ageDisabled && ageNumber) {
+            if(ageNumber!=='' && ageNumber>=60){
                 toggle()
             }
-            if(e.target.value <=1){
+            if(ageNumber <=1){
                 setDisabledAgeBaseOnAge(true)
             }else{
                 setDisabledAgeBaseOnAge(false)
@@ -366,12 +367,12 @@ const UserRegistration = (props) => {
             currentDate.setDate(15);
             currentDate.setMonth(5);
             const estDob = moment(currentDate.toISOString());
-            const dobNew = estDob.add((e.target.value * -1), 'years');
+            const dobNew = estDob.add((ageNumber * -1), 'years');
             //setBasicInfo({...basicInfo, dob: moment(dobNew).format("YYYY-MM-DD")});
             basicInfo.dob =moment(dobNew).format("YYYY-MM-DD")
 
         }
-        setBasicInfo({...basicInfo, age: Math.abs(e.target.value)});
+        setBasicInfo({...basicInfo, age: ageNumber});
     }
     //End of Date of Birth and Age handling 
     //Handle Input Change for Basic Infor
@@ -394,7 +395,7 @@ const UserRegistration = (props) => {
             setBasicInfo ({...basicInfo,  [e.target.name]: name});
         }
         if(e.target.name==='ninNumber' && e.target.value!==''){
-            const ninNumberValue = checkNINLimit(e.target.value)
+            const ninNumberValue = checkNINLimit(e.target.value.replace(/\D/g, ''))
             setBasicInfo ({...basicInfo,  [e.target.name]: ninNumberValue});
         }
         if(e.target.name==='hospitalNumber' && e.target.value!==''){
@@ -976,7 +977,7 @@ const UserRegistration = (props) => {
                                                     <Label>Age</Label>
                                                     <input
                                                         
-                                                        type="number"
+                                                        type="text"
                                                         name="age"                                                       
                                                         className="form-control"                                                        
                                                         id="age"
@@ -1061,7 +1062,7 @@ const UserRegistration = (props) => {
                                                     <Label for="ninNumber">National Identity Number (NIN)  </Label>
                                                     <input
                                                         className="form-control"
-                                                        type="number"
+                                                        type="text"
                                                         name="ninNumber"
                                                         value={basicInfo.ninNumber}
                                                         id="ninNumber"

@@ -420,18 +420,19 @@ const UserRegistration = (props) => {
         }
     }
     const handleAgeChange = (e) => {
-        if (!ageDisabled && e.target.value) {
+        const ageNumber = e.target.value.replace(/\D/g, '')
+        if (!ageDisabled && ageNumber) {
             
             const currentDate = new Date();
             currentDate.setDate(15);
             currentDate.setMonth(5);
             const estDob = moment(currentDate.toISOString());
-            const dobNew = estDob.add((e.target.value * -1), 'years');
+            const dobNew = estDob.add((ageNumber * -1), 'years');
             //setBasicInfo({...basicInfo, dob: moment(dobNew).format("YYYY-MM-DD")});
             basicInfo.dob =moment(dobNew).format("YYYY-MM-DD")
 
         }
-        setBasicInfo({...basicInfo, age: e.target.value});
+        setBasicInfo({...basicInfo, age: ageNumber});
     }
     //End of Date of Birth and Age handling 
     //Handle Input Change for Basic Infor
@@ -452,6 +453,10 @@ const UserRegistration = (props) => {
         if(e.target.name==='middleName' && e.target.value!==''){
             const name = alphabetOnly(e.target.value)
             setBasicInfo ({...basicInfo,  [e.target.name]: name});
+        }
+        if(e.target.name==='ninNumber' && e.target.value!==''){
+            const ninNumberValue = checkNINLimit(e.target.value.replace(/\D/g, ''))
+            setBasicInfo ({...basicInfo,  [e.target.name]: ninNumberValue});
         }
         if(e.target.name==='hospitalNumber' && e.target.value!==''){
             async function getCharacters() {
@@ -512,6 +517,11 @@ const UserRegistration = (props) => {
         const relationship = relationshipOptions.find(obj => obj.id == relationshipId);
         return relationship ? relationship.display : '';
     };
+    const checkNINLimit=(e)=>{
+        const limit = 11;        
+        const acceptedNumber= e.slice(0, limit)
+        return  acceptedNumber   
+    }
     const handleInputChangeRelatives = e => {        
         setRelatives ({...relatives,  [e.target.name]: e.target.value});               
     }
@@ -1020,7 +1030,7 @@ const UserRegistration = (props) => {
                                                     <Label>Age</Label>
                                                     <input
                                                         className="form-control"
-                                                        type="number"
+                                                        type="text"
                                                         name="age"
                                                         id="age"
                                                         value={basicInfo.age}
@@ -1110,7 +1120,7 @@ const UserRegistration = (props) => {
                                                         name="nin"
                                                         id="nin"
                                                         value={basicInfo.ninNumber}
-                                                        //onChange={handleInputChangeBasic}
+                                                        onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88",borderRadius:"0.2rem"}}
                                                     />
                                                    

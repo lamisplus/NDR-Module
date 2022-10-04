@@ -288,7 +288,7 @@ const MedicalHistory = (props) => {
                                     name="motherName"
                                     id="motherName"
                                     value={visit.motherName}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                            
@@ -301,7 +301,7 @@ const MedicalHistory = (props) => {
                                 name="motherAddress"
                                 id="motherAddress"
                                 value={objValues.motherAddress}
-                                onChange={handleInputChangeobjValues} 
+                                onChange={handleMedicalHistory} 
                             />
                         </FormGroup>
                         
@@ -336,7 +336,7 @@ const MedicalHistory = (props) => {
                                     name="fatherName"
                                     id="fatherName"
                                     value={objValues.fatherName}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                            
@@ -349,7 +349,7 @@ const MedicalHistory = (props) => {
                                     name="fatherAddress"
                                     id="fatherAddress"
                                     value={objValues.fatherAddress}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                             
@@ -384,7 +384,7 @@ const MedicalHistory = (props) => {
                                     name="howManySibiling"
                                     id="howManySibiling"
                                     value={objValues.howManySibiling}
-                                    onChange={handleInputChangeobjValues} 
+                                    onChange={handleMedicalHistory} 
                                 />
                             </FormGroup>
                             

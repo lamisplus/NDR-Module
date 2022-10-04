@@ -322,7 +322,7 @@ const ClinicVisit = (props) => {
     }
   }
   const handleInputChangeVitalSignDto = e => {
-    setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+    setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
   }
 
   //Handle CheckBox 
@@ -585,7 +585,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         <FormLabelName >Pulse</FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -612,7 +612,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         <FormLabelName >Respiratory Rate </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -639,7 +639,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         <FormLabelName >Temperature </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -667,7 +667,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         <FormLabelName >Body Weight</FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -702,7 +702,7 @@ const handleInputValueCheckTemperature =(e)=>{
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="number"
+                                type="text"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -735,7 +735,7 @@ const handleInputValueCheckTemperature =(e)=>{
                             <Label > {" "}</Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
+                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                

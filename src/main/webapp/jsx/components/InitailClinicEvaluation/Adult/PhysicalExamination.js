@@ -129,7 +129,8 @@ const BasicInfo = (props) => {
                                 respiratoryRate:""
                             })
     const handleInputChangeVitalSignDto = e => {
-        setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+        setErrors({...errors, [e.target.name]: ""})  
+        setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
     }
     //to check the input value for clinical decision 
     const handleInputValueCheckHeight =(e)=>{
@@ -196,12 +197,25 @@ const BasicInfo = (props) => {
             props.setCompleted([...props.completed, completedMenu])
         }
     }  
+    const validate = () => {        
+        temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+        temp.height = vital.height ? "" : "This field is required" 
+        temp.temperature = vital.temperature ? "" : "This field is required"
+        temp.pulse = vital.pulse ? "" : "This field is required"   
+       
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+        }
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
         props.observation.data.physicalExamination=vital   
-        toast.success("Medical history save successful");
-        handleItemClick('appearance', 'physical-examination' )                  
+        //toast.success("Medical history save successful");
+        if(validate()){
+            handleItemClick('appearance', 'physical-examination' ) 
+        }                 
     }
     
 return (
@@ -221,7 +235,7 @@ return (
                         <Label >Pulse</Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -248,7 +262,7 @@ return (
                         <Label >Respiratory Rate </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -275,7 +289,7 @@ return (
                         <Label >Temperature </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -303,7 +317,7 @@ return (
                         <Label >Body Weight</Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -337,7 +351,7 @@ return (
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="number"
+                                type="text"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -351,7 +365,7 @@ return (
 
                                 style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
                                 >
-                                {vital.height!=='' ? (vital.height/100).toFixed(2) + "m" : "m"}
+                                {vital.height ? (vital.height/100).toFixed(2) + "m" : "m"}
                             </InputGroupText>
                         </InputGroup>
                         {vitalClinicalSupport.height !=="" ? (
@@ -363,12 +377,12 @@ return (
                         </FormGroup>
                     </div>
                     <div className="form-group mb-3 mt-2 col-md-4">
-                        {vital.bodyWeight!=="" && vital.height!==''&&(
+                        {vital.bodyWeight && vital.height &&(
                             <FormGroup>
                             <Label > {" "}</Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {Math.round(vital.bodyWeight/((vital.height * vital.height)/100))}
+                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                
@@ -385,7 +399,7 @@ return (
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -399,7 +413,7 @@ return (
                             diastolic(mmHg)
                             </InputGroupText>
                                 <Input 
-                                type="number"
+                                type="text"
                                 name="diastolic"
                                 id="diastolic"
                                 min={0}
@@ -434,7 +448,7 @@ return (
                         <Label >Head circumference </Label>
                         <InputGroup> 
                             <Input 
-                                type="number"
+                                type="text"
                                 name="headCircumference"
                                 id="headCircumference"
                                 onChange={handleInputChangeVitalSignDto}

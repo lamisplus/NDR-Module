@@ -109,6 +109,7 @@ const BasicInfo = (props) => {
     const [objValues, setobjValues] = useState({nextAppointment:""});
     const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
     const handleRegimen =e =>{
+        setErrors({...errors, [e.target.name]: ""})
         if(e.target.value==='first line'){
             setHideFirstLine(true)
             setHideSecondLine(false)
@@ -126,7 +127,8 @@ const BasicInfo = (props) => {
         }
         setRegimen({...regimen, [e.target.name]: e.target.value})
     }
-    const handleInputChangeobjValues = e => {            
+    const handleInputChangeobjValues = e => {  
+        setErrors({...errors, [e.target.name]: ""})          
         setobjValues ({...objValues,  [e.target.name]: e.target.value});
     }
     const handleItemClick =(page, completedMenu)=>{
@@ -137,12 +139,23 @@ const BasicInfo = (props) => {
             props.setCompleted([...props.completed, completedMenu])
         }
     }  
+    const validate = () => {        
+        temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
+        temp.regimenLine = regimen.regimenLine ? "" : "This field is required" 
+        temp.regimen = regimen.regimen ? "" : "This field is required" 
+       
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+        }
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
         props.observation.data.regimen= regimen
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
+        if(validate()){
         axios.post(`${baseUrl}observation`, props.observation,
         { headers: {"Authorization" : `Bearer ${token}`}},            
         )
@@ -162,7 +175,7 @@ const BasicInfo = (props) => {
             }
              
           });
-       
+        }
                          
     }
         
@@ -193,6 +206,9 @@ return (
                                 <option value="third line">Third Line </option>
                                
                                 </Input>
+                                {errors.regimenLine !=="" ? (
+                                    <span className={classes.error}>{errors.regimenLine}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
                     {hideFirstLine && (
@@ -214,6 +230,9 @@ return (
                                 <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option> 
                                 <option value="AZT + 3TC + EFV400">AZT + 3TC + EFV400</option>                              
                             </Input>
+                            {errors.regimen !=="" ? (
+                                    <span className={classes.error}>{errors.regimen}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
                     )}
@@ -244,6 +263,9 @@ return (
                                 <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
                                 <option value="TDF +  FTC + DTG">TDF +  FTC + DTG</option>
                             </Input>
+                            {errors.regimen !=="" ? (
+                                    <span className={classes.error}>{errors.regimen}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
                     )}
@@ -272,6 +294,9 @@ return (
                                 <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r</option> 
                                 <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                        
                             </Input>
+                            {errors.regimen !=="" ? (
+                                    <span className={classes.error}>{errors.regimen}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
                     )}
@@ -289,7 +314,10 @@ return (
                                     onChange={handleInputChangeobjValues} 
                                     value={objValues.nextAppointment}  
                                 />
-                            </InputGroup>                                        
+                            </InputGroup>
+                            {errors.nextAppointment !=="" ? (
+                                    <span className={classes.error}>{errors.nextAppointment}</span>
+                                ) : "" }                                        
                             </FormGroup>
                     </div>
                     </div> 

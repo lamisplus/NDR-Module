@@ -229,7 +229,7 @@ const ArtCommencement = (props) => {
 
         const handleInputChange = e => {
             setErrors({...temp, [e.target.name]:""})
-            setObjValues ({...objValues,  [e.target.name]: e.target.value});
+            
                 if(e.target.name==='isViralLoadAtStartOfArt' && e.target.value!==""){
                     if(e.target.value==='true'){
                         setViraLoadStart(true)
@@ -239,10 +239,17 @@ const ArtCommencement = (props) => {
                         setViraLoadStart(false)
                     }
                 }
+                if(e.target.name==='cd4Percentage' && e.target.value!==""){
+                    setObjValues ({...objValues,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+                }
+                if(e.target.name==='cd4' && e.target.value!==""){
+                    setObjValues ({...objValues,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+                }
+                //.replace(/\D/g, '')
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})           
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
@@ -396,7 +403,7 @@ const ArtCommencement = (props) => {
                                         <FormGroup>
                                         <Label for="cd4">CD4 at start of ART </Label>
                                         <Input
-                                            type="number"
+                                            type="text"
                                             name="cd4"
                                             id="cd4"
                                             min={0}
@@ -413,7 +420,7 @@ const ArtCommencement = (props) => {
                                     <FormGroup>
                                     <Label for="cd4Percentage">CD4%</Label>
                                     <Input
-                                        type="number"
+                                        type="text"
                                         name="cd4Percentage"
                                         id="cd4Percentage"
                                         min={0}
@@ -502,7 +509,7 @@ const ArtCommencement = (props) => {
                                         <FormGroup>
                                         <Label >Viral Load at Start of ART Result</Label>
                                         <Input
-                                            type="number"
+                                            type="text"
                                             name="viralLoadAtStartOfArt"
                                             id="viralLoadAtStartOfArt"
                                             onChange={handleInputChange}
@@ -663,7 +670,7 @@ const ArtCommencement = (props) => {
                                         <Label >Body Weight</Label>
                                         <InputGroup> 
                                             <Input 
-                                                type="number"
+                                                type="text"
                                                 name="bodyWeight"
                                                 id="bodyWeight"
                                                 onChange={handleInputChangeVitalSignDto}
@@ -698,7 +705,7 @@ const ArtCommencement = (props) => {
                                                 cm
                                         </InputGroupText>
                                             <Input 
-                                                type="number"
+                                                type="text"
                                                 name="height"
                                                 id="height"
                                                 onChange={handleInputChangeVitalSignDto}
@@ -749,7 +756,7 @@ const ArtCommencement = (props) => {
                                         <Label >Blood Pressure</Label>
                                         <InputGroup> 
                                             <Input 
-                                                type="number"
+                                                type="text"
                                                 name="systolic"
                                                 id="systolic"
                                                 min="90"
@@ -764,7 +771,7 @@ const ArtCommencement = (props) => {
                                                 systolic(mmHg)
                                             </InputGroupText>
                                              <Input 
-                                                type="number"
+                                                type="text"
                                                 name="diastolic"
                                                 id="diastolic"
                                                 min={0}
