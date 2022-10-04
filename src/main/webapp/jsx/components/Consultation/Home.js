@@ -174,6 +174,7 @@ const ClinicVisit = (props) => {
     bodyWeight: "",
     diastolic: "",
     encounterDate: "",
+    captureDate:"",
     facilityId: 1,
     height: "",
     personId: props.patientObj.id,
@@ -227,9 +228,9 @@ const ClinicVisit = (props) => {
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
-
-        const lastVitalSigns = response.data[response.data.length - 1]
-        if (lastVitalSigns.encounterDate === moment(new Date()).format("YYYY-MM-DD") === true) {
+         const lastVitalSigns = response.data[response.data.length - 1]
+         console.log(lastVitalSigns)
+        if (lastVitalSigns.captureDate >= moment(new Date()).format("YYYY-MM-DD")) {
           setcurrentVitalSigns(lastVitalSigns)
           setShowCurrentVitalSigns(true)
         }
@@ -336,7 +337,12 @@ const ClinicVisit = (props) => {
     }
   }
   const handleInputChangeVitalSignDto = e => {
-    setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
+    if(e.target.name!=='encounterDate'){
+      setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
+    }else{
+      setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+   }
+    
   }
 
   const addConditionsModal = () => {
@@ -459,6 +465,7 @@ const handleInputValueCheckTemperature =(e)=>{
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
+    vital.captureDate= vital.encounterDate
     objValues['vitalSignDto'] = vital
     axios.post(`${baseUrl}hiv/art/clinic-visit/`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
@@ -775,7 +782,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         </FormGroup>
                     </div>
                    
-                    <div className=" mb-3 col-md-4">
+                    <div className=" mb-3 col-md-5">
                         <FormGroup>
                         <FormLabelName >Body Weight</FormLabelName>
                         <InputGroup> 
@@ -802,7 +809,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         ) : "" }
                         </FormGroup>
                     </div>                                   
-                    <div className="form-group mb-3 col-md-4">
+                    <div className="form-group mb-3 col-md-5">
                         <FormGroup>
                         <FormLabelName >Height</FormLabelName>
                         <InputGroup> 
@@ -842,7 +849,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         ) : "" }
                         </FormGroup>
                     </div>
-                    <div className="form-group mb-3 mt-2 col-md-4">
+                    <div className="form-group mb-3 mt-2 col-md-2">
                         {vital.bodyWeight!=="" && vital.height!=='' && (
                             <FormGroup>
                             <Label > {" "}</Label>
@@ -857,7 +864,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     </div>
               </div>
               <div className="row">
-              <div className="form-group mb-3 col-md-8">
+              <div className="form-group mb-3 col-md-12">
                   <FormGroup>
                   <FormLabelName >Blood Pressure</FormLabelName>
                   <InputGroup>
@@ -865,7 +872,7 @@ const handleInputValueCheckTemperature =(e)=>{
                           systolic(mmHg)
                   </InputGroupText> 
                       <Input 
-                          type="number"
+                          type="text"
                           name="systolic"
                           id="systolic"
                           min="90"
@@ -879,7 +886,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       diastolic(mmHg)
                       </InputGroupText>
                           <Input 
-                          type="number"
+                          type="text"
                           name="diastolic"
                           id="diastolic"
                           min={0}

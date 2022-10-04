@@ -209,7 +209,8 @@ const EAC = (props) => {
     }    
     const BackToSession = (row, actionType) =>{  
         // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
-         props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
+        
+        props.setActiveContent({...props.activeContent, route:'eac-session', id:row.id, activeTab:"history", actionType:actionType, obj:row})
      } 
      const handleSelectedRegimen = e => {
         const regimenId= e.target.value
@@ -286,7 +287,7 @@ const EAC = (props) => {
                         className=" float-end ms-2 mr-2 mt-2 "
                         //startIcon={<FaUserPlus size="10"/>}
                         //startIcon={<TiArrowBack  />}
-                        onClick={BackToSession}
+                        onClick={()=>BackToSession(props.activeContent.obj, 'view')}
                         style={{backgroundColor:"#014D88", color:'#fff', height:'35px'}}
 
                         >
