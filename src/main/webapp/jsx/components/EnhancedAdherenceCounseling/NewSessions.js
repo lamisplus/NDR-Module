@@ -96,7 +96,8 @@ const NEWEACSESSION = (props) => {
                                                 personId: props.patientObj.id,
                                                 status: "",
                                                 visitId:"",
-                                                eacId:""
+                                                eacId:"",
+                                                sessionDate:""
                                             })
         const optionsForBarriers = [
             { value: 'Forgot', label: 'Forgot' },
@@ -215,8 +216,23 @@ const NEWEACSESSION = (props) => {
                     <br/>
                     <br/>
 
-
-                        <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-4">
+                                <FormGroup>
+                                <Label >Session Date</Label>
+                                <Input
+                                    type="date"
+                                    name="sessionDate"
+                                    id="sessionDate"
+                                    value={objValues.sessionDate}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                />
+                                 
+                                 
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
                                 <Label >Adherence</Label>
                                 <Input
@@ -238,7 +254,7 @@ const NEWEACSESSION = (props) => {
                         </FormGroup>
                         </div>
 
-                        <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
                                 <Label >Any missed pharmacy drug pick-ups?</Label>
                                 <Input

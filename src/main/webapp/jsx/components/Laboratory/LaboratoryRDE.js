@@ -206,7 +206,7 @@ const Laboratory = (props) => {
         //tests.labNumber
         if(e.target.name==='labNumber'){
             const onlyPositiveNumber = e.target.value //Math.abs(e.target.value)
-            setTests ({...tests,  [e.target.name]: Math.abs(onlyPositiveNumber)});
+            setTests ({...tests,  [e.target.name]: onlyPositiveNumber});
         }else{
             setTests ({...tests,  [e.target.name]: e.target.value}); 
         }

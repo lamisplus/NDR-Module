@@ -156,10 +156,10 @@ const LabHistory = (props) => {
               title="Laboratory Order"
               columns={[
               // { title: " ID", field: "Id" },
-                {
-                  title: "Test Group",
-                  field: "testGroup",
-                },
+                // {
+                //   title: "Test Group",
+                //   field: "testGroup",
+                // },
                 { title: "Test Name", field: "testName", filtering: false },
                 { title: "Lab Number", field: "labNumber", filtering: false },
                 { title: "Viral Load", field: "lastViralLoad", filtering: false },
@@ -171,7 +171,7 @@ const LabHistory = (props) => {
               isLoading={loading}
               data={ orderList.map((row) => ({
                   //Id: manager.id,
-                  testGroup:row.testGroup,
+                  //testGroup:row.testGroup,
                   testName: row.testName,
                   labNumber: row.labNumber,
                   lastViralLoad: row.lastViralLoad,    

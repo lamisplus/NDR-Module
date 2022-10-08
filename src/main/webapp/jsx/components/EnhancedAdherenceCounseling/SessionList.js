@@ -207,8 +207,8 @@ const LabHistory = (props) => {
                   //Id: manager.id,
                   
                   followupDate: row.followUpDate,
-                  barriers: row.barriers? "As Barreier" : "No Barrier",
-                  intervention: row.intervention ? "As Intervention" : "No Intervention",
+                  barriers: Object.keys(row.barriers).length > 0 ? Object.keys(row.barriers).length + "  Barriers" : "No Barriers",
+                  intervention: Object.keys(row.intervention).length > 0 ? Object.keys(row.intervention).length + "  Interventions" : "No Interventions",
                   comment:row.comment,   
                   status: row.status,
                  

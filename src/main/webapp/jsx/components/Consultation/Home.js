@@ -174,7 +174,7 @@ const ClinicVisit = (props) => {
     bodyWeight: "",
     diastolic: "",
     encounterDate: "",
-    captureDate:"",
+    //captureDate:"",
     facilityId: 1,
     height: "",
     personId: props.patientObj.id,
@@ -465,7 +465,7 @@ const handleInputValueCheckTemperature =(e)=>{
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
-    vital.captureDate= vital.encounterDate
+    //vital.captureDate= vital.encounterDate
     objValues['vitalSignDto'] = vital
     axios.post(`${baseUrl}hiv/art/clinic-visit/`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
