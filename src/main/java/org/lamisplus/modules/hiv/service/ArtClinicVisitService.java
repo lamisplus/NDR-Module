@@ -61,16 +61,18 @@ public class ArtClinicVisitService {
 		if (!Objects.equals(hivEnrollment.getPerson().getId(), personId))
 			throw new EntityNotFoundException(Person.class, "personId", "" + personId);
 		Visit visit = hivVisitEncounter.processAndCreateVisit(personId, artClinicVisitDto.getVisitDate());
+		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
 		if (visit != null) {
-			artClinicVisitDto.getVitalSignDto().setVisitId(visit.getId());
+			vitalSignDto.setVisitId(visit.getId());
 		}
 		Optional<VitalSign> vitalSignOptional = vitalSignRepository.getVitalSignByVisitAndArchived(visit, 0);
 		Long vitalSignId = null;
 		if (vitalSignOptional.isPresent()) {
 			vitalSignId = vitalSignOptional.get().getId();
-			vitalSignService.updateVitalSign(vitalSignId, artClinicVisitDto.getVitalSignDto());
+			
+			vitalSignService.updateVitalSign(vitalSignId, vitalSignDto);
 		} else {
-			vitalSignId = vitalSignService.registerVitalSign(artClinicVisitDto.getVitalSignDto()).getId();
+			vitalSignId = vitalSignService.registerVitalSign(vitalSignDto).getId();
 		}
 		ARTClinical artClinical = convertDtoToART(artClinicVisitDto, vitalSignId);
 		artClinical.setUuid(UUID.randomUUID().toString());
@@ -131,7 +133,7 @@ public class ArtClinicVisitService {
 				.id(visit.getId())
 				.visitDate(visit.getVisitDate())
 				.nextAppointment(visit.getNextAppointment())
-				.artStatus(hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId(visit.getPerson().getId()))
+				.artStatus(hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId(visit.getPerson().getId()).getStatus())
 				.personId(visit.getPerson().getId())
 				.hivEnrollmentId(visit.getHivEnrollment().getId())
 				.adherenceLevel(visit.getAdherenceLevel())
