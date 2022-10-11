@@ -129,7 +129,7 @@ public class HivPatientService {
         if (artCommencement.isPresent ()) {
             hivPatientDto.setCommenced (true);
             hivPatientDto.setArtCommence (commenceService.convertArtToResponseDto (artCommencement.get ()));
-            hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId));
+            hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
         }
     }
 
@@ -139,9 +139,7 @@ public class HivPatientService {
             hivPatientDto.setEnrolled (true);
             hivPatientDto.setEnrollment (enrollment.get ());
             Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (enrollment.get ().getStatusAtRegistrationId ());
-            if (status.isPresent ()) {
-                hivPatientDto.setCurrentStatus (status.get ().getDisplay ());
-            }
+            status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
         } else {
             hivPatientDto.setCurrentStatus ("Not Enrolled");
         }
