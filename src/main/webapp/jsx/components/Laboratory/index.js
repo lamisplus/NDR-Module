@@ -1,8 +1,9 @@
 import React, {useState, Fragment, useEffect } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
-import LabTestOrder from './LabTestOrder';
+import LabOrderResult from './LabOrderResult';
+import ViralLoadOrderResult from './ViralLoadOrderResult';
 import LabHistory from "./LabHistory";
-import LaboratoryRDE from "./LaboratoryRDE";
+//import LaboratoryRDE from "./LaboratoryRDE";
 
 const divStyle = {
   borderRadius: "2px",
@@ -34,12 +35,12 @@ const LaboratoryModule = (props) => {
                   {/* <Tab eventKey="checked-in" title="Checked In Patients">                   
                     <CheckedInPatients />
                   </Tab> */}
-                  <Tab eventKey="home" title="LABORATORY RDE">                   
-                    <LaboratoryRDE patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                  <Tab eventKey="home" title="LAB ORDER & RESULT">                   
+                    <LabOrderResult patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>
-                  {/* <Tab eventKey="testOrder" title="LABORATORY TEST ORDER">                   
-                    <LabTestOrder patientObj={patientObj} setActiveContent={props.setActiveContent}/>
-                  </Tab>   */}
+                  <Tab eventKey="viralLoad" title="VIRAL LOAD ORDER & RESULT">                   
+                    <ViralLoadOrderResult patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                  </Tab>
                   <Tab eventKey="history" title=" HISTORY">                   
                     <LabHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>                   

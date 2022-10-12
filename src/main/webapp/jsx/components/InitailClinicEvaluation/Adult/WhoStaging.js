@@ -25,7 +25,8 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { Button} from 'semantic-ui-react'
 import {  Modal } from "react-bootstrap";
-
+import DualListBox from "react-dual-listbox";
+import 'react-dual-listbox/lib/react-dual-listbox.css';
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -95,6 +96,10 @@ const useStyles = makeStyles((theme) => ({
 const BasicInfo = (props) => {
     const classes = useStyles()
     const [errors, setErrors] = useState({});
+    const [selectedOptions1,setSelectedOptions1] = useState([]);
+    const [selectedOptions2,setSelectedOptions2] = useState([]);
+    const [selectedOptions3,setSelectedOptions3] = useState([]);
+    const [selectedOptions4,setSelectedOptions4] = useState([]);
     let temp = { ...errors } 
     useEffect(() => { 
         if(props.observation.data ){
@@ -102,7 +107,7 @@ const BasicInfo = (props) => {
             setWho(props.observation.data.who)             
         }
     }, [props.observation.data]);  
-    const [who, setWho] = useState({stage:"", stage1Value:"",stage2Value:"", stage3Value:"",stage4Value:""});
+    const [who, setWho] = useState({stage:"", stage1Value:"",stage2Value:"", stage3Value:"",stage4Value:"", stage1ValueOption:"",stage2ValueOption:"", stage3ValueOption:"",stage4ValueOption:""});
     const [hideStage1, setHideStage1] = useState(false);
     const [hideStage2, setHideStage2] = useState(false);
     const [hideStage3, setHideStage3] = useState(false);
@@ -113,7 +118,7 @@ const BasicInfo = (props) => {
         
     }
     const handleWho =e =>{
-        console.log(e.target.value)
+        //console.log(e.target.value)
         if(e.target.value==="stage 1"){
             setHideStage1(true)
             setHideStage2(false)
@@ -142,6 +147,7 @@ const BasicInfo = (props) => {
         }
         setWho({...who, [e.target.name]: e.target.value})
     }
+    
     const handleItemClick =(page, completedMenu)=>{
         props.handleItemClick(page)
         if(props.completed.includes(completedMenu)) {
@@ -154,10 +160,75 @@ const BasicInfo = (props) => {
     const handleSubmit = (e) => { 
         e.preventDefault();  
         props.observation.data.assesment = assesment
-        props.observation.data.who=who  
+        props.observation.data.who=who 
+        who.stage1ValueOption= selectedOptions1
+        who.stage2ValueOption= selectedOptions2
+        who.stage3ValueOption= selectedOptions3
+        who.stage4ValueOption= selectedOptions4
         //toast.success("Record save successful");
         handleItemClick('plan', 'who' )                  
     }
+     const onSelectedOption1 = (selectedValues) => {
+        setSelectedOptions1(selectedValues);
+    };
+    const onSelectedOption2 = (selectedValues) => {
+        setSelectedOptions2(selectedValues);
+    };
+    const onSelectedOption3 = (selectedValues) => {
+        setSelectedOptions3(selectedValues);
+    };
+    const onSelectedOption4 = (selectedValues) => {
+        setSelectedOptions4(selectedValues);
+    };
+    const options1 = [
+        { value: 'Asymptomatic', label: 'Asymptomatic' },
+        { value: 'Persistent generalized lymphadenopathy', label: 'Persistent generalized lymphadenopathy' },
+        { value: 'Herpes Zoster (within last 5 years)', label: 'Performance scale: 1 asymptomatic, normal activity' },
+        
+    ];
+    const options2 = [
+        { value: 'Weight loss less than 10% of body weight', label: 'Weight loss less than 10% of body weight' },
+        { value: 'Minor Mucocutaneous Manifestations', label: 'Minor Mucocutaneous Manifestations' },
+        { value: 'Herpes Zoster (within last 5 years)', label: 'Herpes Zoster (within last 5 years)' },
+        { value: 'Recurrent Upper Respiratory Tract Infections', label: 'Recurrent Upper Respiratory Tract Infections' },
+        { value: 'Performance scale: 2 symptomatic, normal activity', label: 'Performance scale: 2 symptomatic, normal activity' },
+        
+    ];
+    const options3 = [
+        { value: 'Weight loss greater than 10% of body weight', label: 'Weight loss greater than 10% of body weight' },
+        { value: 'Unexplained Chronic Diarrhea less than 1 month', label: 'Unexplained Chronic Diarrhea less than 1 month' },
+        { value: 'Unexplained Prolonged Fever', label: 'Unexplained Prolonged Fever' },
+        { value: 'Oral Candidiasis', label: 'Oral Candidiasis' },
+        { value: 'Oral Hairy Leukoplakia', label: 'Oral Hairy Leukoplakia' },
+
+        { value: 'TB, Pulmonary (within previous year)', label: 'TB, Pulmonary (within previous year)' },
+        { value: 'Severe Bacterial Infections', label: 'Severe Bacterial Infections' },
+        { value: 'Performance scale: 3 bedridden  less than 50% of day in last month', label: 'Performance scale: 3 bedridden  less than 50% of day in last month' },
+       
+    ];
+    const options4 = [
+        { value: 'HIV Wasting syndrome', label: 'HIV Wasting syndrome' },
+        { value: 'PCP', label: 'PCP' },
+        { value: 'Toxoplasmosis, CNS', label: 'Toxoplasmosis, CNS' },
+
+        { value: 'Cryptosporidiosis with Diarrhea greater than 1 month', label: 'Cryptosporidiosis with Diarrhea greater than 1 month' },
+        { value: 'Cryptococcosis, Extrapulmonary', label: 'Cryptococcosis, Extrapulmonary' },
+        { value: 'Cytomegalovirus disease', label: 'Cytomegalovirus disease' },
+        { value: 'Herpes Simplex (mucotaneous greater than 1 month)', label: 'Herpes Simplex (mucotaneous greater than 1 month)' },
+        { value: 'Progressive Multifocal Leukoencephalopathy', label: 'Progressive Multifocal Leukoencephalopathy' },
+        { value: 'Mycosis, disseminated', label: 'Mycosis, disseminated' },
+        { value: 'Oesophageal Candidiasis', label: 'Oesophageal Candidiasis' },
+        { value: 'Atypical Mycobacteriosis, disseminated', label: 'Atypical Mycobacteriosis, disseminated' },
+        { value: 'Salmonella Septicemia, Non-typhoid', label: 'Salmonella Septicemia, Non-typhoid' },
+
+
+        { value: 'TB, Extrapulmonary', label: 'TB, Extrapulmonary' },
+        { value: 'Lymphoma', label: 'Lymphoma' },
+        { value: "Kaposi's Sarcoma", label: "Kaposi's Sarcoma" },
+        { value: 'HIV encephalopathy', label: 'HIV encephalopathy' },
+        { value: 'Performance scale: 4 bedridden greater than 50% of the day in last month', label: 'Performance scale: 4 bedridden greater than 50% of the day in last month' },
+        
+    ];
         
 return (
         <>  
@@ -215,114 +286,56 @@ return (
                         </FormGroup>
                     </div>
                     {hideStage1 && (
-                    <div className="form-group mb-3 col-md-6">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 1 options</Label>
-                        <InputGroup> 
-                                <Input 
-                                    type="select"
-                                    name="stage1Value"
-                                    id="stage1Value"
-                                    value={who.stage1Value} 
-                                    onChange={handleWho}  
-                                >
-                                <option value="">Select</option>
-                                <option value="Asymptomatic">Asymptomatic</option>
-                                <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
-                                <option value="Performance scale: 1 asymptomatic, normal activity">Performance scale: 1 asymptomatic, normal activity</option>
-                                
-                                </Input>
-
-                            </InputGroup>
+                        <DualListBox
+                            //canFilter
+                            options={options1}
+                            onChange={onSelectedOption1}
+                            selected={selectedOptions1}
+                        />
                         </FormGroup>
                     </div>
                     )}
                     {hideStage2 && (
-                    <div className="form-group mb-3 col-md-6">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 2 options</Label>
-                        <InputGroup> 
-                                <Input 
-                                    type="select"
-                                    name="stage2Value"
-                                    id="stage2Value"
-                                    value={who.stage2Value} 
-                                    onChange={handleWho}  
-                                >
-                                <option value="">Select</option>
-                                <option value="Weight loss less than 10% of body weight">Weight loss {"<"}10% of body weight</option>
-                                <option value="Minor Mucocutaneous Manifestations">Minor Mucocutaneous Manifestations</option>
-                                <option value="Herpes Zoster (within last 5 years)">Herpes Zoster (within last 5 years)</option>
-                                <option value=" Recurrent Upper Respiratory Tract Infections"> Recurrent Upper Respiratory Tract Infections</option>
-                                <option value="Performance scale: 2 symptomatic, normal activity">Performance scale: 2 symptomatic, normal activity</option>
-                                </Input>
-
-                            </InputGroup>
+                        <DualListBox
+                            //canFilter
+                            options={options2}
+                            onChange={onSelectedOption2}
+                            selected={selectedOptions2}
+                        />
                         </FormGroup>
                     </div>
                     )}
                     {hideStage3 && (
                     <>
-                    <div className="form-group mb-3 col-md-6">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 3 options</Label>
-                        <InputGroup> 
-                                <Input 
-                                    type="select"
-                                    name="stage3Value"
-                                    id="stage3Value"
-                                    value={who.stage3Value} 
-                                    onChange={handleWho} 
-                                >
-                                <option value="">Select</option>
-                                <option value="Weight loss greater than 10% of body weight">Weight loss {">"}10% of body weight</option>
-                                <option value="Unexplained Chronic Diarrhea less than 1 month">Unexplained Chronic Diarrhea ({">"}1 month)</option>
-                                <option value="Unexplained Prolonged Fever">Unexplained Prolonged Fever</option>
-                                <option value="Oral Candidiasis">Oral Candidiasis</option>
-                                <option value="Oral Hairy Leukoplakia">Oral Hairy Leukoplakia</option>
-                                <option value="TB, Pulmonary (within previous year)">TB, Pulmonary (within previous year)</option>
-                                <option value="Severe Bacterial Infections">Severe Bacterial Infections</option>
-                                <option value="Performance scale: 3 bedridden  less than 50% of day in last month">Performance scale: 3 bedridden {"<"}50% of day in last month</option>
-                                </Input>
-
-                            </InputGroup>
+                        <DualListBox
+                            //canFilter
+                            options={options3}
+                            onChange={onSelectedOption3}
+                            selected={selectedOptions3}
+                        />
                         </FormGroup>
                     </div>
                     </>
                     )}
                     {hideStage4 && (
-                    <div className="form-group mb-3 col-md-6">                                    
+                    <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 4 options</Label>
-                        <InputGroup> 
-                                <Input 
-                                    type="select"
-                                    name="stage4Value"
-                                    id="stage4Value"
-                                    value={who.stage4Value} 
-                                    onChange={handleWho}  
-                                >
-                                <option value="">Select</option>
-                                <option value="HIV Wasting syndrome">HIV Wasting syndrome</option>
-                                <option value="PCP">PCP</option>
-                                <option value="Toxoplasmosis, CNS">Toxoplasmosis, CNS</option>
-                                <option value="Cryptosporidiosis with Diarrhea greater than 1 month">Cryptosporidiosis with Diarrhea ({">"}1 month)</option>
-                                <option value="Cryptococcosis, Extrapulmonary">Cryptococcosis, Extrapulmonary</option>
-                                <option value="Cytomegalovirus disease">Cytomegalovirus disease</option>
-                                <option value="Herpes Simplex (mucotaneous greater than 1 month)">Herpes Simplex (mucotaneous {">"}1 month)</option>
-                                <option value="Progressive Multifocal Leukoencephalopathy">Progressive Multifocal Leukoencephalopathy</option>
-                                <option value="Mycosis, disseminated"> Mycosis, disseminated</option>
-                                <option value="Oesophageal Candidiasis">Oesophageal Candidiasis</option>
-                                <option value="Atypical Mycobacteriosis, disseminated">Atypical Mycobacteriosis, disseminated</option>
-                                <option value="Salmonella Septicemia, Non-typhoid">Salmonella Septicemia, Non-typhoid</option>
-                                <option value="TB, Extrapulmonary"> TB, Extrapulmonary</option>
-                                <option value="Lymphoma">Lymphoma</option>
-                                <option value="Kaposi's Sarcoma"> Kaposi's Sarcoma</option>
-                                <option value="HIV encephalopathy">  HIV encephalopathy</option>
-                                <option value="Performance scale: 4 bedridden greater than 50% of the day in last month"> Performance scale: 4 bedridden {">"}50% of the day in last month</option>
-                                </Input>
-
-                            </InputGroup>
+                        <DualListBox
+                            //canFilter
+                            options={options4}
+                            onChange={onSelectedOption4}
+                            selected={selectedOptions4}
+                        />
                         </FormGroup>
                     </div>
                    )}

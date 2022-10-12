@@ -31,21 +31,21 @@ const ADR = (props) => {
   useEffect(() => {
     PrepSideEffect();
   }, []);
-       //Get list of PrepSideEffect
-       const PrepSideEffect =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setPrepSideEffect(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-        }
+    //Get list of PrepSideEffect
+    const PrepSideEffect =()=>{
+    axios
+        .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setPrepSideEffect(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
   const handAdrleInputChange = e => {
     props.setAdrObj ({...props.adrObj,  [e.target.name]: e.target.value});
   }

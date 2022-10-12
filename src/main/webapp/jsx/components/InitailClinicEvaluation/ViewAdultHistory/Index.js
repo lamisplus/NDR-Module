@@ -196,7 +196,7 @@ const UserRegistration = (props) => {
                                 disabled={activeItem !== 'appearance' ? true : false}
                             >
                             {/* <Label>4</Label> */}
-                            <span style={{color:'#fff'}}>Appearance
+                            <span style={{color:'#fff'}}>General Appearance
                             {completed.includes('appearance') && (
                                 <Icon name='check' color='green' />
                             )}

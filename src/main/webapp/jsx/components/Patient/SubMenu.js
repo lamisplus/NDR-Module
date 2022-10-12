@@ -116,7 +116,7 @@ function SubMenu(props) {
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
             {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )?
                 (
-                <Menu size="mini" color={"grey"} inverted >
+                <Menu size="mini" color={"blue"} inverted >
                     <Menu.Item onClick={() => onClickHome()} disabled> Home</Menu.Item>
                     {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} > Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} >Art Commencement</Menu.Item>)}
@@ -194,8 +194,8 @@ function SubMenu(props) {
                         )
                         :""
                     }  
-                     {patientObj.currentStatus && patientObj.currentStatus==='IIT' &&  (<Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>)}
-                     {/* <Menu.Item onClick={() => loadChronicCare(patientObj)} >Chronic Care</Menu.Item> */}
+                    <Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>
+                     {/* patientObj.currentStatus && patientObj.currentStatus==='IIT' &&  (<Menu.Item onClick={() => loadChronicCare(patientObj)} >Chronic Care</Menu.Item> */}
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} >History</Menu.Item>
                     
                 </Menu>

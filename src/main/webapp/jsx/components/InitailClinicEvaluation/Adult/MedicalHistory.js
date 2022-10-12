@@ -74,7 +74,8 @@ const useStyles = makeStyles((theme) => ({
             fontSize:'14px',
             color:'#014d88',
             fontWeight:'bold'
-        }
+        },
+        
     },
     demo: {
         backgroundColor: theme.palette.background.default,
@@ -93,7 +94,25 @@ const MedicalHistory = (props) => {
     const classes = useStyles();
     const history = useHistory();
     const [errors, setErrors] = useState({});
-
+    const [allergies, setAllergies]= useState([])
+    useEffect(() => {
+        PrepSideEffect();
+      }, []);
+        //Get list of PrepSideEffect
+        const PrepSideEffect =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setAllergies(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
     useEffect(() => { 
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory)           
@@ -451,7 +470,7 @@ const MedicalHistory = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            <Label >Duration (Days)</Label>
                             <InputGroup> 
                                 <Input 
                                     type="text"
@@ -486,7 +505,7 @@ const MedicalHistory = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            <Label >Duration (Days)</Label>
                             <InputGroup> 
                                 <Input 
                                     type="text"
@@ -521,7 +540,7 @@ const MedicalHistory = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-2">
                             <FormGroup>
-                            <Label >Duration</Label>
+                            <Label >Duration (Days)</Label>
                             <InputGroup> 
                                 <Input 
                                     type="text"
@@ -963,7 +982,7 @@ const MedicalHistory = (props) => {
                      <div className="row">
                      <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Patient Screen for TB</Label>
+                            <Label >Patient Screen for TB *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="select"
@@ -989,7 +1008,7 @@ const MedicalHistory = (props) => {
                     {/* Past medical history */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Past Medical History</Label>
+                            <Label >Past Medical History *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1009,7 +1028,7 @@ const MedicalHistory = (props) => {
                     {/* Past Family medical history */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Relevant Family History</Label>
+                            <Label >Relevant Family History *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1047,7 +1066,7 @@ const MedicalHistory = (props) => {
                     {/* Drug Allergies */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Drug Allergies</Label>
+                            <Label >Drug Allergies *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1235,7 +1254,7 @@ const MedicalHistory = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            As never receive ARVs
+                            Has never received ARVs
                             </label>
                         </div>
                     </div>

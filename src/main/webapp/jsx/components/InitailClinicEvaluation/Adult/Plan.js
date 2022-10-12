@@ -172,33 +172,16 @@ return (
         
             <Card className={classes.root}>
                 <CardBody>   
-                <h2 style={{color:'#000'}}>Enroll In & Plan</h2>
+                <h2 style={{color:'#000'}}>Plan & Enroll In  </h2>
                 <br/>
                     <form >
                     {/* Medical History form inputs */}
                     <div className="row">
-                    <h3>Enroll in</h3>
-                    <div className="form-group mb-3 col-md-5">                                    
-                            <Input 
-                                type="select"
-                                name="enrollIn"
-                                id="enrollIn"
-                                value={enroll.enrollIn}
-                                onChange={handleEnroll}  
-                            >
-                            <option value="">Select</option>
-                            <option value="General medical follow-up">General medical follow-up</option>
-                            <option value="ARV therapy">ARV therapy</option>
-                            <option value="AHD management">AHD management</option>
-                            <option value="Pending lab results">Pending lab results</option>
-                            </Input>
-                    </div>
-                    <div className="form-group mb-3 col-md-7">  </div>
-                    <hr/>
-                    <h3>Plan for Antiretroviral Therapy (ART)</h3>
+
+                    <h3>Plan for ART</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Ongoing Monitoring </Label>
+                            <Label>Antiretroviral Therapy (ART)</Label>
                             <Input 
                                     type="select"
                                     name="previousArvExposure"
@@ -211,7 +194,7 @@ return (
                                 <option value="Start new treatment">Start new treatment</option>
                                 <option value="Stop treatment">Stop treatment </option>
                                 <option value="Change treatment">Change treatment </option>
-                                <option value="ARV TX postponed for clinical reason">ARV TX postponed for clinical reason</option>
+                                <option value="Ongoing Monitoring ARV TX postponed for clinical reason">Ongoing Monitoring ARV TX postponed for clinical reason</option>
                                 </Input>
                         </FormGroup>
                     </div>
@@ -359,14 +342,7 @@ return (
                     <hr/>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="tb_investigation"
-                            id="tb_investigation"
-                            value={plan.tb_investigation}
-                            onChange={handlePlan} 
-                            />
+                         
                             <label
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
@@ -543,6 +519,23 @@ return (
                             </InputGroup>                                        
                             </FormGroup>
                     </div>
+                    <h3>Enroll in</h3>
+                    <div className="form-group mb-3 col-md-5">                                    
+                            <Input 
+                                type="select"
+                                name="enrollIn"
+                                id="enrollIn"
+                                value={enroll.enrollIn}
+                                onChange={handleEnroll}  
+                            >
+                            <option value="">Select</option>
+                            <option value="General medical follow-up">General medical follow-up</option>
+                            <option value="ARV therapy">ARV therapy</option>
+                            <option value="AHD management">AHD management</option>
+                            <option value="Pending lab results">Pending lab results</option>
+                            </Input>
+                    </div>
+                    <div className="form-group mb-3 col-md-7">  </div>
                     </div>
                     <br/>
                     <Button content='Back' icon='left arrow' labelPosition='left' style={{backgroundColor:"#992E62", color:'#fff'}} onClick={()=>handleItemClick('who', 'who')}/>

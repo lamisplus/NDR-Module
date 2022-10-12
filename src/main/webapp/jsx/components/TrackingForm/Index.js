@@ -534,7 +534,7 @@ const Tracking = (props) => {
                                     />
                                     ))}
                                     </tbody>
-                                    </Table>
+                                </Table>
                                 </List>
                                 :
                                 ""

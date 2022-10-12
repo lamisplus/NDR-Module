@@ -3,6 +3,7 @@ import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import PharmacyRefill from './PharmacyRefill';
 import PharmacyRefillUpdate from './PharmacyRefillUpdate';
 import PharmacyHistory from "./PharmacyHistory";
+import PharmacyRefillNew from './PharmacyRefillNew'
 
 const divStyle = {
   borderRadius: "2px",
@@ -42,7 +43,7 @@ const PharmacyModule = (props) => {
                       )
                       :
                       (
-                        <PharmacyRefill patientObj={patientObj} setActiveContent={props.setActiveContent} activeContent={props.activeContent}/>
+                        <PharmacyRefillNew patientObj={patientObj} setActiveContent={props.setActiveContent} activeContent={props.activeContent}/>
                       )
                     }
                   </Tab>  
