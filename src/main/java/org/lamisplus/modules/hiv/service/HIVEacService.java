@@ -5,18 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.audit4j.core.util.Log;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.module.ModuleService;
+import org.lamisplus.modules.hiv.domain.dto.EACPharmacyDisplayDto;
 import org.lamisplus.modules.hiv.domain.dto.EACStopDto;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
 import org.lamisplus.modules.hiv.domain.dto.LabEacInfo;
 import org.lamisplus.modules.hiv.domain.entity.HIVEac;
+import org.lamisplus.modules.hiv.domain.entity.HIVEacSession;
 import org.lamisplus.modules.hiv.repositories.HIVEacRepository;
+import org.lamisplus.modules.hiv.repositories.HIVEacSessionRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import reactor.util.UUIDUtils;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +38,8 @@ public class HIVEacService {
 	
 	
 	private final ModuleService moduleService;
+	
+	private final HIVEacSessionRepository hivEacSessionRepository;
 	
 	
 	public List<HIVEacDto> getPatientEAcs(Long patientId) {
@@ -62,6 +70,33 @@ public class HIVEacService {
 		return hivEacRepository.getAllByPersonAndArchived(person, 0)
 				.stream().map(this::mapEntityDto)
 				.collect(Collectors.toList());
+	}
+	
+	public EACPharmacyDisplayDto getPatientOpenEAc(Long patientId) {
+		Person person = personRepository.findById(patientId)
+				.orElseThrow(() -> new EntityNotFoundException(Person.class, "id", String.valueOf(patientId)));
+		Optional<HIVEac> openEAC = hivEacRepository.getAllByPersonAndArchived(person, 0)
+				.stream()
+				.filter(e -> !e.getStatus().equalsIgnoreCase("NOT COMMENCED")
+						&& !e.getStatus().equalsIgnoreCase("STOPPED")
+						&& !e.getStatus().equalsIgnoreCase("COMPLETED"))
+				.findFirst();
+		if (openEAC.isPresent()) {
+			HIVEac eac = openEAC.get();
+			Double viralLoad = eac.getLastViralLoad();
+			List<HIVEacSession> sessions = hivEacSessionRepository.getHIVEacSesByEac(eac);
+			Optional<HIVEacSession> currentSession = sessions.stream()
+					.filter(Objects::nonNull)
+					.sorted(Comparator.comparing(HIVEacSession::getEacSessionDate).reversed())
+					.findFirst();
+			if (currentSession.isPresent()) {
+				return new EACPharmacyDisplayDto(viralLoad, currentSession.get().getStatus(), currentSession.get().getEacSessionDate());
+			}
+			
+		}
+		return null;
+		
+		
 	}
 	
 	public HIVEacDto stopEac(Long id, EACStopDto data) {

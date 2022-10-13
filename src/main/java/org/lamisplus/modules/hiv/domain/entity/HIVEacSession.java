@@ -44,6 +44,7 @@ public class HIVEacSession extends HivAuditEntity implements Serializable, Persi
 	private String interventionOthers;
 	private String comment;
 	private LocalDate followUpDate;
+	private LocalDate eacSessionDate;
 	private String referral;
 	private String adherence;
 	private String status;

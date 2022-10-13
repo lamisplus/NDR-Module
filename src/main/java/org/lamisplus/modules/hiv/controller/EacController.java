@@ -3,10 +3,7 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.hiv.domain.dto.EACStopDto;
-import org.lamisplus.modules.hiv.domain.dto.EacOutComeDto;
-import org.lamisplus.modules.hiv.domain.dto.HIVEacDto;
-import org.lamisplus.modules.hiv.domain.dto.HIVEacSessionDto;
+import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.service.EACOutComeService;
 import org.lamisplus.modules.hiv.service.HIVEacService;
 import org.lamisplus.modules.hiv.service.HIVEacSessionService;
@@ -32,6 +29,11 @@ public class EacController {
 	@GetMapping(value = "/patient/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HIVEacDto>> getPatientEacs(@PathVariable("id") Long id) {
 		return ResponseEntity.ok(hIVEacService.getPatientEAcs(id));
+	}
+	
+	@GetMapping(value = "/open/patient/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<EACPharmacyDisplayDto> getPatientEac(@PathVariable("id") Long id) {
+		return ResponseEntity.ok(hIVEacService.getPatientOpenEAc(id));
 	}
 	
 	@PutMapping(value = "/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
