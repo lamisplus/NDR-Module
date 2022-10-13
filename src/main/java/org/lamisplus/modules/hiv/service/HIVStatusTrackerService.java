@@ -5,11 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.service.ApplicationCodesetService;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
+import org.lamisplus.modules.hiv.domain.dto.StatusDto;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
+import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.hiv.repositories.HIVStatusTrackerRepository;
+import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.controller.exception.NoRecordFoundException;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
@@ -17,6 +21,7 @@ import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -37,7 +42,12 @@ public class HIVStatusTrackerService {
 	
 	private final ArtPharmacyRepository artPharmacyRepository;
 	
+	private final HivEnrollmentRepository hivEnrollmentRepository;
+	
 	private final HandleHIVVisitEncounter hivVisitEncounter;
+	
+	
+	private final ApplicationCodesetService applicationCodesetService;
 	
 	
 	public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
@@ -72,21 +82,57 @@ public class HIVStatusTrackerService {
 		return convertEntityToDto(getExistingHivStatusTracker(id));
 	}
 	
-	public String getPersonCurrentHIVStatusByPersonId(Long personId) {
+	public StatusDto getPersonCurrentHIVStatusByPersonId(Long personId) {
 		Person person = getPerson(personId);
 		Comparator<HIVStatusTracker> personStatusDateComparator = Comparator.comparing(HIVStatusTracker::getStatusDate);
 		Optional<HIVStatusTracker> currentStatus = hivStatusTrackerRepository.findAllByPersonAndArchived(person, 0)
 				.stream()
 				.max(personStatusDateComparator);
 		List<ArtPharmacy> pharmacyRefills = artPharmacyRepository.getArtPharmaciesByPersonAndArchived(person, 0);
+		StatusDto statusDto = new StatusDto("HIV+ NON ART", null);
 		if (!pharmacyRefills.isEmpty()) {
-			return currentStatus.map(this::calculatePatientCurrentStatus).orElse("HIV+ NON ART");
+			return currentStatus.map(this::calculatePatientCurrentStatus)
+					.orElse(statusDto);
 		}
-		return currentStatus.map(HIVStatusTracker::getHivStatus).orElse("HIV+ NON ART");
+		
+		HivEnrollment hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived(person, 0)
+				.orElseThrow(() -> new EntityNotFoundException(HivEnrollment.class, "person id", String.valueOf(person.getId())));
+		LocalDate dateOfRegistration = hivEnrollment.getDateOfRegistration();
+		Long statusAtRegistrationId = hivEnrollment.getStatusAtRegistrationId();
+		String statusAtRegistration = applicationCodesetService.getApplicationCodeset(statusAtRegistrationId).getDisplay();
+		return new StatusDto(statusAtRegistration, dateOfRegistration);
+		
+		
 	}
 	
-	@NotNull
-	private String calculatePatientCurrentStatus(HIVStatusTracker statusTracker) {
+	public StatusDto getPersonCurrentHIVStatusByPersonId(Long personId, LocalDate startDate, LocalDate endDate) {
+		Person person = getPerson(personId);
+		Comparator<HIVStatusTracker> personStatusDateComparator = Comparator.comparing(HIVStatusTracker::getStatusDate);
+		Optional<HIVStatusTracker> currentStatus = hivStatusTrackerRepository.findAllByPersonAndArchived(person, 0)
+				.stream()
+				.filter(status ->
+						status.getStatusDate().isAfter(startDate.minusDays(1))
+								&& status.getStatusDate().isBefore(endDate.plusDays(1)))
+				.max(personStatusDateComparator);
+		List<ArtPharmacy> pharmacyRefills = artPharmacyRepository.getArtPharmaciesByPersonAndArchived(person, 0);
+		StatusDto statusDto = new StatusDto("HIV+ NON ART", null);
+		if (!pharmacyRefills.isEmpty()) {
+			return currentStatus.map(this::calculatePatientCurrentStatus)
+					.orElse(statusDto);
+		}
+		
+		HivEnrollment hivEnrollment = hivEnrollmentRepository.getHivEnrollmentByPersonAndArchived(person, 0)
+				.orElseThrow(() -> new EntityNotFoundException(HivEnrollment.class, "person id", String.valueOf(person.getId())));
+		LocalDate dateOfRegistration = hivEnrollment.getDateOfRegistration();
+		Long statusAtRegistrationId = hivEnrollment.getStatusAtRegistrationId();
+		String statusAtRegistration = applicationCodesetService.getApplicationCodeset(statusAtRegistrationId).getDisplay();
+		return new StatusDto(statusAtRegistration, dateOfRegistration);
+		
+		
+	}
+	
+	
+	private StatusDto calculatePatientCurrentStatus(HIVStatusTracker statusTracker) {
 		AtomicReference<LocalDate> statusDate = new AtomicReference<>(statusTracker.getStatusDate());
 		Visit visit = statusTracker.getVisit();
 		Optional<ArtPharmacy> artPharmacy =
@@ -97,14 +143,20 @@ public class HIVStatusTrackerService {
 		artPharmacy.ifPresent(p -> statusDate.set(p.getNextAppointment()));
 		List<String> staticStatus = Arrays.asList("Stopped Treatment", "Died (Confirmed)", "ART Transfer Out");
 		if (staticStatus.contains(statusTracker.getHivStatus())) {
-			return statusTracker.getHivStatus();
+			return new StatusDto(statusTracker.getHivStatus(), statusTracker.getStatusDate());
+		} else {
+			int months = Period.between(statusDate.get(), LocalDate.now()).getMonths();
+			if (months > 0) {
+				log.info("month {}", months);
+				LocalDate iitDate = statusDate.get().plusDays(29);
+				log.info("days {}", iitDate);
+				return new StatusDto("IIT", iitDate);
+				
+			}
+			
+			return new StatusDto("Active on Treatment", statusDate.get());
+			
 		}
-		int months = Period.between(statusDate.get(), LocalDate.now()).getMonths();
-		log.info("month {}", months);
-		if (months > 0) {
-			return "IIT";
-		}
-		return "ACTIVE ON ART";
 	}
 	
 	public List<HIVStatusTrackerDto> getPersonHIVStatusByPersonId(Long personId) {
