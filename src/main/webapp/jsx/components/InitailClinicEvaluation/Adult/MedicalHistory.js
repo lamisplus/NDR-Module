@@ -1067,17 +1067,23 @@ const MedicalHistory = (props) => {
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Drug Allergies *</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="textarea"
-                                    name="drug_allergies"
-                                    id="drug_allergies"
-                                    onChange={handleMedicalHistory}
-                                    value={objValues.drug_allergies}  
-                                />
-                                 
-                            </InputGroup>
-                        
+                            
+                            <Input
+                                type="select"
+                                name="drug_allergies"
+                                id="drug_allergies"
+                                value={objValues.drug_allergies}
+                                onChange={handleMedicalHistory}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                                >
+                                <option value=""> Select</option>
+                                    {allergies.map((value) => (
+                                        <option key={value.id} value={value.display}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>    
                             </FormGroup>
                             {errors.drug_allergies !=="" ? (
                                 <span className={classes.error}>{errors.drug_allergies}</span>

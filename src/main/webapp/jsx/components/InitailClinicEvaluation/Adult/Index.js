@@ -204,7 +204,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'plan'}
                                 onClick={()=>handleItemClick('plan')}
                                 style={{backgroundColor:activeItem === 'plan' ? '#000': ""}}
-                                disabled={activeItem !== 'plan' ? true : false}
+                                //disabled={activeItem !== 'plan' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Plan & Enroll In

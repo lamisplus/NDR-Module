@@ -106,7 +106,7 @@ const ChildRegimenNextAppointment = (props) => {
     const [hideFirstLine, setHideFirstLine] = useState(false);
     const [hideSecondLine, setHideSecondLine] = useState(false);
     const [hideThirdLine, setHideThirdLine] = useState(false);
-    const [objValues, setobjValues] = useState({nextAppointment:""});
+    const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
     const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
     const handleRegimen =e =>{
         if(e.target.value==='first line'){
@@ -280,6 +280,21 @@ return (
                                     value={objValues.nextAppointment}  
                                 />
                             </InputGroup>                                        
+                            </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >ART Clinician Name</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="text"
+                                    name="clinicianName"
+                                    id="clinicianName"
+                                    onChange={handleInputChangeobjValues} 
+                                    value={objValues.clinicianName}  
+                                />
+                            </InputGroup>
+                                                                  
                             </FormGroup>
                     </div>
                     </div> 

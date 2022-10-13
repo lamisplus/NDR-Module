@@ -263,7 +263,8 @@ return (
                     )}
                     <div className="form-group mb-3 col-md-6"> </div>
                     <h3> Plan (specify orders on requisition)</h3>
-                    <div className="form-group mb-3 col-md-6">
+                    <h3>Lab evaluation :</h3>
+                    {/* <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Lab evaluation</Label>
                             <InputGroup> 
@@ -276,7 +277,7 @@ return (
                                 />
                             </InputGroup>                                        
                             </FormGroup>
-                    </div>
+                    </div> */}
                     <div className="form-group  col-md-5">
                                 <FormGroup>
                                     <Label>CD4 Count </Label>
@@ -335,7 +336,7 @@ return (
                                 </FormGroup>
                             </div>
                             )}
-                    <div className="form-group mb-3 col-md-6">
+                    {/* <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >CD4 count evaluation</Label>                       
                             <InputGroup> 
@@ -355,25 +356,15 @@ return (
 
                             </InputGroup>                                      
                             </FormGroup>
-                    </div>
+                    </div> */}
                     <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                           
-                            name="tb_investigation"
-                            id="tb_investigation"
-                            value={plan.tb_investigation}
-                            onChange={handlePlan} 
-                            />
+                    <div className="form-group mb-3 col-md-2">                                                          
                             <label
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            TB Investigations
-                            </label>
-                        </div>
+                            <h3>TB Investigations :</h3>
+                            </label>                       
                     </div>
                     <div className="form-group mb-3 col-md-2">                                    
                         <div className="form-check custom-checkbox ml-1 ">

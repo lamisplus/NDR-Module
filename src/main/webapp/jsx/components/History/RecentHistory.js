@@ -30,6 +30,9 @@ const RecentHistory = (props) => {
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [recentActivities, setRecentActivities] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadingRecent, setLoadingRecent] = useState(true)
+  const [loadingLab, setLoadingLab] = useState(true)
+  const [loadingPharmacy, setLoadingPharmacy] = useState(true)
   let history = useHistory();
   const [
     activeAccordionHeaderShadow,
@@ -50,9 +53,11 @@ const RecentHistory = (props) => {
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
+        setLoadingRecent(false)
           setRecentActivities(response.data)
        })
        .catch((error) => {
+        setLoadingRecent(false)
        //console.log(error);
        });
    
@@ -64,6 +69,7 @@ const RecentHistory = (props) => {
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
+        setLoadingLab(false)
            let LabObject= []
                 response.data.forEach(function(value, index, array) {
                     const dataOrders = value.labOrder.tests                    
@@ -76,6 +82,7 @@ const RecentHistory = (props) => {
               setViralLoad(LabObject)
        })
        .catch((error) => {
+        setLoadingLab(false)
        //console.log(error);
        });
    
@@ -89,6 +96,7 @@ const RecentHistory = (props) => {
         )
         .then((response) => {
             setLoading(false)
+            setLoadingPharmacy(false)
             setRefillList(response.data);                
         })
         .catch((error) => {  
@@ -387,126 +395,134 @@ const redirectLink=()=>{
       <div className="col-xl-4 col-xxl-4 col-lg-4">
           <div className="card">
             <div className="card-header  border-0 pb-0">
-              <h4 className="card-title"> Recent Activities</h4>
+              <h4 className="card-title"><b>Recent Activities</b> </h4>
             </div>
             <div className="card-body">
-              <PerfectScrollbar
-                style={{ height: "370px" }}
-                id="DZ_W_Todo1"
-                className="widget-media dz-scroll ps ps--active-y"
-              >
-                <Accordion
-                    className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
-                    defaultActiveKey="0"
-                  >
-                    <>
-                    {recentActivities.map((data, i)=>
-                    <div className="accordion-item" key={i}>
-                      <Accordion.Toggle
-                          as={Card.Text}
-                          eventKey={`${i}`}
-                          className={`accordion-header ${
-                            activeAccordionHeaderShadow === 1 ? "" : "collapsed"
-                          } accordion-header-info`}
-                          onClick={() =>
-                            setActiveAccordionHeaderShadow(
-                              activeAccordionHeaderShadow === 1 ? -1 : i
-                            )
-                          }
-                      >
-                      <span className="accordion-header-icon"></span>
-                      <span className="accordion-header-text">Visit Date : <span className="">{data.date}</span> </span>
-                      <span className="accordion-header-indicator"></span>
-                    </Accordion.Toggle>
-                    <Accordion.Collapse
-                      eventKey={`${i}`}
-                      className="accordion__body"
+              {loadingRecent===false ? (<>
+                <PerfectScrollbar
+                  style={{ height: "370px" }}
+                  id="DZ_W_Todo1"
+                  className="widget-media dz-scroll ps ps--active-y"
+                >
+                  <Accordion
+                      className="accordion accordion-header-bg accordion-header-shadow accordion-rounded "
+                      defaultActiveKey="0"
                     >
-                      <div className="accordion-body-text">
-                      <ul className="timeline">
-                        {data.activities && data.activities.map((activity,index) => ( 
-                         
-                          <>
-                            <li>
-                              <div className="timeline-panel">
-                              <div className={index % 2 == 0 ? "media me-2 media-info" : "media me-2 media-success"}>{ActivityName(activity.name)}</div>
-                              <div className="media-body">
-                                <h5 className="mb-1">{activity.name}</h5>
-                                <small className="d-block">
-                                {activity.date}
-                                </small>
-                              </div>
-                              <Dropdown className="dropdown">
-                                <Dropdown.Toggle
-                                variant=" light"
-                                className="i-false p-0 btn-info sharp"
-                                >
-                                <svg
-                                  width="18px"
-                                  height="18px"
-                                  viewBox="0 0 24 24"
-                                  version="1.1"
-                                >
-                                  <g
-                                  stroke="none"
-                                  strokeWidth="1"
-                                  fill="none"
-                                  fillRule="evenodd"
+                      <>
+                      {recentActivities.map((data, i)=>
+                      <div className="accordion-item" key={i}>
+                        <Accordion.Toggle
+                            as={Card.Text}
+                            eventKey={`${i}`}
+                            className={`accordion-header ${
+                              activeAccordionHeaderShadow === 1 ? "" : "collapsed"
+                            } accordion-header-info`}
+                            onClick={() =>
+                              setActiveAccordionHeaderShadow(
+                                activeAccordionHeaderShadow === 1 ? -1 : i
+                              )
+                            }
+                        >
+                        <span className="accordion-header-icon"></span>
+                        <span className="accordion-header-text">Visit Date : <span className="">{data.date}</span> </span>
+                        <span className="accordion-header-indicator"></span>
+                      </Accordion.Toggle>
+                      <Accordion.Collapse
+                        eventKey={`${i}`}
+                        className="accordion__body"
+                      >
+                        <div className="accordion-body-text">
+                        <ul className="timeline">
+                          {data.activities && data.activities.map((activity,index) => ( 
+                          
+                            <>
+                              <li>
+                                <div className="timeline-panel">
+                                <div className={index % 2 == 0 ? "media me-2 media-info" : "media me-2 media-success"}>{ActivityName(activity.name)}</div>
+                                <div className="media-body">
+                                  <h5 className="mb-1">{activity.name}</h5>
+                                  <small className="d-block">
+                                  {activity.date}
+                                  </small>
+                                </div>
+                                <Dropdown className="dropdown">
+                                  <Dropdown.Toggle
+                                  variant=" light"
+                                  className="i-false p-0 btn-info sharp"
                                   >
-                                  <rect x="0" y="0" width="24" height="24" />
-                                  <circle fill="#000000" cx="5" cy="12" r="2" />
-                                  <circle fill="#000000" cx="12" cy="12" r="2" />
-                                  <circle fill="#000000" cx="19" cy="12" r="2" />
-                                  </g>
-                                </svg>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu className="dropdown-menu">
-                                {activity.viewable && ( <Dropdown.Item
-                                  className="dropdown-item"
-                                  onClick={()=>LoadViewPage(activity,'view')}
+                                  <svg
+                                    width="18px"
+                                    height="18px"
+                                    viewBox="0 0 24 24"
+                                    version="1.1"
                                   >
-                                  View
-                                  </Dropdown.Item>
-                                )}
-                                {activity.viewable && ( <Dropdown.Item
-                                  className="dropdown-item"
-                                  onClick={()=>LoadViewPage(activity,'update')}
-                                  >
-                                  Update
-                                  </Dropdown.Item>
-                                )}
-                                  {activity.deletable && (<Dropdown.Item
-                                  className="dropdown-item"
-                                  to="/widget-basic"
-                                  onClick={()=>LoadDeletePage(activity)}
-                                  >
-                                  Delete
-                                  </Dropdown.Item>
+                                    <g
+                                    stroke="none"
+                                    strokeWidth="1"
+                                    fill="none"
+                                    fillRule="evenodd"
+                                    >
+                                    <rect x="0" y="0" width="24" height="24" />
+                                    <circle fill="#000000" cx="5" cy="12" r="2" />
+                                    <circle fill="#000000" cx="12" cy="12" r="2" />
+                                    <circle fill="#000000" cx="19" cy="12" r="2" />
+                                    </g>
+                                  </svg>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu className="dropdown-menu">
+                                  {activity.viewable && ( <Dropdown.Item
+                                    className="dropdown-item"
+                                    onClick={()=>LoadViewPage(activity,'view')}
+                                    >
+                                    View
+                                    </Dropdown.Item>
                                   )}
-                                </Dropdown.Menu>
-                              </Dropdown>
-                              </div>
-                            </li>
-                          </>
-                        ))}                          
-                      </ul>
-                      </div>
-                    </Accordion.Collapse>
-                  </div>
-                )}
+                                  {activity.viewable && ( <Dropdown.Item
+                                    className="dropdown-item"
+                                    onClick={()=>LoadViewPage(activity,'update')}
+                                    >
+                                    Update
+                                    </Dropdown.Item>
+                                  )}
+                                    {activity.deletable && (<Dropdown.Item
+                                    className="dropdown-item"
+                                    to="/widget-basic"
+                                    onClick={()=>LoadDeletePage(activity)}
+                                    >
+                                    Delete
+                                    </Dropdown.Item>
+                                    )}
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                                </div>
+                              </li>
+                            </>
+                          ))}                          
+                        </ul>
+                        </div>
+                      </Accordion.Collapse>
+                    </div>
+                  )}
+                  </>
+                  </Accordion>
+                  
+                </PerfectScrollbar>
+                </>)
+                :
+                <>
+                <p>Loading please wait...</p>
                 </>
-                </Accordion>
-                
-              </PerfectScrollbar>
+              }
             </div>
           </div>
       </div>
       <div className="col-xl-4 col-xxl-4 col-lg-4">
         <div className="card">
           <div className="card-header border-0 pb-0">
-            <h4 className="card-title">Laboratory Orders</h4>
+            <h4 className="card-title"><b>Laboratory Orders</b></h4>
           </div>
           <div className="card-body">
+          {loadingLab===false ? (<>
             <PerfectScrollbar
               style={{ height: "370px" }}
               id="DZ_W_TimeLine"
@@ -562,15 +578,22 @@ const redirectLink=()=>{
                 }
               </ul>
             </PerfectScrollbar>
+            </>)
+                :
+                <>
+                <p>Loading please wait...</p>
+                </>
+            }
           </div>
         </div>
       </div>
       <div className="col-xl-4 col-xxl-4 col-lg-4">
         <div className="card">
           <div className="card-header border-0 pb-0">
-            <h4 className="card-title">Refill Summary</h4>
+            <h3 className="card-title"><b >Refill Summary</b></h3>
           </div>
           <div className="card-body">
+          {loadingPharmacy===false ? (<>
             <PerfectScrollbar
               style={{ height: "370px" }}
               id="DZ_W_TimeLine1"
@@ -621,7 +644,14 @@ const redirectLink=()=>{
 
               </ul>
             </PerfectScrollbar>
+            </>)
+              :
+              <>
+              <p>Loading please wait...</p>
+              </>
+          }
           </div>
+          
         </div>
       </div>
        

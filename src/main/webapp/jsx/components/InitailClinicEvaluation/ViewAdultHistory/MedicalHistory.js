@@ -96,6 +96,25 @@ const MedicalHistory = (props) => {
     const [errors, setErrors] = useState({});
     
     const [visit, setVisit] = useState({visitDate:""})
+    const [allergies, setAllergies]= useState([])
+    useEffect(() => {
+        PrepSideEffect();
+      }, []);
+        //Get list of PrepSideEffect
+        const PrepSideEffect =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setAllergies(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
     useEffect(() => { 
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory) 
@@ -1051,13 +1070,22 @@ const MedicalHistory = (props) => {
                             <FormGroup>
                             <Label >Drug Allergies * </Label>
                             <InputGroup> 
-                                <Input 
-                                    type="textarea"
-                                    name="drug_allergies"
-                                    id="drug_allergies"
-                                    onChange={handleMedicalHistory}
-                                    value={objValues.drug_allergies}  
-                                />
+                            <Input
+                                type="select"
+                                name="drug_allergies"
+                                id="drug_allergies"
+                                value={objValues.drug_allergies}
+                                onChange={handleMedicalHistory}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                                >
+                                <option value=""> Select</option>
+                                    {allergies.map((value) => (
+                                        <option key={value.id} value={value.display}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>   
                                  
                             </InputGroup>
                         

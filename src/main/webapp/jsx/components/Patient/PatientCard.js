@@ -211,7 +211,7 @@ function PatientCard(props) {
                     <Row className={"mt-1"}>
                     <Col md={12} className={classes.root2}>
                       <b style={{fontSize: "25px", color:'rgb(153, 46, 98)'}}>
-                        {patientObj.firstName + " " + patientObj.surname }
+                        {patientObj.firstName!=='' ? patientObj.firstName :""} {" "} { patientObj.surname!=='' ? patientObj.surname:"" }
                         {/* < span style={{color:'green'}}>
                             {": "+"Active"}
                           </span> */}
