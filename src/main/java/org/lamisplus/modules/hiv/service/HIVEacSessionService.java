@@ -1,12 +1,5 @@
 package org.lamisplus.modules.hiv.service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.lamisplus.modules.patient.domain.entity.Person;
-
-
 import lombok.RequiredArgsConstructor;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.hiv.domain.dto.HIVEacSessionDto;
@@ -14,9 +7,14 @@ import org.lamisplus.modules.hiv.domain.entity.HIVEac;
 import org.lamisplus.modules.hiv.domain.entity.HIVEacSession;
 import org.lamisplus.modules.hiv.repositories.HIVEacRepository;
 import org.lamisplus.modules.hiv.repositories.HIVEacSessionRepository;
+import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.stereotype.Service;
 import reactor.util.UUIDUtils;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +65,7 @@ public class HIVEacSessionService {
 				.stream()
 				.filter(e -> e.getArchived() != 1)
 				.map(this::mapEntityToDto)
-				.sorted(Comparator.comparing(HIVEacSessionDto ::getEacId).reversed())
+				.sorted(Comparator.comparing(HIVEacSessionDto::getEacId).reversed())
 				.collect(Collectors.toList());
 	}
 	
@@ -107,10 +105,10 @@ public class HIVEacSessionService {
 			case 3:
 				hivEacSession.setStatus("FOURTH EAC");
 				break;
-	    	case 4:
+			case 4:
 				hivEacSession.setStatus("FIFTY EAC");
 				break;
-		    case 5:
+			case 5:
 				hivEacSession.setStatus("SIXTY EAC");
 				break;
 			default:
@@ -134,11 +132,11 @@ public class HIVEacSessionService {
 				.interventionOthers(entity.getInterventionOthers())
 				.comment(entity.getComment())
 				.followUpDate(entity.getFollowUpDate())
-				.referral(entity.getReferral())
+				.eacSessionDate(entity.getEacSessionDate())
 				.adherence(entity.getAdherence())
 				.status(entity.getStatus())
 				.uuid(entity.getUuid())
-				.build();
+				.referral(entity.getReferral()).build();
 	}
 	
 	
@@ -151,6 +149,7 @@ public class HIVEacSessionService {
 		hIVEacSession.setInterventionOthers(dto.getInterventionOthers());
 		hIVEacSession.setComment(dto.getComment());
 		hIVEacSession.setFollowUpDate(dto.getFollowUpDate());
+		hIVEacSession.setEacSessionDate(dto.getEacSessionDate());
 		hIVEacSession.setReferral(dto.getReferral());
 		hIVEacSession.setAdherence(dto.getAdherence());
 		return hIVEacSession;
