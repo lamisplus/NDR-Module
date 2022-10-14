@@ -7,9 +7,9 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-
 public class EACPharmacyDisplayDto {
 	private Double viralLoad;
+	private LocalDate dateOfViralLoad;
 	private String eACSession;
 	private LocalDate eACSessionDate;
 }
