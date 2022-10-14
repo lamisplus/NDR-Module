@@ -101,7 +101,7 @@ public class HIVEacService {
 			}
 			
 		}
-		return null;
+		return new EACPharmacyDisplayDto(0.0, LocalDate.now(),"Default",LocalDate.now());
 		
 		
 	}
