@@ -181,7 +181,7 @@ function SubMenu(props) {
                      <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='follow'
                     active={activeItem === 'follow'}>Intensive Follow Up</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='transfer'
-                    active={activeItem === 'transfer'}>transfer</Menu.Item>
+                    active={activeItem === 'transfer'}>Transfer</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
                     active={activeItem === 'history'}>History</Menu.Item>
                     

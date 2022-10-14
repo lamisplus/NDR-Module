@@ -304,11 +304,9 @@ const Pharmacy = (props) => {
                         type="text"
                         name="bodyWeight"
                         id="bodyWeight"
-                        //onChange={handleInputChangeVitalSignDto}
                         min="3"
                         max="150"
-                        //value={vital.bodyWeight}
-                        //onKeyUp={handleInputValueCheckBodyWeight} 
+                        disabled
                         style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                     />
                     <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
@@ -333,11 +331,10 @@ const Pharmacy = (props) => {
                         type="text"
                         name="height"
                         id="height"
-                        //onChange={handleInputChangeVitalSignDto}
+                        disabled
                         value={vital.height}
                         min="48.26"
                         max="216.408"
-                        //onKeyUp={handleInputValueCheckHeight} 
                         style={{border: "1px solid #014D88", borderRadius:"0rem"}}
                     />
                         <InputGroupText
@@ -364,11 +361,11 @@ const Pharmacy = (props) => {
                     </FormGroup>
                 )}
             </div>
-            <div className="form-group mb-3 mt-2 col-md-3">
+            {/* <div className="form-group mb-3 mt-2 col-md-3">
                 <FormGroup>
                     <Label >Pregnant Status  : Yes</Label>                                    
                 </FormGroup>
-            </div>
+            </div> */}
             </div>
             <div className="row">
                 <div className="form-group mb-3 col-md-3">
@@ -527,7 +524,53 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
              */}
-
+            <h3>Ehanced Adherance Counseling</h3>
+            <div className="row">
+                <div className="form-group mb-3 col-md-3">
+                    <FormGroup>
+                        <Label >Viral Load Result</Label>
+                        <Input
+                            type="date"
+                            name="deliveryPoint"
+                            id="deliveryPoint"
+                            disabled
+                        />
+                        
+                    </FormGroup>
+                </div>
+                <div className="form-group mb-3 col-md-3">
+                    <FormGroup>
+                        <Label >Date of Last Viral Load</Label>
+                        <Input
+                            type="date"
+                            name="deliveryPoint"
+                            id="deliveryPoint"
+                            disabled
+                    />
+                        
+                    </FormGroup>
+                </div>
+                
+                <div className="form-group mb-3 col-md-3">
+                    <FormGroup>
+                        <Label >EAC Status</Label>
+                        <p>Second Session</p>
+                        
+                    </FormGroup>
+                </div>
+                <div className="form-group mb-3 col-md-3">
+                    <FormGroup>
+                        <Label >Date of EAC</Label>
+                        <Input
+                            type="date"
+                            name="deliveryPoint"
+                            id="deliveryPoint"
+                            disabled
+                        />
+                        
+                    </FormGroup>
+                </div>
+            </div>
             <hr/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>

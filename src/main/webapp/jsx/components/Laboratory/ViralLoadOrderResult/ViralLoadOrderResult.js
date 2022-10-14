@@ -302,29 +302,7 @@ const Laboratory = (props) => {
                 <div className="row">
                     
                     <Row>
-                    <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="encounterDate">Is result avialable?</Label>
-                                <Input
-                                    type="select"
-                                    name="labNumber"
-                                    id="labNumber"
-                                    //min={0}
-                                    value={tests.labNumber}
-                                    onChange={handleInputChange}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                >
-                                    <option value="">Select </option>
-                                    <option value="">Yes</option>
-                                    <option value="">No</option>
-                                   
-                                </Input>
-                                {errors.labNumber !=="" ? (
-                                    <span className={classes.error}>{errors.labNumber}</span>
-                                ) : "" }
-                            </FormGroup>
-                    </Col>
+                 
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">Lab Number</Label>
