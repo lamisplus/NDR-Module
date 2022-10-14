@@ -120,7 +120,7 @@ function SubMenu(props) {
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
             {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )?
                 (
-                <Menu size='massive' color={"blue"} inverted pointing >
+                <Menu size='tiny' color={"blue"} inverted pointing >
                     <Menu.Item onClick={() => onClickHome()} name='home' 
                     active={activeItem === 'home'} > Home</Menu.Item>
                     {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
@@ -140,7 +140,7 @@ function SubMenu(props) {
                )
                :
                (
-                <Menu size='massive' color={"black"} inverted>                    
+                <Menu size='tiny' color={"black"} inverted>                    
                     <Menu.Item onClick={() => onClickHome()} disabled={patientCurrentStatus} name='home'
                     active={activeItem === 'home'}> Home</Menu.Item>
                     {/* {patientObj.clinicalEvaluation===true && (<Menu.Item onClick={() => loadAdultEvaluation()} disabled={patientCurrentStatus} >Initial Evaluation</Menu.Item>)} */}

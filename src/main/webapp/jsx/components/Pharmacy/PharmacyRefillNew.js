@@ -73,6 +73,7 @@ const Pharmacy = (props) => {
     const [regimen, setRegimen] = useState([]);
     const [regimenList, setRegimenList] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
+    const [regimenDrug, setRegimenDrug] = useState([]);
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -88,7 +89,9 @@ const Pharmacy = (props) => {
             prescriptionError: null,
             regimenId: [],
             visitDate: null,
-            visitId: 0
+            visitId: 0,
+            refill:"",
+            refillType:""
     });
     const [vital, setVitalSignDto]= useState({
         bodyWeight: "",
@@ -164,6 +167,20 @@ const Pharmacy = (props) => {
         }
         getCharacters();
     }
+    function RegimenDrug(id) {
+        async function getCharacters() {
+            try{
+            const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            if(response.data.length >0){
+                setRegimenDrug(response.data)
+            }
+            }catch(e) {
+
+            }
+        }
+        getCharacters();
+    }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
        
@@ -176,6 +193,16 @@ const Pharmacy = (props) => {
         }else{
             setRegimenType([])
             setShowRegimen(false)
+        }
+    }
+    const handleSelectedRegimenCombination = e => {
+        const regimenId= e.target.value
+        if(regimenId!==""){
+            RegimenDrug(regimenId)
+            //setShowRegimen(true)
+        }else{
+            setRegimenType([])
+            //setShowRegimen(false)
         }
     }
     const handleCheckBox =e =>{
@@ -373,10 +400,10 @@ const Pharmacy = (props) => {
                     <Label >Refill</Label>
                     <Input
                         type="select"
-                        name="refillPeriod"
-                        id="refillPeriod"
-                    // disabled={objValues.visitDate!==null? false : true}
-                        onChange={handlRefillPeriod}   
+                        name="refill"
+                        id="refill"
+                        value={objValues.refill}
+                        onChange={handleInputChange}   
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                         >
                         <option value="">Select </option>
@@ -387,15 +414,16 @@ const Pharmacy = (props) => {
                     
                     </FormGroup>
                 </div>
+                {objValues.refill==='Yes' && (
                 <div className="form-group mb-3 col-md-3">
                 <FormGroup>
                     <Label >Refill Type</Label>
                     <Input
                         type="select"
-                        name="refillPeriod"
-                        id="refillPeriod"
-                    // disabled={objValues.visitDate!==null? false : true}
-                        onChange={handlRefillPeriod}   
+                        name="refillType"
+                        id="refillType"
+                        value={objValues.refillType}
+                        onChange={handleInputChange}   
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                         >
                         <option value="">Select </option>
@@ -406,7 +434,7 @@ const Pharmacy = (props) => {
                     
                     </FormGroup>
                 </div>
-
+                )}
                 {/* <div className="form-group mb-3 col-md-12">
                         
                         <div className="form-check custom-checkbox ml-1 ">
@@ -599,19 +627,29 @@ const Pharmacy = (props) => {
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                 <Label >Regimen *</Label>
-                <Select
-                    onChange={setSelectedOption}
-                    value={selectedOption}
-                    options={regimenType}
+                
+                <Input
+                    type="select"
+                    name="regimen"
+                    id="regimen"
+                    value={objValues.drugName}
+                    onChange={handleSelectedRegimenCombination}  
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    isMulti="true"
-                    noOptionsMessage="true"
-
-                />
+                    disabled={objValues.refillPeriod!==null? false : true}                 
+                    >
+                    <option value="">Select </option>
+                                    
+                        {regimenType.map((value) => (
+                            <option key={value.id} value={value.value}>
+                                {value.label}
+                            </option>
+                        ))}
+                </Input>
+                
                 </FormGroup>
             </div>
             )}
-            {selectedOption && selectedOption.length >0 ? 
+            {regimenDrug && regimenDrug.length >0 ? 
 
                 (
                     <>
@@ -619,13 +657,17 @@ const Pharmacy = (props) => {
                         <CardBody>
                         <h4>Drugs Information </h4>
                         <div className="row">
-                            <div className="form-group mb-3 col-md-8"  >Regimen Name selected </div>
-                            <div className="form-group mb-3 col-md-4"  >Quantity </div>
+                            <div className="form-group mb-3 col-md-2"  >Regimen Name </div>
+                            <div className="form-group mb-3 col-md-2"  >Strength </div>
+                            <div className="form-group mb-3 col-md-2"  >Frequency </div>
+                            <div className="form-group mb-3 col-md-2"  >Duration </div>
+                            <div className="form-group mb-3 col-md-2"  >Quantity Prescribed</div>
+                            <div className="form-group mb-3 col-md-2"  >Quantity Dispensed</div>
                         </div>
-                        {regimenList.length >0 && regimenList.map((input, index) => (
+                        {regimenDrug.map((input, index) => (
                             <>
                                 <div className="row">
-                                <div className="form-group mb-3 col-md-8"  >
+                                <div className="form-group mb-3 col-md-2"  >
                                     <FormGroup>
                                     <Label ><b>{input.name}</b></Label>
                                     <Input
@@ -640,7 +682,7 @@ const Pharmacy = (props) => {
                                     </FormGroup>
                                 </div>
 
-                                <div className="form-group mb-3 col-md-3">
+                                <div className="form-group mb-3 col-md-2">
                                     <FormGroup>
                                     <Input
                                         type="number"
@@ -656,7 +698,70 @@ const Pharmacy = (props) => {
                                 
                                     </FormGroup>
                                 </div>
-                                <div className="form-group mb-3 col-md-3"></div>
+                                <div className="form-group mb-3 col-md-2">
+                                    <FormGroup>
+                                    <Input
+                                        type="number"
+                                        name="dispenseQuantity"
+                                        id="dispenseQuantity"
+                                        value={input.dispenseQuantity}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        onChange={event => handleFormChange(index, event)}
+                                        required
+                                        >
+                                        
+                                    </Input>
+                                
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-2">
+                                    <FormGroup>
+                                    <Input
+                                        type="number"
+                                        name="dispenseQuantity"
+                                        id="dispenseQuantity"
+                                        value={input.dispenseQuantity}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        onChange={event => handleFormChange(index, event)}
+                                        required
+                                        >
+                                        
+                                    </Input>
+                                
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-2">
+                                    <FormGroup>
+                                    <Input
+                                        type="number"
+                                        name="dispenseQuantity"
+                                        id="dispenseQuantity"
+                                        value={input.dispenseQuantity}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        onChange={event => handleFormChange(index, event)}
+                                        required
+                                        >
+                                        
+                                    </Input>
+                                
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-2">
+                                    <FormGroup>
+                                    <Input
+                                        type="number"
+                                        name="dispenseQuantity"
+                                        id="dispenseQuantity"
+                                        value={input.dispenseQuantity}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        onChange={event => handleFormChange(index, event)}
+                                        required
+                                        >
+                                        
+                                    </Input>
+                                
+                                    </FormGroup>
+                                </div>
                                 </div>
                             </>
                         ))}
