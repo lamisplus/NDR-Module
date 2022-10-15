@@ -19,6 +19,7 @@ import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import reactor.util.UUIDUtils;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -84,17 +85,23 @@ public class HIVEacService {
 		if (openEAC.isPresent()) {
 			HIVEac eac = openEAC.get();
 			Double viralLoad = eac.getLastViralLoad();
+			LocalDate dateOfLastViralLoad = eac.getDateOfLastViralLoad();
 			List<HIVEacSession> sessions = hivEacSessionRepository.getHIVEacSesByEac(eac);
 			Optional<HIVEacSession> currentSession = sessions.stream()
 					.filter(Objects::nonNull)
 					.sorted(Comparator.comparing(HIVEacSession::getEacSessionDate).reversed())
 					.findFirst();
 			if (currentSession.isPresent()) {
-				return new EACPharmacyDisplayDto(viralLoad, currentSession.get().getStatus(), currentSession.get().getEacSessionDate());
+				return new EACPharmacyDisplayDto(
+						viralLoad,
+						dateOfLastViralLoad,
+						currentSession.get().getStatus(),
+						currentSession.get().getEacSessionDate()
+				);
 			}
 			
 		}
-		return null;
+		return new EACPharmacyDisplayDto(0.0, LocalDate.now(),"Default",LocalDate.now());
 		
 		
 	}
