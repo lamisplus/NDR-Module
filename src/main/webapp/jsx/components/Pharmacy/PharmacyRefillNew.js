@@ -74,6 +74,7 @@ const Pharmacy = (props) => {
     const [regimenList, setRegimenList] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
     const [regimenDrug, setRegimenDrug] = useState([]);
+    const [eacStatusObj, setEacStatusObj] = useState()
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -115,7 +116,23 @@ const Pharmacy = (props) => {
                 name: value.label,
                 dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
               })))
+        CheckEACStatus();
     }, [selectedOption]);
+    //Get EAC Status
+    const CheckEACStatus =()=>{
+        axios
+           .get(`${baseUrl}hiv/eac/open/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               console.log(response.data);
+               setEacStatusObj(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
     //Get list of RegimenLine
     const RegimenLine =()=>{
     axios
@@ -290,7 +307,7 @@ const Pharmacy = (props) => {
                        
         }); 
     }
-
+console.log(eacStatusObj)
 
   return (      
       <div>
@@ -552,8 +569,9 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
              */}
-            <h3>Ehanced Adherance Counseling</h3>
-            <div className="row">
+             {eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' && (<>
+                <h3>Ehanced Adherance Counseling</h3>
+                <div className="row">
                 <div className="form-group mb-3 col-md-3">
                     <FormGroup>
                         <Label >Viral Load Result</Label>
@@ -598,7 +616,8 @@ const Pharmacy = (props) => {
                         
                     </FormGroup>
                 </div>
-            </div>
+                </div>
+            </>)}
             <hr/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
