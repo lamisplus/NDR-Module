@@ -172,7 +172,18 @@ const ClinicVisit = (props) => {
     stiTreated: "",
     uuid: "",
     visitDate: "",
-    whoStagingId: ""
+    whoStagingId: "",
+    cryptococcalScreeningStatus: "",
+    cervicalCancerScreeningStatus: "",
+    cervicalCancerTreatmentProvided: "",
+    hepatitisScreeningResult: "",
+    familyPlaning: "",
+    onFamilyPlaning: "",
+    levelOfAdherence: "",
+    tbStatus: "",
+    tbPrevention: "",
+    aRVDrugsRegimen: {},
+    viralLoadOrder: {},
   });
   const [vital, setVitalSignDto] = useState({
     bodyWeight: "",
@@ -198,7 +209,20 @@ const ClinicVisit = (props) => {
     lethergy: "",
     tbStatusId: ""
   });
+  const [tests, setTests]=useState({
 
+    comments: "",
+    dateAssayed: "",
+    labNumber: "",
+    labTestGroupId: "",
+    labTestId: "",
+    dateResultReceived:"",
+    patientId:props.patientObj?props.patientObj.id:"",
+    result: "",
+    sampleCollectionDate: null,
+    viralLoadIndication: 0,
+    visitId:"" 
+})
   useEffect(() => {
     FunctionalStatus();
     WhoStaging();
@@ -228,17 +252,15 @@ const ClinicVisit = (props) => {
     //Get list of Test Group
     const TestGroup =()=>{
       axios
-          .get(`${baseUrl}laboratory/labtestgroups`,
-              { headers: {"Authorization" : `Bearer ${token}`} }
-          )
-          .then((response) => {
-              //setTestGroup(response.data);
-              const getTestList= response.data.filter((x)=> x.id===4)
-              setTest(getTestList[0].labTests)
-          })
-          .catch((error) => {
-          //console.log(error);
-          });
+      .get(`${baseUrl}laboratory/labtestgroups`,
+          { headers: {"Authorization" : `Bearer ${token}`} }
+      )
+      .then((response) => {
+          setTestGroup(response.data);
+      })
+      .catch((error) => {
+      //console.log(error);
+      });
         
     }
 
@@ -414,6 +436,7 @@ const ClinicVisit = (props) => {
       })
     }
   }
+
   //to check the input value for clinical decision 
   const handleInputValueCheckHeight =(e)=>{
     if(e.target.name==="height" && (e.target.value < 48.26 || e.target.value>216.408)){
@@ -489,7 +512,31 @@ const handleInputValueCheckTemperature =(e)=>{
     return Object.values(temp).every(x => x == "")
   }
 
-
+  const handleSelectedTestGroup = e =>{
+      setTests ({...tests,  labTestGroupId: e.target.value});
+      const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
+      setTest(getTestList[0].labTests)
+      // if(e.target.value==='4'){            
+      //     setVlRequired(true)
+      // }else{
+      //     setVlRequired(false) 
+      // }
+  }
+  const handleInputChangeTest = e => {
+    setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
+    if(e.target.value==="16"){
+        //setShowVLIndication(true)
+        //setVlRequired(true)
+        setErrors({...temp, viralLoadIndication:""})
+        
+        setTests ({...tests,  labTestId: e.target.value});
+    }else{
+        //setShowVLIndication(false)
+        //setVlRequired(false) 
+        setTests ({...tests,  labTestId: e.target.value});
+    }
+    //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
+  }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -1027,9 +1074,9 @@ const handleInputValueCheckTemperature =(e)=>{
                   <FormLabelName >Level of Adherence *</FormLabelName>
                   <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="levelOfAdherence"
+                    id="levelOfAdherence"
+                    value={objValues.levelOfAdherence}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -1042,9 +1089,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                  {errors.adherenceLevel !=="" ? (
-                      <span className={classes.error}>{errors.adherenceLevel}</span>
-                  ) : "" }
+                 
                 </FormGroup>
               </div>
               <div className=" mb-3 col-md-6">
@@ -1052,9 +1097,9 @@ const handleInputValueCheckTemperature =(e)=>{
                   <FormLabelName >Cryptococcal Screening Status</FormLabelName>
                   <Input
                     type="select"
-                    name="functionalStatusId"
-                    id="functionalStatusId"
-                    value={objValues.functionalStatusId}
+                    name="cryptococcalScreeningStatus"
+                    id="cryptococcalScreeningStatus"
+                    value={objValues.cryptococcalScreeningStatus}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -1067,9 +1112,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                  {errors.functionalStatusId !=="" ? (
-                      <span className={classes.error}>{errors.functionalStatusId}</span>
-                  ) : "" }
+                 
                 </FormGroup>
               </div>
               <div className=" mb-3 col-md-6">
@@ -1077,9 +1120,9 @@ const handleInputValueCheckTemperature =(e)=>{
                   <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
                   <Input
                     type="select"
-                    name="functionalStatusId"
-                    id="functionalStatusId"
-                    value={objValues.functionalStatusId}
+                    name="cervicalCancerScreeningStatus"
+                    id="cervicalCancerScreeningStatus"
+                    value={objValues.cervicalCancerScreeningStatus}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -1092,9 +1135,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                  {errors.functionalStatusId !=="" ? (
-                      <span className={classes.error}>{errors.functionalStatusId}</span>
-                  ) : "" }
+                  
                 </FormGroup>
               </div>
               <div className=" mb-3 col-md-6">
@@ -1102,9 +1143,9 @@ const handleInputValueCheckTemperature =(e)=>{
                   <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
                   <Input
                     type="select"
-                    name="functionalStatusId"
-                    id="functionalStatusId"
-                    value={objValues.functionalStatusId}
+                    name="cervicalCancerTreatmentProvided"
+                    id="cervicalCancerTreatmentProvided"
+                    value={objValues.cervicalCancerTreatmentProvided}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -1117,9 +1158,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                  {errors.functionalStatusId !=="" ? (
-                      <span className={classes.error}>{errors.functionalStatusId}</span>
-                  ) : "" }
+                  
                 </FormGroup>
               </div>
               <div className=" mb-3 col-md-6">
@@ -1127,9 +1166,9 @@ const handleInputValueCheckTemperature =(e)=>{
                   <FormLabelName >Hepatitis Screening Result</FormLabelName>
                   <Input
                     type="select"
-                    name="functionalStatusId"
-                    id="functionalStatusId"
-                    value={objValues.functionalStatusId}
+                    name="hepatitisScreeningResult"
+                    id="hepatitisScreeningResult"
+                    value={objValues.hepatitisScreeningResult}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -1142,9 +1181,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                  {errors.functionalStatusId !=="" ? (
-                      <span className={classes.error}>{errors.functionalStatusId}</span>
-                  ) : "" }
+                  
                 </FormGroup>
               </div>
               {/* This section is if the patient is Female */}
@@ -1153,9 +1190,9 @@ const handleInputValueCheckTemperature =(e)=>{
                   <FormLabelName >Pregnancy Status</FormLabelName>
                   <Input
                     type="select"
-                    name="adherenceLevel"
-                    id="adherenceLevel"
-                    value={objValues.adherenceLevel}
+                    name="pregnancyStatus"
+                    id="pregnancyStatus"
+                    value={objValues.pregnancyStatus}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     required
@@ -1168,9 +1205,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                  {errors.adherenceLevel !=="" ? (
-                      <span className={classes.error}>{errors.adherenceLevel}</span>
-                  ) : "" }
+                 
                 </FormGroup>
               </div>
               <div className="row">
@@ -1179,9 +1214,9 @@ const handleInputValueCheckTemperature =(e)=>{
                     <FormLabelName >Family Planing ?</FormLabelName>
                     <Input
                       type="select"
-                      name="adherenceLevel"
-                      id="adherenceLevel"
-                      value={objValues.adherenceLevel}
+                      name="familyPlaning"
+                      id="familyPlaning"
+                      value={objValues.familyPlaning}
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                       required
@@ -1194,9 +1229,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         </option>
                       ))}
                     </Input>
-                    {errors.adherenceLevel !=="" ? (
-                        <span className={classes.error}>{errors.adherenceLevel}</span>
-                    ) : "" }
+                   
                   </FormGroup>
                 </div>
                 <div className=" mb-3 col-md-6">
@@ -1204,9 +1237,9 @@ const handleInputValueCheckTemperature =(e)=>{
                     <FormLabelName >On Family Planing </FormLabelName>
                     <Input
                       type="select"
-                      name="adherenceLevel"
-                      id="adherenceLevel"
-                      value={objValues.adherenceLevel}
+                      name="onFamilyPlaning"
+                      id="onFamilyPlaning"
+                      value={objValues.onFamilyPlaning}
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                       required
@@ -1219,9 +1252,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         </option>
                       ))}
                     </Input>
-                    {errors.adherenceLevel !=="" ? (
-                        <span className={classes.error}>{errors.adherenceLevel}</span>
-                    ) : "" }
+                    
                   </FormGroup>
                 </div>
               </div>
@@ -1251,8 +1282,8 @@ const handleInputValueCheckTemperature =(e)=>{
                       <FormLabelName >Regimen Line </FormLabelName>
                       <Input
                         type="select"
-                        name="adherenceLevel"
-                        id="adherenceLevel"
+                        name="regimenLine"
+                        id="regimenLine"
                         value={objValues.adherenceLevel}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -1266,9 +1297,7 @@ const handleInputValueCheckTemperature =(e)=>{
                           </option>
                         ))}
                       </Input>
-                      {errors.adherenceLevel !=="" ? (
-                          <span className={classes.error}>{errors.adherenceLevel}</span>
-                      ) : "" }
+                     
                     </FormGroup>
               </div>
               <div className=" mb-3 col-md-3">
@@ -1276,9 +1305,9 @@ const handleInputValueCheckTemperature =(e)=>{
                       <FormLabelName >Regimen </FormLabelName>
                       <Input
                         type="select"
-                        name="adherenceLevel"
-                        id="adherenceLevel"
-                        value={objValues.adherenceLevel}
+                        name="regimen"
+                        id="regimen"
+                        value={objValues.regimen}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
@@ -1291,19 +1320,17 @@ const handleInputValueCheckTemperature =(e)=>{
                           </option>
                         ))}
                       </Input>
-                      {errors.adherenceLevel !=="" ? (
-                          <span className={classes.error}>{errors.adherenceLevel}</span>
-                      ) : "" }
+                      
                     </FormGroup>
               </div>
-              <div className=" mb-3 col-md-3">
+              <div className=" mb-3 col-md-1">
                     <FormGroup>
                       <FormLabelName >Dosage </FormLabelName>
                       <Input
                         type="text"
-                        name="adherenceLevel"
-                        id="adherenceLevel"
-                        value={objValues.adherenceLevel}
+                        name="dosage"
+                        id="dosage"
+                        value={objValues.dosage}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
@@ -1316,9 +1343,9 @@ const handleInputValueCheckTemperature =(e)=>{
                       <FormLabelName >Adherence </FormLabelName>
                       <Input
                         type="select"
-                        name="adherenceLevel"
-                        id="adherenceLevel"
-                        value={objValues.adherenceLevel}
+                        name="regimenAdherance"
+                        id="regimenAdherance"
+                        value={objValues.regimenAdherance}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
@@ -1331,14 +1358,14 @@ const handleInputValueCheckTemperature =(e)=>{
                           </option>
                         ))}
                       </Input>
-                      {errors.adherenceLevel !=="" ? (
-                          <span className={classes.error}>{errors.adherenceLevel}</span>
-                      ) : "" }
+                     
                     </FormGroup>
               </div>
+              <div className=" mb-3 col-md-2">
               <LabelSui as='a' color='black'  size='tiny' style={{ marginTop:35}}>
                   <Icon name='plus' /> Add
               </LabelSui>
+              </div>
             </div>
             {/* END ARV DRUGS Regimen */}
             <br />
@@ -1348,16 +1375,38 @@ const handleInputValueCheckTemperature =(e)=>{
             <br /><br />
             {/* Viral Load  Form */}
             <div className="row">
-           
-              <div  className="mb-3 col-md-5">
+            <div  className=" col-md-4">
+                <FormGroup>
+                      <FormLabelName for="testGroup">Select Test Group</FormLabelName>
+
+                        <Input
+                            type="select"
+                            name="labTestGroupId"
+                            id="labTestGroupId"
+                            value={tests.labTestGroupId}
+                            onChange={handleSelectedTestGroup} 
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
+                            >
+                            <option value="">Select </option>
+                                            
+                                {testGroup.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.groupName}
+                                    </option>
+                                ))}
+                        </Input>
+                               
+                   </FormGroup>
+              </div>
+              <div  className=" col-md-4">
                 <FormGroup>
                       <FormLabelName for="testGroup">Select Test</FormLabelName>
                       <Input
                           type="select"
                           name="labTestId"
                           id="labTestId"
-                          //value={tests.labTestId}
-                          //onChange={handleInputChangeTest} 
+                          value={tests.labTestId}
+                          onChange={handleInputChangeTest} 
                           style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
                           >
                           <option value="">Select </option>
@@ -1368,12 +1417,11 @@ const handleInputValueCheckTemperature =(e)=>{
                                   </option>
                               ))}
                       </Input>
-                      {errors.labTestId !=="" ? (
-                          <span className={classes.error}>{errors.labTestId}</span>
-                      ) : "" }
+                    
                 </FormGroup>
               </div>
-              <div  className="mb-3 col-md-5">
+              {tests.labTestId==='16' && (
+              <div  className=" col-md-4">
                   <FormGroup>
                     <FormLabelName for="vlIndication">VL Indication</FormLabelName>
                     <Input
@@ -1395,6 +1443,7 @@ const handleInputValueCheckTemperature =(e)=>{
                      
                 </FormGroup>
               </div>
+              )}
               <div className="form-group mb-3 col-md-2">
               <LabelSui as='a' color='black'  size='tiny' style={{ marginTop:35}}>
                   <Icon name='plus' /> Add
