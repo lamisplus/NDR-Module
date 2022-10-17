@@ -1336,6 +1336,9 @@ const handleInputValueCheckTemperature =(e)=>{
                       ) : "" }
                     </FormGroup>
               </div>
+              <LabelSui as='a' color='black'  size='tiny' style={{ marginTop:35}}>
+                  <Icon name='plus' /> Add
+              </LabelSui>
             </div>
             {/* END ARV DRUGS Regimen */}
             <br />
