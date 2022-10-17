@@ -33,14 +33,22 @@ public class RegimenController {
 	@GetMapping(value = "/arv/adult", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RegimenType>> getAdultRegimenTypes() {
 		return ResponseEntity.ok(repository.findAll().stream()
-				.filter(e -> e.getDescription().contains("Adult") || e.getDescription().contains("Third Line"))
+				.filter(e -> e.getDescription().contains("Adult")
+						|| e.getDescription().contains("Third Line")
+						||e.getDescription().contains("IPT")
+						|| e.getDescription().contains("OI")
+						|| e.getDescription().contains("CTX")
+				)
 				.collect(Collectors.toList()));
 	}
 	
 	
 	@GetMapping(value = "/arv/children", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RegimenType>> getChildrenRegimenTypes() {
-		return ResponseEntity.ok(repository.findAll().stream().filter(e -> e.getDescription().contains("Children"))
+		return ResponseEntity.ok(repository.findAll().stream().filter(e -> e.getDescription().contains("Children")
+				|| e.getDescription().contains("OI")
+				||e.getDescription().contains("IPT")
+				|| e.getDescription().contains("CTX"))
 				.collect(Collectors.toList()));
 	}
 	
@@ -51,11 +59,7 @@ public class RegimenController {
 				.collect(Collectors.toList()));
 	}
 	
-	@GetMapping(value = "/oi/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<RegimenType>> getOiDrugsType() {
-		return ResponseEntity.ok(repository.findAll().stream().filter(e -> e.getDescription().contains("OI"))
-				.collect(Collectors.toList()));
-	}
+
 	
 	@GetMapping(value = "/other/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<RegimenType>> getOtherRegimenTypes() {
@@ -63,9 +67,9 @@ public class RegimenController {
 				.stream()
 				.filter(e -> e.getDescription().contains("Other")
 						|| e.getDescription().contains("ARV")
-				|| e.getDescription().contains("PEP")
-				|| e.getDescription().contains("CTX")
-				||e.getDescription().contains("PrEP"))
+						|| e.getDescription().contains("PEP")
+						|| e.getDescription().contains("CTX")
+						||e.getDescription().contains("PrEP"))
 				.collect(Collectors.toList()));
 	}
 	
