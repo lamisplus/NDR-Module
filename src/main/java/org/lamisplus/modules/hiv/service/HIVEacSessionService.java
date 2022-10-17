@@ -65,7 +65,7 @@ public class HIVEacSessionService {
 				.stream()
 				.filter(e -> e.getArchived() != 1)
 				.map(this::mapEntityToDto)
-				.sorted(Comparator.comparing(HIVEacSessionDto::getEacId).reversed())
+				.sorted(Comparator.comparing(HIVEacSessionDto::getEacSessionDate).reversed())
 				.collect(Collectors.toList());
 	}
 	
