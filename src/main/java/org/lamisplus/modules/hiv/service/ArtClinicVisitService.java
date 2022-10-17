@@ -149,12 +149,23 @@ public class ArtClinicVisitService {
 				.tbScreen(visit.getTbScreen())
 				.whoStaging(applicationCodesetService.getApplicationCodeset(visit.getWhoStagingId()).getDisplay())
 				.opportunisticInfections(visit.getOpportunisticInfections())
+				.cryptococcalScreeningStatus(visit.getCryptococcalScreeningStatus())
+				.familyPlaning(visit.getFamilyPlaning())
+				.hepatitisScreeningResult(visit.getHepatitisScreeningResult())
+				.cervicalCancerScreeningStatus(visit.getCervicalCancerScreeningStatus())
+				.cervicalCancerTreatmentProvided(visit.getCervicalCancerTreatmentProvided())
+				.aRVDrugsRegimen(visit.getARVDrugsRegimen())
+				.viralLoadOrder(visit.getViralLoadOrder())
+				.levelOfAdherence(visit.getLevelOfAdherence())
+				.tbPrevention(visit.getTbPrevention())
+				.tbStatus(visit.getTbStatus())
 				.build();
 	}
 	
 	
 	private Person getPerson(Long personId) {
-		return personRepository.findById(personId).orElseThrow(() -> new EntityNotFoundException(Person.class, "id", String.valueOf(personId)));
+		return personRepository.findById(personId)
+				.orElseThrow(() -> new EntityNotFoundException(Person.class, "id", String.valueOf(personId)));
 	}
 	
 	

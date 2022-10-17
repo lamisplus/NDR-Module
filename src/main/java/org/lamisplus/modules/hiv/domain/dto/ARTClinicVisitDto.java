@@ -9,6 +9,7 @@ import org.hibernate.annotations.Type;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.triage.domain.dto.VitalSignRequestDto;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -63,6 +64,22 @@ public class ARTClinicVisitDto implements Serializable {
 	private LocalDate lmpDate;
 	@NotNull
 	private Long visitId;
+	
+	private String cryptococcalScreeningStatus;
+	private String cervicalCancerScreeningStatus;
+	private String cervicalCancerTreatmentProvided;
+	private String hepatitisScreeningResult;
+	private String familyPlaning;
+	private String onFamilyPlaning;
+	private String levelOfAdherence;
+	private String tbStatus;
+	private String tbPrevention;
+	@Type(type = "jsonb")
+	@Column(columnDefinition = "jsonb")
+	private JsonNode aRVDrugsRegimen;
+	@Type(type = "jsonb")
+	@Column(columnDefinition = "jsonb")
+	private JsonNode viralLoadOrder;
 	
 	
 }
