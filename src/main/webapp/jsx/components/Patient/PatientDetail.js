@@ -50,6 +50,8 @@ import NEWEACSESSION from './../EnhancedAdherenceCounseling/NewSessions'
 import ChronicCare from './../ChronicCare/Index'
 import LabOrderResult from './../Laboratory/LabOrderResult/index'
 import ViralLoadOrderResult from './../Laboratory/ViralLoadOrderResult/index'
+import IntensiveFollowUp from './../IntensiveFollowUp/Index'
+import TransferForm from './../TransferForm/Index'
 
 const styles = theme => ({
   root: {
@@ -147,6 +149,8 @@ function PatientCard(props) {
           {activeContent.route==='chronic-care' &&( <ChronicCare patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='laboratoryOrderResult' &&( <LabOrderResult patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='laboratoryViralLoadOrderResult' &&( <ViralLoadOrderResult patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='intensive-followup' &&( <IntensiveFollowUp patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='transfer-form' &&( <TransferForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
          </CardContent>
       </Card>
     </div>

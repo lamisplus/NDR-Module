@@ -75,6 +75,8 @@ const Pharmacy = (props) => {
     const [regimenType, setRegimenType] = useState([]);
     const [regimenDrug, setRegimenDrug] = useState([]);
     const [eacStatusObj, setEacStatusObj] = useState()
+    const [showCurrentVitalSigns, setShowCurrentVitalSigns] = useState(false)
+    const [currentVitalSigns, setcurrentVitalSigns] = useState({})
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -110,6 +112,7 @@ const Pharmacy = (props) => {
     useEffect(() => {
         RegimenLine();
         PrepSideEffect();
+        VitalSigns();
         setRegimenList(
             Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
                 id: value.value,
@@ -117,7 +120,26 @@ const Pharmacy = (props) => {
                 dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
               })))
         CheckEACStatus();
+        VitalSigns()
     }, [selectedOption]);
+    //Check for the last Vital Signs
+    const VitalSigns = () => {
+        axios
+          .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
+            { headers: { "Authorization": `Bearer ${token}` } }
+          )
+          .then((response) => {
+             const lastVitalSigns = response.data[response.data.length - 1]
+             //console.log(lastVitalSigns)
+            if (lastVitalSigns.captureDate >= moment(new Date()).format("YYYY-MM-DD")) {
+                setVitalSignDto(lastVitalSigns)
+              setShowCurrentVitalSigns(true)
+            }
+          })
+          .catch((error) => {
+            //console.log(error);
+          });
+        }
     //Get EAC Status
     const CheckEACStatus =()=>{
         axios
@@ -339,78 +361,81 @@ console.log(eacStatusObj)
                     </FormGroup>
                 </div>
             </div>
-            <div className="row">
-            <div className=" mb-3 col-md-3">
-                <FormGroup>
-                <Label >Body Weight</Label>
-                <InputGroup> 
-                    <Input 
-                        type="text"
-                        name="bodyWeight"
-                        id="bodyWeight"
-                        min="3"
-                        max="150"
-                        disabled
-                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                    />
-                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                        kg
-                    </InputGroupText>
-                </InputGroup>
-                
-                </FormGroup>
-            </div>                                   
-            <div className="form-group mb-3 col-md-3">
-                <FormGroup>
-                <Label >Height</Label>
-                <InputGroup> 
-                <InputGroupText
-                        addonType="append"
-                        
-                        style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
-                        >
-                        cm
-                </InputGroupText>
-                    <Input 
-                        type="text"
-                        name="height"
-                        id="height"
-                        disabled
-                        value={vital.height}
-                        min="48.26"
-                        max="216.408"
-                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}
-                    />
-                        <InputGroupText
-                        addonType="append"
-                        
-                        style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
-                        >
-                        {vital.height!=='' ? (vital.height/100).toFixed(2) + "m" : "m"}
-                    </InputGroupText>
-                </InputGroup>
-                
-                </FormGroup>
-            </div>
-            <div className="form-group mb-3 mt-2 col-md-3">
-                {vital.bodyWeight!=="" && vital.height!=='' && (
+            {vital.bodyWeight!=='' && vital.height!=='' && (<>
+                <div className="row">
+                <div className=" mb-3 col-md-3">
                     <FormGroup>
-                    <Label> </Label>
+                    <Label >Body Weight</Label>
                     <InputGroup> 
-                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                        BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
-                    </InputGroupText>                   
+                        <Input 
+                            type="text"
+                            name="bodyWeight"
+                            id="bodyWeight"
+                            min="3"
+                            value={vital.bodyWeight}
+                            max="150"
+                            disabled
+                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                        />
+                        <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                            kg
+                        </InputGroupText>
+                    </InputGroup>
                     
-                    </InputGroup>                
                     </FormGroup>
-                )}
-            </div>
-            {/* <div className="form-group mb-3 mt-2 col-md-3">
-                <FormGroup>
-                    <Label >Pregnant Status  : Yes</Label>                                    
-                </FormGroup>
-            </div> */}
-            </div>
+                </div>                                   
+                <div className="form-group mb-3 col-md-3">
+                    <FormGroup>
+                    <Label >Height</Label>
+                    <InputGroup> 
+                    <InputGroupText
+                            addonType="append"
+                            
+                            style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
+                            >
+                            cm
+                    </InputGroupText>
+                        <Input 
+                            type="text"
+                            name="height"
+                            id="height"
+                            disabled
+                            value={vital.height}
+                            min="48.26"
+                            max="216.408"
+                            style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                        />
+                            <InputGroupText
+                            addonType="append"
+                            
+                            style={{ backgroundColor:"#992E62", color:"#fff", border: "1px solid #992E62", borderRadius:"0rem"}}
+                            >
+                            {vital.height!=='' ? (vital.height/100).toFixed(2) + "m" : "m"}
+                        </InputGroupText>
+                    </InputGroup>
+                    
+                    </FormGroup>
+                </div>
+                <div className="form-group mb-3 mt-2 col-md-3">
+                    {vital.bodyWeight!=="" && vital.height!=='' && (
+                        <FormGroup>
+                        <Label> </Label>
+                        <InputGroup> 
+                        <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                            BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
+                        </InputGroupText>                   
+                        
+                        </InputGroup>                
+                        </FormGroup>
+                    )}
+                </div>
+                {/* <div className="form-group mb-3 mt-2 col-md-3">
+                    <FormGroup>
+                        <Label >Pregnant Status  : Yes</Label>                                    
+                    </FormGroup>
+                </div> */}
+                </div>
+            </>)}
             <div className="row">
                 <div className="form-group mb-3 col-md-3">
                 <FormGroup>

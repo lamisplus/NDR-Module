@@ -235,7 +235,7 @@ const Tracking = (props) => {
                         <h3>Attempted to Contact</h3>
                         <div className="form-group mb-3 col-md-3">        
                             <FormGroup>
-                                <Label >Attempt Date</Label>
+                                <Label >Date of call</Label>
                                 <Input
                                     type="date"
                                     name="attemptDate"
@@ -254,7 +254,7 @@ const Tracking = (props) => {
                             </div> 
                             <div className="form-group mb-3 col-md-3">
                                 <FormGroup>
-                                <Label >Who Attempted Contact?</Label>
+                                <Label >How do you feel generally?</Label>
                                 <Input
                                     type="text"
                                     name="whoAttemptedContact"
@@ -271,7 +271,28 @@ const Tracking = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-3">
                                 <FormGroup>
-                                <Label >Mode Of Contact</Label>
+                                <Label >Do you have any of the following</Label>
+                                <Input
+                                    type="select"
+                                    name="modeOfConatct"
+                                    id="modeOfConatct"
+                                    value={attempt.modeOfConatct}
+                                    onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                >
+                                 <option value="">Select</option> 
+                                 <option value="Telephone">Telephone</option> 
+                                 <option value="Home Visit">Home Visit</option> 
+                                </Input> 
+                                {errors.modeOfConatct !=="" ? (
+                                    <span className={classes.error}>{errors.modeOfConatct}</span>
+                                ) : "" }   
+                                </FormGroup>
+                            </div>
+                             <div className="form-group mb-3 col-md-3">
+                                <FormGroup>
+                                <Label >Do you have any of the following</Label>
                                 <Input
                                     type="select"
                                     name="modeOfConatct"
@@ -292,60 +313,29 @@ const Tracking = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-3">
                                 <FormGroup>
-                                <Label >Person Contacted</Label>
+                                <Label >Have you missed any doses of your medications in the past 7 days</Label>
                                 <Input
                                     type="select"
-                                    name="personContacted"
-                                    id="personContacted"
-                                    value={attempt.personContacted}
+                                    name="modeOfConatct"
+                                    id="modeOfConatct"
+                                    value={attempt.modeOfConatct}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
                                  <option value="">Select</option> 
-                                 <option value="Guardian">Guardian</option> 
-                                 <option value="Client">Client</option> 
-                                 <option value="Tx Partner">Tx Partner</option> 
-                                 <option value="No Contact">No Contact</option>
-                                </Input>
-                                {errors.personContacted !=="" ? (
-                                    <span className={classes.error}>{errors.personContacted}</span>
-                                ) : "" }  
+                                 <option value="Yes">Yes</option> 
+                                 <option value="No">No</option> 
+                                </Input> 
+                                {errors.modeOfConatct !=="" ? (
+                                    <span className={classes.error}>{errors.modeOfConatct}</span>
+                                ) : "" }   
                                 </FormGroup>
                             </div>
+
                             <div className="form-group mb-3 col-md-3">
                                 <FormGroup>
-                                <Label >Reason for Defaulting</Label>
-                                <Input
-                                    type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    value={attempt.reasonForDefaulting}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Was sick">Was sick</option> 
-                                 <option value="No transport fare">No transport fare</option> 
-                                 <option value="Transferred to new site">Transferred to new site</option> 
-                                 <option value="Forgot">Forgot</option>
-                                 <option value="Felt Better">Felt Better</option> 
-                                 <option value="Not permitted to leave work">Not permitted to leave work</option> 
-                                 <option value="Lost appointment card">Lost appointment card</option> 
-                                 <option value="Still had drugs">Still had drugs</option> 
-                                 <option value="Taking Herbal Treatment">Taking Herbal Treatment</option>
-                                 <option value="Others">Others</option>
-                                </Input>
-                                {errors.reasonForDefaulting !=="" ? (
-                                    <span className={classes.error}>{errors.reasonForDefaulting}</span>
-                                ) : "" }  
-                                </FormGroup>
-                            </div>
-                            {attempt.reasonForDefaulting==='Others' && (
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Reason for Defaulting</Label>
+                                <Label >Reason </Label>
                                 <Input
                                     type="text"
                                     name="reasonForDefaultingOthers"
@@ -360,7 +350,26 @@ const Tracking = (props) => {
                                 ) : "" }
                                 </FormGroup>
                             </div>
-                            )}
+                            <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Outcome of the call </Label>
+
+                                <Input 
+                                    type="select"
+                                    name="careInFacilityDiscountinued"
+                                    id="careInFacilityDiscountinued"
+                                    onChange={handleInputChange}
+                                    value={objValues.careInFacilityDiscountinued}  
+                                >
+                                    <option value=""></option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </Input>
+                                {errors.careInFacilityDiscountinued !=="" ? (
+                                <span className={classes.error}>{errors.careInFacilityDiscountinued}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
                             <div className="form-group mb-3 col-md-2">
                             <LabelSui as='a' color='black'  onClick={addAttempt}  size='tiny' style={{ marginTop:35}}>
                                 <Icon name='plus' /> Add
@@ -399,49 +408,8 @@ const Tracking = (props) => {
                             }       
                         <hr/>
                         </div>
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for="">Patient Care in Facility Discontinued? </Label>
+                        
 
-                                <Input 
-                                    type="select"
-                                    name="careInFacilityDiscountinued"
-                                    id="careInFacilityDiscountinued"
-                                    onChange={handleInputChange}
-                                    value={objValues.careInFacilityDiscountinued}  
-                                >
-                                    <option value=""></option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </Input>
-                                {errors.careInFacilityDiscountinued !=="" ? (
-                                <span className={classes.error}>{errors.careInFacilityDiscountinued}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Referred for</Label>
-                            <Input
-                                type="select"
-                                name="referredFor"
-                                id="referredFor"
-                                onChange={handleInputChange}
-                                value={objValues.referredFor} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Adherence Counselling">Adherence Counselling</option>
-                                <option value="Others">Others</option>
-                            </Input>
-                            {errors.referredFor !=="" ? (
-                                <span className={classes.error}>{errors.referredFor}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                       
                     </div>
                     
                     {saving ? <Spinner /> : ""}

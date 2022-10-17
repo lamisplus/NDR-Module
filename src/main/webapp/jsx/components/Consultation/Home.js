@@ -21,6 +21,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 import { Accordion, Alert } from "react-bootstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import {Label as LabelSui} from 'semantic-ui-react'
 
 let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
@@ -105,6 +106,7 @@ const ClinicVisit = (props) => {
   const [heightValue, setHeightValue]= useState("cm")
   const [errors, setErrors] = useState({});
   const [clinicVisitList, setClinicVisitList] = useState([])
+  const [vLIndication, setVLIndication] = useState([]);
   const [loading, setLoading] = useState(true)
   const [
     activeAccordionHeaderShadow,
@@ -117,6 +119,8 @@ const ClinicVisit = (props) => {
   const [clinicalStage, setClinicalStage] = useState([]);
   const [functionalStatus, setFunctionalStatus] = useState([]);
   const [adherenceLevel, setAdherenceLevel] = useState([]);
+  const [testGroup, setTestGroup] = useState([]);
+    const [test, setTest] = useState([]);
   const [tbStatus, setTbStatus] = useState([]);
   const [TBForms, setTBForms] = useState(false)
   // const [addVitalModal, setAddVitalModal] = useState(false);
@@ -204,8 +208,40 @@ const ClinicVisit = (props) => {
     GetPatientObj();
     ClinicVisitList();
     PatientDetaild();
+    ViraLoadIndication();
+    TestGroup();
     //hiv/patient/3
   }, []);
+    //GET VIRAL LOAD INDICATION 
+      const ViraLoadIndication =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/VIRAL_LOAD_INDICATION`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setVLIndication(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //Get list of Test Group
+    const TestGroup =()=>{
+      axios
+          .get(`${baseUrl}laboratory/labtestgroups`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+              //setTestGroup(response.data);
+              const getTestList= response.data.filter((x)=> x.id===4)
+              setTest(getTestList[0].labTests)
+          })
+          .catch((error) => {
+          //console.log(error);
+          });
+        
+    }
+
      //GET LIST Drug Refill
      async function ClinicVisitList() {
       setLoading(true)
@@ -229,7 +265,7 @@ const ClinicVisit = (props) => {
       )
       .then((response) => {
          const lastVitalSigns = response.data[response.data.length - 1]
-         console.log(lastVitalSigns)
+         //console.log(lastVitalSigns)
         if (lastVitalSigns.captureDate >= moment(new Date()).format("YYYY-MM-DD")) {
           setcurrentVitalSigns(lastVitalSigns)
           setShowCurrentVitalSigns(true)
@@ -1011,7 +1047,185 @@ const handleInputValueCheckTemperature =(e)=>{
                   ) : "" }
                 </FormGroup>
               </div>
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Cryptococcal Screening Status</FormLabelName>
+                  <Input
+                    type="select"
+                    name="functionalStatusId"
+                    id="functionalStatusId"
+                    value={objValues.functionalStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
 
+                    {functionalStatus.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.display}
+                      </option>
+                    ))}
+                  </Input>
+                  {errors.functionalStatusId !=="" ? (
+                      <span className={classes.error}>{errors.functionalStatusId}</span>
+                  ) : "" }
+                </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
+                  <Input
+                    type="select"
+                    name="functionalStatusId"
+                    id="functionalStatusId"
+                    value={objValues.functionalStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {functionalStatus.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.display}
+                      </option>
+                    ))}
+                  </Input>
+                  {errors.functionalStatusId !=="" ? (
+                      <span className={classes.error}>{errors.functionalStatusId}</span>
+                  ) : "" }
+                </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
+                  <Input
+                    type="select"
+                    name="functionalStatusId"
+                    id="functionalStatusId"
+                    value={objValues.functionalStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {functionalStatus.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.display}
+                      </option>
+                    ))}
+                  </Input>
+                  {errors.functionalStatusId !=="" ? (
+                      <span className={classes.error}>{errors.functionalStatusId}</span>
+                  ) : "" }
+                </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Hepatitis Screening Result</FormLabelName>
+                  <Input
+                    type="select"
+                    name="functionalStatusId"
+                    id="functionalStatusId"
+                    value={objValues.functionalStatusId}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {functionalStatus.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.display}
+                      </option>
+                    ))}
+                  </Input>
+                  {errors.functionalStatusId !=="" ? (
+                      <span className={classes.error}>{errors.functionalStatusId}</span>
+                  ) : "" }
+                </FormGroup>
+              </div>
+              {/* This section is if the patient is Female */}
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Pregnancy Status</FormLabelName>
+                  <Input
+                    type="select"
+                    name="adherenceLevel"
+                    id="adherenceLevel"
+                    value={objValues.adherenceLevel}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {adherenceLevel.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.display}
+                      </option>
+                    ))}
+                  </Input>
+                  {errors.adherenceLevel !=="" ? (
+                      <span className={classes.error}>{errors.adherenceLevel}</span>
+                  ) : "" }
+                </FormGroup>
+              </div>
+              <div className="row">
+                <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                    <FormLabelName >Family Planing ?</FormLabelName>
+                    <Input
+                      type="select"
+                      name="adherenceLevel"
+                      id="adherenceLevel"
+                      value={objValues.adherenceLevel}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      required
+                    >
+                      <option value="select">Select </option>
+
+                      {adherenceLevel.map((value) => (
+                        <option key={value.id} value={value.id}>
+                          {value.display}
+                        </option>
+                      ))}
+                    </Input>
+                    {errors.adherenceLevel !=="" ? (
+                        <span className={classes.error}>{errors.adherenceLevel}</span>
+                    ) : "" }
+                  </FormGroup>
+                </div>
+                <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                    <FormLabelName >On Family Planing </FormLabelName>
+                    <Input
+                      type="select"
+                      name="adherenceLevel"
+                      id="adherenceLevel"
+                      value={objValues.adherenceLevel}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      required
+                    >
+                      <option value="select">Select </option>
+
+                      {adherenceLevel.map((value) => (
+                        <option key={value.id} value={value.id}>
+                          {value.display}
+                        </option>
+                      ))}
+                    </Input>
+                    {errors.adherenceLevel !=="" ? (
+                        <span className={classes.error}>{errors.adherenceLevel}</span>
+                    ) : "" }
+                  </FormGroup>
+                </div>
+              </div>
+             {/* End of section if the patient is Female */}
             </div>
             <br />
             <Label as='a' color='red' style={{width:'106%', height:'35px'}} ribbon>
@@ -1027,11 +1241,164 @@ const handleInputValueCheckTemperature =(e)=>{
             <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={props.patientObj.enrollment.dateOfRegistration} />
             <br />
             <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
-            <h4 style={{color:'#fff'}}>TB SCREENING</h4>
+            <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>
             </Label>
             <br /><br />
-            {/* TB Screening Form */}
-            <TBScreening tbObj={tbObj} setTbObj={setTbObj} />
+            {/* ARV DRUGS Regimen */}
+            <div className="row">
+              <div className=" mb-3 col-md-3">
+                    <FormGroup>
+                      <FormLabelName >Regimen Line </FormLabelName>
+                      <Input
+                        type="select"
+                        name="adherenceLevel"
+                        id="adherenceLevel"
+                        value={objValues.adherenceLevel}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {adherenceLevel.map((value) => (
+                          <option key={value.id} value={value.id}>
+                            {value.display}
+                          </option>
+                        ))}
+                      </Input>
+                      {errors.adherenceLevel !=="" ? (
+                          <span className={classes.error}>{errors.adherenceLevel}</span>
+                      ) : "" }
+                    </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-3">
+                    <FormGroup>
+                      <FormLabelName >Regimen </FormLabelName>
+                      <Input
+                        type="select"
+                        name="adherenceLevel"
+                        id="adherenceLevel"
+                        value={objValues.adherenceLevel}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {adherenceLevel.map((value) => (
+                          <option key={value.id} value={value.id}>
+                            {value.display}
+                          </option>
+                        ))}
+                      </Input>
+                      {errors.adherenceLevel !=="" ? (
+                          <span className={classes.error}>{errors.adherenceLevel}</span>
+                      ) : "" }
+                    </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-3">
+                    <FormGroup>
+                      <FormLabelName >Dosage </FormLabelName>
+                      <Input
+                        type="text"
+                        name="adherenceLevel"
+                        id="adherenceLevel"
+                        value={objValues.adherenceLevel}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      />
+                      
+                    </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-3">
+                    <FormGroup>
+                      <FormLabelName >Adherence </FormLabelName>
+                      <Input
+                        type="select"
+                        name="adherenceLevel"
+                        id="adherenceLevel"
+                        value={objValues.adherenceLevel}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {adherenceLevel.map((value) => (
+                          <option key={value.id} value={value.id}>
+                            {value.display}
+                          </option>
+                        ))}
+                      </Input>
+                      {errors.adherenceLevel !=="" ? (
+                          <span className={classes.error}>{errors.adherenceLevel}</span>
+                      ) : "" }
+                    </FormGroup>
+              </div>
+            </div>
+            {/* END ARV DRUGS Regimen */}
+            <br />
+            <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+            <h4 style={{color:'#fff'}}>Viral Load  Order</h4>
+            </Label>
+            <br /><br />
+            {/* Viral Load  Form */}
+            <div className="row">
+           
+              <div  className="mb-3 col-md-5">
+                <FormGroup>
+                      <FormLabelName for="testGroup">Select Test</FormLabelName>
+                      <Input
+                          type="select"
+                          name="labTestId"
+                          id="labTestId"
+                          //value={tests.labTestId}
+                          //onChange={handleInputChangeTest} 
+                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
+                          >
+                          <option value="">Select </option>
+                                          
+                              {test.map((value) => (
+                                  <option key={value.id} value={value.id}>
+                                      {value.labTestName}
+                                  </option>
+                              ))}
+                      </Input>
+                      {errors.labTestId !=="" ? (
+                          <span className={classes.error}>{errors.labTestId}</span>
+                      ) : "" }
+                </FormGroup>
+              </div>
+              <div  className="mb-3 col-md-5">
+                  <FormGroup>
+                    <FormLabelName for="vlIndication">VL Indication</FormLabelName>
+                    <Input
+                    type="select"
+                    name="viralLoadIndication"
+                    id="viralLoadIndication"
+                    //value={tests.viralLoadIndication}
+                    onChange={handleInputChange}  
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                    >
+                    <option value="">Select </option>
+                                    
+                        {vLIndication.map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.display}
+                            </option>
+                        ))}
+                    </Input>
+                     
+                </FormGroup>
+              </div>
+              <div className="form-group mb-3 col-md-2">
+              <LabelSui as='a' color='black'  size='tiny' style={{ marginTop:35}}>
+                  <Icon name='plus' /> Add
+              </LabelSui>
+        </div>
+            </div>
+            {/* END Viral Load  Form */}
             <br />
             <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE </h4>
