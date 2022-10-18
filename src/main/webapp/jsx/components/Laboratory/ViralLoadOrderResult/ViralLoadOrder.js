@@ -81,12 +81,13 @@ const Laboratory = (props) => {
     const [tests, setTests]=useState({
 
                                         comments: "",
-                                        dateAssayed: "",
                                         labNumber: "",
                                         labTestGroupId: "",
                                         labTestId: "",
-                                        dateResultReceived:"",
+                                        dateCollectedBy:"",
                                         patientId:props.patientObj?props.patientObj.id:"",
+                                        sampleCollectedBy:"",
+                                        sampleTypeId:"",
                                         result: "",
                                         sampleCollectionDate: null,
                                         viralLoadIndication: 0,
@@ -152,29 +153,6 @@ const Laboratory = (props) => {
             });
         
     }
-    //Get Patiet Visit 
-    // const PatientVisit =()=>{
-    //     axios
-    //         .get(`${baseUrl}patient/visit/visit-detail/${props.patientObj.id}`,
-    //             { headers: {"Authorization" : `Bearer ${token}`} }
-    //         )
-    //         .then((response) => {
-    //             const lastVisit = response.data[response.data.length - 1]
-    //             if(lastVisit.status==="PENDING"){
-    //                 visitId= lastVisit.id
-    //                 //setCurrentVisit(true)
-    //                 setButtonHidden(false)
-    //             }else{
-    //                 toast.error("Patient do not have any active visit")
-    //                 setButtonHidden(true)
-    //                 //setCurrentVisit(false)
-    //             }
-
-    //         })
-    //         .catch((error) => {
-    //         //console.log(error);
-    //         });        
-    // }
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios
@@ -246,19 +224,14 @@ const Laboratory = (props) => {
       };
       //Validations of the forms
       const validate = () => {        
-        //temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
-        temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
-        temp.labTestId = tests.labTestId ? "" : "This field is required"
-        //temp.labNumber = tests.labNumber ? "" : "This field is required"
-        //temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
-        vlRequired && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
-        if(tests.dateResultReceived!==""){
-            temp.result = tests.result ? "" : "This field is required"
-        }
-        if(tests.dateResultReceived!==""){
-            temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
-        }
-        
+        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
+        temp.labNumber = tests.labNumber ? "" : "This field is required"
+        //temp.labTestId = tests.labTestId ? "" : "This field is required"
+        temp.sampleTypeId = tests.sampleTypeId ? "" : "This field is required"
+        temp.sampleCollectionDate = tests.sampleCollectionDate ? "" : "This field is required"
+        temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required"
+        temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
+       
         setErrors({
             ...temp
         })
@@ -266,13 +239,14 @@ const Laboratory = (props) => {
     }
     
     const handleSubmit = (e) => {        
-        e.preventDefault();            
+        e.preventDefault();
+        if(validate()){          
         setSaving(true);
-        axios.post(`${baseUrl}laboratory/rde-orders`,testOrderList,
+        axios.post(`${baseUrl}laboratory/vl-orders`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
-                toast.success("Laboratory test order created successful");
+                toast.success("Viral load order created successful");
                 props.setActiveContent({...props.activeContent, route:'recent-history'})
             })
             .catch(error => {
@@ -282,6 +256,7 @@ const Laboratory = (props) => {
                     toast.error(errorMessage); 
                 }                  
             }); 
+        }  
     }
 
 
@@ -302,7 +277,24 @@ const Laboratory = (props) => {
                 <div className="row">
                     
                     <Row>
-                    
+                    <Col md={6} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate"> Lab Number*</Label>
+                                <Input
+                                    type="text"
+                                    name="labNumber"
+                                    id="labNumber"
+                                    value={tests.labNumber}
+                                    onChange={handleInputChange}
+                                   
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.labNumber !=="" ? (
+                                    <span className={classes.error}>{errors.labNumber}</span>
+                                ) : "" }
+                            </FormGroup>
+                    </Col>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">VL Indication*</Label>
@@ -332,21 +324,21 @@ const Laboratory = (props) => {
                                 <Label for="encounterDate">Sample Type</Label>
                                 <Input
                                     type="select"
-                                    name="labNumber"
-                                    id="labNumber"
+                                    name="sampleTypeId"
+                                    id="sampleTypeId"
                                     //min={0}
-                                    value={tests.labNumber}
+                                    value={tests.sampleTypeId}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                 >
                                     <option value="">Select </option>
-                                    <option value="">Blood/Plasma </option>
-                                    <option value="">DBS </option>
-                                    <option value="">PBS </option>
+                                    <option value="Blood/Plasma">Blood/Plasma </option>
+                                    <option value="DBS">DBS </option>
+                                    <option value="PBS">PBS </option>
                                 </Input>
-                                {errors.labNumber !=="" ? (
-                                    <span className={classes.error}>{errors.labNumber}</span>
+                                {errors.sampleTypeId !=="" ? (
+                                    <span className={classes.error}>{errors.sampleTypeId}</span>
                                 ) : "" }
                             </FormGroup>
                     </Col>
@@ -368,47 +360,44 @@ const Laboratory = (props) => {
                                     <span className={classes.error}>{errors.sampleCollectionDate}</span>
                                 ) : "" }
                             </FormGroup>
-                        </Col>
-                        <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="encounterDate">Collected by </Label>
-                                <Input
-                                    type="text"
-                                    name="dateAssayed"
-                                    id="dateAssayed"
-                                    value={tests.dateAssayed}
-                                    min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
-                                    onChange={handleInputChange}
-                                    //min={tests.sampleCollectionDate}
-                                    max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                />
-                                {errors.dateAssayed !=="" ? (
-                                    <span className={classes.error}>{errors.dateAssayed}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </Col>
-                        <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="encounterDate">Date Collected by</Label>
-                                <Input
-                                    type="date"
-                                    name="dateAssayed"
-                                    id="dateAssayed"
-                                    value={tests.dateAssayed}
-                                    min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
-                                    onChange={handleInputChange}
-                                    //min={tests.sampleCollectionDate}
-                                    max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                />
-                                {errors.dateAssayed !=="" ? (
-                                    <span className={classes.error}>{errors.dateAssayed}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </Col>
+                    </Col>
+                    <Col md={6} className="form-group mb-3">
+                        <FormGroup>
+                            <Label for="sampleCollectedBy">Collected by *</Label>
+                            <Input
+                                type="text"
+                                name="sampleCollectedBy"
+                                id="sampleCollectedBy"
+                                value={tests.sampleCollectedBy}                                
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.sampleCollectedBy !=="" ? (
+                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </Col>
+                    <Col md={6} className="form-group mb-3">
+                        <FormGroup>
+                            <Label for="encounterDate">Date Collected by *</Label>
+                            <Input
+                                type="date"
+                                name="dateCollectedBy"
+                                id="dateCollectedBy"
+                                value={tests.dateCollectedBy}
+                                min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                onChange={handleInputChange}
+                                //min={tests.sampleCollectionDate}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.dateCollectedBy !=="" ? (
+                                <span className={classes.error}>{errors.dateCollectedBy}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </Col>
 
                     </Row>
                 </div>
@@ -424,7 +413,7 @@ const Laboratory = (props) => {
                         startIcon={<SaveIcon />}
                         hidden={buttonHidden}
                         style={{backgroundColor:"#014d88"}}
-                        disabled={testOrderList.length >0 ? false : true}
+                        //disabled={testOrderList.length >0 ? false : true}
                         onClick={handleSubmit}
                         >
                         {!saving ? (

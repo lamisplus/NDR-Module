@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Label, Icon, List, Button, Card,Feed } from 'semantic-ui-react'
+import { Grid, Segment, Label, Icon, List, Button, Card } from 'semantic-ui-react'
+import { Table  } from "react-bootstrap";
 // Page titie
 import { FormGroup, Label as FormLabelName, InputGroup,
           InputGroupText,
@@ -14,9 +15,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
 import axios from "axios";
 //import AddVitals from './Vitals/AddVitals'
-import AddAllergy from './Allergies/AddAllergy'
-import AddCondition from './Conditions/AddCondition'
-import PostPatient from './PostPatient/Index'
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Accordion, Alert } from "react-bootstrap";
@@ -98,6 +98,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const ClinicVisit = (props) => {
+  let visitId=""
   let patientObj = props.patientObj ? props.patientObj : {}
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
@@ -107,6 +108,7 @@ const ClinicVisit = (props) => {
   const [errors, setErrors] = useState({});
   const [clinicVisitList, setClinicVisitList] = useState([])
   const [vLIndication, setVLIndication] = useState([]);
+  const [testOrderList, setTestOrderList] = useState([]);//Test Order List
   const [loading, setLoading] = useState(true)
   const [
     activeAccordionHeaderShadow,
@@ -122,6 +124,9 @@ const ClinicVisit = (props) => {
   const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
   const [tbStatus, setTbStatus] = useState([]);
+  const [adultRegimenLine, setAdultRegimenLine] = useState([]);
+  const [childRegimenLine, setChildRegimenLine] = useState([]);
+  const [regimenTypeObj, setRegimenTypeObj] = useState([]);
   const [TBForms, setTBForms] = useState(false)
   // const [addVitalModal, setAddVitalModal] = useState(false);
   // const AddVitalToggle = () => setAddVitalModal(!addVitalModal)
@@ -139,6 +144,7 @@ const ClinicVisit = (props) => {
   //ADR array Object 
   const [adrObj, setAdrObj] = useState({ adr: "", adrOnsetDate: "" });
   const [adrList, setAdrList] = useState([]);
+  const [arvDrugOrderList, setarvDrugOrderList] = useState([])
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                                                                     bodyWeight: "",
@@ -149,6 +155,13 @@ const ClinicVisit = (props) => {
                                                                     temperature:"",
                                                                     respiratoryRate:"" 
                                                                   })
+  const [arvDrugObj, setArvDrugObj] = useState({
+    regimenLine: "",
+    regimenDrug: "",
+    dosage: "",
+    regimenAdherance: "",
+ 
+  })
   const [objValues, setObjValues] = useState({
     adherenceLevel: "",
     adheres: {},
@@ -184,6 +197,7 @@ const ClinicVisit = (props) => {
     tbPrevention: "",
     aRVDrugsRegimen: {},
     viralLoadOrder: {},
+    tbPrevention:"",
   });
   const [vital, setVitalSignDto] = useState({
     bodyWeight: "",
@@ -234,6 +248,8 @@ const ClinicVisit = (props) => {
     PatientDetaild();
     ViraLoadIndication();
     TestGroup();
+    AdultRegimenLine();
+    ChildRegimenLine();
     //hiv/patient/3
   }, []);
     //GET VIRAL LOAD INDICATION 
@@ -248,6 +264,32 @@ const ClinicVisit = (props) => {
             .catch((error) => {
             //console.log(error);
             });        
+    }
+    //GET AdultRegimenLine 
+    const AdultRegimenLine =()=>{
+      axios
+          .get(`${baseUrl}hiv/regimen/arv/adult`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+            setAdultRegimenLine(response.data);
+          })
+          .catch((error) => {
+          //console.log(error);
+          });        
+    }
+    //GET AdultRegimenLine 
+    const ChildRegimenLine =()=>{
+      axios
+          .get(`${baseUrl}hiv/regimen/arv/adult`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+            setChildRegimenLine(response.data);
+          })
+          .catch((error) => {
+          //console.log(error);
+          });        
     }
     //Get list of Test Group
     const TestGroup =()=>{
@@ -394,6 +436,29 @@ const ClinicVisit = (props) => {
       }
     }
   }
+  const handleInputChangeRegimenLine = e => {
+    const regimenId= e.target.value
+    setArvDrugObj({ ...arvDrugObj, [e.target.name]: e.target.value });
+    if(e.target.name==="regimenLine"){
+      RegimenType(regimenId)
+      }else{
+        RegimenType([])
+      }
+  }
+  function RegimenType(id) {
+    async function getCharacters() {
+        try{
+        const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+        { headers: {"Authorization" : `Bearer ${token}`} })
+        if(response.data){
+          setRegimenTypeObj(response.data)
+        }
+        }catch(e) {
+
+        }
+    }
+    getCharacters();
+ }
   const handleInputChangeVitalSignDto = e => {
     if(e.target.name!=='encounterDate'){
       setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
@@ -402,19 +467,51 @@ const ClinicVisit = (props) => {
    }
     
   }
+  //Validations of the Lab Viral Load 
+  const validateLabOrder = () => {        
+    temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
+    temp.labTestId = tests.labTestId ? "" : "This field is required"
+    tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")   
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
+  }
+   //Validations of the ARV DRUG Load 
+   const validateArvDrug = () => {       
+    temp.regimenLine = arvDrugObj.regimenLine ? "" : "This field is required"
+    temp.regimenDrug = arvDrugObj.regimenDrug ? "" : "This field is required"
+    temp.dosage = arvDrugObj.dosage ? "" : "This field is required"
+    temp.regimenAdherance = arvDrugObj.regimenAdherance ? "" : "This field is required"
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
+}
+  const addOrder = e => {  
+    if(validateLabOrder()){
+        tests.visitId=visitId
+        setTestOrderList([...testOrderList, tests])
+    }
+  }
+  /* Remove ADR  function **/
+  const removeOrder = index => {       
+    testOrderList.splice(index, 1);
+    setTestOrderList([...testOrderList]);
+     
+  };
+  const addArvDrugOrder = e => { 
+    if(validateArvDrug()){
+      setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
+    }        
+  }
+  /* Remove ADR  function **/
+  const removeArvDrugOrder = index => {       
+    arvDrugOrderList.splice(index, 1);
+    setarvDrugOrderList([...arvDrugOrderList]);
+     
+  };
 
-  const addConditionsModal = () => {
-    //setpatientObj({...patientObj, ...row});
-    setAddConditionModal(!addConditionModal)
-  }
-  const addAllergiesModal = () => {
-    //setpatientObj({...patientObj, ...row});
-    setAddAllergyModal(!addAllergyModal)
-  }
-  const PostPatientService = (row) => {
-    //setpatientObj({...patientObj, ...row});
-    setPostPatientModal(!postPatientModal)
-  }
   //Handle CheckBox 
   const handleCheckBox = e => {
     if (e.target.checked) {
@@ -501,8 +598,8 @@ const handleInputValueCheckTemperature =(e)=>{
     temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
     temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
     temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
-    temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
-    temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
+    //temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
+    temp.diastolic = vital.diastolic ? "" : "This field is required"
     temp.systolic = vital.systolic ? "" : "This field is required"
     temp.height = vital.height ? "" : "This field is required"
     temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
@@ -524,18 +621,7 @@ const handleInputValueCheckTemperature =(e)=>{
   }
   const handleInputChangeTest = e => {
     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-    if(e.target.value==="16"){
-        //setShowVLIndication(true)
-        //setVlRequired(true)
-        setErrors({...temp, viralLoadIndication:""})
-        
-        setTests ({...tests,  labTestId: e.target.value});
-    }else{
-        //setShowVLIndication(false)
-        //setVlRequired(false) 
-        setTests ({...tests,  labTestId: e.target.value});
-    }
-    //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
+    setTests ({...tests,  [e.target.name]: e.target.value});       
   }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
@@ -548,7 +634,8 @@ const handleInputValueCheckTemperature =(e)=>{
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
-    //vital.captureDate= vital.encounterDate
+    objValues.viralLoadOrder= tests
+    objValues.aRVDrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
     axios.post(`${baseUrl}hiv/art/clinic-visit/`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
@@ -965,9 +1052,11 @@ const handleInputValueCheckTemperature =(e)=>{
                           onKeyUp={handleInputValueCheckSystolic}
                           style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
                       />
+                     
                       <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                       diastolic(mmHg)
                       </InputGroupText>
+                      
                           <Input 
                           type="text"
                           name="diastolic"
@@ -983,17 +1072,17 @@ const handleInputValueCheckTemperature =(e)=>{
                       
                   </InputGroup>
                   {vitalClinicalSupport.systolic !=="" ? (
-                  <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
-                  ) : ""}
-                  {errors.systolic !=="" ? (
-                      <span className={classes.error}>{errors.systolic}</span>
-                  ) : "" }  
-                  {vitalClinicalSupport.diastolic !=="" ? (
-                  <span className={classes.error}>{vitalClinicalSupport.diastolic}</span>
-                  ) : ""}
-                  {errors.diastolic !=="" ? (
-                      <span className={classes.error}>{errors.diastolic}</span>
-                  ) : "" }          
+                    <span className={classes.error}>{vitalClinicalSupport.systolic}</span>
+                    ) : ""}
+                    {errors.systolic !=="" ? (
+                        <span className={classes.error}>{errors.systolic}</span>
+                    ) : "" }  
+                     {vitalClinicalSupport.diastolic !=="" ? (
+                      <span className={classes.error} >{vitalClinicalSupport.diastolic}</span>
+                      ) : ""}
+                      {errors.diastolic !=="" ? (
+                          <span className={'float-end'}><span className={classes.error} >{errors.diastolic}</span></span>
+                      ) : "" }       
                   </FormGroup>
               </div>
 
@@ -1069,7 +1158,7 @@ const handleInputValueCheckTemperature =(e)=>{
                   ) : "" }
                 </FormGroup>
               </div>
-              <div className=" mb-3 col-md-6">
+              {/* <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Level of Adherence *</FormLabelName>
                   <Input
@@ -1089,9 +1178,11 @@ const handleInputValueCheckTemperature =(e)=>{
                       </option>
                     ))}
                   </Input>
-                 
+                  {errors.adherenceLevel !=="" ? (
+                      <span className={classes.error}>{errors.adherenceLevel}</span>
+                  ) : "" }
                 </FormGroup>
-              </div>
+              </div> */}
               <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Cryptococcal Screening Status</FormLabelName>
@@ -1277,76 +1368,82 @@ const handleInputValueCheckTemperature =(e)=>{
             <br /><br />
             {/* ARV DRUGS Regimen */}
             <div className="row">
-              <div className=" mb-3 col-md-3">
+              <div className=" mb-3 col-md-6">
                     <FormGroup>
                       <FormLabelName >Regimen Line </FormLabelName>
                       <Input
                         type="select"
                         name="regimenLine"
                         id="regimenLine"
-                        value={objValues.adherenceLevel}
-                        onChange={handleInputChange}
+                        value={arvDrugObj.regimenLine}
+                        onChange={handleInputChangeRegimenLine}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
                       >
                         <option value="select">Select </option>
 
-                        {adherenceLevel.map((value) => (
+                        {adultRegimenLine.map((value) => (
                           <option key={value.id} value={value.id}>
-                            {value.display}
+                            {value.description}
                           </option>
                         ))}
                       </Input>
-                     
+                      {errors.regimenLine !=="" ? (
+                                <span className={classes.error}>{errors.regimenLine}</span>
+                        ) : "" }
                     </FormGroup>
               </div>
-              <div className=" mb-3 col-md-3">
+              <div className=" mb-3 col-md-6">
                     <FormGroup>
                       <FormLabelName >Regimen </FormLabelName>
                       <Input
                         type="select"
-                        name="regimen"
-                        id="regimen"
-                        value={objValues.regimen}
-                        onChange={handleInputChange}
+                        name="regimenDrug"
+                        id="regimenDrug"
+                        value={arvDrugObj.regimenDrug}
+                        onChange={handleInputChangeRegimenLine}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
                       >
                         <option value="select">Select </option>
 
-                        {adherenceLevel.map((value) => (
+                        {regimenTypeObj.map((value) => (
                           <option key={value.id} value={value.id}>
-                            {value.display}
+                            {value.description}
                           </option>
                         ))}
                       </Input>
-                      
+                      {errors.regimenDrug !=="" ? (
+                                <span className={classes.error}>{errors.regimenDrug}</span>
+                        ) : "" }
                     </FormGroup>
               </div>
-              <div className=" mb-3 col-md-1">
+              <div className=" mb-3 col-md-4">
                     <FormGroup>
                       <FormLabelName >Dosage </FormLabelName>
                       <Input
                         type="text"
                         name="dosage"
                         id="dosage"
-                        value={objValues.dosage}
-                        onChange={handleInputChange}
+                        value={arvDrugObj.dosage}
+                        onChange={handleInputChangeRegimenLine}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
                       />
-                      
+                      {errors.dosage !=="" ? (
+                                <span className={classes.error}>{errors.dosage}</span>
+                        ) : "" }
                     </FormGroup>
               </div>
-              <div className=" mb-3 col-md-3">
+              <div className=" mb-3 col-md-6">
                     <FormGroup>
                       <FormLabelName >Adherence </FormLabelName>
                       <Input
                         type="select"
                         name="regimenAdherance"
                         id="regimenAdherance"
-                        value={objValues.regimenAdherance}
-                        onChange={handleInputChange}
+                        value={arvDrugObj.regimenAdherance}
+                        onChange={handleInputChangeRegimenLine}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
                       >
@@ -1358,14 +1455,52 @@ const handleInputValueCheckTemperature =(e)=>{
                           </option>
                         ))}
                       </Input>
-                     
+                      {errors.regimenAdherance !=="" ? (
+                                <span className={classes.error}>{errors.regimenAdherance}</span>
+                        ) : "" }
                     </FormGroup>
               </div>
-              <div className=" mb-3 col-md-2">
-              <LabelSui as='a' color='black'  size='tiny' style={{ marginTop:35}}>
-                  <Icon name='plus' /> Add
-              </LabelSui>
+              <div className="col-md-2 float-end">
+                <LabelSui as='a' color='black'  size='tiny' onClick={addArvDrugOrder} style={{ marginTop:35}}>
+                    <Icon name='plus' /> Add
+                </LabelSui>
+                </div>
+              <div className="row">
+                
               </div>
+              {arvDrugOrderList.length >0 ?   
+                    <List>
+                    <Table  striped responsive>
+                        <thead >
+                            <tr>
+                                <th>Regimen Line</th>
+                                <th>Regimen</th>                                   
+                                <th>Dosage</th>
+                                <th>Adherence</th>                                        
+                                <th ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {arvDrugOrderList.map((regimenObj,index) => (
+
+                        <ArvDrugOrderObjList
+                            key={index}
+                            index={index}
+                            regimenObj={regimenObj}
+                            regimenType={regimenTypeObj}
+                            regimenLine={adultRegimenLine}
+                            adherenceLevel={adherenceLevel}
+                            removeArvDrugOrder={removeArvDrugOrder}
+                        />
+                        ))}
+                        </tbody>
+                        </Table>
+                        <br/>
+                        <br/>
+                    </List>
+                    :
+                    ""
+                } 
             </div>
             {/* END ARV DRUGS Regimen */}
             <br />
@@ -1395,7 +1530,9 @@ const handleInputValueCheckTemperature =(e)=>{
                                     </option>
                                 ))}
                         </Input>
-                               
+                        {errors.labTestGroupId !=="" ? (
+                                <span className={classes.error}>{errors.labTestGroupId}</span>
+                            ) : "" }      
                    </FormGroup>
               </div>
               <div  className=" col-md-4">
@@ -1417,7 +1554,9 @@ const handleInputValueCheckTemperature =(e)=>{
                                   </option>
                               ))}
                       </Input>
-                    
+                      {errors.labTestId !=="" ? (
+                                <span className={classes.error}>{errors.labTestId}</span>
+                            ) : "" }
                 </FormGroup>
               </div>
               {tests.labTestId==='16' && (
@@ -1428,8 +1567,8 @@ const handleInputValueCheckTemperature =(e)=>{
                     type="select"
                     name="viralLoadIndication"
                     id="viralLoadIndication"
-                    //value={tests.viralLoadIndication}
-                    onChange={handleInputChange}  
+                    value={tests.viralLoadIndication}
+                    onChange={handleInputChangeTest}  
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                     >
                     <option value="">Select </option>
@@ -1440,15 +1579,48 @@ const handleInputValueCheckTemperature =(e)=>{
                             </option>
                         ))}
                     </Input>
-                     
+                    {errors.viralLoadIndication !=="" ? (
+                                <span className={classes.error}>{errors.viralLoadIndication}</span>
+                            ) : "" }
                 </FormGroup>
               </div>
               )}
               <div className="form-group mb-3 col-md-2">
-              <LabelSui as='a' color='black'  size='tiny' style={{ marginTop:35}}>
-                  <Icon name='plus' /> Add
-              </LabelSui>
-        </div>
+                <LabelSui as='a' color='black'  size='tiny' onClick={addOrder} style={{ marginTop:35}}>
+                    <Icon name='plus' /> Add
+                </LabelSui> 
+            </div>
+            {testOrderList.length >0 ?   
+                    <List>
+                    <Table  striped responsive>
+                        <thead >
+                            <tr>
+                                <th>Test Group</th>
+                                <th>Test</th>                                   
+                                <th>VL Indication</th>                                       
+                                <th ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {testOrderList.map((tests,index) => (
+
+                        <TestOrdersList
+                            key={index}
+                            index={index}
+                            order={tests}
+                            testGroupObj={testGroup}
+                            vLIndicationObj={vLIndication}
+                            removeOrder={removeOrder}
+                        />
+                        ))}
+                        </tbody>
+                        </Table>
+                        <br/>
+                        <br/>
+                    </List>
+                    :
+                    ""
+                } 
             </div>
             {/* END Viral Load  Form */}
             <br />
@@ -1492,11 +1664,67 @@ const handleInputValueCheckTemperature =(e)=>{
         </Grid.Column>
       </Grid>
       {/* <AddVitals toggle={AddVitalToggle} showModal={addVitalModal} /> */}
-      <AddAllergy toggle={AddAllergyToggle} showModal={addAllergyModal} />
+      {/* <AddAllergy toggle={AddAllergyToggle} showModal={addAllergyModal} />
       <AddCondition toggle={AddConditionToggle} showModal={addConditionModal} />
-      <PostPatient toggle={PostPatientToggle} showModal={postPatientModal} />
+      <PostPatient toggle={PostPatientToggle} showModal={postPatientModal} /> */}
     </div>
   );
 };
+function TestOrdersList({
+  order,
+  index,
+  removeOrder,
+  testGroupObj,
+  vLIndicationObj,
+}) {
+  
+  const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
+  const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
+  const vLIndication=vLIndicationObj.length>0 ?
+  vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : {}
+
+  return (
+          <tr>
+              <th>{testGroupName.groupName=='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
+              <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>             
+              <th>{vLIndication && vLIndication.display ? vLIndication.display : ""}</th>
+              <th></th>
+              <th >
+                  <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeOrder(index)}>
+                      <DeleteIcon fontSize="inherit" />
+                  </IconButton>
+                  
+              </th>
+          </tr> 
+  );
+}
+function ArvDrugOrderObjList({
+  index,
+  removeArvDrugOrder,
+  regimenObj,
+  regimenLine,
+  regimenType,
+  adherenceLevel,
+}) {
+  const regimenLineName = regimenLine.find((x)=> x.id===parseInt(regimenObj.regimenLine))
+  const regimenTypeName = regimenType.find((x)=> x.id===parseInt(regimenObj.regimenDrug))
+  const adherence = adherenceLevel.find((x)=> x.id===parseInt(regimenObj.regimenAdherance))
+
+  return (
+          <tr>
+              <th>{regimenLineName && regimenLineName.description}</th>
+              <th>{regimenTypeName && regimenTypeName.description}</th>             
+              <th>{regimenObj.dosage}</th>
+              <th>{adherence && adherence.display}</th>
+              <th></th>
+              <th >
+                  <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeArvDrugOrder(index)}>
+                      <DeleteIcon fontSize="inherit" />
+                  </IconButton>
+                  
+              </th>
+          </tr> 
+  );
+}
 
 export default ClinicVisit;

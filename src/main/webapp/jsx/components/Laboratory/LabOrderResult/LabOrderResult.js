@@ -235,15 +235,15 @@ const Laboratory = (props) => {
             tests.visitId=visitId
             setTestOrderList([...testOrderList, tests])
         }
-      }
-      /* Remove ADR  function **/
-      const removeOrder = index => {       
-        testOrderList.splice(index, 1);
-        setTestOrderList([...testOrderList]);
-         
-      };
-      //Validations of the forms
-      const validate = () => {        
+    }
+    /* Remove ADR  function **/
+    const removeOrder = index => {       
+    testOrderList.splice(index, 1);
+    setTestOrderList([...testOrderList]);
+        
+    };
+    //Validations of the forms
+    const validate = () => {        
         //temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
         temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
         temp.labTestId = tests.labTestId ? "" : "This field is required"
@@ -658,6 +658,6 @@ function TestOrdersList({
                 </th>
             </tr> 
     );
-  }
+}
 
 export default Laboratory;
