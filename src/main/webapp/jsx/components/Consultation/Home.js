@@ -1158,7 +1158,7 @@ const handleInputValueCheckTemperature =(e)=>{
                   ) : "" }
                 </FormGroup>
               </div>
-              {/* <div className=" mb-3 col-md-6">
+              <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Level of Adherence *</FormLabelName>
                   <Input
@@ -1182,7 +1182,7 @@ const handleInputValueCheckTemperature =(e)=>{
                       <span className={classes.error}>{errors.adherenceLevel}</span>
                   ) : "" }
                 </FormGroup>
-              </div> */}
+              </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Cryptococcal Screening Status</FormLabelName>
