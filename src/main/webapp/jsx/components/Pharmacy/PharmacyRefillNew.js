@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 import { Input, Label, FormGroup, CardBody, Card, InputGroupText, InputGroup } from "reactstrap";
+import { Table  } from "react-bootstrap";
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
@@ -11,6 +14,7 @@ import { Spinner } from "reactstrap";
 import Select from "react-select";
 import { url as baseUrl, token } from "../../../api";
 import { toast} from "react-toastify";
+import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 //import { Icon,Button, } from 'semantic-ui-react'
 
 
@@ -72,9 +76,10 @@ const Pharmacy = (props) => {
     const [showRegimen, setShowRegimen] = useState(false);
     const [regimen, setRegimen] = useState([]);
     const [regimenList, setRegimenList] = useState([]);
+    const [eacStatusObj, setEacStatusObj] = useState()
     const [regimenType, setRegimenType] = useState([]);
     const [regimenDrug, setRegimenDrug] = useState([]);
-    const [eacStatusObj, setEacStatusObj] = useState()
+    const [regimenDrugList, setRegimenDrugList] = useState([]);
     const [showCurrentVitalSigns, setShowCurrentVitalSigns] = useState(false)
     const [currentVitalSigns, setcurrentVitalSigns] = useState({})
     const [objValues, setObjValues] = useState({
@@ -206,19 +211,35 @@ const Pharmacy = (props) => {
         }
         getCharacters();
     }
-    function RegimenDrug(id) {
-        async function getCharacters() {
+    function RegimenDrug(id) {        
+        let drugId = id
+        async function getCharacters(drugId) {            
             try{
             const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
             { headers: {"Authorization" : `Bearer ${token}`} })
-            if(response.data.length >0){
-                setRegimenDrug(response.data)
+            if(response.data.length >0){                
+                const regimenName = regimenType.find((x) => { 
+                    if(x.value==parseInt(drugId)){
+                        return x
+                    }
+                })                           
+                const newObj = response.data.map(x => {
+                    x['dispense']=""
+                    x['prescribed']=""
+                    x['dosage']=""
+                    x['freqency']=""
+                    x['duration']=""
+                    x['regimenId']=id
+                    x['regimenName']= regimenName.label
+                    return x;
+                })
+                setRegimenDrug(newObj)
             }
             }catch(e) {
 
             }
         }
-        getCharacters();
+        getCharacters(drugId);
     }
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -226,7 +247,9 @@ const Pharmacy = (props) => {
     }
     const handleSelectedRegimen = e => {
         const regimenId= e.target.value
+        
         if(regimenId!==""){
+            
             RegimenType(regimenId)
             setShowRegimen(true)
         }else{
@@ -298,11 +321,19 @@ const Pharmacy = (props) => {
 
     }
     const handleFormChange = (index, event) => {
-        let data = [...regimenList];
+        let data = [...regimenDrug];
         data[index][event.target.name] = event.target.value;
-        setRegimenList(data);
+        setRegimenDrug (data);
      }
-
+     const addDrug = e => {
+        setRegimenDrugList([...regimenDrugList, ...regimenDrug])            
+        
+      }
+    /* Remove ADR  function **/
+    const removeAttempt = index => {       
+        regimenDrugList.splice(index, 1);
+        setRegimenDrugList([...regimenDrugList]);        
+    }; 
     const handleSubmit = (e) => {        
         e.preventDefault();
         setSaving(true);
@@ -311,7 +342,7 @@ const Pharmacy = (props) => {
         //objValues.extra=regimenList 
         objValues.mmdType=mmdType
         //delete regimenList['name']
-        objValues.regimen=regimenList
+        objValues.regimen=regimenDrugList
 
         axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
         { headers: {"Authorization" : `Bearer ${token}`}},)
@@ -329,7 +360,14 @@ const Pharmacy = (props) => {
                        
         }); 
     }
-console.log(eacStatusObj)
+    let TotalDispensed = regimenDrug.reduce(function(prev, current) {
+        return prev + +current.dispense
+      }, 0);
+      let TotalPrescribed = regimenDrug.reduce(function(prev, current) {
+        return prev + +current.prescribed
+      }, 0);
+      
+console.log(regimenDrugList)
 
   return (      
       <div>
@@ -729,10 +767,45 @@ console.log(eacStatusObj)
                                 <div className="form-group mb-3 col-md-2">
                                     <FormGroup>
                                     <Input
+                                        type="text"
+                                        name="strength"
+                                        id="strength"
+                                        value={input.strength}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        onChange={event => handleFormChange(index, event)}
+                                        disabled
+                                        >
+                                        
+                                    </Input>
+                                
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-2">
+                                    <FormGroup>
+                                    <Input
+                                        type="select"
+                                        name="frequency"
+                                        id="frequency"
+                                        value={input.frequency}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        onChange={event => handleFormChange(index, event)}
+                                        required
+                                    >
+                                        <option value=''>Select</option>
+                                        <option value='BD'>BD</option>
+                                        <option value='OD'>OD</option>
+                                        <option value='2BD'>2BD</option>
+                                    </Input>
+                                
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-2">
+                                    <FormGroup>
+                                    <Input
                                         type="number"
-                                        name="dispenseQuantity"
-                                        id="dispenseQuantity"
-                                        value={input.dispenseQuantity}
+                                        name="duration"
+                                        id="duration"
+                                        value={input.duration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         required
@@ -746,9 +819,9 @@ console.log(eacStatusObj)
                                     <FormGroup>
                                     <Input
                                         type="number"
-                                        name="dispenseQuantity"
-                                        id="dispenseQuantity"
-                                        value={input.dispenseQuantity}
+                                        name="prescribed"
+                                        id="prescribed"
+                                        value={input.prescribed}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         required
@@ -762,41 +835,9 @@ console.log(eacStatusObj)
                                     <FormGroup>
                                     <Input
                                         type="number"
-                                        name="dispenseQuantity"
-                                        id="dispenseQuantity"
-                                        value={input.dispenseQuantity}
-                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        onChange={event => handleFormChange(index, event)}
-                                        required
-                                        >
-                                        
-                                    </Input>
-                                
-                                    </FormGroup>
-                                </div>
-                                <div className="form-group mb-3 col-md-2">
-                                    <FormGroup>
-                                    <Input
-                                        type="number"
-                                        name="dispenseQuantity"
-                                        id="dispenseQuantity"
-                                        value={input.dispenseQuantity}
-                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        onChange={event => handleFormChange(index, event)}
-                                        required
-                                        >
-                                        
-                                    </Input>
-                                
-                                    </FormGroup>
-                                </div>
-                                <div className="form-group mb-3 col-md-2">
-                                    <FormGroup>
-                                    <Input
-                                        type="number"
-                                        name="dispenseQuantity"
-                                        id="dispenseQuantity"
-                                        value={input.dispenseQuantity}
+                                        name="dispense"
+                                        id="dispense"
+                                        value={input.dispense}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         required
@@ -807,9 +848,57 @@ console.log(eacStatusObj)
                                     </FormGroup>
                                 </div>
                                 </div>
+                                
                             </>
                         ))}
-                       
+                        <div className="row">
+                            <div className="form-group mb-3 col-md-2"  ></div>
+                            <div className="form-group mb-3 col-md-2"  ></div>
+                            <div className="form-group mb-3 col-md-2"  ></div>
+                            <div className="form-group mb-3 col-md-2"  ></div>
+                            <div className="form-group mb-3 col-md-2"  ><b>Total : {TotalPrescribed}</b></div>
+                            <div className="form-group mb-3 col-md-2"  ><b>Total : {TotalDispensed}</b></div>
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-2 float-end">
+                            <LabelSui as='a' color='black'  onClick={addDrug}  size='tiny' style={{ marginTop:35}}>
+                                <Icon name='plus' /> Add
+                            </LabelSui>
+                        </div>
+                        {regimenDrugList.length >0 
+                            ?
+                                <List>
+                                <Table  striped responsive>
+                                    <thead >
+                                        <tr>
+                                            <th>Regimen Line</th>
+                                            <th>Regimen</th>
+                                            <th>Strength</th>
+                                            <th>Frequency</th>
+                                            <th>Dosage</th>
+                                            <th>Quty Prescribed</th>
+                                            <th>Qnty Dispensed </th>
+                                            
+                                            <th ></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {regimenDrugList.map((regimenDrugObj, index) => (
+
+                                    <DrugDispensedLists
+                                        key={index}
+                                        index={index}
+                                        regimenDrugObj={regimenDrugObj}
+                                        removeAttempt={removeAttempt}
+                                    />
+                                    ))}
+                                    </tbody>
+                                </Table>
+                                </List>
+                                :
+                                ""
+                            }     
+                        </div>
                         </CardBody>
                         </Card>
                         <br/>
@@ -822,7 +911,7 @@ console.log(eacStatusObj)
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />
-                {regimenList.length >0 && (
+                {regimenDrugList.length >0 && (
                 <MatButton
                     type="submit"
                     variant="contained"
@@ -848,4 +937,29 @@ console.log(eacStatusObj)
   );
 }
 
+function DrugDispensedLists({
+    regimenDrugObj,
+    index,
+    removeAttempt,
+  }) {
+   
+    return (
+            <tr>
+                <th>{regimenDrugObj.regimenName}</th>
+                <th>{regimenDrugObj.name}</th>
+                <th>{regimenDrugObj.strength}</th>
+                <th>{regimenDrugObj.frequency}</th>
+                <th>{regimenDrugObj.dosage}</th>
+                <th>{regimenDrugObj.prescribed}</th>
+                <th>{regimenDrugObj.dispense}</th>
+                <th></th>
+                <th >
+                    <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeAttempt(index)}>
+                        <DeleteIcon fontSize="inherit" />
+                    </IconButton>
+                    
+                </th>
+            </tr> 
+    );
+  }
 export default Pharmacy;

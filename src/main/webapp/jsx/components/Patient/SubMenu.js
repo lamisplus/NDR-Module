@@ -167,8 +167,8 @@ function SubMenu(props) {
                     active={activeItem === 'pharmacy'}> Pharmacy</Menu.Item>
                     <Menu.Item onClick={() => loadEAC(patientObj)} disabled={patientCurrentStatus} name='eac'
                     active={activeItem === 'eac'}> EAC</Menu.Item>
-                    <Menu.Item onClick={() => loadStatusUpdate(patientObj)} name='status'
-                    active={activeItem === 'status'}>Client Status Update</Menu.Item>
+                    {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} name='status'
+                    active={activeItem === 'status'}>Client Status Update</Menu.Item> */}
                     {/* {patientObj.currentStatus && patientObj.currentStatus==='IIT' && (<Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>)} */}
                     {!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==473) && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}

@@ -15,6 +15,8 @@ import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
 import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
+import DualListBox from "react-dual-listbox";
+import 'react-dual-listbox/lib/react-dual-listbox.css';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -85,82 +87,44 @@ const Tracking = (props) => {
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
-    const [eacObj, setEacObj] = useState([]);
-    
+    const [selected, setSelected] = useState([]);
     const [observation, setObservation]=useState({
         data: {},
         dateOfObservation: "yyyy-MM-dd",
         facilityId: null,
         personId: 0,
-        type: "Tracking form",
+        type: "Intensive follow up",
         visitId: null
     })
-    const [objValues, setObjValues]=useState({
-            durationOnART:"", 
-            dsdStatus:"", 
-            dsdModel:"", 
-            reasonForTracking:"",
-            dateLastAppointment:"",
-            dateMissedAppointment :"",
-            careInFacilityDiscountinued :"",
-            dateOfDiscontinuation :"",
-            reasonForDiscountinuation:"",
-            reasonForLossToFollowUp :"",
-            causeOfDeath :"",
-            dateReturnToCare :"",
-            referredFor:"",
-            referredForOthers:"",
-            reasonForTrackingOthers:"",
-            causeOfDeathOthers:"",
-            reasonForLossToFollowUpOthers:"",
-            attempts:"",
-            patientId:props.patientObj.id
-            })
-    const handleInputChange = e => {
-        setErrors({...temp, [e.target.name]:""})
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }  
-    const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
-                modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""
+
+    const [attempt, setAttempt] = useState({  
+            caller:"", 
+            callOutcome:"",
+            comment:"",
+            missedMedication:"",
+            howDoYouFeelGenerally:"",
+            anyOfTheFollowing:"",
+            callDate:"",
     });
+    const optionsForSelection =[]
     const [attemptList, setAttemptList] = useState([])          
     const handleInputChangeAttempt = e => {
         //console.log(e.target.value)
         setErrors({...temp, [e.target.name]:""})
         setAttempt ({...attempt,  [e.target.name]: e.target.value});
     }
-    //Validations of the forms
-    const validate = () => {        
-    temp.durationOnART = objValues.durationOnART ? "" : "This field is required"
-    temp.dsdStatus = objValues.dsdStatus ? "" : "This field is required"
-    {objValues.dsdStatus==='Devolved' && (temp.dsdModel = objValues.dsdModel ? "" : "This field is required")}
-    temp.reasonForTracking = objValues.reasonForTracking ? "" : "This field is required"
-    temp.dateLastAppointment = objValues.dateLastAppointment ? "" : "This field is required"
-    temp.dateMissedAppointment = objValues.dateMissedAppointment ? "" : "This field is required"
-
-    temp.careInFacilityDiscountinued = objValues.careInFacilityDiscountinued ? "" : "This field is required"
-    {objValues.careInFacilityDiscountinued==='Yes' && (temp.dateOfDiscontinuation = objValues.dateOfDiscontinuation ? "" : "This field is required")}
-    {objValues.careInFacilityDiscountinued==='Yes' && (temp.reasonForDiscountinuation = objValues.reasonForDiscountinuation ? "" : "This field is required")}
-    {objValues.reasonForDiscountinuation==='Loss to follow-up' && (temp.reasonForLossToFollowUp = objValues.reasonForLossToFollowUp ? "" : "This field is required")}
-    {objValues.reasonForDiscountinuation==='Death' && (temp.causeOfDeath = objValues.causeOfDeath ? "" : "This field is required")}
-    temp.dateReturnToCare = objValues.dateReturnToCare ? "" : "This field is required"
-    temp.referredFor = objValues.referredFor ? "" : "This field is required"
-    {objValues.referredFor==='Others' && (temp.referredForOthers = objValues.referredForOthers ? "" : "This field is required")}
-    {objValues.reasonForTracking==='Others' && (temp.reasonForTrackingOthers = objValues.reasonForTrackingOthers ? "" : "This field is required")}
-    {objValues.causeOfDeath==='Unknown' || objValues.causeOfDeath==='Other cause of death' || objValues.causeOfDeath==='Suspected Opportunistic Infection' && (temp.causeOfDeathOthers = objValues.causeOfDeathOthers ? "" : "This field is required")}
-    {objValues.reasonForLossToFollowUp==='Others' && ( temp.reasonForLossToFollowUpOthers = objValues.reasonForLossToFollowUpOthers ? "" : "This field is required")}
-    setErrors({
-        ...temp
-    })
-    return Object.values(temp).every(x => x == "")
-    }
+    const onSelect = (selectedValues) => {
+        setSelected(selectedValues);
+    };
     //Validations of the forms
     const validateAttempt = () => {        
-    temp.attemptDate = attempt.attemptDate ? "" : "This field is required"
-    temp.whoAttemptedContact = attempt.whoAttemptedContact ? "" : "This field is required"
-    temp.modeOfConatct = attempt.modeOfConatct ? "" : "This field is required"
-    temp.personContacted = attempt.personContacted ? "" : "This field is required"
-    temp.reasonForDefaulting = attempt.reasonForDefaulting ? "" : "This field is required"
+    temp.caller = attempt.caller ? "" : "This field is required"
+    temp.callOutcome = attempt.callOutcome ? "" : "This field is required"
+    temp.comment = attempt.comment ? "" : "This field is required"
+    temp.missedMedication = attempt.missedMedication ? "" : "This field is required"
+    temp.howDoYouFeelGenerally = attempt.howDoYouFeelGenerally ? "" : "This field is required"
+    temp.anyOfTheFollowing = attempt.anyOfTheFollowing ? "" : "This field is required"
+    temp.callDate = attempt.callDate ? "" : "This field is required"
     setErrors({
         ...temp
     })
@@ -169,9 +133,13 @@ const Tracking = (props) => {
     const addAttempt = e => {
         if(validateAttempt()){ 
             setAttemptList([...attemptList, attempt])
-            setAttempt({attemptDate: "", whoAttemptedContact: "", 
-                        modeOfConatct: "", personContacted: "", 
-                        reasonForDefaulting: "", reasonForDefaultingOthers:""
+            setAttempt({caller:"", 
+            callOutcome:"",
+            comment:"",
+            missedMedication:"",
+            howDoYouFeelGenerally:"",
+            anyOfTheFollowing:"",
+            callDate:"",
             })
         }else{
             toast.error("Please fill the required fields");
@@ -186,14 +154,12 @@ const Tracking = (props) => {
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {        
         e.preventDefault();
-        if(validate()){
             if(attemptList.length >0){
-                objValues.attempts=attemptList
                 observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
                 observation.personId =patientObj.id
-                observation.data=objValues        
+                observation.data=attemptList        
                 setSaving(true);
-                axios.post(`${baseUrl}patient-tracker`,objValues,
+                axios.post(`${baseUrl}observation`,observation,
                 { headers: {"Authorization" : `Bearer ${token}`}},
                 
                 )
@@ -217,7 +183,7 @@ const Tracking = (props) => {
                 }else{
                     toast.error("Attempt to Contact can not be empty");
                 }
-            }  
+       
     }
 
   return (      
@@ -233,144 +199,140 @@ const Tracking = (props) => {
                         <div className="row">
                         <hr/>
                         <h3>Attempted to Contact</h3>
-                        <div className="form-group mb-3 col-md-3">        
+                        <div className="form-group mb-3 col-md-4">        
                             <FormGroup>
                                 <Label >Date of call</Label>
                                 <Input
                                     type="date"
-                                    name="attemptDate"
-                                    id="attemptDate"
-                                    value={attempt.attemptDate}
+                                    name="callDate"
+                                    id="callDate"
+                                    value={attempt.callDate}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     
                                     > 
                                 </Input>
-                                {errors.attemptDate !=="" ? (
-                                    <span className={classes.error}>{errors.attemptDate}</span>
+                                {errors.callDate !=="" ? (
+                                    <span className={classes.error}>{errors.callDate}</span>
                                 ) : "" }
                                 </FormGroup> 
-                            </div> 
-                            <div className="form-group mb-3 col-md-3">
+                            </div>
+                            <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
                                 <Label >How do you feel generally?</Label>
                                 <Input
-                                    type="text"
-                                    name="whoAttemptedContact"
-                                    id="whoAttemptedContact"
-                                    value={attempt.whoAttemptedContact}
+                                    type="select"
+                                    name="howDoYouFeelGenerally"
+                                    id="howDoYouFeelGenerally"
+                                    value={attempt.howDoYouFeelGenerally}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
-                                />
-                                {errors.whoAttemptedContact !=="" ? (
-                                    <span className={classes.error}>{errors.whoAttemptedContact}</span>
+                                >
+                                    <option value="">Select</option> 
+                                    <option value="Telephone">Telephone</option> 
+                                    <option value="Home Visit">Home Visit</option> 
+                                </Input> 
+                                {errors.howDoYouFeelGenerally !=="" ? (
+                                    <span className={classes.error}>{errors.howDoYouFeelGenerally}</span>
                                 ) : "" }   
                                 </FormGroup>
                             </div>
-                            <div className="form-group mb-3 col-md-3">
+                            
+                            <div className="form-group mb-3 col-md-12">
                                 <FormGroup>
                                 <Label >Do you have any of the following</Label>
-                                <Input
-                                    type="select"
-                                    name="modeOfConatct"
-                                    id="modeOfConatct"
-                                    value={attempt.modeOfConatct}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Telephone">Telephone</option> 
-                                 <option value="Home Visit">Home Visit</option> 
-                                </Input> 
-                                {errors.modeOfConatct !=="" ? (
-                                    <span className={classes.error}>{errors.modeOfConatct}</span>
+                                <DualListBox
+                                //canFilter
+                                    options={optionsForSelection}
+                                    onChange={onSelect}
+                                    selected={selected}
+                                /> 
+                                
+                                {errors.anyOfTheFollowing !=="" ? (
+                                    <span className={classes.error}>{errors.anyOfTheFollowing}</span>
                                 ) : "" }   
                                 </FormGroup>
                             </div>
-                             <div className="form-group mb-3 col-md-3">
+                            <div className="row">
+                                <div className="form-group mb-3 col-md-4">
+                                    <FormGroup>
+                                    <Label >Have you missed any doses of your medications in the past 7 days</Label>
+                                    <Input
+                                        type="select"
+                                        name="missedMedication"
+                                        id="missedMedication"
+                                        value={attempt.missedMedication}
+                                        onChange={handleInputChangeAttempt}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        
+                                    >
+                                    <option value="">Select</option> 
+                                    <option value="Yes">Yes</option> 
+                                    <option value="No">No</option> 
+                                    </Input> 
+                                    {errors.missedMedication !=="" ? (
+                                        <span className={classes.error}>{errors.missedMedication}</span>
+                                    ) : "" }   
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-4">
+                                    <FormGroup>
+                                    <Label >Comment </Label>
+                                    <Input
+                                        type="text"
+                                        name="comment"
+                                        id="comment"
+                                        value={attempt.comment}
+                                        onChange={handleInputChangeAttempt}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        
+                                    />
+                                    {errors.comment !=="" ? (
+                                    <span className={classes.error}>{errors.comment}</span>
+                                    ) : "" }
+                                    </FormGroup>
+                                </div>
+                                <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
-                                <Label >Do you have any of the following</Label>
-                                <Input
-                                    type="select"
-                                    name="modeOfConatct"
-                                    id="modeOfConatct"
-                                    value={attempt.modeOfConatct}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Telephone">Telephone</option> 
-                                 <option value="Home Visit">Home Visit</option> 
-                                </Input> 
-                                {errors.modeOfConatct !=="" ? (
-                                    <span className={classes.error}>{errors.modeOfConatct}</span>
-                                ) : "" }   
-                                </FormGroup>
-                            </div>
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Have you missed any doses of your medications in the past 7 days</Label>
-                                <Input
-                                    type="select"
-                                    name="modeOfConatct"
-                                    id="modeOfConatct"
-                                    value={attempt.modeOfConatct}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Yes">Yes</option> 
-                                 <option value="No">No</option> 
-                                </Input> 
-                                {errors.modeOfConatct !=="" ? (
-                                    <span className={classes.error}>{errors.modeOfConatct}</span>
-                                ) : "" }   
-                                </FormGroup>
-                            </div>
+                                <Label for="">Outcome of the call </Label>
 
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Reason </Label>
-                                <Input
-                                    type="text"
-                                    name="reasonForDefaultingOthers"
-                                    id="reasonForDefaultingOthers"
-                                    value={attempt.reasonForDefaultingOthers}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                />
-                                {errors.reasonForDefaultingOthers !=="" ? (
-                                <span className={classes.error}>{errors.reasonForDefaultingOthers}</span>
-                                ) : "" }
+                                    <Input 
+                                        type="select"
+                                        name="callOutcome"
+                                        id="callOutcome"
+                                        onChange={handleInputChangeAttempt}
+                                        value={attempt.callOutcome}  
+                                    >
+                                        <option value=""></option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </Input>
+                                    {errors.callOutcome !=="" ? (
+                                    <span className={classes.error}>{errors.callOutcome}</span>
+                                    ) : "" }
                                 </FormGroup>
+                                </div>
                             </div>
                             <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for="">Outcome of the call </Label>
-
-                                <Input 
-                                    type="select"
-                                    name="careInFacilityDiscountinued"
-                                    id="careInFacilityDiscountinued"
-                                    onChange={handleInputChange}
-                                    value={objValues.careInFacilityDiscountinued}  
-                                >
-                                    <option value=""></option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </Input>
-                                {errors.careInFacilityDiscountinued !=="" ? (
-                                <span className={classes.error}>{errors.careInFacilityDiscountinued}</span>
+                                <FormGroup>
+                                <Label >Initials of the caller </Label>
+                                <Input
+                                    type="text"
+                                    name="caller"
+                                    id="caller"
+                                    value={attempt.caller}
+                                    onChange={handleInputChangeAttempt}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    
+                                />
+                                {errors.caller !=="" ? (
+                                <span className={classes.error}>{errors.caller}</span>
                                 ) : "" }
-                            </FormGroup>
-                        </div>
-                            <div className="form-group mb-3 col-md-2">
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-2 float-end">
                             <LabelSui as='a' color='black'  onClick={addAttempt}  size='tiny' style={{ marginTop:35}}>
                                 <Icon name='plus' /> Add
                             </LabelSui>
@@ -382,11 +344,13 @@ const Tracking = (props) => {
                                 <Table  striped responsive>
                                     <thead >
                                         <tr>
-                                            <th>Attempted Date</th>
-                                            <th>Who Attempted Contact</th>
-                                            <th>Mode Of Conatct</th>
-                                            <th>Person Contacted</th>
-                                            <th>Reason For Defaulting</th>
+                                            <th>call Date</th>
+                                            <th>How Do you Fell</th>
+                                            <th>Do you have any of the following</th>
+                                            <th>Missed medication in the last 7days</th>
+                                            <th>comment</th>
+                                            <th>call outcome</th>
+                                            <th>Initial call Name</th>
                                             <th ></th>
                                         </tr>
                                     </thead>
@@ -423,7 +387,7 @@ const Tracking = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac1==="" ? true : false}
+                    disabled={attemptList.length <=0  ? true : false}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>
@@ -444,15 +408,16 @@ function AttemptedLists({
     index,
     removeAttempt,
   }) {
-  
-  
+   
     return (
             <tr>
-                <th>{attemptObj.attemptDate}</th>
-                <th>{attemptObj.whoAttemptedContact}</th>
-                <th>{attemptObj.modeOfConatct}</th>
-                <th>{attemptObj.personContacted}</th>
-                <th>{attemptObj.reasonForDefaulting==='' ? attemptObj.reasonForDefaultingOthers : attemptObj.reasonForDefaulting}</th>
+                <th>{attemptObj.callDate}</th>
+                <th>{attemptObj.howDoYouFeelGenerally}</th>
+                <th>{attemptObj.anyOfTheFollowing}</th>
+                <th>{attemptObj.missedMedication}</th>
+                <th>{attemptObj.comment}</th>
+                <th>{attemptObj.callOutcome}</th>
+                <th>{attemptObj.caller}</th>
                 <th></th>
                 <th >
                     <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeAttempt(index)}>
