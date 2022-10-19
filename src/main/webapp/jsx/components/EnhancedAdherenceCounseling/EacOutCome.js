@@ -161,7 +161,6 @@ const EAC = (props) => {
             .then((response) => {
             setLoading(false)
             const filterRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
-            console.log(filterRegimen)
             setRegimenLine(filterRegimen)
             })
             .catch((error) => {

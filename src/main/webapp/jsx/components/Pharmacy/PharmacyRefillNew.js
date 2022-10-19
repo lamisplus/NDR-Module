@@ -63,6 +63,7 @@ let refillPeriodValue=null
 
 const Pharmacy = (props) => {
     const patientObj = props.patientObj;
+    const [selectedCombinedRegimen, setSelectedCombinedRegimen] = useState([]);
     const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
@@ -78,10 +79,18 @@ const Pharmacy = (props) => {
     const [regimenList, setRegimenList] = useState([]);
     const [eacStatusObj, setEacStatusObj] = useState()
     const [regimenType, setRegimenType] = useState([]);
+    const [regimenTypeOI, setRegimenTypeOI] = useState([]);
+    const [regimenTypeTB, setRegimenTypeTB] = useState([]);
     const [regimenDrug, setRegimenDrug] = useState([]);
     const [regimenDrugList, setRegimenDrugList] = useState([]);
     const [showCurrentVitalSigns, setShowCurrentVitalSigns] = useState(false)
     const [currentVitalSigns, setcurrentVitalSigns] = useState({})
+    const [adultRegimenLine, setAdultRegimenLine] = useState([]);
+    const [adultArtRegimenLine, setAdultArtRegimenLine] = useState([]);
+    const [oIRegimenLine, setOIRegimenLine] = useState([]);
+    const [tbRegimenLine, setTbRegimenLine] = useState([]);
+    const [othersRegimenLine, setOthersRegimenLine] = useState([]);
+    const [childRegimenLine, setChildRegimenLine] = useState([]);
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -96,6 +105,7 @@ const Pharmacy = (props) => {
             refillPeriod:null,
             prescriptionError: null,
             regimenId: [],
+            regimenTypeId:"",
             visitDate: null,
             visitId: 0,
             refill:"",
@@ -118,6 +128,7 @@ const Pharmacy = (props) => {
         RegimenLine();
         PrepSideEffect();
         VitalSigns();
+        AdultRegimenLine();
         setRegimenList(
             Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
                 id: value.value,
@@ -127,6 +138,27 @@ const Pharmacy = (props) => {
         CheckEACStatus();
         VitalSigns()
     }, [selectedOption]);
+     //GET AdultRegimenLine 
+     const AdultRegimenLine =()=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/arv/adult`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                console.log(response.data)
+                //const filterRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
+                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
+                const tbRegimen=response.data.filter((x)=> (x.id===10 ))
+                const oIRegimen=response.data.filter((x)=> (x.id===9 || x.id===15))
+                const othersRegimen=response.data.filter((x)=> (x.id!==1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
+               setAdultArtRegimenLine(artRegimen);
+               setTbRegimenLine(tbRegimen);
+               setOIRegimenLine(oIRegimen);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+      }
     //Check for the last Vital Signs
     const VitalSigns = () => {
         axios
@@ -211,29 +243,138 @@ const Pharmacy = (props) => {
         }
         getCharacters();
     }
+    function RegimenTypeOI(id) {
+        async function getCharacters() {
+            try{
+            const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            if(response.data.length >0){
+                setRegimenTypeOI(
+                    Object.entries(response.data).map(([key, value]) => ({
+                    label: value.description,
+                    value: value.id,
+                    })))
+            }
+            }catch(e) {
+
+            }
+        }
+        getCharacters();
+    }
+    function RegimenTypeTB(id) {
+        async function getCharacters() {
+            try{
+            const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            if(response.data.length >0){
+                setRegimenTypeTB(
+                    Object.entries(response.data).map(([key, value]) => ({
+                    label: value.description,
+                    value: value.id,
+                    })))
+            }
+            }catch(e) {
+
+            }
+        }
+        getCharacters();
+    }
     function RegimenDrug(id) {        
         let drugId = id
         async function getCharacters(drugId) {            
             try{
             const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
             { headers: {"Authorization" : `Bearer ${token}`} })
-            if(response.data.length >0){                
+            if(response.data.length >0){                   
+                setSelectedCombinedRegimen(response.data)         
                 const regimenName = regimenType.find((x) => { 
                     if(x.value==parseInt(drugId)){
+                        console.log(x)
                         return x
                     }
                 })                           
-                const newObj = response.data.map(x => {
-                    x['dispense']=""
-                    x['prescribed']=""
-                    x['dosage']=""
-                    x['freqency']=""
-                    x['duration']=""
-                    x['regimenId']=id
-                    x['regimenName']= regimenName.label
-                    return x;
-                })
-                setRegimenDrug(newObj)
+                
+                const drugObj=[{
+                    dispense:"",
+                    prescribed:"",
+                    dosage:"",
+                    freqency:"",
+                    duration:"",
+                    name:regimenName.label,
+                    regimenId:regimenName.value,
+                    regimenName:regimenName.label,
+
+                }]                
+                setRegimenDrug(drugObj)
+            }
+            }catch(e) {
+
+            }
+        }
+        getCharacters(drugId);
+    }
+    function RegimenDrugOI(id) {        
+        let drugId = id
+        console.log(id)
+        async function getCharacters(drugId) {            
+            try{
+            const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            if(response.data){                   
+                setSelectedCombinedRegimen(response.data)         
+                const regimenName = regimenTypeOI.find((x) => { 
+                    if(x.value==parseInt(drugId)){
+                        console.log(x)
+                        return x
+                    }
+                })                           
+                
+                const drugObj=[{
+                    dispense:"",
+                    prescribed:"",
+                    dosage:"",
+                    freqency:"",
+                    duration:"",
+                    name:regimenName.label,
+                    regimenId:regimenName.value,
+                    regimenName:regimenName.label,
+
+                }]                
+                setRegimenDrug(drugObj)
+            }
+            }catch(e) {
+
+            }
+        }
+        getCharacters(drugId);
+    }
+    function RegimenDrugTB(id) {        
+        let drugId = id
+        async function getCharacters(drugId) {            
+            try{
+            const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} })
+            if(response.data){                   
+                setSelectedCombinedRegimen(response.data)         
+                const regimenName = regimenTypeTB.find((x) => { 
+                    if(x.value==parseInt(drugId)){
+                        console.log(x)
+                        return x
+                    }
+                })                           
+                
+                const drugObj=[{
+                    dispense:"",
+                    prescribed:"",
+                    dosage:"",
+                    freqency:"",
+                    duration:"",
+                    name:regimenName.label,
+                    regimenId:regimenName.value,
+                    regimenName:regimenName.label,
+
+                }]                
+                setRegimenDrug(drugObj)
             }
             }catch(e) {
 
@@ -257,6 +398,24 @@ const Pharmacy = (props) => {
             setShowRegimen(false)
         }
     }
+    const handleSelectedRegimenOI = e => {
+        const regimenId= e.target.value
+        
+        if(regimenId!==""){
+            RegimenTypeOI(regimenId)
+        }else{
+            setRegimenTypeOI([])
+        }
+    }
+    const handleSelectedRegimenTB = e => {
+        const regimenId= e.target.value
+        
+        if(regimenId!==""){
+            RegimenTypeTB(regimenId)
+        }else{
+            setRegimenTypeTB([])
+        }
+    }
     const handleSelectedRegimenCombination = e => {
         const regimenId= e.target.value
         if(regimenId!==""){
@@ -266,15 +425,51 @@ const Pharmacy = (props) => {
             setRegimenType([])
             //setShowRegimen(false)
         }
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }
-    const handleCheckBox =e =>{
-        if(e.target.checked){
-            setShowDsdModel(true)
-            setObjValues ({...objValues,  isDevolve: true});
+    const handleSelectedRegimenCombinationOI = e => {
+        const regimenId= e.target.value
+        if(regimenId!==""){
+            RegimenDrugOI(regimenId)
+            //setShowRegimen(true)
         }else{
-            setShowDsdModel(false)
-            setObjValues ({...objValues,  isDevolve: false});
+            setRegimenTypeOI([])
+            //setShowRegimen(false)
         }
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+    }
+    const handleSelectedRegimenCombinationTB = e => {
+        const regimenId= e.target.value
+        if(regimenId!==""){
+            RegimenDrugTB(regimenId)
+            //setShowRegimen(true)
+        }else{
+            setRegimenTypeTB([])
+            //setShowRegimen(false)
+        }
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+    }
+
+    const handleCheckBoxRegimen =e =>{
+        const originalCombination=regimenDrug
+        console.log(originalCombination)
+        if(e.target.checked){
+            const newObjCombination = selectedCombinedRegimen.map(x => {
+                x['dispense']=""
+                x['prescribed']=""
+                x['dosage']=""
+                x['freqency']=""
+                x['duration']=""
+                x['regimenId']=regimenDrug[0].regimenId
+                x['regimenName']= regimenDrug[0].regimenName
+                return x;
+            })
+            setRegimenDrug(newObjCombination)
+            
+        }else{
+            console.log(regimenDrug)
+            RegimenDrug(objValues.regimenId)
+        } 
     } 
     const handlePrescriptionErrorCheckBox =e =>{
         if(e.target.checked){
@@ -367,7 +562,6 @@ const Pharmacy = (props) => {
         return prev + +current.prescribed
       }, 0);
       
-console.log(regimenDrugList)
 
   return (      
       <div>
@@ -682,6 +876,10 @@ console.log(regimenDrugList)
                 </div>
             </>)}
             <hr/>
+            <LabelSui as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>ART DRUGS</h4>
+            </LabelSui>
+            <br/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                 <Label >Select Regimen Line *</Label>
@@ -696,7 +894,7 @@ console.log(regimenDrugList)
                     >
                     <option value="">Select </option>
                                     
-                        {regimen.map((value) => (
+                        {adultArtRegimenLine.map((value) => (
                             <option key={value.id} value={value.id}>
                                 {value.description}
                             </option>
@@ -705,16 +903,16 @@ console.log(regimenDrugList)
                 
                 </FormGroup>
             </div>
-            {showRegimen && (
+
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                 <Label >Regimen *</Label>
                 
                 <Input
                     type="select"
-                    name="regimen"
-                    id="regimen"
-                    value={objValues.drugName}
+                    name="regimenId"
+                    id="regimenId"
+                    value={objValues.regimenId}
                     onChange={handleSelectedRegimenCombination}  
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     disabled={objValues.refillPeriod!==null? false : true}                 
@@ -730,7 +928,109 @@ console.log(regimenDrugList)
                 
                 </FormGroup>
             </div>
-            )}
+            <LabelSui as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>OI DRUGS</h4>
+            </LabelSui>
+            <br/>
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <Label >Select Regimen Line *</Label>
+                <Input
+                    type="select"
+                    name="regimen"
+                    id="regimen"
+                    value={objValues.drugName}
+                    onChange={handleSelectedRegimenOI}  
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={objValues.refillPeriod!==null? false : true}                 
+                    >
+                    <option value="">Select </option>
+                                    
+                        {oIRegimenLine.map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.description}
+                            </option>
+                        ))}
+                </Input>
+                
+                </FormGroup>
+            </div>
+
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <Label >Regimen *</Label>
+                
+                <Input
+                    type="select"
+                    name="regimenId"
+                    id="regimenId"
+                    value={objValues.regimenId}
+                    onChange={handleSelectedRegimenCombinationOI}  
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={objValues.refillPeriod!==null? false : true}                 
+                    >
+                    <option value="">Select </option>
+                                    
+                        {regimenTypeOI.map((value) => (
+                            <option key={value.id} value={value.value}>
+                                {value.label}
+                            </option>
+                        ))}
+                </Input>
+                
+                </FormGroup>
+            </div>
+            <LabelSui as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>TB DRUG</h4>
+            </LabelSui>
+            <br/>
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <Label >Select Regimen Line *</Label>
+                <Input
+                    type="select"
+                    name="regimen"
+                    id="regimen"
+                    value={objValues.drugName}
+                    onChange={handleSelectedRegimenTB}  
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={objValues.refillPeriod!==null? false : true}                 
+                    >
+                    <option value="">Select </option>
+                                    
+                        {tbRegimenLine.map((value) => (
+                            <option key={value.id} value={value.id}>
+                                {value.description}
+                            </option>
+                        ))}
+                </Input>
+                
+                </FormGroup>
+            </div>
+            <div className="form-group mb-3 col-md-6">
+                <FormGroup>
+                <Label >Regimen *</Label>
+                
+                <Input
+                    type="select"
+                    name="regimenId"
+                    id="regimenId"
+                    value={objValues.regimenId}
+                    onChange={handleSelectedRegimenCombinationTB} 
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    disabled={objValues.refillPeriod!==null? false : true}                 
+                    >
+                    <option value="">Select </option>
+                                    
+                        {regimenTypeTB.map((value) => (
+                            <option key={value.id} value={value.value}>
+                                {value.label}
+                            </option>
+                        ))}
+                </Input>
+                
+                </FormGroup>
+            </div>
             {regimenDrug && regimenDrug.length >0 ? 
 
                 (
@@ -738,9 +1038,24 @@ console.log(regimenDrugList)
                         <Card>
                         <CardBody>
                         <h4>Drugs Information </h4>
+                        <div className="form-check custom-checkbox ml-1 ">
+                        <input
+                        type="checkbox"
+                        className="form-check-input"                       
+                        name="devolvePatient"
+                        id="devolvePatient"
+                        onChange={handleCheckBoxRegimen}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        />
+                        <label
+                        className="form-check-label"
+                        htmlFor="basic_checkbox_1"
+                        >
+                        As Combination
+                        </label>
+                    </div>
                         <div className="row">
-                            <div className="form-group mb-3 col-md-2"  >Regimen Name </div>
-                            <div className="form-group mb-3 col-md-2"  >Strength </div>
+                            <div className="form-group mb-3 col-md-4"  >Regimen Name </div>
                             <div className="form-group mb-3 col-md-2"  >Frequency </div>
                             <div className="form-group mb-3 col-md-2"  >Duration </div>
                             <div className="form-group mb-3 col-md-2"  >Quantity Prescribed</div>
@@ -749,9 +1064,9 @@ console.log(regimenDrugList)
                         {regimenDrug.map((input, index) => (
                             <>
                                 <div className="row">
-                                <div className="form-group mb-3 col-md-2"  >
+                                <div className="form-group mb-3 col-md-4"  >
                                     <FormGroup>
-                                    <Label ><b>{input.name}</b></Label>
+                                    <Label ><b>{input.name } {input.strength!=="" ? input.strength :""}</b></Label>
                                     <Input
                                         type="hidden"
                                         name="id"
@@ -764,22 +1079,6 @@ console.log(regimenDrugList)
                                     </FormGroup>
                                 </div>
 
-                                <div className="form-group mb-3 col-md-2">
-                                    <FormGroup>
-                                    <Input
-                                        type="text"
-                                        name="strength"
-                                        id="strength"
-                                        value={input.strength}
-                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        onChange={event => handleFormChange(index, event)}
-                                        disabled
-                                        >
-                                        
-                                    </Input>
-                                
-                                    </FormGroup>
-                                </div>
                                 <div className="form-group mb-3 col-md-2">
                                     <FormGroup>
                                     <Input
@@ -852,8 +1151,8 @@ console.log(regimenDrugList)
                             </>
                         ))}
                         <div className="row">
-                            <div className="form-group mb-3 col-md-2"  ></div>
-                            <div className="form-group mb-3 col-md-2"  ></div>
+                            <div className="form-group mb-3 col-md-4"  ></div>
+                           
                             <div className="form-group mb-3 col-md-2"  ></div>
                             <div className="form-group mb-3 col-md-2"  ></div>
                             <div className="form-group mb-3 col-md-2"  ><b>Total : {TotalPrescribed}</b></div>
@@ -871,9 +1170,7 @@ console.log(regimenDrugList)
                                 <Table  striped responsive>
                                     <thead >
                                         <tr>
-                                            <th>Regimen Line</th>
-                                            <th>Regimen</th>
-                                            <th>Strength</th>
+                                            <th>Regimen Drug</th>
                                             <th>Frequency</th>
                                             <th>Dosage</th>
                                             <th>Quty Prescribed</th>
@@ -945,9 +1242,7 @@ function DrugDispensedLists({
    
     return (
             <tr>
-                <th>{regimenDrugObj.regimenName}</th>
-                <th>{regimenDrugObj.name}</th>
-                <th>{regimenDrugObj.strength}</th>
+                <th>{regimenDrugObj.name} {regimenDrugObj.strength!==""? regimenDrugObj.strength :""}</th>
                 <th>{regimenDrugObj.frequency}</th>
                 <th>{regimenDrugObj.dosage}</th>
                 <th>{regimenDrugObj.prescribed}</th>

@@ -247,7 +247,7 @@ const ClinicVisit = (props) => {
     ClinicVisitList();
     PatientDetaild();
     ViraLoadIndication();
-    TestGroup();
+    //TestGroup();
     AdultRegimenLine();
     ChildRegimenLine();
     //hiv/patient/3
