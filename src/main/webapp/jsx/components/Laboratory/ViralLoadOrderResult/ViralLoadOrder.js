@@ -250,7 +250,7 @@ const Laboratory = (props) => {
         <br/>
         <Card className={classes.root}>
             <CardBody>
-            {moduleStatus==="1" && (
+            {/* {moduleStatus==="1" && ( */}
                 <form >
                 <div className="row">
                     
@@ -404,7 +404,7 @@ const Laboratory = (props) => {
                     </MatButton>
                 
                 </form>
-            )}
+            {/* )}
             {moduleStatus==="2" && (
             <>
             <Alert
@@ -415,7 +415,7 @@ const Laboratory = (props) => {
             </Alert>
            
             </>
-            )} 
+            )}  */}
             </CardBody>
         </Card> 
         </div>             

@@ -302,7 +302,7 @@ console.log(errors)
         <br/>
         <Card className={classes.root}>
             <CardBody>
-            {moduleStatus==="1" && (
+            {/* {moduleStatus==="1" && ( */}
                 <form >
                 <div className="row">
                     
@@ -771,7 +771,7 @@ console.log(errors)
                     </MatButton>
                 
                 </form>
-            )}
+            {/* )}
             {moduleStatus==="2" && (
             <>
             <Alert
@@ -782,7 +782,7 @@ console.log(errors)
             </Alert>
            
             </>
-            )} 
+            )}  */}
             </CardBody>
         </Card> 
         </div>             

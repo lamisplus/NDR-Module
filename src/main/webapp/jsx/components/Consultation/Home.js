@@ -100,6 +100,7 @@ const useStyles = makeStyles(theme => ({
 const ClinicVisit = (props) => {
   let visitId=""
   let patientObj = props.patientObj ? props.patientObj : {}
+  console.log(patientObj)
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -122,7 +123,7 @@ const ClinicVisit = (props) => {
   const [functionalStatus, setFunctionalStatus] = useState([]);
   const [adherenceLevel, setAdherenceLevel] = useState([]);
   const [testGroup, setTestGroup] = useState([]);
-    const [test, setTest] = useState([]);
+  const [test, setTest] = useState([]);
   const [tbStatus, setTbStatus] = useState([]);
   const [adultRegimenLine, setAdultRegimenLine] = useState([]);
   const [childRegimenLine, setChildRegimenLine] = useState([]);
@@ -151,12 +152,7 @@ const ClinicVisit = (props) => {
   const [hepatitis, setHepatitis] = useState([])
   const [pregnancyStatus, setPregnancyStatus] = useState([])
   const [familyPlaining, setFamilyPlaining] = useState([])
-  CRYPTOCOCCAL_SCREENING_STATUS();
-    CERVICAL_CANCER_SCREENING_STATUS();
-    CERVICAL_CANCER_TREATMENT();
-    HEPATITIS_SCREENING_RESULT();
-    PREGANACY_STATUS();
-    FAMILY_PLANNING_METHOD();
+
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                                                                     bodyWeight: "",
@@ -248,7 +244,7 @@ const ClinicVisit = (props) => {
     sampleCollectionDate: null,
     viralLoadIndication: 0,
     visitId:"" 
-})
+  })
   useEffect(() => {
     FunctionalStatus();
     WhoStaging();
@@ -270,6 +266,22 @@ const ClinicVisit = (props) => {
     FAMILY_PLANNING_METHOD();
     //hiv/patient/3
   }, []);
+  const calculate_age = dob => {
+    var today = new Date();
+    var dateParts = dob.split("-");
+    var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+    var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+    var age_now = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age_now--;
+            }
+        if (age_now === 0) {
+                return m;
+            }
+            return age_now;
+};
+  const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
   // CRYPTOCOCCAL_SCREENING_STATUS	
   const CRYPTOCOCCAL_SCREENING_STATUS	 = () => {
     axios
@@ -287,7 +299,7 @@ const ClinicVisit = (props) => {
   // CERVICAL_CANCER_SCREENING_STATUS	
   const CERVICAL_CANCER_SCREENING_STATUS = () => {
     axios
-      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+      .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_STATUS	`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
@@ -298,10 +310,10 @@ const ClinicVisit = (props) => {
       });
 
   }
-   // CERVICAL_CANCER_TREATMENT	
-   const CERVICAL_CANCER_TREATMENT = () => {
+    // CERVICAL_CANCER_TREATMENT	
+    const CERVICAL_CANCER_TREATMENT = () => {
     axios
-      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+      .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_TREATMENT	`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
@@ -313,9 +325,9 @@ const ClinicVisit = (props) => {
 
     }
   // HEPATITIS_SCREENING_RESULT	
-   const HEPATITIS_SCREENING_RESULT = () => {
+    const HEPATITIS_SCREENING_RESULT = () => {
     axios
-      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+      .get(`${baseUrl}application-codesets/v2/HEPATITIS_SCREENING_RESULT	`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
@@ -327,9 +339,9 @@ const ClinicVisit = (props) => {
 
     }
     // HEPATITIS_SCREENING_RESULT	
-   const FAMILY_PLANNING_METHOD = () => {
+    const FAMILY_PLANNING_METHOD = () => {
     axios
-      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+      .get(`${baseUrl}application-codesets/v2/FAMILY_PLANNING_METHOD	`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
@@ -341,9 +353,9 @@ const ClinicVisit = (props) => {
 
     }
     // HEPATITIS_SCREENING_RESULT	
-   const PREGANACY_STATUS = () => {
+    const PREGANACY_STATUS = () => {
     axios
-      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+      .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS	`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
@@ -548,26 +560,26 @@ const ClinicVisit = (props) => {
       }
   }
   function RegimenType(id) {
-    async function getCharacters() {
-        try{
-        const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
-        { headers: {"Authorization" : `Bearer ${token}`} })
-        if(response.data){
-          setRegimenTypeObj(response.data)
-        }
-        }catch(e) {
+  async function getCharacters() {
+      try{
+      const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+      { headers: {"Authorization" : `Bearer ${token}`} })
+      if(response.data){
+        setRegimenTypeObj(response.data)
+      }
+      }catch(e) {
 
-        }
-    }
-    getCharacters();
- }
+      }
+  }
+  getCharacters();
+  }
   const handleInputChangeVitalSignDto = e => {
-    if(e.target.name!=='encounterDate'){
-      setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
-    }else{
-      setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
-   }
-    
+  if(e.target.name!=='encounterDate'){
+    setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
+  }else{
+    setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+  }
+
   }
   //Validations of the Lab Viral Load 
   const validateLabOrder = () => {        
@@ -579,8 +591,8 @@ const ClinicVisit = (props) => {
     })
     return Object.values(temp).every(x => x == "")
   }
-   //Validations of the ARV DRUG Load 
-   const validateArvDrug = () => {       
+    //Validations of the ARV DRUG Load 
+    const validateArvDrug = () => {       
     temp.regimenLine = arvDrugObj.regimenLine ? "" : "This field is required"
     temp.regimenDrug = arvDrugObj.regimenDrug ? "" : "This field is required"
     temp.dosage = arvDrugObj.dosage ? "" : "This field is required"
@@ -589,7 +601,7 @@ const ClinicVisit = (props) => {
         ...temp
     })
     return Object.values(temp).every(x => x == "")
-}
+  }
   const addOrder = e => {  
     if(validateLabOrder()){
         tests.visitId=visitId
@@ -600,7 +612,7 @@ const ClinicVisit = (props) => {
   const removeOrder = index => {       
     testOrderList.splice(index, 1);
     setTestOrderList([...testOrderList]);
-     
+      
   };
   const addArvDrugOrder = e => { 
     if(validateArvDrug()){
@@ -611,7 +623,7 @@ const ClinicVisit = (props) => {
   const removeArvDrugOrder = index => {       
     arvDrugOrderList.splice(index, 1);
     setarvDrugOrderList([...arvDrugOrderList]);
-     
+      
   };
 
   //Handle CheckBox 
@@ -1220,6 +1232,75 @@ const handleInputValueCheckTemperature =(e)=>{
 
               </div>
             </div>
+            {patientAge && patientAge<14 && (
+                    <div className="row">
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Head circumference </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="headCircumference"
+                                id="headCircumference"
+                                onChange={handleInputChangeVitalSignDto}
+                                min="35"
+                                max="47"
+                                value={vital.headCircumference}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Surface Area </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="surfaceArea"
+                                id="surfaceArea"
+                                onChange={handleInputChangeVitalSignDto}
+                                value={vital.surfaceArea}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm<sup>3</sup>
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >MUAC</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="select"
+                                        name="muac"
+                                        id="muac"
+                                        onChange={handleInputChangeVitalSignDto} 
+                                        value={vital.muac} 
+                                    >
+                                    <option value="">Select</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Under">Under</option>
+                                    <option value="Over">Over</option>
+                                    </Input>
+                                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                        cm
+                                    </InputGroupText>
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                    </div>
+            )}
             <Label as='a' color='black'  style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>CONSULTATION</h4>
             </Label>
@@ -1338,52 +1419,7 @@ const handleInputValueCheckTemperature =(e)=>{
                  
                 </FormGroup>
               </div>
-              <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
-                  <Input
-                    type="select"
-                    name="cervicalCancerScreeningStatus"
-                    id="cervicalCancerScreeningStatus"
-                    value={objValues.cervicalCancerScreeningStatus}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
-
-                    {cervicalStatus.map((value) => (
-                            <option key={value.code} value={value.code}>
-                                {value.display}
-                            </option>
-                        ))}
-                  </Input>
-                  
-                </FormGroup>
-              </div>
-              <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
-                  <Input
-                    type="select"
-                    name="cervicalCancerTreatmentProvided"
-                    id="cervicalCancerTreatmentProvided"
-                    value={objValues.cervicalCancerTreatmentProvided}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
-
-                    {cervicalTreatment.map((value) => (
-                            <option key={value.code} value={value.code}>
-                                {value.display}
-                            </option>
-                        ))}
-                  </Input>
-                  
-                </FormGroup>
-              </div>
+              
               <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Hepatitis Screening Result</FormLabelName>
@@ -1408,30 +1444,79 @@ const handleInputValueCheckTemperature =(e)=>{
                 </FormGroup>
               </div>
               {/* This section is if the patient is Female */}
-              <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Pregnancy Status</FormLabelName>
-                  <Input
-                    type="select"
-                    name="pregnancyStatus"
-                    id="pregnancyStatus"
-                    value={objValues.pregnancyStatus}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
+              {patientObj.sex==='Female' && (
+                <>
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >Pregnancy Status</FormLabelName>
+                      <Input
+                        type="select"
+                        name="pregnancyStatus"
+                        id="pregnancyStatus"
+                        value={objValues.pregnancyStatus}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
 
-                    {pregnancyStatus.map((value) => (
-                            <option key={value.code} value={value.code}>
-                                {value.display}
-                            </option>
-                        ))}
-                  </Input>
-                 
-                </FormGroup>
-              </div>
-              <div className="row">
+                        {pregnancyStatus.map((value) => (
+                                <option key={value.code} value={value.code}>
+                                    {value.display}
+                                </option>
+                            ))}
+                      </Input>
+                    
+                    </FormGroup>
+                  </div>
+                  <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                    <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
+                    <Input
+                      type="select"
+                      name="cervicalCancerScreeningStatus"
+                      id="cervicalCancerScreeningStatus"
+                      value={objValues.cervicalCancerScreeningStatus}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      required
+                    >
+                      <option value="select">Select </option>
+
+                      {cervicalStatus.map((value) => (
+                              <option key={value.code} value={value.code}>
+                                  {value.display}
+                              </option>
+                          ))}
+                    </Input>
+                    
+                  </FormGroup>
+                  </div>
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
+                      <Input
+                        type="select"
+                        name="cervicalCancerTreatmentProvided"
+                        id="cervicalCancerTreatmentProvided"
+                        value={objValues.cervicalCancerTreatmentProvided}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {cervicalTreatment.map((value) => (
+                                <option key={value.code} value={value.code}>
+                                    {value.display}
+                                </option>
+                            ))}
+                      </Input>
+                      
+                    </FormGroup>
+                  </div>
+                </>
+              )}
                 <div className=" mb-3 col-md-6">
                   <FormGroup>
                     <FormLabelName >Family Planing ?</FormLabelName>
@@ -1478,7 +1563,7 @@ const handleInputValueCheckTemperature =(e)=>{
                 )}
               </div>
              {/* End of section if the patient is Female */}
-            </div>
+
             <br />
             <Label as='a' color='red' style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>

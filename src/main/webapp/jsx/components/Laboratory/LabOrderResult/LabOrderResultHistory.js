@@ -192,7 +192,7 @@ const LabHistory = (props) => {
   return (
     <div>
             <br/>
-            {moduleStatus==="1" && (
+            {/* {moduleStatus==="1" && ( */}
               <MaterialTable
               icons={tableIcons}
                 title="Laboratory Order History"
@@ -205,7 +205,7 @@ const LabHistory = (props) => {
                   { title: "Test Name", field: "testName", filtering: false },
                   { title: "Lab Number", field: "labNumber", filtering: false },
                   { title: "Date Sample Collected", field: "sampleCollectionDate", filtering: false },
-                  { title: "Date Assayed", field: "dateAssayed", filtering: false },
+                  // { title: "Date Assayed", field: "dateAssayed", filtering: false },
                   { title: "Date Result Received", field: "dateResultReceived", filtering: false },
                   { title: "VL Indication", field: "viralLoadIndication", filtering: false },
                   { title: "Action", field: "Action", filtering: false },
@@ -218,28 +218,11 @@ const LabHistory = (props) => {
                     testName: row.labTestName,
                     labNumber: row.labNumber,
                     sampleCollectionDate: row.sampleCollectionDate,    
-                    dateAssayed: row.dateAssayed,
+                    //dateAssayed: row.dateAssayed,
                     dateResultReceived: row.dateResultReceived, 
                     viralLoadIndication: row.viralLoadIndicationName,
                     Action: 
-                    // (
-                    //   <ButtonGroup variant="contained" 
-                    //       aria-label="split button"
-                    //       style={{backgroundColor:'rgb(153, 46, 98)', height:'30px'}}
-                    //       size="large"
-                    //       onClick={()=>onClickHome(row)}
-                    //   >
-                    //   <Button
-                    //   color="primary"
-                    //   size="small"
-                    //   aria-label="select merge strategy"
-                    //   aria-haspopup="menu"
-                    //   style={{backgroundColor:'rgb(153, 46, 98)'}}
-                    //   >
-                    //       <MdEditNote style={{marginRight: "5px"}}/> {" "}{" "} Update
-                    //   </Button>
-                    //   </ButtonGroup>
-                    // ), 
+                   
                     <div>
                               <Menu.Menu position='right'  >
                               <Menu.Item >
@@ -275,7 +258,7 @@ const LabHistory = (props) => {
                             debounceInterval: 400
                         }}
               />
-            )}
+            {/* )}
             {moduleStatus==="2" && (
               <>
               <Alert
@@ -286,7 +269,7 @@ const LabHistory = (props) => {
               </Alert>
             
               </>
-              )} 
+              )}  */}
     </div>
   );
 }

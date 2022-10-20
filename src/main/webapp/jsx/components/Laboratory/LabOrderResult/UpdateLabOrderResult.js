@@ -250,7 +250,7 @@ useEffect(() => {
         <br/>
         <Card className={classes.root}>
             <CardBody>
-            {moduleStatus==="1" && (
+            {/* {moduleStatus==="1" && ( */}
                 <form >
                 <div className="row">
                     
@@ -518,7 +518,7 @@ useEffect(() => {
                     }
                 
                 </form>
-            )}
+            {/* )}
             {moduleStatus==="2" && (
             <>
             <Alert
@@ -529,7 +529,7 @@ useEffect(() => {
             </Alert>
            
             </>
-            )} 
+            )}  */}
             </CardBody>
         </Card> 
         </div>             

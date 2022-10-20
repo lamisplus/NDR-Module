@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Label,} from 'semantic-ui-react'
+import { Grid, Segment, Label,List, Label as LabelSui} from 'semantic-ui-react'
+import { Table  } from "react-bootstrap";
 // Page titie
 import { FormGroup, Label as FormLabelName, InputGroup,
           InputGroupText,
@@ -25,7 +26,8 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { Button as ButtonSMUI, Icon} from 'semantic-ui-react'
 import {Link} from 'react-router-dom';
-//import { objectValues } from "react-toastify/dist/utils";
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 let adherenceLevelObj = []
@@ -125,22 +127,57 @@ const ClinicVisit = (props) => {
   const [TBForms, setTBForms] = useState(false)
   const [currentVitalSigns, setcurrentVitalSigns] = useState({})
   const [showCurrentVitalSigns, setShowCurrentVitalSigns] = useState(false)
+  const [adultRegimenLine, setAdultRegimenLine] = useState([]);
+  const [childRegimenLine, setChildRegimenLine] = useState([]);
+  const [regimenTypeObj, setRegimenTypeObj] = useState([]);
   //opportunistic infection Object
   const [infection, setInfection] = useState({ illnessInfection: "", ondateInfection: "" });
   const [infectionList, setInfectionList] = useState([]);
+  const [testGroup, setTestGroup] = useState([]);
+  const [test, setTest] = useState([]);
   //ADR array Object 
   const [adrObj, setAdrObj] = useState({ adr: "", adrOnsetDate: "" });
   const [adrList, setAdrList] = useState([]);
+  const [arvDrugOrderList, setarvDrugOrderList] = useState([])
+  const [cryptococcal, setCryptococcal] = useState([])
+  const [cervicalStatus, setCervicalStatus] = useState([])
+  const [cervicalTreatment, setCervicalTreatment] = useState([])
+  const [hepatitis, setHepatitis] = useState([])
+  const [pregnancyStatus, setPregnancyStatus] = useState([])
+  const [familyPlaining, setFamilyPlaining] = useState([])
+  const [vLIndication, setVLIndication] = useState([]);
+  const [testOrderList, setTestOrderList] = useState([]);//Test Order List
+  const [arvDrugObj, setArvDrugObj] = useState({
+    regimenLine: "",
+    regimenDrug: "",
+    dosage: "",
+    regimenAdherance: "",
+ 
+  })
+  const [tests, setTests]=useState({
+
+    comments: "",
+    dateAssayed: "",
+    labNumber: "",
+    labTestGroupId: "",
+    labTestId: "",
+    dateResultReceived:"",
+    patientId:props.patientObj?props.patientObj.id:"",
+    result: "",
+    sampleCollectionDate: null,
+    viralLoadIndication: 0,
+    visitId:"" 
+  })
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
-                                                                    bodyWeight: "",
-                                                                    diastolic: "",
-                                                                    height: "",
-                                                                    systolic: "",
-                                                                    pulse:"",
-                                                                    temperature:"",
-                                                                    respiratoryRate:"" 
-                                                                  })
+          bodyWeight: "",
+          diastolic: "",
+          height: "",
+          systolic: "",
+          pulse:"",
+          temperature:"",
+          respiratoryRate:"" 
+        })
   const [objValues, setObjValues] = useState({
     adherenceLevel: "",
     adheres: {},
@@ -164,7 +201,20 @@ const ClinicVisit = (props) => {
     stiTreated: "",
     uuid: "",
     visitDate: "",
-    whoStagingId: ""
+    whoStagingId: "",
+    cryptococcalScreeningStatus: "",
+    cervicalCancerScreeningStatus: "",
+    cervicalCancerTreatmentProvided: "",
+    hepatitisScreeningResult: "",
+    familyPlaning: "",
+    onFamilyPlaning: "",
+    levelOfAdherence: "",
+    tbStatus: "",
+    tbPrevention: "",
+    aRVDrugsRegimen: {},
+    viralLoadOrder: {},
+    tbPrevention:"",
+
   });
   const [vital, setVitalSignDto] = useState({
     bodyWeight: "",
@@ -198,14 +248,163 @@ const ClinicVisit = (props) => {
     VitalSigns()
     GetPatientObj();
     ClinicVisitListHistory();
+    AdultRegimenLine();
+    ChildRegimenLine();
+    CRYPTOCOCCAL_SCREENING_STATUS();
+    CERVICAL_CANCER_SCREENING_STATUS();
+    CERVICAL_CANCER_TREATMENT();
+    HEPATITIS_SCREENING_RESULT();
+    PREGANACY_STATUS();
+    FAMILY_PLANNING_METHOD();
+    TestGroup();
     if(props.activeContent.id!==null){
      
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
   }, []);
-     //GET LIST Drug Refill
-     async function ClinicVisitListHistory() {
+  const calculate_age = dob => {
+    var today = new Date();
+    var dateParts = dob.split("-");
+    var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+    var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+    var age_now = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age_now--;
+            }
+        if (age_now === 0) {
+                return m;
+            }
+            return age_now;
+};
+  const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
+  //Get list of Test Group
+  const TestGroup =()=>{
+    axios
+    .get(`${baseUrl}laboratory/labtestgroups`,
+        { headers: {"Authorization" : `Bearer ${token}`} }
+    )
+    .then((response) => {
+        setTestGroup(response.data);
+    })
+    .catch((error) => {
+    //console.log(error);
+    });
+      
+  }
+    // PREGANACY_STATUS
+    const PREGANACY_STATUS = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/PREGANACY_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setPregnancyStatus(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // CRYPTOCOCCAL_SCREENING_STATUS	
+    const CRYPTOCOCCAL_SCREENING_STATUS	 = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setCryptococcal(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // CERVICAL_CANCER_SCREENING_STATUS	
+    const CERVICAL_CANCER_SCREENING_STATUS = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setCervicalStatus(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // CERVICAL_CANCER_TREATMENT	
+    const CERVICAL_CANCER_TREATMENT = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_TREATMENT	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setCervicalTreatment(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // HEPATITIS_SCREENING_RESULT	
+    const HEPATITIS_SCREENING_RESULT = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/HEPATITIS_SCREENING_RESULT	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setHepatitis(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // HEPATITIS_SCREENING_RESULT	
+    const FAMILY_PLANNING_METHOD = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/FAMILY_PLANNING_METHOD	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setFamilyPlaining(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    //GET AdultRegimenLine 
+    const AdultRegimenLine =()=>{
+    axios
+        .get(`${baseUrl}hiv/regimen/arv/adult`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+          setAdultRegimenLine(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });        
+    }
+    //GET AdultRegimenLine 
+    const ChildRegimenLine =()=>{
+      axios
+          .get(`${baseUrl}hiv/regimen/arv/adult`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+            setChildRegimenLine(response.data);
+          })
+          .catch((error) => {
+          //console.log(error);
+          });        
+    }
+    //GET LIST Drug Refill
+    async function ClinicVisitListHistory() {
       setLoading(true)
       axios
           .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
@@ -219,231 +418,311 @@ const ClinicVisit = (props) => {
               setLoading(false)  
           });        
     }
-  //Check for the last Vital Signs
-  const VitalSigns = () => {
-    axios
-      .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
-        { headers: { "Authorization": `Bearer ${token}` } }
-      )
-      .then((response) => {
-
-        const lastVitalSigns = response.data[response.data.length - 1]
-        if (lastVitalSigns.encounterDate >= moment(new Date()).format("YYYY-MM-DD") ) {
-          setcurrentVitalSigns(lastVitalSigns)
-          setShowCurrentVitalSigns(true)
-        }
-      })
-      .catch((error) => {
-        //console.log(error);
-      });
-  }
-    //Get The updated patient objeect
-    const GetPatientObj = () => {
+    //Check for the last Vital Signs
+    const VitalSigns = () => {
       axios
-        .get(`${baseUrl}hiv/patients`,
+        .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
           { headers: { "Authorization": `Bearer ${token}` } }
         )
         .then((response) => {
-          const patObJ= response.data.filter((x)=> x.id===props.patientObj.id)
 
-          setGetPatientObj(patObJ[0])
+          const lastVitalSigns = response.data[response.data.length - 1]
+          if (lastVitalSigns.encounterDate >= moment(new Date()).format("YYYY-MM-DD") ) {
+            setcurrentVitalSigns(lastVitalSigns)
+            setShowCurrentVitalSigns(true)
+          }
         })
         .catch((error) => {
           //console.log(error);
         });
     }
+      //Get The updated patient objeect
+      const GetPatientObj = () => {
+        axios
+          .get(`${baseUrl}hiv/patients`,
+            { headers: { "Authorization": `Bearer ${token}` } }
+          )
+          .then((response) => {
+            const patObJ= response.data.filter((x)=> x.id===props.patientObj.id)
 
-  //Get list of WhoStaging
-  const WhoStaging = () => {
-    axios
-      .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
-        { headers: { "Authorization": `Bearer ${token}` } }
-      )
-      .then((response) => {
-        //console.log(response.data);
-        setClinicalStage(response.data);
-      })
-      .catch((error) => {
-        //console.log(error);
-      });
+            setGetPatientObj(patObJ[0])
+          })
+          .catch((error) => {
+            //console.log(error);
+          });
+      }
 
-  }
-  ///GET LIST OF FUNCTIONAL%20_STATUS
-  // TB STATUS
-  const TBStatus = () => {
-    axios
-      .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
-        { headers: { "Authorization": `Bearer ${token}` } }
-      )
-      .then((response) => {
-        //console.log(response.data);
-        setTbStatus(response.data);
-      })
-      .catch((error) => {
-        //console.log(error);
-      });
+    //Get list of WhoStaging
+    const WhoStaging = () => {
+      axios
+        .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
+          //console.log(response.data);
+          setClinicalStage(response.data);
+        })
+        .catch((error) => {
+          //console.log(error);
+        });
 
-  }
+    }
+    ///GET LIST OF FUNCTIONAL%20_STATUS
+    // TB STATUS
+    const TBStatus = () => {
+      axios
+        .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
+          //console.log(response.data);
+          setTbStatus(response.data);
+        })
+        .catch((error) => {
+          //console.log(error);
+        });
 
-  async function FunctionalStatus() {
-    axios
-      .get(`${baseUrl}application-codesets/v2/FUNCTIONAL%20_STATUS`,
-        { headers: { "Authorization": `Bearer ${token}` } }
-      )
-      .then((response) => {
+    }
 
-        setFunctionalStatus(response.data);
-        //setValues(response.data)
-      })
-      .catch((error) => {
-      });
-  }
-  ///Level of Adherence
-  async function AdherenceLevel() {
-    axios
-      .get(`${baseUrl}application-codesets/v2/PrEP_LEVEL_OF_ADHERENCE`,
-        { headers: { "Authorization": `Bearer ${token}` } }
-      )
-      .then((response) => {
-        setAdherenceLevel(response.data);
+    async function FunctionalStatus() {
+      axios
+        .get(`${baseUrl}application-codesets/v2/FUNCTIONAL%20_STATUS`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
 
-      })
-      .catch((error) => {
-      });
-  }
-  const handleInputChange = e => {
-    setObjValues({ ...objValues, [e.target.name]: e.target.value });
-    if (e.target.name === "whoStagingId") {
-      if (e.target.value === "NO") {
-        setTBForms(true)
-      } else {
-        setTBForms(false)
+          setFunctionalStatus(response.data);
+          //setValues(response.data)
+        })
+        .catch((error) => {
+        });
+    }
+    ///Level of Adherence
+    async function AdherenceLevel() {
+      axios
+        .get(`${baseUrl}application-codesets/v2/PrEP_LEVEL_OF_ADHERENCE`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
+          setAdherenceLevel(response.data);
+
+        })
+        .catch((error) => {
+        });
+    }
+    const handleInputChange = e => {
+      setObjValues({ ...objValues, [e.target.name]: e.target.value });
+      if (e.target.name === "whoStagingId") {
+        if (e.target.value === "NO") {
+          setTBForms(true)
+        } else {
+          setTBForms(false)
+        }
       }
     }
-  }
-  const handleInputChangeVitalSignDto = e => {
-    if(e.target.name!=='encounterDate'){
-      setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
-    }else{
-      setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+    const handleInputChangeVitalSignDto = e => {
+      if(e.target.name!=='encounterDate'){
+        setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
+      }else{
+        setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+      }
+      
     }
-    
-  }
 
-  //Handle CheckBox 
-  const handleCheckBox = e => {
-    if (e.target.checked) {
-      //currentVitalSigns.personId === null ? props.patientObj.id : currentVitalSigns.personId
-      setVitalSignDto({ ...currentVitalSigns })
-    } else {
-      setVitalSignDto({
-        bodyWeight: "",
-        diastolic: "",
-        captureDate:"",
-        encounterDate: "",
-        facilityId: "",
-        height: "",
-        personId: props.patientObj.id,
-        serviceTypeId: "",
-        systolic: "",
-        pulse:"",
-        temperature:"",
-        respiratoryRate:"" 
+    //Handle CheckBox 
+    const handleCheckBox = e => {
+      if (e.target.checked) {
+        //currentVitalSigns.personId === null ? props.patientObj.id : currentVitalSigns.personId
+        setVitalSignDto({ ...currentVitalSigns })
+      } else {
+        setVitalSignDto({
+          bodyWeight: "",
+          diastolic: "",
+          captureDate:"",
+          encounterDate: "",
+          facilityId: "",
+          height: "",
+          personId: props.patientObj.id,
+          serviceTypeId: "",
+          systolic: "",
+          pulse:"",
+          temperature:"",
+          respiratoryRate:"" 
+        })
+      }
+    }
+    //to check the input value for clinical decision 
+    const handleInputValueCheckHeight =(e)=>{
+      if(e.target.name==="height" && (e.target.value < 48.26 || e.target.value>216.408)){
+        const message ="Height cannot be greater than 216.408 and less than 48.26"
+        setVitalClinicalSupport({...vitalClinicalSupport, height:message})
+      }else{
+        setVitalClinicalSupport({...vitalClinicalSupport, height:""})
+      }
+    }
+    const handleInputValueCheckBodyWeight =(e)=>{
+      if(e.target.name==="bodyWeight" && (e.target.value < 3 || e.target.value>150)){      
+        const message ="Body weight must not be greater than 150 and less than 3"
+        setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:message})
+      }else{
+        setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:""})
+      }
+    }
+    const handleInputValueCheckSystolic =(e)=>{
+      if(e.target.name==="systolic" && (e.target.value < 90 || e.target.value>240)){      
+        const message ="Blood Pressure systolic must not be greater than 240 and less than 90"
+        setVitalClinicalSupport({...vitalClinicalSupport, systolic:message})
+      }else{
+        setVitalClinicalSupport({...vitalClinicalSupport, systolic:""})
+      }
+    }
+    const handleInputValueCheckDiastolic =(e)=>{
+      if(e.target.name==="diastolic" && (e.target.value < 60 || e.target.value>140)){      
+        const message ="Blood Pressure diastolic must not be greater than 140 and less than 60"
+        setVitalClinicalSupport({...vitalClinicalSupport, diastolic:message})
+      }else{
+        setVitalClinicalSupport({...vitalClinicalSupport, diastolic:""})
+      }
+    }
+    const handleInputValueCheckPulse =(e)=>{
+      if(e.target.name==="pulse" && (e.target.value < 40 || e.target.value>120)){      
+      const message ="Pulse must not be greater than 120 and less than 40"
+      setVitalClinicalSupport({...vitalClinicalSupport, pulse:message})
+      }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, pulse:""})
+      }
+    }
+    const handleInputValueCheckRespiratoryRate =(e)=>{
+        if(e.target.name==="respiratoryRate" && (e.target.value < 10 || e.target.value>70)){      
+        const message ="Respiratory Rate must not be greater than 70 and less than 10"
+        setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:message})
+        }else{
+        setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:""})
+        }
+    }
+    const handleInputValueCheckTemperature =(e)=>{
+        if(e.target.name==="temperature" && (e.target.value < 35 || e.target.value>47)){      
+        const message ="Temperature must not be greater than 47 and less than 35"
+        setVitalClinicalSupport({...vitalClinicalSupport, temperature:message})
+        }else{
+        setVitalClinicalSupport({...vitalClinicalSupport, temperature:""})
+        }
+    }
+    const handleInputChangeRegimenLine = e => {
+      const regimenId= e.target.value
+      setArvDrugObj({ ...arvDrugObj, [e.target.name]: e.target.value });
+      if(e.target.name==="regimenLine"){
+        RegimenType(regimenId)
+        }else{
+          RegimenType([])
+        }
+    }
+    function RegimenType(id) {
+      async function getCharacters() {
+          try{
+          const response = await axios.get(`${baseUrl}hiv/regimen/types/${id}`,
+          { headers: {"Authorization" : `Bearer ${token}`} })
+          if(response.data){
+            setRegimenTypeObj(response.data)
+          }
+          }catch(e) {
+    
+          }
+      }
+      getCharacters();
+    }
+    //Validations of the forms
+    const validate = () => {        
+      temp.encounterDate = vital.encounterDate ? "" : "This field is required"
+      temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
+      temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
+      temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
+      temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
+      temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
+      temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
+      temp.systolic = vital.systolic ? "" : "This field is required"
+      temp.height = vital.height ? "" : "This field is required"
+      temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+      setErrors({
+          ...temp
       })
+      return Object.values(temp).every(x => x == "")
     }
-  }
-  //to check the input value for clinical decision 
-  const handleInputValueCheckHeight =(e)=>{
-    if(e.target.name==="height" && (e.target.value < 48.26 || e.target.value>216.408)){
-      const message ="Height cannot be greater than 216.408 and less than 48.26"
-      setVitalClinicalSupport({...vitalClinicalSupport, height:message})
-    }else{
-      setVitalClinicalSupport({...vitalClinicalSupport, height:""})
-    }
-  }
-  const handleInputValueCheckBodyWeight =(e)=>{
-    if(e.target.name==="bodyWeight" && (e.target.value < 3 || e.target.value>150)){      
-      const message ="Body weight must not be greater than 150 and less than 3"
-      setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:message})
-    }else{
-      setVitalClinicalSupport({...vitalClinicalSupport, bodyWeight:""})
-    }
-  }
-  const handleInputValueCheckSystolic =(e)=>{
-    if(e.target.name==="systolic" && (e.target.value < 90 || e.target.value>240)){      
-      const message ="Blood Pressure systolic must not be greater than 240 and less than 90"
-      setVitalClinicalSupport({...vitalClinicalSupport, systolic:message})
-    }else{
-      setVitalClinicalSupport({...vitalClinicalSupport, systolic:""})
-    }
-  }
-  const handleInputValueCheckDiastolic =(e)=>{
-    if(e.target.name==="diastolic" && (e.target.value < 60 || e.target.value>140)){      
-      const message ="Blood Pressure diastolic must not be greater than 140 and less than 60"
-      setVitalClinicalSupport({...vitalClinicalSupport, diastolic:message})
-    }else{
-      setVitalClinicalSupport({...vitalClinicalSupport, diastolic:""})
-    }
-  }
-  const handleInputValueCheckPulse =(e)=>{
-    if(e.target.name==="pulse" && (e.target.value < 40 || e.target.value>120)){      
-    const message ="Pulse must not be greater than 120 and less than 40"
-    setVitalClinicalSupport({...vitalClinicalSupport, pulse:message})
-    }else{
-    setVitalClinicalSupport({...vitalClinicalSupport, pulse:""})
-    }
-}
-const handleInputValueCheckRespiratoryRate =(e)=>{
-    if(e.target.name==="respiratoryRate" && (e.target.value < 10 || e.target.value>70)){      
-    const message ="Respiratory Rate must not be greater than 70 and less than 10"
-    setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:message})
-    }else{
-    setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:""})
-    }
-}
-const handleInputValueCheckTemperature =(e)=>{
-    if(e.target.name==="temperature" && (e.target.value < 35 || e.target.value>47)){      
-    const message ="Temperature must not be greater than 47 and less than 35"
-    setVitalClinicalSupport({...vitalClinicalSupport, temperature:message})
-    }else{
-    setVitalClinicalSupport({...vitalClinicalSupport, temperature:""})
-    }
-}
-  //Validations of the forms
-  const validate = () => {        
-    temp.encounterDate = vital.encounterDate ? "" : "This field is required"
-    temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
-    temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-    temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
-    temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
-    temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
-    temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
-    temp.systolic = vital.systolic ? "" : "This field is required"
-    temp.height = vital.height ? "" : "This field is required"
-    temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+      //Validations of the Lab Viral Load 
+  const validateLabOrder = () => {        
+    temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
+    temp.labTestId = tests.labTestId ? "" : "This field is required"
+    tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")   
     setErrors({
         ...temp
     })
     return Object.values(temp).every(x => x == "")
   }
-
-  const  heightFunction =(e)=>{
-    if(e==='cm'){
-        setHeightValue('cm')
-        if(vital.height!==""){
-            const newHeightValue= (vital.height * 100)
-            setVitalSignDto ({...vital,  height: newHeightValue});
-        }
-    }else if(e==='m'){
-        setHeightValue('m')
-        if(vital.height!==""){
-            const newHeightValue= (vital.height/100)
-            setVitalSignDto ({...vital,  height: newHeightValue});
-        }
-        
-    }
-
+    //Validations of the ARV DRUG Load 
+    const validateArvDrug = () => {       
+    temp.regimenLine = arvDrugObj.regimenLine ? "" : "This field is required"
+    temp.regimenDrug = arvDrugObj.regimenDrug ? "" : "This field is required"
+    temp.dosage = arvDrugObj.dosage ? "" : "This field is required"
+    temp.regimenAdherance = arvDrugObj.regimenAdherance ? "" : "This field is required"
+    setErrors({
+        ...temp
+    })
+    return Object.values(temp).every(x => x == "")
   }
+  const addOrder = e => {  
+    if(validateLabOrder()){
+        tests.visitId=visitId
+        setTestOrderList([...testOrderList, tests])
+    }
+  }
+  /* Remove ADR  function **/
+  const removeOrder = index => {       
+    testOrderList.splice(index, 1);
+    setTestOrderList([...testOrderList]);
+      
+  };
+  const addArvDrugOrder = e => { 
+    if(validateArvDrug()){
+      setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
+    }        
+  }
+  /* Remove ADR  function **/
+  const removeArvDrugOrder = index => {       
+    arvDrugOrderList.splice(index, 1);
+    setarvDrugOrderList([...arvDrugOrderList]);
+      
+  };
+    const handleSelectedTestGroup = e =>{
+      setTests ({...tests,  labTestGroupId: e.target.value});
+      const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
+      setTest(getTestList[0].labTests)
+      // if(e.target.value==='4'){            
+      //     setVlRequired(true)
+      // }else{
+      //     setVlRequired(false) 
+      // }
+    }
+    const handleInputChangeTest = e => {
+    setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
+    setTests ({...tests,  [e.target.name]: e.target.value});       
+    }
+    const  heightFunction =(e)=>{
+      if(e==='cm'){
+          setHeightValue('cm')
+          if(vital.height!==""){
+              const newHeightValue= (vital.height * 100)
+              setVitalSignDto ({...vital,  height: newHeightValue});
+          }
+      }else if(e==='m'){
+          setHeightValue('m')
+          if(vital.height!==""){
+              const newHeightValue= (vital.height/100)
+              setVitalSignDto ({...vital,  height: newHeightValue});
+          }
+          
+      }
+
+    }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -488,12 +767,15 @@ const handleInputValueCheckTemperature =(e)=>{
       )
       .then((response) => {
           const e = response.data
+          console.log(e)
+          setObjValues(e)
           setVitalSignDto({ ...e.vitalSignDto })
           objValues.clinicalNote = e.clinicalNote
           objValues.functionalStatusId= e.functionalStatusId
           objValues.whoStagingId= e.whoStagingId 
           objValues.nextAppointment= e.nextAppointment
           objValues.adherenceLevel = e.adherenceLevel
+          setObjValues(e)
           setTbObj({...e.tbScreen})
           setAdrList([...e.adverseDrugReactions])
           setInfectionList([...e.opportunisticInfections])
@@ -802,7 +1084,77 @@ const handleInputValueCheckTemperature =(e)=>{
               </div>
 
               </div>
+              </div>
+              {patientAge && patientAge<14 && (
+                    <div className="row">
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Head circumference </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="headCircumference"
+                                id="headCircumference"
+                                onChange={handleInputChangeVitalSignDto}
+                                min="35"
+                                max="47"
+                                value={vital.headCircumference}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Surface Area </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="surfaceArea"
+                                id="surfaceArea"
+                                onChange={handleInputChangeVitalSignDto}
+                                value={vital.surfaceArea}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm<sup>3</sup>
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >MUAC</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="select"
+                                        name="muac"
+                                        id="muac"
+                                        onChange={handleInputChangeVitalSignDto} 
+                                        value={vital.muac} 
+                                    >
+                                    <option value="">Select</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Under">Under</option>
+                                    <option value="Over">Over</option>
+                                    </Input>
+                                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                        cm
+                                    </InputGroupText>
+                                </InputGroup>
+                            
+                                </FormGroup>
                         </div>
+                    </div>
+            )}
+              
                         <Label as='a' color='grey' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>CONSULTATION</h4>
                         </Label>
@@ -902,8 +1254,198 @@ const handleInputValueCheckTemperature =(e)=>{
                             ) : "" }
                             </FormGroup>
                         </div>
+                        <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Level of Adherence *</FormLabelName>
+                  <Input
+                    type="select"
+                    name="levelOfAdherence"
+                    id="levelOfAdherence"
+                    value={objValues.levelOfAdherence}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
 
-                        </div>
+                    {adherenceLevel.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.display}
+                      </option>
+                    ))}
+                  </Input>
+                  {errors.adherenceLevel !=="" ? (
+                      <span className={classes.error}>{errors.adherenceLevel}</span>
+                  ) : "" }
+                </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Cryptococcal Screening Status</FormLabelName>
+                  <Input
+                    type="select"
+                    name="cryptococcalScreeningStatus"
+                    id="cryptococcalScreeningStatus"
+                    value={objValues.cryptococcalScreeningStatus}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {cryptococcal.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
+                  </Input>
+                 
+                </FormGroup>
+              </div>
+              {patientObj.sex==='Female' && (
+                <>
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
+                      <Input
+                        type="select"
+                        name="cervicalCancerScreeningStatus"
+                        id="cervicalCancerScreeningStatus"
+                        value={objValues.cervicalCancerScreeningStatus}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {cervicalStatus.map((value) => (
+                                <option key={value.code} value={value.code}>
+                                    {value.display}
+                                </option>
+                            ))}
+                      </Input>
+                      
+                    </FormGroup>
+                  </div>
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
+                      <Input
+                        type="select"
+                        name="cervicalCancerTreatmentProvided"
+                        id="cervicalCancerTreatmentProvided"
+                        value={objValues.cervicalCancerTreatmentProvided}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {cervicalTreatment.map((value) => (
+                                <option key={value.code} value={value.code}>
+                                    {value.display}
+                                </option>
+                            ))}
+                      </Input>
+                      
+                    </FormGroup>
+                  </div>
+                  <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Pregnancy Status</FormLabelName>
+                  <Input
+                    type="select"
+                    name="pregnancyStatus"
+                    id="pregnancyStatus"
+                    value={objValues.pregnancyStatus}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {pregnancyStatus.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
+                  </Input>
+                 
+                </FormGroup>
+              </div>
+                </>
+              )}
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Hepatitis Screening Result</FormLabelName>
+                  <Input
+                    type="select"
+                    name="hepatitisScreeningResult"
+                    id="hepatitisScreeningResult"
+                    value={objValues.hepatitisScreeningResult}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {hepatitis.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
+                  </Input>
+                  
+                </FormGroup>
+              </div>
+              {/* This section is if the patient is Female */}
+
+                <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                    <FormLabelName >Family Planing ?</FormLabelName>
+                    <Input
+                      type="select"
+                      name="familyPlaning"
+                      id="familyPlaning"
+                      value={objValues.familyPlaning}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      required
+                    >
+                      <option value="select">Select </option>
+                      <option value="Yes">Yes </option>
+                      <option value="No">No </option>
+                    </Input>
+                   
+                  </FormGroup>
+                </div>
+                    {objValues.familyPlaning==='Yes' && (
+                      <div className=" mb-3 col-md-6">
+                        <FormGroup>
+                          <FormLabelName >On Family Planing </FormLabelName>
+                          <Input
+                            type="select"
+                            name="onFamilyPlaning"
+                            id="onFamilyPlaning"
+                            value={objValues.onFamilyPlaning}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                          >
+                            <option value="select">Select </option>
+
+                            {familyPlaining.map((value) => (
+                                  <option key={value.code} value={value.code}>
+                                      {value.display}
+                                  </option>
+                              ))}
+                          </Input>
+                          
+                        </FormGroup>
+                      </div>
+                    )}
+                    
+                    </div>
                         <br />
                         <Label as='a' color='red' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
@@ -917,12 +1459,276 @@ const handleInputValueCheckTemperature =(e)=>{
                         <br /><br />
                         <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}  enableUpdate={enableUpdate}/>
                         <br />
-                        <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+                        {/* <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>TB SCREENING</h4>
                         </Label>
-                        <br /><br />
+
+                        <br /><br /> */}
                         {/* TB Screening Form */}
-                        <TBScreening tbObj={tbObj} setTbObj={setTbObj} enableUpdate={enableUpdate}/>
+                        {/* <TBScreening tbObj={tbObj} setTbObj={setTbObj} enableUpdate={enableUpdate}/> */}
+                        <br />
+                        <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>
+                        </Label>
+                       
+                        <br /><br />
+                        {/* ARV DRUGS Regimen */}
+                        <div className="row">
+                          <div className=" mb-3 col-md-6">
+                                <FormGroup>
+                                  <FormLabelName >Regimen Line </FormLabelName>
+                                  <Input
+                                    type="select"
+                                    name="regimenLine"
+                                    id="regimenLine"
+                                    value={arvDrugObj.regimenLine}
+                                    onChange={handleInputChangeRegimenLine}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                  >
+                                    <option value="select">Select </option>
+
+                                    {adultRegimenLine.map((value) => (
+                                      <option key={value.id} value={value.id}>
+                                        {value.description}
+                                      </option>
+                                    ))}
+                                  </Input>
+                                  {errors.regimenLine !=="" ? (
+                                            <span className={classes.error}>{errors.regimenLine}</span>
+                                    ) : "" }
+                                </FormGroup>
+                          </div>
+                          <div className=" mb-3 col-md-6">
+                                <FormGroup>
+                                  <FormLabelName >Regimen </FormLabelName>
+                                  <Input
+                                    type="select"
+                                    name="regimenDrug"
+                                    id="regimenDrug"
+                                    value={arvDrugObj.regimenDrug}
+                                    onChange={handleInputChangeRegimenLine}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                  >
+                                    <option value="select">Select </option>
+
+                                    {regimenTypeObj.map((value) => (
+                                      <option key={value.id} value={value.id}>
+                                        {value.description}
+                                      </option>
+                                    ))}
+                                  </Input>
+                                  {errors.regimenDrug !=="" ? (
+                                            <span className={classes.error}>{errors.regimenDrug}</span>
+                                    ) : "" }
+                                </FormGroup>
+                          </div>
+                          <div className=" mb-3 col-md-4">
+                                <FormGroup>
+                                  <FormLabelName >Dosage </FormLabelName>
+                                  <Input
+                                    type="text"
+                                    name="dosage"
+                                    id="dosage"
+                                    value={arvDrugObj.dosage}
+                                    onChange={handleInputChangeRegimenLine}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                  />
+                                  {errors.dosage !=="" ? (
+                                            <span className={classes.error}>{errors.dosage}</span>
+                                    ) : "" }
+                                </FormGroup>
+                          </div>
+                          <div className=" mb-3 col-md-6">
+                                <FormGroup>
+                                  <FormLabelName >Adherence </FormLabelName>
+                                  <Input
+                                    type="select"
+                                    name="regimenAdherance"
+                                    id="regimenAdherance"
+                                    value={arvDrugObj.regimenAdherance}
+                                    onChange={handleInputChangeRegimenLine}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                  >
+                                    <option value="select">Select </option>
+
+                                    {adherenceLevel.map((value) => (
+                                      <option key={value.id} value={value.id}>
+                                        {value.display}
+                                      </option>
+                                    ))}
+                                  </Input>
+                                  {errors.regimenAdherance !=="" ? (
+                                            <span className={classes.error}>{errors.regimenAdherance}</span>
+                                    ) : "" }
+                                </FormGroup>
+                          </div>
+                          <div className="col-md-2 float-end">
+                            <LabelSui as='a' color='black'  size='tiny' onClick={addArvDrugOrder} style={{ marginTop:35}}>
+                                <Icon name='plus' /> Add
+                            </LabelSui>
+                            </div>
+                          <div className="row">
+                            
+                          </div>
+                          {arvDrugOrderList.length >0 ?   
+                                <List>
+                                <Table  striped responsive>
+                                    <thead >
+                                        <tr>
+                                            <th>Regimen Line</th>
+                                            <th>Regimen</th>                                   
+                                            <th>Dosage</th>
+                                            <th>Adherence</th>                                        
+                                            <th ></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {arvDrugOrderList.map((regimenObj,index) => (
+
+                                    <ArvDrugOrderObjList
+                                        key={index}
+                                        index={index}
+                                        regimenObj={regimenObj}
+                                        regimenType={regimenTypeObj}
+                                        regimenLine={adultRegimenLine}
+                                        adherenceLevel={adherenceLevel}
+                                        removeArvDrugOrder={removeArvDrugOrder}
+                                    />
+                                    ))}
+                                    </tbody>
+                                    </Table>
+                                    <br/>
+                                    <br/>
+                                </List>
+                                :
+                                ""
+                            } 
+                        </div>
+                        {/* END ARV DRUGS Regimen */}
+                        <br />
+                        <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+                        <h4 style={{color:'#fff'}}>Viral Load  Order</h4>
+                        </Label>
+                        <br /><br />
+                        {/* Viral Load  Form */}
+                        <div className="row">
+                        <div  className=" col-md-4">
+                            <FormGroup>
+                                  <FormLabelName for="testGroup">Select Test Group</FormLabelName>
+
+                                    <Input
+                                        type="select"
+                                        name="labTestGroupId"
+                                        id="labTestGroupId"
+                                        value={tests.labTestGroupId}
+                                        onChange={handleSelectedTestGroup} 
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
+                                        >
+                                        <option value="">Select </option>
+                                                        
+                                            {testGroup.map((value) => (
+                                                <option key={value.id} value={value.id}>
+                                                    {value.groupName}
+                                                </option>
+                                            ))}
+                                    </Input>
+                                    {errors.labTestGroupId !=="" ? (
+                                            <span className={classes.error}>{errors.labTestGroupId}</span>
+                                        ) : "" }      
+                              </FormGroup>
+                          </div>
+                          <div  className=" col-md-4">
+                            <FormGroup>
+                                  <FormLabelName for="testGroup">Select Test</FormLabelName>
+                                  <Input
+                                      type="select"
+                                      name="labTestId"
+                                      id="labTestId"
+                                      value={tests.labTestId}
+                                      onChange={handleInputChangeTest} 
+                                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
+                                      >
+                                      <option value="">Select </option>
+                                                      
+                                          {test.map((value) => (
+                                              <option key={value.id} value={value.id}>
+                                                  {value.labTestName}
+                                              </option>
+                                          ))}
+                                  </Input>
+                                  {errors.labTestId !=="" ? (
+                                            <span className={classes.error}>{errors.labTestId}</span>
+                                        ) : "" }
+                            </FormGroup>
+                          </div>
+                          {tests.labTestId==='16' && (
+                          <div  className=" col-md-4">
+                              <FormGroup>
+                                <FormLabelName for="vlIndication">VL Indication</FormLabelName>
+                                <Input
+                                type="select"
+                                name="viralLoadIndication"
+                                id="viralLoadIndication"
+                                value={tests.viralLoadIndication}
+                                onChange={handleInputChangeTest}  
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                >
+                                <option value="">Select </option>
+                                                
+                                    {vLIndication.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                                </Input>
+                                {errors.viralLoadIndication !=="" ? (
+                                            <span className={classes.error}>{errors.viralLoadIndication}</span>
+                                        ) : "" }
+                            </FormGroup>
+                          </div>
+                          )}
+                          <div className="form-group mb-3 col-md-2">
+                            <LabelSui as='a' color='black'  size='tiny' onClick={addOrder} style={{ marginTop:35}}>
+                                <Icon name='plus' /> Add
+                            </LabelSui> 
+                        </div>
+                        {testOrderList.length >0 ?   
+                                <List>
+                                <Table  striped responsive>
+                                    <thead >
+                                        <tr>
+                                            <th>Test Group</th>
+                                            <th>Test</th>                                   
+                                            <th>VL Indication</th>                                       
+                                            <th ></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {testOrderList.map((tests,index) => (
+
+                                    <TestOrdersList
+                                        key={index}
+                                        index={index}
+                                        order={tests}
+                                        testGroupObj={testGroup}
+                                        vLIndicationObj={vLIndication}
+                                        removeOrder={removeOrder}
+                                    />
+                                    ))}
+                                    </tbody>
+                                    </Table>
+                                    <br/>
+                                    <br/>
+                                </List>
+                                :
+                                ""
+                            } 
+                        </div>
+                        {/* END Viral Load  Form */}
                         <br />
                         <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE</h4>
@@ -974,5 +1780,60 @@ const handleInputValueCheckTemperature =(e)=>{
     </div>
   );
 };
+function TestOrdersList({
+  order,
+  index,
+  removeOrder,
+  testGroupObj,
+  vLIndicationObj,
+}) {
+  
+  const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
+  const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
+  const vLIndication=vLIndicationObj.length>0 ?
+  vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : {}
 
+  return (
+          <tr>
+              <th>{testGroupName.groupName=='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
+              <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>             
+              <th>{vLIndication && vLIndication.display ? vLIndication.display : ""}</th>
+              <th></th>
+              <th >
+                  <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeOrder(index)}>
+                      <DeleteIcon fontSize="inherit" />
+                  </IconButton>
+                  
+              </th>
+          </tr> 
+  );
+}
+function ArvDrugOrderObjList({
+  index,
+  removeArvDrugOrder,
+  regimenObj,
+  regimenLine,
+  regimenType,
+  adherenceLevel,
+}) {
+  const regimenLineName = regimenLine.find((x)=> x.id===parseInt(regimenObj.regimenLine))
+  const regimenTypeName = regimenType.find((x)=> x.id===parseInt(regimenObj.regimenDrug))
+  const adherence = adherenceLevel.find((x)=> x.id===parseInt(regimenObj.regimenAdherance))
+
+  return (
+          <tr>
+              <th>{regimenLineName && regimenLineName.description}</th>
+              <th>{regimenTypeName && regimenTypeName.description}</th>             
+              <th>{regimenObj.dosage}</th>
+              <th>{adherence && adherence.display}</th>
+              <th></th>
+              <th >
+                  <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeArvDrugOrder(index)}>
+                      <DeleteIcon fontSize="inherit" />
+                  </IconButton>
+                  
+              </th>
+          </tr> 
+  );
+}
 export default ClinicVisit;
