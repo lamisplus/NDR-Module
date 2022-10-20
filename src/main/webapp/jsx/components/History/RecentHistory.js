@@ -133,8 +133,8 @@ const RecentHistory = (props) => {
       }else if(status===5){
         return "timeline-badge info"
       }else {
-        //return "timeline-badge secondary"
-        return "timeline-badge info"
+        return "timeline-badge secondary"
+        //return "timeline-badge info"
       }
   }
   const ActivityName =(name)=> {
@@ -544,7 +544,7 @@ const redirectLink=()=>{
                       >
                         <h6 className="mb-0">
                           Test Order Date{" "}<br/>
-                          <strong className="text-primary">{test.orderDate}</strong>
+                          <strong className="text-primary">{test.dateOrderBy}</strong>
                         </h6>
                         {test.labTestGroupName!=='others' &&(<h6 className="mb-0">
                           Test Order{" "}<br/>
