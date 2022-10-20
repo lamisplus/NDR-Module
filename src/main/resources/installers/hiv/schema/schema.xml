@@ -200,6 +200,17 @@
                 is_viral_load_at_start_of_art BOOLEAN,
                 viral_load_at_start_of_art DOUBLE PRECISION,
                 date_of_viral_load_at_start_of_art date,
+                cryptococcal_screening_status      VARCHAR(255),
+                cervical_cancer_screening_status   VARCHAR(255),
+                cervical_cancer_treatment_provided VARCHAR(255),
+                hepatitis_screening_result         VARCHAR(255),
+                family_planing                     VARCHAR(255),
+                on_family_planing                  VARCHAR(255),
+                level_of_adherence                 VARCHAR(255),
+                tb_status                          VARCHAR(255),
+                tb_prevention                      VARCHAR(255),
+                arvdrugs_regimen                   JSONB,
+                viral_load_order                   JSONB,
                 CONSTRAINT pk_hiv_art_clinical PRIMARY KEY
             (
                 id
@@ -639,17 +650,6 @@
                 uuid                VARCHAR(255)                            NOT NULL,
                 status              VARCHAR(255),
                 archived            INTEGER,
-                cryptococcal_screening_status      VARCHAR(255),
-                cervical_cancer_screening_status   VARCHAR(255),
-                cervical_cancer_treatment_provided VARCHAR(255),
-                hepatitis_screening_result         VARCHAR(255),
-                family_planing                     VARCHAR(255),
-                on_family_planing                  VARCHAR(255),
-                level_of_adherence                 VARCHAR(255),
-                tb_status                          VARCHAR(255),
-                tb_prevention                      VARCHAR(255),
-                arvdrugs_regimen                   JSONB,
-                viral_load_order                   JSONB,
                 CONSTRAINT pk_hiv_eac_session PRIMARY KEY (id)
             );
             ALTER TABLE hiv_eac_session

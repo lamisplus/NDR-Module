@@ -195,7 +195,7 @@ public class ArtPharmacyService {
 			throw new IllegalTypeException(ArtPharmacy.class, "visitId", "Regimen is already dispense for this visit " + dto.getVisitId());
 		}
 		Set<Regimen> regimenList = regimen.stream()
-				.map(regimenId -> regimenRepository.findById(regimenId.getId()).orElse(null))
+				.map(regimenId -> regimenRepository.findById(regimenId.getRegimenId()).orElse(null))
 				.collect(Collectors.toSet());
 		artPharmacy.setPerson(person);
 		artPharmacy.setRegimens(regimenList);

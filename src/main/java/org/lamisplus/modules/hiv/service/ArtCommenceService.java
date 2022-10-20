@@ -125,7 +125,9 @@ public class ArtCommenceService {
 	
 	public ARTClinicalCommenceDto updateArtCommence(Long id, ARTClinicalCommenceDto artClinicalCommenceDto) {
 		ARTClinical existArtClinical = getExistArt(id);
-		VitalSignRequestDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto();
+		VitalSignRequestDto vitalSignDto = artClinicalCommenceDto.getVitalSignDto ();
+		String captureDate = artClinicalCommenceDto.getVisitDate().toString().concat(" 12:00");
+		vitalSignDto.setCaptureDate(captureDate);
 		vitalSignService.updateVitalSign(existArtClinical.getVitalSign().getId(), vitalSignDto);
 		ARTClinical artClinical = convertDtoToART(artClinicalCommenceDto, artClinicalCommenceDto.getVitalSignId());
 		artClinical.setId(existArtClinical.getId());
