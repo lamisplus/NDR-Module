@@ -71,16 +71,16 @@ const RecentHistory = (props) => {
        .then((response) => {
         console.log(response.data)
         setLoadingLab(false)
-           let LabObject= []
-                response.data.forEach(function(value, index, array) {
-                    const dataOrders = value.labOrder.tests                    
-                    if(dataOrders[index]) {
-                        dataOrders.forEach(function(value, index, array) {
-                            LabObject.push(value)
-                        })                       
-                    }                   
-                });
-              setViralLoad(LabObject)
+          //  let LabObject= []
+          //       response.data.forEach(function(value, index, array) {
+          //           const dataOrders = value.labOrder.tests                    
+          //           if(dataOrders[index]) {
+          //               dataOrders.forEach(function(value, index, array) {
+          //                   LabObject.push(value)
+          //               })                       
+          //           }                   
+          //       });
+              setViralLoad(response.data)
        })
        .catch((error) => {
         setLoadingLab(false)
@@ -133,7 +133,8 @@ const RecentHistory = (props) => {
       }else if(status===5){
         return "timeline-badge info"
       }else {
-        return "timeline-badge secondary"
+        //return "timeline-badge secondary"
+        return "timeline-badge info"
       }
   }
   const ActivityName =(name)=> {
@@ -155,7 +156,7 @@ const RecentHistory = (props) => {
     let regimenArr = []
     regimenObj.forEach(function (value, index, array) {
       //console.log(value)
-        regimenArr.push(value['name'])
+        regimenArr.push(value['regimenName'])
     })
     return regimenArr.toString();
   }

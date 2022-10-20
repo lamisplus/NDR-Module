@@ -113,6 +113,7 @@ const PharmacyHistory = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
+                
                 setLoading(false)
                 setRefillList(response.data);                
             })
@@ -123,7 +124,7 @@ const PharmacyHistory = (props) => {
     const regimenName =(regimenObj)=> {
       let regimenArr = []
       regimenObj.forEach(function (value, index, array) {       
-          regimenArr.push(<li key={index}>{value['name']}</li>)
+          regimenArr.push(<li key={index}>{value['regimenName']}</li>)
       })
       return regimenArr; 
       }
@@ -170,11 +171,11 @@ const PharmacyHistory = (props) => {
                 { title: "Next Appointment", field: "nextAppointment", filtering: false },
                 { title: "Regimen Name", field: "regimenName", filtering: false },
                // { title: "Quantity", field: "regimenQuantity", filtering: false },
-                { title: "isDevolve", field: "isDevolve", filtering: false },
-                { title: "DSDModel", field: "dsdModel", filtering: false },
-                { title: "MMD Type", field: "mmdType", filtering: false },
-                { title: "Prescription Error", field: "prescriptionError", filtering: false },
-                { title: "ADR Screened", field: "adverseDrugReactions", filtering: false },
+                // { title: "isDevolve", field: "isDevolve", filtering: false },
+                // { title: "DSDModel", field: "dsdModel", filtering: false },
+                // { title: "MMD Type", field: "mmdType", filtering: false },
+                // { title: "Prescription Error", field: "prescriptionError", filtering: false },
+                // { title: "ADR Screened", field: "adverseDrugReactions", filtering: false },
                 { title: "Action", field: "Action", filtering: false },
 
               ]}
@@ -191,11 +192,11 @@ const PharmacyHistory = (props) => {
                                 </ul>
                     
                                 ),  
-                 regimenQuantity: "", 
-                  isDevolve: row.isDevolve, 
-                  mmdType: row.mmdType, 
-                  prescriptionError: row.prescriptionError===false? "NO":"YES", 
-                  adverseDrugReactions: row.adrScreened===false? "NO":"YES",                   
+                  regimenQuantity: "", 
+                //   isDevolve: row.isDevolve, 
+                //   mmdType: row.mmdType, 
+                //   prescriptionError: row.prescriptionError===false? "NO":"YES", 
+                //   adverseDrugReactions: row.adrScreened===false? "NO":"YES",                   
                   Action:<div>
                             <Menu.Menu position='right'  >
                             <Menu.Item >
