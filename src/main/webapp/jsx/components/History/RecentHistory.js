@@ -65,10 +65,11 @@ const RecentHistory = (props) => {
   //Get list of LaboratoryHistory
   const LaboratoryHistory =()=>{
     axios
-       .get(`${baseUrl}laboratory/orders/patients/${props.patientObj.id}`,
+       .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
+        console.log(response.data)
         setLoadingLab(false)
            let LabObject= []
                 response.data.forEach(function(value, index, array) {

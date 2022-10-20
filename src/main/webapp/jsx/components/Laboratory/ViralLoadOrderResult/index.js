@@ -2,7 +2,7 @@ import React, {useState, Fragment, useEffect } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import ViralLoadOrder from './ViralLoadOrder';
 import ViralLoadOrderResult from './ViralLoadOrderResult';
-//import LabHistory from "./LabHistory";
+import ViralLoadOrderResultHistory from "./ViralLoadOrderResultHistory";
 //import LaboratoryRDE from "./LaboratoryRDE";
 
 const divStyle = {
@@ -42,7 +42,7 @@ const LaboratoryModule = (props) => {
                     <ViralLoadOrderResult patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>
                   <Tab eventKey="history" title=" HISTORY">                   
-                    {/* <LabHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/> */}
+                    <ViralLoadOrderResultHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/>
                   </Tab>                   
                 </Tabs>
               </div>

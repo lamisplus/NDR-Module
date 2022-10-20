@@ -112,8 +112,8 @@ const Laboratory = (props) => {
         CheckLabModule();
         ViraLoadIndication();
         LabTestDetail();
-            
-    }, [props.patientObj.id]);
+        setTests(props.activeContent.obj)    
+    }, [props.patientObj.id, props.activeContent.obj]);
 
         const LabTestDetail =()=>{
             axios
@@ -152,28 +152,6 @@ const Laboratory = (props) => {
         
     }
    
-    // const PatientVisit =()=>{
-    //     axios
-    //         .get(`${baseUrl}patient/visit/visit-detail/${props.patientObj.id}`,
-    //             { headers: {"Authorization" : `Bearer ${token}`} }
-    //         )
-    //         .then((response) => {
-    //             const lastVisit = response.data[response.data.length - 1]
-    //             if(lastVisit.status==="PENDING"){
-    //                 visitId= lastVisit.id
-    //                 //setCurrentVisit(true)
-    //                 setButtonHidden(false)
-    //             }else{
-    //                 toast.error("Patient do not have any active visit")
-    //                 setButtonHidden(true)
-    //                 //setCurrentVisit(false)
-    //             }
-
-    //         })
-    //         .catch((error) => {
-    //         //console.log(error);
-    //         });        
-    // }
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios

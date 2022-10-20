@@ -1,8 +1,7 @@
 import React, {useState, Fragment, useEffect } from "react";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import LabOrderResult from './LabOrderResult';
-
-//import LabHistory from "./LabHistory";
+import LabOrderResultHistory from "./LabOrderResultHistory";
 //import LaboratoryRDE from "./LaboratoryRDE";
 
 const divStyle = {
@@ -15,8 +14,8 @@ const LaboratoryModule = (props) => {
     const patientObj = props.patientObj
     useEffect ( () => {
       setKey(props.activeContent.activeTab)
-    }, [props.activeContent.id]);
-
+    }, [props.activeContent.id, props.activeContent.activeTab]);
+  
 
   return (
     <Fragment>  
@@ -40,7 +39,7 @@ const LaboratoryModule = (props) => {
                   </Tab>
                   
                   <Tab eventKey="history" title=" HISTORY">                   
-                    {/* <LabHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/> */}
+                   <LabOrderResultHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/> 
                   </Tab>                   
                 </Tabs>
               </div>
