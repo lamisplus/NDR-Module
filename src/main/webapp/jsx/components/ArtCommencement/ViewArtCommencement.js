@@ -168,19 +168,19 @@ const ArtCommencement = (props) => {
         GetARTCommencement();
         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.activeContent.id]);
-          //Get Mental Health Object
+    //Get ART Object
     const GetARTCommencement =()=>{
         axios
            .get(`${baseUrl}hiv/art/commencement/${props.activeContent.id}`,
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => { 
-                //console.log(response.data)           
+                console.log(response.data)           
                 setObjValues(response.data)
                 if(response.data.isViralLoadAtStartOfArt===true){
                     setViraLoadStart(true)
                 }
-                RegimenType(response.data.regimenTypeId)
+                RegimenType(response.data.regimenId)
                 setVitalSignDto(response.data.vitalSignDto)
            })
            .catch((error) => {

@@ -90,7 +90,15 @@ const Laboratory = (props) => {
                                         result: "",
                                         sampleCollectionDate: null,
                                         viralLoadIndication: 0,
-                                        visitId:"" 
+                                        visitId:"" ,
+                                        checkedBy: "",
+                                        clinicianName: "",
+                                        dateChecked: "",
+                                        dateResultReported: "",
+                                        id: "",
+                                        orderId: "",
+                                        resultReportedBy: "",
+
                                     })
     useEffect(() => {
            
@@ -151,29 +159,7 @@ const Laboratory = (props) => {
             });
         
     }
-    //Get Patiet Visit 
-    // const PatientVisit =()=>{
-    //     axios
-    //         .get(`${baseUrl}patient/visit/visit-detail/${props.patientObj.id}`,
-    //             { headers: {"Authorization" : `Bearer ${token}`} }
-    //         )
-    //         .then((response) => {
-    //             const lastVisit = response.data[response.data.length - 1]
-    //             if(lastVisit.status==="PENDING"){
-    //                 visitId= lastVisit.id
-    //                 //setCurrentVisit(true)
-    //                 setButtonHidden(false)
-    //             }else{
-    //                 toast.error("Patient do not have any active visit")
-    //                 setButtonHidden(true)
-    //                 //setCurrentVisit(false)
-    //             }
 
-    //         })
-    //         .catch((error) => {
-    //         //console.log(error);
-    //         });        
-    // }
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios
@@ -449,7 +435,93 @@ const Laboratory = (props) => {
                             </FormGroup>
                     </Col>
                     )}
-                    
+                     <div className="row">
+                        <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Reported by</Label>
+                                <Input
+                                    type="text"
+                                    name="resultReportedBy"
+                                    id="resultReportedBy"
+                                    value={tests.resultReportedBy}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.resultReportedBy !=="" ? (
+                                    <span className={classes.error}>{errors.resultReportedBy}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </Col>
+                        <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Reported Date</Label>
+                                <Input
+                                    type="date"
+                                    name="dateResultReported"
+                                    id="dateResultReported"
+                                    value={tests.dateResultReported}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.dateResultReported !=="" ? (
+                                    <span className={classes.error}>{errors.dateResultReported}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </Col>
+                        <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Checked by</Label>
+                                <Input
+                                    type="text"
+                                    name="checkedBy"
+                                    id="checkedBy"
+                                    value={tests.checkedBy}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.checkedBy !=="" ? (
+                                    <span className={classes.error}>{errors.checkedBy}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </Col>
+                        <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Checked Date</Label>
+                                <Input
+                                    type="date"
+                                    name="dateChecked"
+                                    id="dateChecked"
+                                    value={tests.dateChecked}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.dateChecked !=="" ? (
+                                    <span className={classes.error}>{errors.dateChecked}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </Col>
+                        <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Clinician Name</Label>
+                                <Input
+                                    type="text"
+                                    name="clinicianName"
+                                    id="clinicianName"
+                                    value={tests.clinicianName}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                />
+                                {errors.clinicianName !=="" ? (
+                                    <span className={classes.error}>{errors.clinicianName}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </Col>
+                    </div>
                     <Col md={12}>                  
                         <LabelSui as='a' color='black'  className="float-end" onClick={addOrder}  size='tiny' style={{ marginTop:20, marginBottom:20}}>
                             <Icon name='plus' /> Add Test
@@ -497,94 +569,7 @@ const Laboratory = (props) => {
                         ""
                     } 
                 </Row>
-                
-                <div className="row">
-                <Col md={6} className="form-group mb-3">
-                    <FormGroup>
-                        <Label for="encounterDate">Reported by</Label>
-                        <Input
-                            type="text"
-                            name="reportedBy"
-                            id="reportedBy"
-                            value={tests.reportedBy}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                        />
-                        {errors.reportedBy !=="" ? (
-                            <span className={classes.error}>{errors.reportedBy}</span>
-                        ) : "" }
-                    </FormGroup>
-                </Col>
-                <Col md={6} className="form-group mb-3">
-                    <FormGroup>
-                        <Label for="encounterDate">Reported Date</Label>
-                        <Input
-                            type="date"
-                            name="clinicianName"
-                            id="clinicianName"
-                            value={tests.clinicianName}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                        />
-                        {errors.clinicianName !=="" ? (
-                            <span className={classes.error}>{errors.clinicianName}</span>
-                        ) : "" }
-                    </FormGroup>
-                </Col>
-                <Col md={6} className="form-group mb-3">
-                    <FormGroup>
-                        <Label for="encounterDate">Checked by</Label>
-                        <Input
-                            type="text"
-                            name="reportedBy"
-                            id="reportedBy"
-                            value={tests.reportedBy}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                        />
-                        {errors.reportedBy !=="" ? (
-                            <span className={classes.error}>{errors.reportedBy}</span>
-                        ) : "" }
-                    </FormGroup>
-                </Col>
-                <Col md={6} className="form-group mb-3">
-                    <FormGroup>
-                        <Label for="encounterDate">Checked Date</Label>
-                        <Input
-                            type="date"
-                            name="clinicianName"
-                            id="clinicianName"
-                            value={tests.clinicianName}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                        />
-                        {errors.clinicianName !=="" ? (
-                            <span className={classes.error}>{errors.clinicianName}</span>
-                        ) : "" }
-                    </FormGroup>
-                </Col>
-                <Col md={6} className="form-group mb-3">
-                    <FormGroup>
-                        <Label for="encounterDate">Clinician Name</Label>
-                        <Input
-                            type="text"
-                            name="clinicianName"
-                            id="clinicianName"
-                            value={tests.clinicianName}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                        />
-                        {errors.clinicianName !=="" ? (
-                            <span className={classes.error}>{errors.clinicianName}</span>
-                        ) : "" }
-                    </FormGroup>
-                </Col>
-                </div>
+
                 </div>
                     
                     {saving ? <Spinner /> : ""}

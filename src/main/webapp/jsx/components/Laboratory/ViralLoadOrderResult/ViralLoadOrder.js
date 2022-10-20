@@ -69,10 +69,10 @@ const Laboratory = (props) => {
     const [errors, setErrors] = useState({});
     const [buttonHidden, setButtonHidden]= useState(false);
     const [moduleStatus, setModuleStatus]= useState("0")
-    const [testGroup, setTestGroup] = useState([]);
+    const [labNumber, setLabNum] = useState([]);
     const [test, setTest] = useState([]);
     const [vlRequired, setVlRequired]=useState(false)
-    const [priority, setPriority]=useState([])
+    const [labTestDetail, setLabTestDetail]=useState([])
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -93,45 +93,29 @@ const Laboratory = (props) => {
                                         viralLoadIndication: 0,
                                         visitId:"" 
                                     })
-    useEffect(() => {
-           
-            CheckLabModule();
-         
-                TestGroup();
-                PriorityOrder();
-                ViraLoadIndication();
-                //PatientVisit();
+    useEffect(() => {           
+        CheckLabModule();
+        LabTestDetail();
+        ViraLoadIndication();
             
         }, [props.patientObj.id]);
         
+    
     //Get list of Test Group
-    const TestGroup =()=>{
+    const LabTestDetail =()=>{
         axios
-            .get(`${baseUrl}laboratory/labtestgroups`,
+            .get(`${baseUrl}laboratory/labtests/viral%20load`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                setTestGroup(response.data);
+  
+                setLabTestDetail(response.data);
             })
             .catch((error) => {
             //console.log(error);
             });
         
     }
-    //Get list of Test Group
-    const PriorityOrder =()=>{
-        axios
-            .get(`${baseUrl}application-codesets/v2/TEST_ORDER_PRIORITY`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                setPriority(response.data);
-            })
-            .catch((error) => {
-            //console.log(error);
-            });
-        
-        }
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -160,22 +144,14 @@ const Laboratory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
+                
                 setVLIndication(response.data);
             })
             .catch((error) => {
             //console.log(error);
             });        
     }
-    const handleSelectedTestGroup = e =>{
-        setTests ({...tests,  labTestGroupId: e.target.value});
-        const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
-        setTest(getTestList[0].labTests)
-        // if(e.target.value==='4'){            
-        //     setVlRequired(true)
-        // }else{
-        //     setVlRequired(false) 
-        // }
-    }
+   
     const handleInputChangeObject = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         setTests ({...tests,  [e.target.name]: e.target.value});               
@@ -229,7 +205,7 @@ const Laboratory = (props) => {
         //temp.labTestId = tests.labTestId ? "" : "This field is required"
         temp.sampleTypeId = tests.sampleTypeId ? "" : "This field is required"
         temp.sampleCollectionDate = tests.sampleCollectionDate ? "" : "This field is required"
-        temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required"
+        //temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
        
         setErrors({
@@ -240,7 +216,9 @@ const Laboratory = (props) => {
     
     const handleSubmit = (e) => {        
         e.preventDefault();
-        if(validate()){          
+        if(validate()){
+            tests.labTestGroupId= labTestDetail.labTestGroupId
+            tests.labTestId= labTestDetail.id         
         setSaving(true);
         axios.post(`${baseUrl}laboratory/vl-orders`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
@@ -333,9 +311,11 @@ const Laboratory = (props) => {
                                     required
                                 >
                                     <option value="">Select </option>
-                                    <option value="Blood/Plasma">Blood/Plasma </option>
-                                    <option value="DBS">DBS </option>
-                                    <option value="PBS">PBS </option>
+                                    {labTestDetail.sampleType.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.sampleTypeName}
+                                        </option>
+                                    ))}
                                 </Input>
                                 {errors.sampleTypeId !=="" ? (
                                     <span className={classes.error}>{errors.sampleTypeId}</span>
@@ -378,7 +358,7 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="form-group mb-3">
+                    {/* <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Collected by *</Label>
                             <Input
@@ -397,7 +377,7 @@ const Laboratory = (props) => {
                                 <span className={classes.error}>{errors.dateCollectedBy}</span>
                             ) : "" }
                         </FormGroup>
-                    </Col>
+                    </Col> */}
 
                     </Row>
                 </div>

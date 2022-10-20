@@ -124,15 +124,14 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "start": "react-scripts --max-old-space-size=15096 start",
+    "start": "react-scripts --max-old-space-size=16096 start",
     "jsreport": "jsreport-start",
-    "build": "react-scripts --max-old-space-size=15096 build && xcopy /s /y build src\\main\\resources\\views\\static\\hiv",
+    "build": "react-scripts --max-old-space-size=16096 build && xcopy /s /y build src\\main\\resources\\views\\static\\hiv",
     "serve": "serve -s build",
     "run-build": "react-scripts build && serve",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
+
   },
   "eslintConfig": {
     "extends": [

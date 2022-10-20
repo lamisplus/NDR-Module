@@ -646,7 +646,7 @@ const UserRegistration = (props) => {
                 patientForm.id = patientId;
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
-                const response = await axios.put(`${baseUrl}hiv/patient/${patientObj.id}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                const response = await axios.put(`${baseUrl}hiv/enrollment/${patientObj.id}`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
                 toast.success("Patient Updated successful");
                 history.push('/');
             } catch (error) {                

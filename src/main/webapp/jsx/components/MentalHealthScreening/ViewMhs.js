@@ -122,7 +122,7 @@ const ViewMentalHealthScreening = (props) => {
           observation.personId =patientObj.id
           observation.data=objValues
           setSaving(true);
-          axios.post(`${baseUrl}observation`,observation,
+          axios.put(`${baseUrl}observation/${props.activeContent.id}`,observation,
            { headers: {"Authorization" : `Bearer ${token}`}},          
           )
               .then(response => {
@@ -134,7 +134,7 @@ const ViewMentalHealthScreening = (props) => {
                   }else{
                     setReferrer(false)
                   }
-                  props.setActiveContent("recent-history")
+                  props.setActiveContent({...props.activeContent, route:'recent-history'})
                   //history.push("/")
               })
               .catch(error => {
@@ -183,7 +183,7 @@ const ViewMentalHealthScreening = (props) => {
                                 value={objValues.mhs1}
                                 onChange={handleInputChangeKP}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType !=='update' ? true : false}
                                 >
                                 <option value=""> Select</option>
                                 <option value="YES"> YES</option>
@@ -201,7 +201,7 @@ const ViewMentalHealthScreening = (props) => {
                                 value={objValues.mhs2}
                                 onChange={handleInputChangeKP}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType !=='update' ? true : false}
                                 >
                                 <option value=""> Select</option>
                                 <option value="YES"> YES</option>
@@ -219,7 +219,7 @@ const ViewMentalHealthScreening = (props) => {
                             value={objValues.mhs3}
                             onChange={handleInputChangeKP}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
+                            disabled={props.activeContent.actionType !=='update' ? true : false}
                             >
                             <option value=""> Select</option>
                             <option value="YES"> YES</option>
@@ -237,7 +237,7 @@ const ViewMentalHealthScreening = (props) => {
                                 value={objValues.mhs4}
                                 onChange={handleInputChangeKP}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType !=='update' ? true : false}
                                 >
                                 <option value=""> Select</option>
                                 <option value="YES"> YES</option>
@@ -255,7 +255,7 @@ const ViewMentalHealthScreening = (props) => {
                                 value={objValues.mhs5}
                                 onChange={handleInputChangeKP}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={props.activeContent.actionType !=='update' ? true : false}
                                 >
                                 <option value=""> Select</option>
                                 <option value="YES"> YES</option>

@@ -882,7 +882,7 @@ const Pharmacy = (props) => {
             <br/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Select Regimen Line *</Label>
+                <Label >Select Regimen Line </Label>
                 <Input
                     type="select"
                     name="regimen"
@@ -906,7 +906,7 @@ const Pharmacy = (props) => {
 
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Regimen *</Label>
+                <Label >Regimen </Label>
                 
                 <Input
                     type="select"
@@ -934,7 +934,7 @@ const Pharmacy = (props) => {
             <br/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Select Regimen Line *</Label>
+                <Label >OI Drug</Label>
                 <Input
                     type="select"
                     name="regimen"
@@ -958,7 +958,7 @@ const Pharmacy = (props) => {
 
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Regimen *</Label>
+                <Label >Drugs</Label>
                 
                 <Input
                     type="select"
@@ -986,7 +986,7 @@ const Pharmacy = (props) => {
             <br/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Select Regimen Line *</Label>
+                <Label >TB Treatment Drug</Label>
                 <Input
                     type="select"
                     name="regimen"
@@ -1009,7 +1009,7 @@ const Pharmacy = (props) => {
             </div>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Regimen *</Label>
+                <Label >Drugs </Label>
                 
                 <Input
                     type="select"
@@ -1051,7 +1051,7 @@ const Pharmacy = (props) => {
                         className="form-check-label"
                         htmlFor="basic_checkbox_1"
                         >
-                        As Combination
+                        As no combination
                         </label>
                     </div>
                         <div className="row">
@@ -1172,7 +1172,7 @@ const Pharmacy = (props) => {
                                         <tr>
                                             <th>Regimen Drug</th>
                                             <th>Frequency</th>
-                                            <th>Dosage</th>
+                                            <th>Duration</th>
                                             <th>Quty Prescribed</th>
                                             <th>Qnty Dispensed </th>
                                             
@@ -1244,7 +1244,7 @@ function DrugDispensedLists({
             <tr>
                 <th>{regimenDrugObj.name} {regimenDrugObj.strength!==""? regimenDrugObj.strength :""}</th>
                 <th>{regimenDrugObj.frequency}</th>
-                <th>{regimenDrugObj.dosage}</th>
+                <th>{regimenDrugObj.duration}</th>
                 <th>{regimenDrugObj.prescribed}</th>
                 <th>{regimenDrugObj.dispense}</th>
                 <th></th>

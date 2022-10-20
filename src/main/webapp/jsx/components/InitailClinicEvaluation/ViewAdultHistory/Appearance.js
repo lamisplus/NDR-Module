@@ -186,6 +186,10 @@ const BasicInfo = (props) => {
                                                         tenderness:"", 
                                                         other:"",
                                                     });
+
+    useEffect(() => { 
+        console.log(props.observation.data)
+    }, [props.observation.data])
     const handleGeneralApperance =e =>{
         if(e.target.name!=='other'){
         if(e.target.checked){
@@ -412,7 +416,7 @@ return (
         
             <Card className={classes.root}>
                 <CardBody>   
-                <h2 style={{color:'#000'}}>Appearance</h2>
+                <h2 style={{color:'#000'}}>General Appearance</h2>
                 <br/>
                     <form >
                     {/* Medical History form inputs */}

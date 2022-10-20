@@ -96,8 +96,12 @@ const BasicInfo = (props) => {
     const [errors, setErrors] = useState({});
     let temp = { ...errors }
     useEffect(() => { 
+        //console.log(props.observation.data.pastArvMedical)
         if(props.observation.data ){
             setPastArvMedicalMedical(props.observation.data.pastArvMedical)           
+        }
+        if(props.observation.data.pastArvMedical.none==='on'){
+            setHideOtherPastArv(true)
         }
     }, [props.observation.data]);   
     const [hideOtherPastArv, setHideOtherPastArv]=useState(false)
@@ -167,6 +171,7 @@ const BasicInfo = (props) => {
                             type="checkbox"
                             className="form-check-input"                            
                             name="none"
+                            checked={props.observation.data.pastArvMedical.none==='on' ? true : false}
                             id="none"
                             onChange={handlePastArv}
                             />
