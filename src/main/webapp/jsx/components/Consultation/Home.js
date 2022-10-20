@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Label, Icon, List, Button, Card } from 'semantic-ui-react'
+import { Grid, Segment, Label, Icon, List, Button, Card, Message } from 'semantic-ui-react'
 import { Table  } from "react-bootstrap";
 // Page titie
 import { FormGroup, Label as FormLabelName, InputGroup,
@@ -145,6 +145,18 @@ const ClinicVisit = (props) => {
   const [adrObj, setAdrObj] = useState({ adr: "", adrOnsetDate: "" });
   const [adrList, setAdrList] = useState([]);
   const [arvDrugOrderList, setarvDrugOrderList] = useState([])
+  const [cryptococcal, setCryptococcal] = useState([])
+  const [cervicalStatus, setCervicalStatus] = useState([])
+  const [cervicalTreatment, setCervicalTreatment] = useState([])
+  const [hepatitis, setHepatitis] = useState([])
+  const [pregnancyStatus, setPregnancyStatus] = useState([])
+  const [familyPlaining, setFamilyPlaining] = useState([])
+  CRYPTOCOCCAL_SCREENING_STATUS();
+    CERVICAL_CANCER_SCREENING_STATUS();
+    CERVICAL_CANCER_TREATMENT();
+    HEPATITIS_SCREENING_RESULT();
+    PREGANACY_STATUS();
+    FAMILY_PLANNING_METHOD();
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                                                                     bodyWeight: "",
@@ -247,11 +259,101 @@ const ClinicVisit = (props) => {
     ClinicVisitList();
     PatientDetaild();
     ViraLoadIndication();
-    //TestGroup();
+    TestGroup();
     AdultRegimenLine();
     ChildRegimenLine();
+    CRYPTOCOCCAL_SCREENING_STATUS();
+    CERVICAL_CANCER_SCREENING_STATUS();
+    CERVICAL_CANCER_TREATMENT();
+    HEPATITIS_SCREENING_RESULT();
+    PREGANACY_STATUS();
+    FAMILY_PLANNING_METHOD();
     //hiv/patient/3
   }, []);
+  // CRYPTOCOCCAL_SCREENING_STATUS	
+  const CRYPTOCOCCAL_SCREENING_STATUS	 = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setCryptococcal(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+  }
+  // CERVICAL_CANCER_SCREENING_STATUS	
+  const CERVICAL_CANCER_SCREENING_STATUS = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setCervicalStatus(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+  }
+   // CERVICAL_CANCER_TREATMENT	
+   const CERVICAL_CANCER_TREATMENT = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setCervicalTreatment(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+  // HEPATITIS_SCREENING_RESULT	
+   const HEPATITIS_SCREENING_RESULT = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setHepatitis(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // HEPATITIS_SCREENING_RESULT	
+   const FAMILY_PLANNING_METHOD = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setFamilyPlaining(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
+    // HEPATITIS_SCREENING_RESULT	
+   const PREGANACY_STATUS = () => {
+    axios
+      .get(`${baseUrl}application-codesets/v2/CRYPTOCOCCAL_SCREENING_STATUS	`,
+        { headers: { "Authorization": `Bearer ${token}` } }
+      )
+      .then((response) => {
+        setPregnancyStatus(response.data);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
+
+    }
     //GET VIRAL LOAD INDICATION 
       const ViraLoadIndication =()=>{
         axios
@@ -661,6 +763,31 @@ const handleInputValueCheckTemperature =(e)=>{
     }
   }
 
+  function BmiCal (bmi){
+    if(bmi<18.5){
+      return (
+        <Message        
+         size='mini'
+         color='brown'
+          content='Underweight'
+        />
+      )      
+    }else if(bmi >=18.5 && bmi<=24.9){
+      <Message        
+         size='mini'
+         color='olive'
+          content='Well nourished'
+        />
+    }
+    else if( bmi>25){
+      <Message        
+         size='mini'
+         color='blue'
+          content='Overweight/Obese'
+        />
+    }
+    
+  }
 
   return (
     <div className={classes.root}>
@@ -1032,6 +1159,11 @@ const handleInputValueCheckTemperature =(e)=>{
                             </FormGroup>
                         )}
                     </div>
+                    <div className="form-group mb-3 mt-2 col-md-12">
+                          {
+                            BmiCal((vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2))
+                          }
+                    </div>
               </div>
               <div className="row">
               <div className="form-group mb-3 col-md-12">
@@ -1197,11 +1329,11 @@ const handleInputValueCheckTemperature =(e)=>{
                   >
                     <option value="select">Select </option>
 
-                    {functionalStatus.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.display}
-                      </option>
-                    ))}
+                    {cryptococcal.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                   </Input>
                  
                 </FormGroup>
@@ -1220,11 +1352,11 @@ const handleInputValueCheckTemperature =(e)=>{
                   >
                     <option value="select">Select </option>
 
-                    {functionalStatus.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.display}
-                      </option>
-                    ))}
+                    {cervicalStatus.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                   </Input>
                   
                 </FormGroup>
@@ -1243,11 +1375,11 @@ const handleInputValueCheckTemperature =(e)=>{
                   >
                     <option value="select">Select </option>
 
-                    {functionalStatus.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.display}
-                      </option>
-                    ))}
+                    {cervicalTreatment.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                   </Input>
                   
                 </FormGroup>
@@ -1266,11 +1398,11 @@ const handleInputValueCheckTemperature =(e)=>{
                   >
                     <option value="select">Select </option>
 
-                    {functionalStatus.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.display}
-                      </option>
-                    ))}
+                    {hepatitis.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                   </Input>
                   
                 </FormGroup>
@@ -1290,11 +1422,11 @@ const handleInputValueCheckTemperature =(e)=>{
                   >
                     <option value="select">Select </option>
 
-                    {adherenceLevel.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.display}
-                      </option>
-                    ))}
+                    {pregnancyStatus.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                   </Input>
                  
                 </FormGroup>
@@ -1313,39 +1445,37 @@ const handleInputValueCheckTemperature =(e)=>{
                       required
                     >
                       <option value="select">Select </option>
-
-                      {adherenceLevel.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.display}
-                        </option>
-                      ))}
+                      <option value="Yes">Yes </option>
+                      <option value="No">No </option>
                     </Input>
                    
                   </FormGroup>
                 </div>
-                <div className=" mb-3 col-md-6">
-                  <FormGroup>
-                    <FormLabelName >On Family Planing </FormLabelName>
-                    <Input
-                      type="select"
-                      name="onFamilyPlaning"
-                      id="onFamilyPlaning"
-                      value={objValues.onFamilyPlaning}
-                      onChange={handleInputChange}
-                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                      required
-                    >
-                      <option value="select">Select </option>
+                {objValues.familyPlaning==='Yes' && (
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >On Family Planing </FormLabelName>
+                      <Input
+                        type="select"
+                        name="onFamilyPlaning"
+                        id="onFamilyPlaning"
+                        value={objValues.onFamilyPlaning}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
 
-                      {adherenceLevel.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.display}
-                        </option>
-                      ))}
-                    </Input>
-                    
-                  </FormGroup>
-                </div>
+                        {familyPlaining.map((value) => (
+                              <option key={value.code} value={value.code}>
+                                  {value.display}
+                              </option>
+                          ))}
+                      </Input>
+                      
+                    </FormGroup>
+                  </div>
+                )}
               </div>
              {/* End of section if the patient is Female */}
             </div>

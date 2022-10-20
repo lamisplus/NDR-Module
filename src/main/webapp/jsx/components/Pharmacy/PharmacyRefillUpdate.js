@@ -103,43 +103,43 @@ const Pharmacy = (props) => {
 
         setEnableUpdate(false)
     }
-        //Get Pharmacy refill Detail
-        const PharmacyRefillDetail =()=>{
-            axios
-                .get(`${baseUrl}hiv/art/pharmacy/${props.activeContent.id}`,
-                    { headers: {"Authorization" : `Bearer ${token}`} }
-                )
-                .then((response) => {
-                    const data=response.data
-                    //console.log(response.data);
-                    setObjValues(data);
-                    //setRegimenList(data.extra.regimens)
-                    setRegimenList(data && data.extra ? data.extra.regimens : [])
-                    if(data.adrScreened){
-                        setShowAdr(true)
-                        setSelectedOptionAdr(data.adverseDrugReactions)
-                    }
-                    if(data.regimen.length > 0){
-                        setSelectedOption(
-                            Object.entries(data.extra.regimens).map(([key, value]) => ({
-                                        label: value.name,
-                                        value: value.id
-                                    }))
-                        )
-                        // setRegimenList(
-                        //     Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
-                        //         id: value.value,
-                        //         name: value.label,
-                        //         dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
-                        //     })))
-                        setShowRegimen(true)
-                    }
-                })
-                .catch((error) => {
-                //console.log(error);
-                });
-            
-            }
+    //Get Pharmacy refill Detail
+    const PharmacyRefillDetail =()=>{
+        axios
+            .get(`${baseUrl}hiv/art/pharmacy/${props.activeContent.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                const data=response.data
+                //console.log(response.data);
+                setObjValues(data);
+                //setRegimenList(data.extra.regimens)
+                setRegimenList(data && data.extra ? data.extra.regimens : [])
+                if(data.adrScreened){
+                    setShowAdr(true)
+                    setSelectedOptionAdr(data.adverseDrugReactions)
+                }
+                if(data.regimen.length > 0){
+                    setSelectedOption(
+                        Object.entries(data.extra.regimens).map(([key, value]) => ({
+                                    label: value.name,
+                                    value: value.id
+                                }))
+                    )
+                    // setRegimenList(
+                    //     Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
+                    //         id: value.value,
+                    //         name: value.label,
+                    //         dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
+                    //     })))
+                    setShowRegimen(true)
+                }
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     //Get list of RegimenLine
     const RegimenLine =()=>{
     axios

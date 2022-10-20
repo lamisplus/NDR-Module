@@ -40,7 +40,7 @@ import FirstEac from './../EnhancedAdherenceCounseling/ViewEAC/FirstEac'
 import SecondEac from './../EnhancedAdherenceCounseling/ViewEAC/SecondEac'
 import ThirdEac from './../EnhancedAdherenceCounseling/ViewEAC/ThirdEac'
 import ViewLaboratory from './../Laboratory/ViewLaboratory'
-import PharmacyRefillUpdate from './../Pharmacy/PharmacyRefillUpdate'
+import PharmacyRefillViewUpdate from './../Pharmacy/PharmacyRefillViewUpdate'
 import Biometrics from './Biometric'
 import TrackingForm from './../TrackingForm/Index'
 import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
@@ -142,7 +142,7 @@ function PatientCard(props) {
           {activeContent.route==='second-eac-history' &&( <SecondEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='completed-eac-history' &&( <ThirdEac patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='lab-view' &&( <ViewLaboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='pharmacy-update' &&( <PharmacyRefillUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='pharmacy-update' &&( <PharmacyRefillViewUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='tracking-form' &&( <TrackingForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='first-eac' &&( <FirstEacPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='eac-outcome' &&( <EACOUTCOME patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}

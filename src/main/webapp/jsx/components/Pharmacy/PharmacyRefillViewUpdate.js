@@ -71,12 +71,12 @@ const Pharmacy = (props) => {
     const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
     const [mmdType, setmmdType]=useState();
+    const [dsdModelType, setDsdModelType] = useState([]);
     const [showmmdType, setShowmmdType]=useState(false);
     const [showDsdModel, setShowDsdModel] = useState(false);
     const [showAdr, setShowAdr] = useState(false);
     const [showRegimen, setShowRegimen] = useState(false);
     const [regimen, setRegimen] = useState([]);
-    const [regimenList, setRegimenList] = useState([]);
     const [eacStatusObj, setEacStatusObj] = useState()
     const [regimenType, setRegimenType] = useState([]);
     const [regimenTypeOI, setRegimenTypeOI] = useState([]);
@@ -109,7 +109,8 @@ const Pharmacy = (props) => {
             visitDate: null,
             visitId: 0,
             refill:"",
-            refillType:""
+            refillType:"",
+            dsdModelType
     });
     const [vital, setVitalSignDto]= useState({
         bodyWeight: "",
@@ -129,15 +130,44 @@ const Pharmacy = (props) => {
         PrepSideEffect();
         VitalSigns();
         AdultRegimenLine();
-        setRegimenList(
-            Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
-                id: value.value,
-                name: value.label,
-                dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
-              })))
+        PharmacyRefillDetail();
         CheckEACStatus();
         VitalSigns()
-    }, [selectedOption]);
+    }, [props.activeContent.obj, props.activeContent.id]);
+    //Get Pharmacy refill Detail
+    const PharmacyRefillDetail =()=>{
+        axios
+            .get(`${baseUrl}hiv/art/pharmacy/${props.activeContent.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                const data=response.data
+                setObjValues(data);
+                setRegimenDrugList(data && data.extra ? data.extra.regimens : [])
+                DsdModelType(objValues.dsdModel)
+                //}
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    //Get list of DSD Model Type
+    function DsdModelType (dsdmodel) {
+        const dsd = dsdmodel ==='Facility' ? 'DSD_MODEL_FACILITY' : 'DSD_MODEL_COMMUNITY'
+        axios
+           .get(`${baseUrl}application-codesets/v2/${dsd}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               console.log(response.data);
+               setDsdModelType(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
      //GET AdultRegimenLine 
      const AdultRegimenLine =()=>{
         axios
@@ -145,7 +175,6 @@ const Pharmacy = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                console.log(response.data)
                 //const filterRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
                 const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
                 const tbRegimen=response.data.filter((x)=> (x.id===10 ))
@@ -159,6 +188,8 @@ const Pharmacy = (props) => {
             //console.log(error);
             });        
       }
+
+    console.log(props.activeContent)
     //Check for the last Vital Signs
     const VitalSigns = () => {
         axios
@@ -315,7 +346,6 @@ const Pharmacy = (props) => {
     }
     function RegimenDrugOI(id) {        
         let drugId = id
-        console.log(id)
         async function getCharacters(drugId) {            
             try{
             const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
@@ -383,6 +413,10 @@ const Pharmacy = (props) => {
         getCharacters(drugId);
     }
     const handleInputChange = e => {
+        if(e.target.name==='dsdModel' && e.target.value!==''){
+            DsdModelType(e.target.value)
+            setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        }
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
        
     }
@@ -452,7 +486,6 @@ const Pharmacy = (props) => {
 
     const handleCheckBoxRegimen =e =>{
         const originalCombination=regimenDrug
-        console.log(originalCombination)
         if(e.target.checked){
             const newObjCombination = selectedCombinedRegimen.map(x => {
                 x['dispense']=""
@@ -467,7 +500,6 @@ const Pharmacy = (props) => {
             setRegimenDrug(newObjCombination)
             
         }else{
-            console.log(regimenDrug)
             RegimenDrug(objValues.regimenId)
         } 
     } 
@@ -490,7 +522,6 @@ const Pharmacy = (props) => {
     const handlRefillPeriod = e =>{
         const refillcount= e.target.value
         refillPeriodValue=refillcount
-        
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
@@ -539,7 +570,7 @@ const Pharmacy = (props) => {
         //delete regimenList['name']
         objValues.regimen=regimenDrugList
 
-        axios.post(`${baseUrl}hiv/art/pharmacy`,objValues,
+        axios.put(`${baseUrl}hiv/art/pharmacy/${props.activeContent.obj.id}`,objValues,
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
@@ -561,7 +592,6 @@ const Pharmacy = (props) => {
       let TotalPrescribed = regimenDrug.reduce(function(prev, current) {
         return prev + +current.prescribed
       }, 0);
-      
 
   return (      
       <div>
@@ -737,7 +767,8 @@ const Pharmacy = (props) => {
                         name="refillPeriod"
                         id="refillPeriod"
                         disabled={objValues.visitDate!==null? false : true}
-                        onChange={handlRefillPeriod}   
+                        onChange={handlRefillPeriod}  
+                        value={objValues.refillPeriod} 
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                         >
                         <option value="">Select </option>
@@ -773,9 +804,9 @@ const Pharmacy = (props) => {
                     <Label >DSD Model</Label>
                     <Input
                         type="select"
-                        name="deliveryPoint"
-                        id="deliveryPoint"
-                        value={objValues.deliveryPoint}
+                        name="dsdModel"
+                        id="dsdModel"
+                        value={objValues.dsdModel}
                         onChange={handleInputChange} 
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                         >
@@ -792,15 +823,18 @@ const Pharmacy = (props) => {
                     <Label >DSD Model Type</Label>
                     <Input
                         type="select"
-                        name="deliveryPoint"
-                        id="deliveryPoint"
-                        value={objValues.deliveryPoint}
+                        name="dsdModelType"
+                        id="dsdModelType"
+                        value={objValues.dsdModelType}
                         onChange={handleInputChange} 
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                         >
                         <option value="">Select </option>
-                        <option value="Facility">Facility </option>
-                        <option value="Community">Community </option>
+                        {dsdModelType.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                         
                     </Input>
                     
@@ -1164,37 +1198,7 @@ const Pharmacy = (props) => {
                                 <Icon name='plus' /> Add
                             </LabelSui>
                         </div>
-                        {regimenDrugList.length >0 
-                            ?
-                                <List>
-                                <Table  striped responsive>
-                                    <thead >
-                                        <tr>
-                                            <th>Regimen Drug</th>
-                                            <th>Frequency</th>
-                                            <th>Duration</th>
-                                            <th>Quty Prescribed</th>
-                                            <th>Qnty Dispensed </th>
-                                            
-                                            <th ></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {regimenDrugList.map((regimenDrugObj, index) => (
-
-                                    <DrugDispensedLists
-                                        key={index}
-                                        index={index}
-                                        regimenDrugObj={regimenDrugObj}
-                                        removeAttempt={removeAttempt}
-                                    />
-                                    ))}
-                                    </tbody>
-                                </Table>
-                                </List>
-                                :
-                                ""
-                            }     
+                           
                         </div>
                         </CardBody>
                         </Card>
@@ -1205,6 +1209,37 @@ const Pharmacy = (props) => {
                     :
                     ""
                 }
+                {regimenDrugList.length >0 
+                ?
+                    <List>
+                    <Table  striped responsive>
+                        <thead >
+                            <tr>
+                                <th>Regimen Drug</th>
+                                <th>Frequency</th>
+                                <th>Duration</th>
+                                <th>Quty Prescribed</th>
+                                <th>Qnty Dispensed </th>
+                                
+                                <th ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {regimenDrugList.map((regimenDrugObj, index) => (
+
+                        <DrugDispensedLists
+                            key={index}
+                            index={index}
+                            regimenDrugObj={regimenDrugObj}
+                            removeAttempt={removeAttempt}
+                        />
+                        ))}
+                        </tbody>
+                    </Table>
+                    </List>
+                    :
+                    ""
+                }  
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />
@@ -1220,9 +1255,9 @@ const Pharmacy = (props) => {
                     
                     >
                     {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    <span style={{ textTransform: "capitalize" }}>Update</span>
                     ) : (
-                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    <span style={{ textTransform: "capitalize" }}>Updating...</span>
                     )}
                 </MatButton>
                 )}
@@ -1242,7 +1277,7 @@ function DrugDispensedLists({
    
     return (
             <tr>
-                <th>{regimenDrugObj.name} {regimenDrugObj.strength!==""? regimenDrugObj.strength :""}</th>
+                <th>{regimenDrugObj.name ? regimenDrugObj.name : regimenDrugObj.regimenName} {regimenDrugObj.strength!==""? regimenDrugObj.strength :""}</th>
                 <th>{regimenDrugObj.frequency}</th>
                 <th>{regimenDrugObj.duration}</th>
                 <th>{regimenDrugObj.prescribed}</th>

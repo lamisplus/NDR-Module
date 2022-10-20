@@ -70,6 +70,7 @@ const Pharmacy = (props) => {
     const [selectedOption, setSelectedOption] = useState([]);
     const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
+    const [dsdModelType, setDsdModelType] = useState([]);
     const [mmdType, setmmdType]=useState();
     const [showmmdType, setShowmmdType]=useState(false);
     const [showDsdModel, setShowDsdModel] = useState(false);
@@ -109,7 +110,8 @@ const Pharmacy = (props) => {
             visitDate: null,
             visitId: 0,
             refill:"",
-            refillType:""
+            refillType:"",
+            dsdModelType:""
     });
     const [vital, setVitalSignDto]= useState({
         bodyWeight: "",
@@ -219,6 +221,22 @@ const Pharmacy = (props) => {
                 label: value.display,
                 value: value.id,
               })));
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    //Get list of DSD Model Type
+    function DsdModelType (dsdmodel) {
+        const dsd = dsdmodel ==='Facility' ? 'DSD_MODEL_FACILITY' : 'DSD_MODEL_COMMUNITY'
+        axios
+           .get(`${baseUrl}application-codesets/v2/${dsd}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               console.log(response.data);
+               setDsdModelType(response.data);
            })
            .catch((error) => {
            //console.log(error);
@@ -383,6 +401,10 @@ const Pharmacy = (props) => {
         getCharacters(drugId);
     }
     const handleInputChange = e => {
+        if(e.target.name==='dsdModel' && e.target.value!==''){
+            DsdModelType(e.target.value)
+            setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        }
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
        
     }
@@ -467,7 +489,7 @@ const Pharmacy = (props) => {
             setRegimenDrug(newObjCombination)
             
         }else{
-            console.log(regimenDrug)
+          
             RegimenDrug(objValues.regimenId)
         } 
     } 
@@ -773,9 +795,9 @@ const Pharmacy = (props) => {
                     <Label >DSD Model</Label>
                     <Input
                         type="select"
-                        name="deliveryPoint"
-                        id="deliveryPoint"
-                        value={objValues.deliveryPoint}
+                        name="dsdModel"
+                        id="dsdModel"
+                        value={objValues.dsdModel}
                         onChange={handleInputChange} 
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                         >
@@ -792,15 +814,18 @@ const Pharmacy = (props) => {
                     <Label >DSD Model Type</Label>
                     <Input
                         type="select"
-                        name="deliveryPoint"
-                        id="deliveryPoint"
-                        value={objValues.deliveryPoint}
+                        name="dsdModelType"
+                        id="dsdModelType"
+                        value={objValues.dsdModelType}
                         onChange={handleInputChange} 
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
                         >
                         <option value="">Select </option>
-                        <option value="Facility">Facility </option>
-                        <option value="Community">Community </option>
+                        {dsdModelType.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
                         
                     </Input>
                     
