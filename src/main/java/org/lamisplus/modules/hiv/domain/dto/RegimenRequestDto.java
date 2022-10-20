@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegimenRequestDto {
-    private Long id;
-    private Integer dispenseQuantity;
+    private Long regimenId;
+    private Integer dispense;
+    private String regimenName;
+    private String prescribed;
+    private Integer duration;
+    private Integer dosage;
+    private String frequency;
 }
