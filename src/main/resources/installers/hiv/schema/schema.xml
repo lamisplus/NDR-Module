@@ -444,7 +444,7 @@
                 refill_period INTEGER,
                 dsd_model_type         VARCHAR(255),
                 refill                 VARCHAR(255),
-                "refill_type "         VARCHAR(255),
+                refill_type        VARCHAR(255),
                 delivery_point VARCHAR(255),
                 dsd_model VARCHAR(255),
                 archived INTEGER,

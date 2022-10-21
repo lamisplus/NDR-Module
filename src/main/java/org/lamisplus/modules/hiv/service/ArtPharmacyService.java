@@ -199,6 +199,7 @@ public class ArtPharmacyService {
 				.collect(Collectors.toSet());
 		artPharmacy.setPerson(person);
 		artPharmacy.setRegimens(regimenList);
+		System.out.println("Regimen");
 		//processAndSetDispenseRegimenInExtra(dto, artPharmacy);
 		artPharmacy.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		log.info(" entity 2nd:  {}", artPharmacy);
