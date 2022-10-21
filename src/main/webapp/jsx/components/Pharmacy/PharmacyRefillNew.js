@@ -480,7 +480,7 @@ const Pharmacy = (props) => {
                 x['dispense']=""
                 x['prescribed']=""
                 x['dosage']=""
-                //x['freqency']=""
+                x['freqency']=""
                 x['duration']=""
                 x['regimenId']=regimenDrug[0].regimenId
                 x['regimenName']= regimenDrug[0].regimenName
