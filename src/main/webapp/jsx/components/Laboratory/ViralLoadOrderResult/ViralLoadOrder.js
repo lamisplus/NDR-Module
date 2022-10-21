@@ -104,12 +104,11 @@ const Laboratory = (props) => {
     //Get list of Test Group
     const LabTestDetail =()=>{
         axios
-            .get(`${baseUrl}laboratory/labtests/viral%20load`,
+            .get(`${baseUrl}laboratory/labtests/viral load`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-  
-                setLabTestDetail(response.data);
+                setLabTestDetail(response.data.sampleType);
             })
             .catch((error) => {
             //console.log(error);
@@ -311,7 +310,7 @@ const Laboratory = (props) => {
                                     required
                                 >
                                     <option value="">Select </option>
-                                    {labTestDetail.sampleType.map((value) => (
+                                    {labTestDetail.map((value) => (
                                         <option key={value.id} value={value.id}>
                                             {value.sampleTypeName}
                                         </option>
