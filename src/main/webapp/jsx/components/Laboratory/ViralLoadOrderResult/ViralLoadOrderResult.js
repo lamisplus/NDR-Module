@@ -120,9 +120,8 @@ const Laboratory = (props) => {
                 .get(`${baseUrl}laboratory/labtests/viral%20load`,
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
-                .then((response) => {
-      
-                    setLabTestDetail(response.data);
+                .then((response) => {      
+                    setLabTestDetail(response.data.sampleType);
                 })
                 .catch((error) => {
                 //console.log(error);
@@ -288,7 +287,6 @@ const Laboratory = (props) => {
             }); 
         }
     }
-console.log(errors)
 
   return (      
       <div >
@@ -385,7 +383,7 @@ console.log(errors)
                                     required
                                 >
                                     <option value="">Select </option>
-                                    {labTestDetail.sampleType.map((value) => (
+                                    {labTestDetail.map((value) => (
                                         <option key={value.id} value={value.id}>
                                             {value.sampleTypeName}
                                         </option>

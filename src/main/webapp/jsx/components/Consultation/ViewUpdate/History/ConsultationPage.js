@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Segment, Label,List, Label as LabelSui} from 'semantic-ui-react'
+import { Grid, Segment, Label,List, Label as LabelSui, Message} from 'semantic-ui-react'
 import { Table  } from "react-bootstrap";
 // Page titie
 import { FormGroup, Label as FormLabelName, InputGroup,
@@ -793,7 +793,31 @@ const ClinicVisit = (props) => {
 
       setEnableUpdate(true)
   }
-
+  function BmiCal (bmi){
+    if(bmi<18.5){
+      return (
+        <Message        
+         size='mini'
+         color='brown'
+          content='Underweight'
+        />
+      )      
+    }else if(bmi >=18.5 && bmi<=24.9){
+      <Message        
+         size='mini'
+         color='olive'
+          content='Well nourished'
+        />
+    }
+    else if( bmi>25){
+      <Message        
+         size='mini'
+         color='blue'
+          content='Overweight/Obese'
+        />
+    }
+    
+  }
 
   return (
     <div className={classes.root}>
@@ -1030,6 +1054,11 @@ const ClinicVisit = (props) => {
                             </InputGroup>                
                             </FormGroup>
                         )}
+                    </div>
+                    <div className="form-group mb-3 mt-2 col-md-12">
+                          {
+                            BmiCal((vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2))
+                          }
                     </div>
               </div>
               <div className="row">
