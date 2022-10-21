@@ -75,8 +75,19 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
     private Integer refillPeriod;
     @Column(name = "delivery_point")
     private String deliveryPoint;
+   
     @Column(name = "dsd_model")
     private  String dsdModel;
+    
+    @Column(name = "dsd_model_type")
+    private  String dsdModelType;
+    
+    @Column(name = "refill")
+    private  String refill ;
+    
+    @Column(name = "refill_type ")
+    private  String refillType ;
+  
     @Basic
     @Column(name = "archived")
     private int archived;

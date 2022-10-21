@@ -40,6 +40,9 @@ public class ResponseArtPharmacyDto implements Serializable {
     private Boolean prescriptionError;
     private Boolean adherence;
     private String mmdType;
+    private  String dsdModelType;
+    private  String refill ;
+    private  String refillType ;
     @Future
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

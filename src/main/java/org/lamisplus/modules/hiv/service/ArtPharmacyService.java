@@ -182,7 +182,7 @@ public class ArtPharmacyService {
 	}
 	
 	
-	private ArtPharmacy convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {
+	private ArtPharmacy  convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {
 		ArtPharmacy artPharmacy = new ArtPharmacy();
 		BeanUtils.copyProperties(dto, artPharmacy);
 		log.info(" entity 1st:  {}", artPharmacy);
@@ -199,7 +199,7 @@ public class ArtPharmacyService {
 				.collect(Collectors.toSet());
 		artPharmacy.setPerson(person);
 		artPharmacy.setRegimens(regimenList);
-		processAndSetDispenseRegimenInExtra(dto, artPharmacy);
+		//processAndSetDispenseRegimenInExtra(dto, artPharmacy);
 		artPharmacy.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		log.info(" entity 2nd:  {}", artPharmacy);
 		return artPharmacy;
@@ -231,7 +231,9 @@ public class ArtPharmacyService {
 	
 	private void processAndSetDispenseRegimenInExtra(RegisterArtPharmacyDto dto, ArtPharmacy artPharmacy) {
 		ObjectMapper objectMapper = new ObjectMapper();
-		ArrayNode regimens = objectMapper.valueToTree(dto.getRegimen());
+		Set<RegimenRequestDto> regimen = dto.getRegimen();
+		// find a way to remove duplicates
+		ArrayNode regimens = objectMapper.valueToTree(regimen);
 		JsonNode extra = dto.getExtra();
 		((ObjectNode) extra).set(REGIMEN, regimens);
 		artPharmacy.setExtra(extra);

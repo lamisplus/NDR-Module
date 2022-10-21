@@ -40,6 +40,9 @@ public class PatientTracker extends HivAuditEntity implements Serializable, Pers
 	private String reasonForTrackingOthers;
 	private String causeOfDeathOthers;
 	private String reasonForLossToFollowUpOthers;
+	@ManyToOne
+	@JoinColumn(name = "status_uuid", referencedColumnName = "uuid")
+	private HIVStatusTracker statusTracker;
 	private Integer archived;
 	@Column(name = "uuid", nullable = false, unique = true, updatable = false)
 	private String uuid;
