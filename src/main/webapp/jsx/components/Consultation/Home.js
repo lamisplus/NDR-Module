@@ -1164,7 +1164,7 @@ const handleInputValueCheckTemperature =(e)=>{
                             <Label > {" "}</Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
+                                BMI : {(vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                
@@ -1173,7 +1173,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     </div>
                     <div className="form-group mb-3 mt-2 col-md-12">
                           {
-                            BmiCal((vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2))
+                            BmiCal((vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2))
                           }
                     </div>
               </div>
