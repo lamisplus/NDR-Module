@@ -556,7 +556,7 @@ const Pharmacy = (props) => {
         setSaving(true);
         objValues.adverseDrugReactions=selectedOptionAdr
         objValues.personId=props.patientObj.id
-        objValues.extra=regimenDrugList 
+        objValues.extra['regimens']=regimenDrugList 
         objValues.mmdType=mmdType
         //delete regimenList['name']
         objValues.regimen=regimenDrugList
