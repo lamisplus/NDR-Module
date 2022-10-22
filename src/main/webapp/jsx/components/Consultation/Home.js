@@ -397,7 +397,7 @@ const ClinicVisit = (props) => {
           //console.log(error);
           });        
     }
-    //GET AdultRegimenLine 
+    //GET ChildRegimenLine 
     const ChildRegimenLine =()=>{
       axios
           .get(`${baseUrl}hiv/regimen/arv/children`,

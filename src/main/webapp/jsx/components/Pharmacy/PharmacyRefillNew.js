@@ -111,6 +111,8 @@ const Pharmacy = (props) => {
             visitId: 0,
             refill:"",
             refillType:"",
+            switch:"",
+            substitute:"",
             dsdModelType:""
     });
     const [vital, setVitalSignDto]= useState({
@@ -138,8 +140,38 @@ const Pharmacy = (props) => {
                 dispenseQuantity:objValues.refillPeriod!==null ? objValues.refillPeriod: ""
               })))
         CheckEACStatus();
-        VitalSigns()
+        VitalSigns();
+        ChildRegimenLine();
     }, [selectedOption]);
+    const calculate_age = dob => {
+        var today = new Date();
+        var dateParts = dob.split("-");
+        var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+        var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+        var age_now = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age_now--;
+                }
+            if (age_now === 0) {
+                    return m;
+                }
+                return age_now;
+    };
+    const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
+    //GET ChildRegimenLine 
+    const ChildRegimenLine =()=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/arv/children`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+              setChildRegimenLine(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
      //GET AdultRegimenLine 
      const AdultRegimenLine =()=>{
         axios
@@ -317,7 +349,7 @@ const Pharmacy = (props) => {
                     prescribed:"",
                     dosage:"",
                     freqency:"",
-                    duration:"",
+                    duration:objValues.refillPeriod,
                     name:regimenName.label,
                     regimenId:regimenName.value,
                     regimenName:regimenName.label,
@@ -352,7 +384,7 @@ const Pharmacy = (props) => {
                     prescribed:"",
                     dosage:"",
                     freqency:"",
-                    duration:"",
+                    duration:objValues.refillPeriod,
                     name:regimenName.label,
                     regimenId:regimenName.value,
                     regimenName:regimenName.label,
@@ -386,7 +418,7 @@ const Pharmacy = (props) => {
                     prescribed:"",
                     dosage:"",
                     freqency:"",
-                    duration:"",
+                    duration:objValues.refillPeriod,
                     name:regimenName.label,
                     regimenId:regimenName.value,
                     regimenName:regimenName.label,
@@ -474,14 +506,14 @@ const Pharmacy = (props) => {
 
     const handleCheckBoxRegimen =e =>{
         const originalCombination=regimenDrug
-        console.log(originalCombination)
+        //console.log(originalCombination)
         if(e.target.checked){
             const newObjCombination = selectedCombinedRegimen.map(x => {
                 x['dispense']=""
                 x['prescribed']=""
                 x['dosage']=""
                 //x['freqency']=""
-                x['duration']=""
+                x['duration']=objValues.refillPeriod
                 x['regimenId']=regimenDrug[0].regimenId
                 x['regimenName']= regimenDrug[0].regimenName
                 return x;
@@ -543,6 +575,7 @@ const Pharmacy = (props) => {
         setRegimenDrug (data);
      }
      const addDrug = e => {
+        console.log(regimenDrug)
         setRegimenDrugList([...regimenDrugList, ...regimenDrug])            
         
       }
@@ -577,11 +610,13 @@ const Pharmacy = (props) => {
                        
         }); 
     }
+
     let TotalDispensed = regimenDrug.reduce(function(prev, current) {
         return prev + +current.dispense
       }, 0);
       let TotalPrescribed = regimenDrug.reduce(function(prev, current) {
-        return prev + +current.prescribed
+        const duration =current.frequency * current.duration
+        return prev + +duration
       }, 0);
       
 
@@ -710,48 +745,47 @@ const Pharmacy = (props) => {
                     
                     </FormGroup>
                 </div>
-                {objValues.refill==='Yes' && (
-                <div className="form-group mb-3 col-md-3">
-                <FormGroup>
-                    <Label >Refill Type</Label>
-                    <Input
-                        type="select"
-                        name="refillType"
-                        id="refillType"
-                        value={objValues.refillType}
-                        onChange={handleInputChange}   
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
-                        >
-                        <option value="">Select </option>
-                        <option value="Substitution">Substitution</option>
-                        <option value="Switch">Switch </option>
-                    
-                    </Input>
-                    
-                    </FormGroup>
-                </div>
-                )}
-                {/* <div className="form-group mb-3 col-md-12">
-                        
+                <div className="mt-4 col-md-2" > 
+                      
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
                             className="form-check-input"                       
                             name="devolvePatient"
                             id="devolvePatient"
-                            onChange={handleCheckBox}
+                            //onChange={handleCheckBox}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             <label
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Devolve Patient
+                            Switch
                             </label>
                         </div>
-                </div> */}
-                
-                <div className="form-group mb-3 col-md-3">
+                   
+                </div>
+                <div className="mt-4 col-md-2">        
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                       
+                            name="devolvePatient"
+                            id="devolvePatient"
+                            //onChange={handleCheckBox}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Substitution
+                            </label>
+                        </div>
+                </div>
+                </div>
+                <div className="row">
+                <div className="form-group mb-3 col-md-4">
                 <FormGroup>
                     <Label >Refill Period(days) *</Label>
                     <Input
@@ -774,13 +808,14 @@ const Pharmacy = (props) => {
                     
                     </FormGroup>
                 </div>
-                <div className="form-group mb-3 col-md-3">
+                <div className="form-group mb-3 col-md-4">
                 <FormGroup>
                     <Label for="artDate"> Date of Next Appointment* </Label>
                     <Input
                         type="date"
                         name="nextAppointment"
                         id="nextAppointment"
+                        min={enrollDate}
                         disabled={objValues.refillPeriod!==null? false : true}
                         onChange={handleInputChange}
                         value={objValues.nextAppointment}
@@ -831,26 +866,7 @@ const Pharmacy = (props) => {
                     
                 </FormGroup>
             </div>
-            {/* <div className="form-group mb-3 col-md-6">
-                <FormGroup>
-                    <Label >DSD Model Type</Label>
-                    <Input
-                        type="select"
-                        name="deliveryPoint"
-                        id="deliveryPoint"
-                        value={objValues.deliveryPoint}
-                        onChange={handleInputChange} 
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
-                        >
-                        <option value="">Select </option>
-                        <option value="Facility">Facility </option>
-                        <option value="Community">Community </option>
-                        
-                    </Input>
-                    
-                </FormGroup>
-            </div>
-             */}
+           
              {eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' && (<>
                 <h3>Ehanced Adherance Counseling</h3>
                 <div className="row">
@@ -919,11 +935,24 @@ const Pharmacy = (props) => {
                     >
                     <option value="">Select </option>
                                     
-                        {adultArtRegimenLine.map((value) => (
-                            <option key={value.id} value={value.id}>
+                    {patientAge >5 &&  (
+                          <>
+                            {adultRegimenLine.map((value) => (
+                              <option key={value.id} value={value.id}>
                                 {value.description}
+                              </option>
+                            ))}
+                          </>
+                    )}
+                    {patientAge <=5 &&  (
+                        <>
+                        {childRegimenLine.map((value) => (
+                            <option key={value.id} value={value.id}>
+                            {value.description}
                             </option>
                         ))}
+                        </>
+                    )}
                 </Input>
                 
                 </FormGroup>
@@ -1067,8 +1096,8 @@ const Pharmacy = (props) => {
                         <input
                         type="checkbox"
                         className="form-check-input"                       
-                        name="devolvePatient"
-                        id="devolvePatient"
+                        name="noCombination"
+                        id="noCombination"
                         onChange={handleCheckBoxRegimen}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         />
@@ -1116,9 +1145,12 @@ const Pharmacy = (props) => {
                                         required
                                     >
                                         <option value=''>Select</option>
-                                        <option value='BD'>BD</option>
-                                        <option value='OD'>OD</option>
-                                        <option value='2BD'>2BD</option>
+                                        <option value='2'>BD</option>
+                                        <option value='1'>OD</option>
+                                        <option value='4'>2BD</option>
+                                        <option value='6'>OD/BD</option>
+                                        <option value='8'>QDS</option>
+                                        <option value='10'>3ce/Week</option>
                                     </Input>
                                 
                                     </FormGroup>
@@ -1132,7 +1164,7 @@ const Pharmacy = (props) => {
                                         value={input.duration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
-                                        required
+                                        disabled
                                         >
                                         
                                     </Input>
@@ -1142,13 +1174,13 @@ const Pharmacy = (props) => {
                                 <div className="form-group mb-3 col-md-2">
                                     <FormGroup>
                                     <Input
-                                        type="number"
+                                        type="text"
                                         name="prescribed"
                                         id="prescribed"
-                                        value={input.prescribed}
+                                        value={input.duration * (input.frequency!==NaN? input.frequency : 1)}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
-                                        required
+                                        disabled
                                         >
                                         
                                     </Input>
@@ -1198,8 +1230,8 @@ const Pharmacy = (props) => {
                                             <th>Regimen Drug</th>
                                             <th>Frequency</th>
                                             <th>Duration</th>
-                                            <th>Quty Prescribed</th>
-                                            <th>Qnty Dispensed </th>
+                                            <th>Quantity Prescribed</th>
+                                            <th>Quantity Dispensed </th>
                                             
                                             <th ></th>
                                         </tr>
@@ -1264,13 +1296,29 @@ function DrugDispensedLists({
     index,
     removeAttempt,
   }) {
-   
+   function FrequencyLabel(count){
+            if(count==='1'){
+                return 'OD'
+            }else if(count==='2'){
+                return 'BD'
+            }else if(count==='4'){
+                return '2BD'
+            }else if(count==='6'){
+                return 'OD/BD'
+            }else if(count==='8'){
+                return 'QDS'
+            }else if(count==='10'){
+                return '3ce/Week'
+            }else{
+                return ''
+            }
+   }
     return (
             <tr>
                 <th>{regimenDrugObj.name} {regimenDrugObj.strength!==""? regimenDrugObj.strength :""}</th>
-                <th>{regimenDrugObj.frequency}</th>
+                <th>{FrequencyLabel(regimenDrugObj.frequency)}</th>
                 <th>{regimenDrugObj.duration}</th>
-                <th>{regimenDrugObj.prescribed}</th>
+                <th>{regimenDrugObj.frequency * regimenDrugObj.duration}</th>
                 <th>{regimenDrugObj.dispense}</th>
                 <th></th>
                 <th >

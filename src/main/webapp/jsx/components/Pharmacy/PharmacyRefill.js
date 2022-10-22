@@ -282,7 +282,7 @@ console.log(selectedOption)
                         Devolve Patient
                         </label>
                     </div>
-                </div>
+            </div>
             <div className="form-group mb-3 col-md-4">
                 <FormGroup>
                 <Label for="artDate">Encounter Date * </Label>
