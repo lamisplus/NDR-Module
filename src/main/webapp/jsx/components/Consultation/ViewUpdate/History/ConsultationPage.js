@@ -150,6 +150,8 @@ const ClinicVisit = (props) => {
   const [arvDrugObj, setArvDrugObj] = useState({
     regimenLine: "",
     regimenDrug: "",
+    regimenLineName: "",
+    regimenDrugName: "",
     dosage: "",
     regimenAdherance: "",
  
@@ -611,11 +613,14 @@ const ClinicVisit = (props) => {
     const handleInputChangeRegimenLine = e => {
       const regimenId= e.target.value
       setArvDrugObj({ ...arvDrugObj, [e.target.name]: e.target.value });
-      if(e.target.name==="regimenLine"){
+      
+    }
+    const handleInputChangeRegimen = e => {
+      const regimenId= e.target.value
+      setArvDrugObj({ ...arvDrugObj, [e.target.name]: e.target.value });
+      if(e.target.value!==""){
         RegimenType(regimenId)
-        }else{
-          RegimenType([])
-        }
+      }
     }
     function RegimenType(id) {
       async function getCharacters() {
@@ -683,6 +688,12 @@ const ClinicVisit = (props) => {
   };
   const addArvDrugOrder = e => { 
     if(validateArvDrug()){
+      const actualRegimen= patientAge <=5 ? adultRegimenLine : childRegimenLine //determine the regimen to filter by age 
+       const regimenName = actualRegimen.find((x)=> x.id===parseInt(arvDrugObj.regimenLine))
+       arvDrugObj.regimenLineName= regimenName.description
+      const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))
+      arvDrugObj.regimenDrugName= regimenType.description
+      console.log(regimenType.description)
       setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
     }        
   }
@@ -1118,7 +1129,7 @@ const ClinicVisit = (props) => {
                     <div className="row">
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Head circumference </Label>
+                        <FormLabelName >Head Circumference </FormLabelName>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -1140,7 +1151,7 @@ const ClinicVisit = (props) => {
                     </div>
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Surface Area </Label>
+                        <FormLabelName >Surface Area </FormLabelName>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -1158,9 +1169,9 @@ const ClinicVisit = (props) => {
                         
                         </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
-                                <Label >MUAC</Label>
+                                <FormLabelName >MUAC</FormLabelName>
                                 <InputGroup> 
                                     <Input 
                                         type="select"
@@ -1182,7 +1193,7 @@ const ClinicVisit = (props) => {
                                 </FormGroup>
                         </div>
                     </div>
-            )}
+              )}
               
                         <Label as='a' color='grey' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>CONSULTATION</h4>
@@ -1480,13 +1491,13 @@ const ClinicVisit = (props) => {
                         <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
                         </Label>
                         <br /><br />
-                        <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} enableUpdate={enableUpdate}/>
+                        <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} enableUpdate={enableUpdate} encounterDate={vital.encounterDate}/>
                         <br />
                         <Label as='a' color='pink' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>ADR</h4>
                         </Label>
                         <br /><br />
-                        <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}  enableUpdate={enableUpdate}/>
+                        <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}  enableUpdate={enableUpdate} encounterDate={vital.encounterDate}/>
                         <br />
                         {/* <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>TB SCREENING</h4>
@@ -1511,17 +1522,29 @@ const ClinicVisit = (props) => {
                                     name="regimenLine"
                                     id="regimenLine"
                                     value={arvDrugObj.regimenLine}
-                                    onChange={handleInputChangeRegimenLine}
+                                    onChange={handleInputChangeRegimen}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
                                   >
                                     <option value="select">Select </option>
-
-                                    {adultRegimenLine.map((value) => (
-                                      <option key={value.id} value={value.id}>
-                                        {value.description}
-                                      </option>
-                                    ))}
+                                    {patientAge >5 &&  (
+                                      <>
+                                        {adultRegimenLine.map((value) => (
+                                          <option key={value.id} value={value.id}>
+                                            {value.description}
+                                          </option>
+                                        ))}
+                                      </>
+                                    )}
+                                    {patientAge <=5 &&  (
+                                      <>
+                                        {childRegimenLine.map((value) => (
+                                          <option key={value.id} value={value.id}>
+                                            {value.description}
+                                          </option>
+                                        ))}
+                                      </>
+                                    )}
                                   </Input>
                                   {errors.regimenLine !=="" ? (
                                             <span className={classes.error}>{errors.regimenLine}</span>
@@ -1616,17 +1639,15 @@ const ClinicVisit = (props) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {arvDrugOrderList.map((regimenObj,index) => (
+                                    {arvDrugOrderList.map((regimenObject,index) => (
 
-                                    <ArvDrugOrderObjList
-                                        key={index}
-                                        index={index}
-                                        regimenObj={regimenObj}
-                                        regimenType={regimenTypeObj}
-                                        regimenLine={adultRegimenLine}
-                                        adherenceLevel={adherenceLevel}
-                                        removeArvDrugOrder={removeArvDrugOrder}
-                                    />
+                                      <ArvDrugOrderObjList
+                                      key={index}
+                                      index={index}
+                                      regimenObject={regimenObject}
+                                      adherenceLevel={adherenceLevel}
+                                      removeArvDrugOrder={removeArvDrugOrder}
+                                      />
                                     ))}
                                     </tbody>
                                     </Table>
@@ -1840,20 +1861,17 @@ function TestOrdersList({
 function ArvDrugOrderObjList({
   index,
   removeArvDrugOrder,
-  regimenObj,
-  regimenLine,
-  regimenType,
+  regimenObject,
   adherenceLevel,
 }) {
-  const regimenLineName = regimenLine.find((x)=> x.id===parseInt(regimenObj.regimenLine))
-  const regimenTypeName = regimenType.find((x)=> x.id===parseInt(regimenObj.regimenDrug))
-  const adherence = adherenceLevel.find((x)=> x.id===parseInt(regimenObj.regimenAdherance))
+
+  const adherence = adherenceLevel.find((x)=> x.id===parseInt(regimenObject.regimenAdherance))
 
   return (
           <tr>
-              <th>{regimenLineName && regimenLineName.description}</th>
-              <th>{regimenTypeName && regimenTypeName.description}</th>             
-              <th>{regimenObj.dosage}</th>
+              <th>{regimenObject.regimenLineName }</th>
+              <th>{regimenObject.regimenDrugName }</th>             
+              <th>{regimenObject.dosage}</th>
               <th>{adherence && adherence.display}</th>
               <th></th>
               <th >
@@ -1865,4 +1883,5 @@ function ArvDrugOrderObjList({
           </tr> 
   );
 }
+
 export default ClinicVisit;

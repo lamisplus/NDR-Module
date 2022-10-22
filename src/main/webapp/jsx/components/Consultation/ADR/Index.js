@@ -111,7 +111,7 @@ const ADR = (props) => {
                 onChange={handAdrleInputChange}
                 min={props.artStartDate}
                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                max= {moment(new Date()).format("YYYY-MM-DD") }
+                max= {props.encounterDate}
                 required
                 > 
             </Input>
