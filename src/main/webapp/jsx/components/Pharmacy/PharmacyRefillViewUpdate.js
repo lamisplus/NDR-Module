@@ -1182,7 +1182,7 @@ const Pharmacy = (props) => {
                                         type="text"
                                         name="prescribed"
                                         id="prescribed"
-                                        value={input.duration * (input.frequency!=="NaN"? input.frequency : 1)}
+                                        value={input.duration * (input.frequency!==NaN? input.frequency : 1)}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         disabled
