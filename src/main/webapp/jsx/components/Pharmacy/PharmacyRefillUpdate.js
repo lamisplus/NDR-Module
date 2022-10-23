@@ -257,7 +257,7 @@ const Pharmacy = (props) => {
         setRegimenList(data);
      }
 
-    console.log(regimenList)
+
     const handleSubmit = (e) => {        
         e.preventDefault();
         setSaving(true);

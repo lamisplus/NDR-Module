@@ -345,7 +345,7 @@ const UserRegistration = (props) => {
                     return m + " month(s)";
                 }
                 return age_now ;
-      };
+    };
      //Get States from selected country
      const getStates = e => {
         const getCountryId =e.target.value;

@@ -569,6 +569,13 @@ const Pharmacy = (props) => {
         }
 
     }
+    const handleCheckBox =e =>{
+        
+        if(e.target.checked){
+            console.log(e.target.value)
+            setObjValues ({...objValues,  [e.target.name] :true});
+        }
+    } 
     const handleFormChange = (index, event) => {
         let data = [...regimenDrug];
         data[index][event.target.name] = event.target.value;
@@ -749,11 +756,12 @@ const Pharmacy = (props) => {
                       
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
-                            type="checkbox"
+                            type="radio"
                             className="form-check-input"                       
-                            name="devolvePatient"
-                            id="devolvePatient"
-                            //onChange={handleCheckBox}
+                            name="switch"
+                            id="switch"
+                            value="switch"
+                            onChange={handleCheckBox}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             <label
@@ -768,11 +776,12 @@ const Pharmacy = (props) => {
                 <div className="mt-4 col-md-2">        
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
-                            type="checkbox"
+                            type="radio"
                             className="form-check-input"                       
-                            name="devolvePatient"
-                            id="devolvePatient"
-                            //onChange={handleCheckBox}
+                            name="switch"
+                            id="switch"
+                            value="Substitution"
+                            onChange={handleCheckBox}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
                             <label
