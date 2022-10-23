@@ -85,7 +85,14 @@ const Tracking = (props) => {
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
-    const [eacObj, setEacObj] = useState([]);
+    const [reasonTracking, setReasonTracking] = useState([]);
+    const [reasonDiscountinuation, setreasonDiscountinuation] = useState([]);
+    const [causeDeath, setcauseDeath] = useState([]);
+    const [reasonLostToFollowUp, setreasonLostToFollowUp] = useState([]);
+    const [reasonDefaulting, setreasonDefaulting] = useState([]);
+    const [personContact, setpersonContact] = useState([]);
+    const [modeCommunication, setmodeCommunication] = useState([]);
+    const [dsdStatus, setdsdStatus] = useState([]);
     
     const [observation, setObservation]=useState({
         data: {},
@@ -116,6 +123,115 @@ const Tracking = (props) => {
             attempts:"",
             patientId:props.patientObj.id
             })
+    useEffect(() => {
+        ReasonForTracking();
+        LostToFollowUp();
+        ReasonForDiscountinuation();
+        CauseOfDeath();
+        ReasonForDefaulting();
+        DsdStatus();
+        ModeOfCommunication();
+        PersonContact();
+    }, []);
+    const ReasonForTracking =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/REASON_TRACKING`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setReasonTracking(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //TRACKING_DSD_STATUS
+    const DsdStatus =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/TRACKING_DSD_STATUS`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setdsdStatus(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //MODE_OF_COMMUNICATION
+    const ModeOfCommunication =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/MODE_OF_COMMUNICATION`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setmodeCommunication(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }//MODE_OF_COMMUNICATION
+    const PersonContact =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/PERSON_CONTACTED`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setpersonContact(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //
+    const ReasonForDefaulting =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/REASON_DEFAULTING`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setreasonDefaulting(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    const ReasonForDiscountinuation =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/REASON_DISCONTINUATION`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setreasonDiscountinuation(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    const CauseOfDeath =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/CAUSE_DEATH`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setcauseDeath(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    const LostToFollowUp =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/REASON_TRACKING`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setreasonLostToFollowUp(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
@@ -260,8 +376,12 @@ const Tracking = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.dsdStatus} 
                                 >
-                                   <option value="Not devolved">Not devolved</option>
-                                    <option value="Devolved">Devolved</option>
+                                   <option value="">Select</option>
+                                    {dsdStatus.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                     
                                 </Input>
                                 {errors.dsdStatus !=="" ? (
@@ -269,7 +389,7 @@ const Tracking = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        {objValues.dsdStatus==='Devolved' && (
+                        {objValues.dsdStatus==='TRACKING_DSD_STATUS_DEVOLVED' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label for="">DSD Model</Label>
@@ -303,19 +423,19 @@ const Tracking = (props) => {
                                     onChange={handleInputChange}
                                     value={objValues.reasonForTracking} 
                                 >
-                                    <option value=""></option>
-                                    <option value="Intensive follow-up">Intensive follow-up</option>
-                                    <option value="Missed Appointment">Missed Appointment</option>
-                                    <option value="Missed Pharmacy Refill">Missed Pharmacy Refill</option>
-                                    <option value="Missed Appointment">Lost to follow-up</option>
-                                    <option value="Others">Others</option>
+                                    <option value="">Select</option>
+                                    {reasonTracking.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                 </Input>
                                 {errors.reasonForTracking !=="" ? (
                                     <span className={classes.error}>{errors.reasonForTracking}</span>
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        {objValues.reasonForTracking==='Others' && (
+                        {objValues.reasonForTracking==='REASON_TRACKING_OTHER_(SPECIFY)' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label for="">Reason for Tracking</Label>
@@ -423,9 +543,12 @@ const Tracking = (props) => {
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
-                                 <option value="">Select</option> 
-                                 <option value="Telephone">Telephone</option> 
-                                 <option value="Home Visit">Home Visit</option> 
+                                 <option value="">Select</option>
+                                    {modeCommunication.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                 </Input> 
                                 {errors.modeOfConatct !=="" ? (
                                     <span className={classes.error}>{errors.modeOfConatct}</span>
@@ -444,11 +567,12 @@ const Tracking = (props) => {
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
-                                 <option value="">Select</option> 
-                                 <option value="Guardian">Guardian</option> 
-                                 <option value="Client">Client</option> 
-                                 <option value="Tx Partner">Tx Partner</option> 
-                                 <option value="No Contact">No Contact</option>
+                                 <option value="">Select</option>
+                                    {personContact.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                 </Input>
                                 {errors.personContacted !=="" ? (
                                     <span className={classes.error}>{errors.personContacted}</span>
@@ -467,24 +591,19 @@ const Tracking = (props) => {
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
                                 >
-                                 <option value="">Select</option> 
-                                 <option value="Was sick">Was sick</option> 
-                                 <option value="No transport fare">No transport fare</option> 
-                                 <option value="Transferred to new site">Transferred to new site</option> 
-                                 <option value="Forgot">Forgot</option>
-                                 <option value="Felt Better">Felt Better</option> 
-                                 <option value="Not permitted to leave work">Not permitted to leave work</option> 
-                                 <option value="Lost appointment card">Lost appointment card</option> 
-                                 <option value="Still had drugs">Still had drugs</option> 
-                                 <option value="Taking Herbal Treatment">Taking Herbal Treatment</option>
-                                 <option value="Others">Others</option>
+                                 <option value="">Select</option>
+                                    {reasonDefaulting.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                 </Input>
                                 {errors.reasonForDefaulting !=="" ? (
                                     <span className={classes.error}>{errors.reasonForDefaulting}</span>
                                 ) : "" }  
                                 </FormGroup>
                             </div>
-                            {attempt.reasonForDefaulting==='Others' && (
+                            {attempt.reasonForDefaulting==='REASON_DEFAULTING_OTHERS_(PLS_SPECIFY)' && (
                             <div className="form-group mb-3 col-md-3">
                                 <FormGroup>
                                 <Label >Reason for Defaulting</Label>
@@ -593,11 +712,12 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             >
-                                <option value=""></option>
-                                <option value="Treatment stop">Treatment stop</option>
-                                <option value="Death">Death  </option>
-                                <option value="Loss to follow-up">Loss to follow-up</option>
-                                <option value="Self-transfer to another facility">Self-transfer to another facility</option>
+                                <option value="">Select</option>
+                                    {reasonDiscountinuation.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                             </Input>
                             {errors.reasonForDiscountinuation !=="" ? (
                                 <span className={classes.error}>{errors.reasonForDiscountinuation}</span>
@@ -605,7 +725,7 @@ const Tracking = (props) => {
                             </FormGroup>
                         </div>
                         </>)}
-                        {objValues.reasonForDiscountinuation==='Death' && (
+                        {objValues.reasonForDiscountinuation==='REASON_DISCONTINUATION_DEATH' && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">Cause of Death</Label>
@@ -618,15 +738,11 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             >
-                                <option value=""></option>
-                                <option value="Natural cause">Natural cause</option>
-                                <option value="Suspected ARV Side effect">Suspected ARV Side effect</option>
-                                <option value="Tuberculosis">Tuberculosis</option>
-                                <option value="HIV-related (Cancer, parasitic disease)">HIV-related (Cancer, parasitic disease)</option>
-                                <option value="Suspected Opportunistic Infection">Suspected Opportunistic Infection</option>
-                                <option value="Non-natural cause">Non-natural cause</option>
-                                <option value="Other cause of death">Other cause of death</option>
-                                <option value="Unknown">Unknown</option>
+                                 {causeDeath.map((value) => (
+                                        <option key={value.code} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                             </Input>
                             {errors.causeOfDeath !=="" ? (
                                 <span className={classes.error}>{errors.causeOfDeath}</span>
@@ -634,7 +750,7 @@ const Tracking = (props) => {
                             </FormGroup>
                         </div>
                         )}
-                        {(objValues.causeOfDeath==='Unknown' || objValues.causeOfDeath==='Other cause of death' || objValues.causeOfDeath==='Suspected Opportunistic Infection') && (
+                        {(objValues.causeOfDeath==='CAUSE_DEATH_OTHER_NATURAL_CAUSES' || objValues.causeOfDeath==='CAUSE_DEATH_UNKNOWN_CAUSE' ) && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">Cause of Death - {objValues.causeOfDeath} (specify)</Label>
@@ -666,7 +782,7 @@ const Tracking = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             >
-                                <option value=""></option>
+                                <option value="">Select</option>
                                 <option value="Travel/Relocation">Travel/Relocation</option>
                                 <option value="Spiritual/Cultural beliefs">Spiritual/Cultural beliefs</option>
                                 <option value="Pill burden/ARV side effects">Pill burden/ARV side effects</option>

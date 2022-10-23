@@ -87,7 +87,7 @@ const ADR = (props) => {
                 value={props.infection.ondateInfection}
                 onChange={handleInfectionInputChange}
                 min={props.artStartDate}
-                max= {moment(new Date()).format("YYYY-MM-DD") }
+                max= {props.encounterDate}
                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                 required
                 > 
