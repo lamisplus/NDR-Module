@@ -623,13 +623,12 @@ const ClinicVisit = (props) => {
       
   };
   const addArvDrugOrder = e => { 
-    if(validateArvDrug()){
-      const actualRegimen= patientAge <=5 ? adultRegimenLine : childRegimenLine //determine the regimen to filter by age 
-       const regimenName = actualRegimen.find((x)=> x.id===parseInt(arvDrugObj.regimenLine))
-       arvDrugObj.regimenLineName= regimenName.description
-      const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))
+    if(validateArvDrug()){      
+      const actualRegimen= patientAge <=5 ? childRegimenLine : adultRegimenLine //determine the regimen to filter by age 
+      const regimenName = actualRegimen.find((x)=> x.id===parseInt(arvDrugObj.regimenLine))
+      arvDrugObj.regimenLineName= regimenName.description
+      const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))     
       arvDrugObj.regimenDrugName= regimenType.description
-      console.log(regimenType.description)
       setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
     }        
   }
