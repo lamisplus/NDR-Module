@@ -214,7 +214,7 @@ const Tracking = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                setreasonDiscountinuation(response.data);
+                setreasonDiscountinuation(response.data.filter((x)=> x.code!=='REASON_DISCONTINUATION_INTERRUPTION_IN_TREATMENT'));
             })
             .catch((error) => {
             //console.log(error);
