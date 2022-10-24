@@ -270,10 +270,7 @@
             (
                 255
             ) NOT NULL,
-                visit_id VARCHAR
-            (
-                255
-            ) NOT NULL,
+                visit_id VARCHAR( 255),
                 tracking_outcome VARCHAR
             (
                 255
@@ -614,9 +611,14 @@
                 date_of_discontinuation             date,
                 date_missed_appointment             date,
                 person_uuid                         VARCHAR(255)                            NOT NULL,
+                status_uuid                          VARCHAR(255),
                 CONSTRAINT pk_hiv_patient_tracker PRIMARY KEY (id)
             );
+            ALTER TABLE hiv_patient_tracker
+                ADD CONSTRAINT uc_hiv_patient_tracker_uuid UNIQUE (uuid);
 
+            ALTER TABLE hiv_patient_tracker
+                ADD CONSTRAINT FK_HIV_PATIENT_TRACKER_ON_STATUS_UUID FOREIGN KEY (status_uuid) REFERENCES hiv_status_tracker (uuid);
             ALTER TABLE hiv_patient_tracker
                 ADD CONSTRAINT FK_HIV_PATIENT_TRACKER_ON_PERSON_UUID FOREIGN KEY (person_uuid) REFERENCES patient_person (uuid);
         </sql>

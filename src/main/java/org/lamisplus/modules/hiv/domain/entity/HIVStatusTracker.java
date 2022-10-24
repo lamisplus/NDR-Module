@@ -37,7 +37,7 @@ public class HIVStatusTracker extends HivAuditEntity implements Persistable<Long
     @JoinColumn(name = "person_id", referencedColumnName = "uuid", nullable = false)
     private Person person;
     @ManyToOne
-    @JoinColumn(name = "visit_id", referencedColumnName = "uuid", nullable = false)
+    @JoinColumn(name = "visit_id", referencedColumnName = "uuid")
     private Visit visit;
 
     @Column(name = "tracking_outcome")
