@@ -285,7 +285,7 @@ const ClinicVisit = (props) => {
                 return m;
             }
             return age_now;
-};
+  };
   const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
   // CRYPTOCOCCAL_SCREENING_STATUS	
   const CRYPTOCOCCAL_SCREENING_STATUS	 = () => {
