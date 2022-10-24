@@ -883,10 +883,12 @@ const Pharmacy = (props) => {
                     <FormGroup>
                         <Label >Viral Load Result</Label>
                         <Input
-                            type="date"
-                            name="deliveryPoint"
-                            id="deliveryPoint"
+                            type="text"
+                            name="viralLoad"
+                            id="viralLoad"
                             disabled
+                            value={eacStatusObj.viralLoad}
+                            
                         />
                         
                     </FormGroup>
@@ -896,9 +898,10 @@ const Pharmacy = (props) => {
                         <Label >Date of Last Viral Load</Label>
                         <Input
                             type="date"
-                            name="deliveryPoint"
-                            id="deliveryPoint"
+                            name="dateOfViralLoad"
+                            id="dateOfViralLoad"
                             disabled
+                            value={eacStatusObj.dateOfViralLoad}
                     />
                         
                     </FormGroup>
@@ -907,7 +910,7 @@ const Pharmacy = (props) => {
                 <div className="form-group mb-3 col-md-3">
                     <FormGroup>
                         <Label >EAC Status</Label>
-                        <p>Second Session</p>
+                        <p>{eacStatusObj.eacsession}</p>
                         
                     </FormGroup>
                 </div>
@@ -916,9 +919,10 @@ const Pharmacy = (props) => {
                         <Label >Date of EAC</Label>
                         <Input
                             type="date"
-                            name="deliveryPoint"
-                            id="deliveryPoint"
+                            name="eacsessionDate"
+                            id="eacsessionDate"
                             disabled
+                            value={eacStatusObj.eacsessionDate}
                         />
                         
                     </FormGroup>
