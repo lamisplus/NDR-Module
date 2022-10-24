@@ -26,7 +26,7 @@ public class HIVEacSessionDto implements Serializable {
 	private final String interventionOthers;
 	private final String comment;
 	private final LocalDate followUpDate;
-	private LocalDate eacSessionDate;
+	private LocalDate sessionDate;
 	private final String referral;
 	private final String adherence;
 	private final String status;

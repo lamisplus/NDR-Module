@@ -36,6 +36,7 @@ public class HIVEacSessionService {
 		hivEacSession.setUuid(UUIDUtils.random().toString());
 		hivEacSession.setPerson(eac.getPerson());
 		hivEacSession.setFacilityId(eac.getPerson().getFacilityId());
+		hivEacSession.setEacSessionDate(dto.getSessionDate());
 		hivEacSession.setVisit(visit);
 		hivEacSession.setArchived(0);
 		HIVEacSession eacSession = hiveacSessionRepository.save(hivEacSession);
@@ -65,7 +66,7 @@ public class HIVEacSessionService {
 				.stream()
 				.filter(e -> e.getArchived() != 1)
 				.map(this::mapEntityToDto)
-				.sorted(Comparator.comparing(HIVEacSessionDto::getEacSessionDate).reversed())
+				.sorted(Comparator.comparing(HIVEacSessionDto::getSessionDate).reversed())
 				.collect(Collectors.toList());
 	}
 	
@@ -132,7 +133,7 @@ public class HIVEacSessionService {
 				.interventionOthers(entity.getInterventionOthers())
 				.comment(entity.getComment())
 				.followUpDate(entity.getFollowUpDate())
-				.eacSessionDate(entity.getEacSessionDate())
+				.sessionDate(entity.getEacSessionDate())
 				.adherence(entity.getAdherence())
 				.status(entity.getStatus())
 				.uuid(entity.getUuid())
@@ -149,7 +150,7 @@ public class HIVEacSessionService {
 		hIVEacSession.setInterventionOthers(dto.getInterventionOthers());
 		hIVEacSession.setComment(dto.getComment());
 		hIVEacSession.setFollowUpDate(dto.getFollowUpDate());
-		hIVEacSession.setEacSessionDate(dto.getEacSessionDate());
+		hIVEacSession.setEacSessionDate(dto.getSessionDate());
 		hIVEacSession.setReferral(dto.getReferral());
 		hIVEacSession.setAdherence(dto.getAdherence());
 		return hIVEacSession;

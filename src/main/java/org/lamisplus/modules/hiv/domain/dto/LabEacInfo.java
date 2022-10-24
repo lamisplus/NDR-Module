@@ -1,6 +1,8 @@
 package org.lamisplus.modules.hiv.domain.dto;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface LabEacInfo {
   Long getPatientId();
@@ -8,7 +10,7 @@ public interface LabEacInfo {
   String getTestGroup();
   String getTestName();
   String getLabNumber();
-  LocalDate getResultDate();
+  LocalDateTime getResultDate();
   Long getResult();
   
 }

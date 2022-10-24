@@ -21,7 +21,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 	@Query(value = "select * from\n" +
 			"    (\n" +
 			"        select a.patient_id as patientId\n" +
-			"             , b.id as testResltId\n" +
+			"             , b.id as testResultId\n" +
 			"             , d.group_name as testGroup\n" +
 			"             , c.lab_test_name as testName\n" +
 			"             , a.lab_number as labNumber\n" +
