@@ -147,7 +147,10 @@ const ArtCommencement = (props) => {
                                                 systolic:"",
                                                 pulse:"",
                                                 temperature:"",
-                                                respiratoryRate:"" 
+                                                respiratoryRate:"",
+                                                headCircumference:"",
+                                                surfaceArea:"",
+                                                muac:"" 
                                             })
       //Vital signs clinical decision support 
     const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
@@ -159,44 +162,59 @@ const ArtCommencement = (props) => {
                                                                         temperature:"",
                                                                         respiratoryRate:""
                                                                     })
-
+    const calculate_age = dob => {
+        var today = new Date();
+        var dateParts = dob.split("-");
+        var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+        var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
+        var age_now = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age_now--;
+                }
+            if (age_now === 0) {
+                    return m;
+                }
+                return age_now;
+    };
+    const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
     useEffect(() => {
         FunctionalStatus();
         WhoStaging();
         TBStatus();
         PreganacyStatus();
         RegimenLine();
+        InitialClinicEvaluation();
          gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.patientObj]);
-      //Get list of WhoStaging
-      const WhoStaging =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setClinicalStage(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-      }
-      const InitialClinicEvaluation =()=>{
-        axios
-           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               console.log(response.data);
-               //setClinicalStage(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-      }
+        //Get list of WhoStaging
+        const WhoStaging =()=>{
+            axios
+            .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setClinicalStage(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
+        const InitialClinicEvaluation =()=>{
+            axios
+            .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                    const obj1 =response.data.find(x=> x.type==='Clinical evaluation')
+                    setVitalSignDto({...obj1.data.physicalExamination})
+            })
+            .catch((error) => {
+            //console.log(error);
+            });       
+        }
         //Get list of RegimenLine
         const RegimenLine =()=>{
         axios
@@ -941,7 +959,75 @@ const ArtCommencement = (props) => {
                     </div>
 
                     </div>
-
+                    {patientAge && patientAge<14 && (
+                    <div className="row">
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Head Circumference </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="headCircumference"
+                                id="headCircumference"
+                                onChange={handleInputChangeVitalSignDto}
+                                min="35"
+                                max="47"
+                                value={vital.headCircumference}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className=" mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Surface Area </Label>
+                        <InputGroup> 
+                            <Input 
+                                type="text"
+                                name="surfaceArea"
+                                id="surfaceArea"
+                                onChange={handleInputChangeVitalSignDto}
+                                value={vital.surfaceArea}
+                                onKeyUp={handleInputValueCheckTemperature} 
+                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                            />
+                            <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                cm<sup>3</sup>
+                            </InputGroupText>
+                        </InputGroup>
+                        
+                        </FormGroup>
+                    </div>
+                    <div className="form-group mb-3 col-md-4">
+                                <FormGroup>
+                                <Label >MUAC</Label>
+                                <InputGroup> 
+                                    <Input 
+                                        type="select"
+                                        name="muac"
+                                        id="muac"
+                                        onChange={handleInputChangeVitalSignDto} 
+                                        value={vital.muac} 
+                                    >
+                                    <option value="">Select</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Under">Under</option>
+                                    <option value="Over">Over</option>
+                                    </Input>
+                                    <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                        cm
+                                    </InputGroupText>
+                                </InputGroup>
+                            
+                                </FormGroup>
+                        </div>
+                    </div>
+                    )}
                     <div className="form-group mb-3 col-md-12">
                         <FormGroup>
                         <Label >Clinical Notes</Label>

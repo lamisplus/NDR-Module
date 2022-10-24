@@ -121,7 +121,19 @@ const Tracking = (props) => {
             causeOfDeathOthers:"",
             reasonForLossToFollowUpOthers:"",
             attempts:"",
-            patientId:props.patientObj.id
+            patientId:props.patientObj.id,
+            statusTracker: {
+                agreedDate: "",
+                causeOfDeath: "",
+                facilityId: "",
+                hivStatus: "",
+                personId:props.patientObj.id,
+                reasonForInterruption: "",
+                statusDate: "",
+                trackDate: "",
+                trackOutcome: "",
+                visitId: ""
+              }
             })
     useEffect(() => {
         ReasonForTracking();
@@ -202,7 +214,7 @@ const Tracking = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                setreasonDiscountinuation(response.data);
+                setreasonDiscountinuation(response.data.filter((x)=> x.code!=='REASON_DISCONTINUATION_INTERRUPTION_IN_TREATMENT'));
             })
             .catch((error) => {
             //console.log(error);
@@ -307,7 +319,14 @@ const Tracking = (props) => {
                 objValues.attempts=attemptList
                 observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
                 observation.personId =patientObj.id
-                observation.data=objValues        
+                observation.data=objValues 
+                objValues.statusTracker.causeOfDeath=objValues.causeOfDeath
+                objValues.statusTracker.hivStatus=objValues.reasonForDiscountinuation
+                objValues.statusTracker.reasonForInterruption=objValues.reasonForDiscountinuation
+                objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation
+                objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation
+                objValues.statusTracker.trackOutcome=objValues.reasonForTracking
+                
                 setSaving(true);
                 axios.post(`${baseUrl}patient-tracker`,objValues,
                 { headers: {"Authorization" : `Bearer ${token}`}},
@@ -335,7 +354,7 @@ const Tracking = (props) => {
                 }
             }  
     }
-
+console.log(errors)
   return (      
         <div>                   
             <Card className={classes.root}>
@@ -714,7 +733,7 @@ const Tracking = (props) => {
                             >
                                 <option value="">Select</option>
                                     {reasonDiscountinuation.map((value) => (
-                                        <option key={value.code} value={value.code}>
+                                        <option key={value.code} value={value.display}>
                                             {value.display}
                                         </option>
                                     ))}
@@ -725,7 +744,7 @@ const Tracking = (props) => {
                             </FormGroup>
                         </div>
                         </>)}
-                        {objValues.reasonForDiscountinuation==='REASON_DISCONTINUATION_DEATH' && (
+                        {objValues.reasonForDiscountinuation==='Death' && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="">Cause of Death</Label>
