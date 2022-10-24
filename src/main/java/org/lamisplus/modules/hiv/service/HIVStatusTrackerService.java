@@ -191,6 +191,17 @@ public class HIVStatusTrackerService {
 	public HIVStatusTracker convertDtoToEntity(HIVStatusTrackerDto hivStatusTrackerDto) {
 		HIVStatusTracker hivStatusTracker = new HIVStatusTracker();
 		BeanUtils.copyProperties(hivStatusTrackerDto, hivStatusTracker);
+		String hivStatus = hivStatusTracker.getHivStatus();
+		if (hivStatus.contains("Death")) {
+			hivStatus = "Died (Confirmed)";
+		}
+		if (hivStatus.contains("Treatment Stop")) {
+			hivStatus = "Stopped Treatment";
+		}
+		if (hivStatus.contains("Self-transfer to another facility")) {
+			hivStatus = "ART Transfer Out";
+		}
+		hivStatusTracker.setHivStatus(hivStatus);
 		hivStatusTracker.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		return hivStatusTracker;
 	}
