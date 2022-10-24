@@ -577,6 +577,13 @@ const Pharmacy = (props) => {
         }
 
     }
+    const handleCheckBox =e =>{
+        
+        if(e.target.checked){
+            console.log(e.target.value)
+            setObjValues ({...objValues,  [e.target.name] :true});
+        }
+    }
     const handleFormChange = (index, event) => {
         let data = [...regimenDrug];
         data[index][event.target.name] = event.target.value;
@@ -753,42 +760,44 @@ const Pharmacy = (props) => {
                 </div>
                 <div className="mt-4 col-md-2" > 
                       
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                       
-                            name="devolvePatient"
-                            id="devolvePatient"
-                            //onChange={handleCheckBox}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Switch
-                            </label>
-                        </div>
-                   
-                </div>
-                <div className="mt-4 col-md-2">        
-                        <div className="form-check custom-checkbox ml-1 ">
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                       
-                            name="devolvePatient"
-                            id="devolvePatient"
-                            //onChange={handleCheckBox}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Substitution
-                            </label>
-                        </div>
-                </div>
+                      <div className="form-check custom-checkbox ml-1 ">
+                          <input
+                          type="radio"
+                          className="form-check-input"                       
+                          name="switch"
+                          id="switch"
+                          value="switch"
+                          onChange={handleCheckBox}
+                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                          />
+                          <label
+                          className="form-check-label"
+                          htmlFor="basic_checkbox_1"
+                          >
+                          Switch
+                          </label>
+                      </div>
+                 
+              </div>
+              <div className="mt-4 col-md-2">        
+                      <div className="form-check custom-checkbox ml-1 ">
+                          <input
+                          type="radio"
+                          className="form-check-input"                       
+                          name="switch"
+                          id="switch"
+                          value="Substitution"
+                          onChange={handleCheckBox}
+                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                          />
+                          <label
+                          className="form-check-label"
+                          htmlFor="basic_checkbox_1"
+                          >
+                          Substitution
+                          </label>
+                      </div>
+              </div>
                 </div>
                 <div className="row">
                 <div className="form-group mb-3 col-md-4">

@@ -182,7 +182,21 @@ const ArtCommencement = (props) => {
            //console.log(error);
            });
        
-        }
+      }
+      const InitialClinicEvaluation =()=>{
+        axios
+           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               console.log(response.data);
+               //setClinicalStage(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+      }
         //Get list of RegimenLine
         const RegimenLine =()=>{
         axios
