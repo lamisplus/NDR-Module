@@ -78,7 +78,8 @@ public class ArtPharmacyService {
 	private void processAndCheckoutHivVisit(Long personId, Visit visit) {
 		List<EncounterResponseDto> nonHIVEncounters =
 				encounterService.getAllEncounterByPerson(personId).stream()
-						.filter(e -> e.getStatus().equalsIgnoreCase("PENDING") && !(e.getServiceCode().equalsIgnoreCase("hiv-code")))
+						.filter(e -> e.getStatus().equalsIgnoreCase("PENDING")
+								&& !(e.getServiceCode().equalsIgnoreCase("hiv-code")))
 						.collect(Collectors.toList());
 		log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: " + visit.getId());
 		if (nonHIVEncounters.isEmpty()) {
@@ -155,26 +156,7 @@ public class ArtPharmacyService {
 	@Nullable
 	private RegisterArtPharmacyDto getRegisterArtPharmacyDtoWithName(ArtPharmacy artPharmacy) {
 		try {
-			RegisterArtPharmacyDto responseDto = convertEntityToRegisterDto(artPharmacy);
-			JsonNode extra = responseDto.getExtra();
-			
-			if (extra.hasNonNull(REGIMEN)) {
-				JsonNode jsonNode = extra.get(REGIMEN);
-				for (JsonNode regimen : jsonNode) {
-					if (regimen.hasNonNull("id")) {
-						JsonNode regimenId = regimen.get("id");
-						long id = regimenId.asLong();
-						Optional<Regimen> optionalRegimen = regimenRepository.findById(id);
-						optionalRegimen.ifPresent(regimen1 -> {
-							String description = regimen1.getDescription();
-							((ObjectNode) regimen).put("name", description);
-							responseDto.setExtra(extra);
-						});
-					}
-					
-				}
-			}
-			return responseDto;
+			return convertEntityToRegisterDto(artPharmacy);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -199,8 +181,6 @@ public class ArtPharmacyService {
 				.collect(Collectors.toSet());
 		artPharmacy.setPerson(person);
 		artPharmacy.setRegimens(regimenList);
-		System.out.println("Regimen");
-		//processAndSetDispenseRegimenInExtra(dto, artPharmacy);
 		artPharmacy.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		log.info(" entity 2nd:  {}", artPharmacy);
 		return artPharmacy;
@@ -213,17 +193,6 @@ public class ArtPharmacyService {
 	private RegisterArtPharmacyDto convertEntityToRegisterDto(ArtPharmacy entity) throws IOException {
 		RegisterArtPharmacyDto dto = new RegisterArtPharmacyDto();
 		BeanUtils.copyProperties(entity, dto);
-		log.info(" dto 1st:  {}", dto);
-		JsonNode extra = entity.getExtra();
-		
-		if (extra.hasNonNull(REGIMEN)) {
-			JsonNode regimens = extra.get(REGIMEN);
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectReader reader = mapper.readerFor(new TypeReference<Set<RegimenRequestDto>>() {
-			});
-			Set<RegimenRequestDto> result = reader.readValue(regimens);
-			dto.setRegimen(result);
-		}
 		log.info(" dto 1st:  {}", dto);
 		dto.setPersonId(entity.getPerson().getId());
 		return dto;

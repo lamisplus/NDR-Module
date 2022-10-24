@@ -2,8 +2,11 @@ package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
 import org.lamisplus.modules.hiv.domain.dto.PatientTrackingDto;
+import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.domain.entity.PatientTracker;
+import org.lamisplus.modules.hiv.repositories.HIVStatusTrackerRepository;
 import org.lamisplus.modules.hiv.repositories.PatientTrackerRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
@@ -20,9 +23,20 @@ public class PatientTrackerService {
 	
 	private final PersonRepository personRepository;
 	
+	private final HIVStatusTrackerService statusTrackerService;
+	
+	private  final HIVStatusTrackerRepository hivStatusTrackerRepository;
+	
 	
 	public PatientTrackingDto createPatientTracker(PatientTrackingDto dto) {
-		return mapEntityDto(patientTrackerRepository.save(mapDtoEntity(dto)));
+		PatientTracker patientTracker = mapDtoEntity(dto);
+		if (dto.getStatusTracker() != null){
+			HIVStatusTrackerDto statusDto = statusTrackerService.registerHIVStatusTracker(dto.getStatusTracker());
+			HIVStatusTracker status = hivStatusTrackerRepository.findById(statusDto.getId()).orElseThrow(
+					() -> new EntityNotFoundException(HIVStatusTracker.class, "id", String.valueOf(statusDto.getId())));
+			patientTracker.setStatusTracker(status);
+		}
+		return mapEntityDto(patientTrackerRepository.save(patientTracker));
 	}
 	
 	
@@ -30,6 +44,8 @@ public class PatientTrackerService {
 		PatientTracker patientTrackerExist = getPatientTrackerById(id);
 		PatientTracker patientTracker = mapDtoEntity(dto);
 		patientTracker.setId(patientTrackerExist.getId());
+		patientTracker.setUuid(patientTrackerExist.getUuid());
+		patientTracker.setStatusTracker(patientTrackerExist.getStatusTracker());
 		return mapEntityDto(patientTrackerRepository.save(patientTracker));
 		
 		

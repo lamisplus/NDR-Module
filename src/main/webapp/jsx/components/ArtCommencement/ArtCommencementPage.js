@@ -166,6 +166,7 @@ const ArtCommencement = (props) => {
         TBStatus();
         PreganacyStatus();
         RegimenLine();
+        InitialClinicEvaluation();
          gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.patientObj]);
       //Get list of WhoStaging
