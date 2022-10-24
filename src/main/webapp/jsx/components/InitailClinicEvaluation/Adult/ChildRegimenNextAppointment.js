@@ -303,6 +303,7 @@ return (
                                     type="date"
                                     name="nextAppointment"
                                     id="nextAppointment"
+                                    min={props.patientObj && props.patientObj.enrollment ? props.patientObj.enrollment.dateOfRegistration :""}
                                     onChange={handleInputChangeobjValues} 
                                     value={objValues.nextAppointment}  
                                 />

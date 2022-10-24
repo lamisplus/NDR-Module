@@ -179,13 +179,14 @@ const Pharmacy = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                console.log(response.data)
+                
                 //const filterRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
                 const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
                 const tbRegimen=response.data.filter((x)=> (x.id===10 ))
                 const oIRegimen=response.data.filter((x)=> (x.id===9 || x.id===15 || x.id===8))
                 const othersRegimen=response.data.filter((x)=> (x.id!==1 || x.id===2 || x.id===3 || x.id===4 || x.id===14))
-               setAdultArtRegimenLine(artRegimen);
+                console.log(artRegimen)
+                setAdultArtRegimenLine(artRegimen);
                setTbRegimenLine(tbRegimen);
                setOIRegimenLine(oIRegimen);
             })
@@ -506,7 +507,7 @@ const Pharmacy = (props) => {
 
     const handleCheckBoxRegimen =e =>{
         const originalCombination=regimenDrug
-        //console.log(originalCombination)
+        //console.log(selectedCombinedRegimen)
         if(e.target.checked){
             const newObjCombination = selectedCombinedRegimen.map(x => {
                 x['dispense']=""
@@ -515,7 +516,7 @@ const Pharmacy = (props) => {
                 //x['freqency']=""
                 x['duration']=objValues.refillPeriod
                 x['regimenId']=regimenDrug[0].regimenId
-                x['regimenName']= regimenDrug[0].regimenName
+                x['regimenName']= regimenDrug[0].name
                 return x;
             })
             setRegimenDrug(newObjCombination)
@@ -572,7 +573,6 @@ const Pharmacy = (props) => {
     const handleCheckBox =e =>{
         
         if(e.target.checked){
-            console.log(e.target.value)
             setObjValues ({...objValues,  [e.target.name] :true});
         }
     } 
@@ -946,7 +946,7 @@ const Pharmacy = (props) => {
                                     
                     {patientAge >5 &&  (
                           <>
-                            {adultRegimenLine.map((value) => (
+                            {adultArtRegimenLine.map((value) => (
                               <option key={value.id} value={value.id}>
                                 {value.description}
                               </option>
