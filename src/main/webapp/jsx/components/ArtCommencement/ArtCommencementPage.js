@@ -169,35 +169,34 @@ const ArtCommencement = (props) => {
         InitialClinicEvaluation();
          gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.patientObj]);
-      //Get list of WhoStaging
-      const WhoStaging =()=>{
-        axios
-           .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setClinicalStage(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-      }
-      const InitialClinicEvaluation =()=>{
-        axios
-           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               console.log(response.data);
-               //setClinicalStage(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-      }
+        //Get list of WhoStaging
+        const WhoStaging =()=>{
+            axios
+            .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setClinicalStage(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
+        const InitialClinicEvaluation =()=>{
+            axios
+            .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                    const obj1 =response.data.find(x=> x.type==='Clinical evaluation')
+                    setVitalSignDto({...obj1.data.physicalExamination})
+            })
+            .catch((error) => {
+            //console.log(error);
+            });       
+        }
         //Get list of RegimenLine
         const RegimenLine =()=>{
         axios

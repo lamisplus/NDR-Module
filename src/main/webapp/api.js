@@ -1,4 +1,4 @@
 // export const  token = (new URLSearchParams(window.location.search)).get("jwt")
 // export const url = '/api/v1/'
 export const url =  'http://localhost:8383/api/v1/';
-export const  token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndWVzdEBsYW1pc3BsdXMub3JnIiwiYXV0aCI6IlN1cGVyIEFkbWluIiwibmFtZSI6Ikd1ZXN0IEd1ZXN0IiwiZXhwIjoxNjY2NjQzNjY4fQ.relofI59PPizqMm1V0Q7q_z3xuOsvibRbm5gwF3fwH8PWvJDpNl1rn9b6BrxDfuoVrsR50Ad9lJI56c958v-Vw';
+export const  token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndWVzdEBsYW1pc3BsdXMub3JnIiwiYXV0aCI6IlN1cGVyIEFkbWluIiwibmFtZSI6Ikd1ZXN0IEd1ZXN0IiwiZXhwIjoxNjY2NjQ5MTM4fQ.5g4eNMoZxXrfgRb8bZZrc_A7y81AdOUsU3G8YOZwifwOsT3AHty0JdrrkbDyuNEb9FszEwJZnj94cGhCZymlPA';

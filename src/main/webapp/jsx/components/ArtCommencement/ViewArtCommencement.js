@@ -168,6 +168,7 @@ const ArtCommencement = (props) => {
         GetARTCommencement();
         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.activeContent.id]);
+
     //Get ART Object
     const GetARTCommencement =()=>{
         axios
