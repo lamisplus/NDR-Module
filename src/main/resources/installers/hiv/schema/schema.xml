@@ -296,7 +296,8 @@
                 id
             )
                 );
-
+            ALTER TABLE hiv_status_tracker
+                ADD CONSTRAINT uc_hiv_status_tracker_uuid UNIQUE (uuid);
             ALTER TABLE hiv_status_tracker
                 ADD CONSTRAINT FK_HIV_STATUS_TRACKER_ON_PERSON FOREIGN KEY (person_id) REFERENCES patient_person (uuid);
 
@@ -614,9 +615,6 @@
                 status_uuid                          VARCHAR(255),
                 CONSTRAINT pk_hiv_patient_tracker PRIMARY KEY (id)
             );
-            ALTER TABLE hiv_patient_tracker
-                ADD CONSTRAINT uc_hiv_patient_tracker_uuid UNIQUE (uuid);
-
             ALTER TABLE hiv_patient_tracker
                 ADD CONSTRAINT FK_HIV_PATIENT_TRACKER_ON_STATUS_UUID FOREIGN KEY (status_uuid) REFERENCES hiv_status_tracker (uuid);
             ALTER TABLE hiv_patient_tracker
