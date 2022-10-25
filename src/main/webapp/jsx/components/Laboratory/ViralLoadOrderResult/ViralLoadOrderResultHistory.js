@@ -98,53 +98,35 @@ const useStyles = makeStyles(theme => ({
 
 
 const LabHistory = (props) => {    
-    const [orderList, setOrderList] = useState([])
-    const [loading, setLoading] = useState(true)
+
     const [moduleStatus, setModuleStatus]= useState("0")
     const [buttonHidden, setButtonHidden]= useState(false);
 
     useEffect(() => {
-      CheckLabModule();
+      //CheckLabModule();
+    }, []);
 
-        LabOrders()
-
-      }, [props.patientObj.id]);
-    //GET LIST OF Patients
-    async function LabOrders() {
-        setLoading(true)
-        axios
-            .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                setLoading(false)
-                setOrderList(response.data);                
-            })
-            .catch((error) => {  
-                setLoading(false)  
-            });        
-    }
   //Check if Module Exist
-  const CheckLabModule =()=>{
-    axios
-        .get(`${baseUrl}modules/check?moduleName=laboratory`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-        )
-        .then((response) => {
-            if(response.data===true){
-            setModuleStatus("1")
-            setButtonHidden(false)
-            }
-            else{
-                setModuleStatus("2")
-                //toast.error("Laboratory module is not install")
-                setButtonHidden(true)
-            }
-        }).catch((error) => {
-        //console.log(error);
-        });
-    
-  }
+    // const CheckLabModule =()=>{
+    //   axios
+    //       .get(`${baseUrl}modules/check?moduleName=laboratory`,
+    //           { headers: {"Authorization" : `Bearer ${token}`} }
+    //       )
+    //       .then((response) => {
+    //           if(response.data===true){
+    //           setModuleStatus("1")
+    //           setButtonHidden(false)
+    //           }
+    //           else{
+    //               setModuleStatus("2")
+    //               //toast.error("Laboratory module is not install")
+    //               setButtonHidden(true)
+    //           }
+    //       }).catch((error) => {
+    //       //console.log(error);
+    //       });
+      
+    // }
     const labStatus =(status)=> {
         console.log(status)
           if(status===0){
@@ -175,7 +157,7 @@ const LabHistory = (props) => {
           )
           .then((response) => {
               toast.success("Record Deleted Successfully");
-              LabOrders()
+              props.LabOrders()
           })
           .catch((error) => {
               if(error.response && error.response.data){
@@ -195,7 +177,7 @@ const LabHistory = (props) => {
             {/* {moduleStatus==="1" && ( */}
               <MaterialTable
               icons={tableIcons}
-                title="Laboratory Order History"
+                title="Laboratory Viral Load Order and Result  History"
                 columns={[
                 // { title: " ID", field: "Id" },
                   {
@@ -211,8 +193,8 @@ const LabHistory = (props) => {
                   { title: "Action", field: "Action", filtering: false },
 
                 ]}
-                isLoading={loading}
-                data={ orderList.map((row) => ({
+                //isLoading={loading}
+                data={ props.orderList.map((row) => ({
                     //Id: manager.id,
                     testGroup:row.labTestGroupName,
                     testName: row.labTestName,

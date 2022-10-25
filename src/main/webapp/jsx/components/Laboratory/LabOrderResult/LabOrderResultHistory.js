@@ -98,32 +98,16 @@ const useStyles = makeStyles(theme => ({
 
 
 const LabHistory = (props) => {    
-    const [orderList, setOrderList] = useState([])
-    const [loading, setLoading] = useState(true)
+    
+    //const [loading, setLoading] = useState(true)
     const [moduleStatus, setModuleStatus]= useState("0")
     const [buttonHidden, setButtonHidden]= useState(false);
 
     useEffect(() => {
-      CheckLabModule();
+        //CheckLabModule();
+        //LabOrders()
+      }, []);
 
-        LabOrders()
-
-      }, [props.patientObj.id]);
-    //GET LIST OF Patients
-    async function LabOrders() {
-        setLoading(true)
-        axios
-            .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                setLoading(false)
-                setOrderList(response.data);                
-            })
-            .catch((error) => {  
-                setLoading(false)  
-            });        
-    }
   //Check if Module Exist
   const CheckLabModule =()=>{
     axios
@@ -174,8 +158,8 @@ const LabHistory = (props) => {
               { headers: {"Authorization" : `Bearer ${token}`} }
           )
           .then((response) => {
-              toast.success("Record Deleted Successfully");
-              LabOrders()
+              toast.success("Record deleted successfully");
+              props.LabOrders()
           })
           .catch((error) => {
               if(error.response && error.response.data){
@@ -211,8 +195,8 @@ const LabHistory = (props) => {
                   { title: "Action", field: "Action", filtering: false },
 
                 ]}
-                isLoading={loading}
-                data={ orderList.map((row) => ({
+                //isLoading={loading}
+                data={ props.orderList.map((row) => ({
                     //Id: manager.id,
                     testGroup:row.labTestGroupName,
                     testName: row.labTestName,

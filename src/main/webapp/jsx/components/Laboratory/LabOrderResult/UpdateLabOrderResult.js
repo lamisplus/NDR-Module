@@ -103,10 +103,10 @@ useEffect(() => {
         ViraLoadIndication();
         //PatientVisit();
         CheckLabModule();
-        setTests(props.activeContent.obj)
+        setTests({...props.activeContent.obj})
         //setTest(props.activeContent.obj.labTestId)
     }, [props.patientObj.id, props.activeContent.obj]);
-    console.log(props.activeContent.obj)
+    console.log(tests)
     //Get list of Test Group
     const TestGroup =()=>{
         axios
@@ -209,7 +209,7 @@ useEffect(() => {
         temp.labTestId = tests.labTestId ? "" : "This field is required"
         temp.labNumber = tests.labNumber ? "" : "This field is required"
         temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
-        vlRequired && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
+        tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
         temp.result = tests.result ? "" : "This field is required"
         setErrors({
             ...temp
@@ -220,6 +220,7 @@ useEffect(() => {
     const handleSubmit = (e) => {        
         e.preventDefault();            
         setSaving(true);
+
         //setTestOrderList([...testOrderList, tests])
         axios.put(`${baseUrl}laboratory/rde-orders/tests/${props.activeContent.obj.id}`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
@@ -257,9 +258,9 @@ useEffect(() => {
                     <Row>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">laboratory Number*</Label>
+                                <Label for="encounterDate">laboratory Number* </Label>
                                 <Input
-                                    type="number"
+                                    type="text"
                                     name="labNumber"
                                     id="labNumber"
                                     value={tests.labNumber}
@@ -376,7 +377,7 @@ useEffect(() => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                       {vlRequired && (
+                       {tests.labTestId==='16' || tests.labTestId===16 && (
                         <Col md={4} className="form-group mb-3">
                                 <FormGroup>
                                     <Label for="vlIndication">VL Indication*</Label>
@@ -402,9 +403,6 @@ useEffect(() => {
                                 </FormGroup>
                         </Col>
                         )}
-                        
-                    </Row>
-                    <div className="row">
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="encounterDate">Reported by</Label>
@@ -489,9 +487,11 @@ useEffect(() => {
                                     <span className={classes.error}>{errors.clinicianName}</span>
                                 ) : "" }
                             </FormGroup>
-                        </Col>
+                        </Col> 
+                    </Row>
+                       
                     </div>
-                </div>
+
                     
                     {saving ? <Spinner /> : ""}
                     <br />

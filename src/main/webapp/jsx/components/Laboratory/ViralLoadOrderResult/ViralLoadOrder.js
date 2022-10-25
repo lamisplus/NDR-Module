@@ -109,12 +109,15 @@ const Laboratory = (props) => {
             )
             .then((response) => {
                 setLabTestDetail(response.data.sampleType);
+                tests.labTestGroupId= response.data.labTestGroupId
+                tests.labTestId= response.data.id 
             })
             .catch((error) => {
             //console.log(error);
             });
         
     }
+
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -166,23 +169,7 @@ const Laboratory = (props) => {
         }
                       
     }
-    const handleInputChangeTest = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        
-        if(e.target.value==="16"){
-            setShowVLIndication(true)
-            setVlRequired(true)
-            setErrors({...temp, viralLoadIndication:""})
-            
-            setTests ({...tests,  labTestId: e.target.value});
-        }else{
-            setShowVLIndication(false)
-            setVlRequired(false) 
-            setTests ({...tests,  labTestId: e.target.value});
-        }
-        //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
-    }
-
+   
     const addOrder = e => {  
         console.log(errors) 
         if(validate()){
@@ -215,16 +202,16 @@ const Laboratory = (props) => {
     
     const handleSubmit = (e) => {        
         e.preventDefault();
-        if(validate()){
-            tests.labTestGroupId= labTestDetail.labTestGroupId
-            tests.labTestId= labTestDetail.id         
+        if(validate()){         
         setSaving(true);
         axios.post(`${baseUrl}laboratory/vl-orders`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
+                props.LabOrders();
+                console.log(props.activeContent)
                 toast.success("Viral load order created successful");
-                props.setActiveContent({...props.activeContent, route:'recent-history'})
+                props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
             })
             .catch(error => {
                 setSaving(false);
@@ -272,6 +259,7 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                     </Col>
+                    
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">VL Indication*</Label>
@@ -294,8 +282,25 @@ const Laboratory = (props) => {
                             {errors.viralLoadIndication !=="" ? (
                                 <span className={classes.error}>{errors.viralLoadIndication}</span>
                             ) : "" }
+                             <Input
+                                type="text"
+                                name="labTestGroupId"
+                                id="labTestGroupId"
+                                hidden
+                                value={tests.labTestGroupId}
+                                                
+                            />
+                            <Input
+                                type="text"
+                                name="labTestId"
+                                id="labTestId"
+                                hidden
+                                value={tests.labTestId}
+                                                
+                            />
                             </FormGroup>
                     </Col>
+                    
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="encounterDate">Sample Type</Label>

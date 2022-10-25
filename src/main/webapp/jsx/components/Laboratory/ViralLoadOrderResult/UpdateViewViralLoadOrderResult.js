@@ -122,7 +122,7 @@ const Laboratory = (props) => {
                 )
                 .then((response) => {
       
-                    setLabTestDetail(response.data);
+                    setLabTestDetail(response.data.sampleType);
                 })
                 .catch((error) => {
                 //console.log(error);
@@ -266,7 +266,6 @@ const Laboratory = (props) => {
             }); 
         }
     }
-console.log(errors)
 
   return (      
       <div >
@@ -363,7 +362,7 @@ console.log(errors)
                                     required
                                 >
                                     <option value="">Select </option>
-                                    {labTestDetail.sampleType.map((value) => (
+                                    {labTestDetail.map((value) => (
                                         <option key={value.id} value={value.id}>
                                             {value.sampleTypeName}
                                         </option>
@@ -393,6 +392,7 @@ console.log(errors)
                             ) : "" }
                         </FormGroup>
                     </Col>
+                    {tests.pcrLabSampleNumber!==null && (<>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">PCR Sample No.</Label>
@@ -723,7 +723,7 @@ console.log(errors)
                             
                         </FormGroup>
                     </Col>
-                        
+                    </>)}    
                     </Row>
                 </div>
                     

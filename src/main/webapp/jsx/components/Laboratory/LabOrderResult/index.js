@@ -1,7 +1,9 @@
 import React, {useState, Fragment, useEffect } from "react";
+import axios from "axios";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
 import LabOrderResult from './LabOrderResult';
 import LabOrderResultHistory from "./LabOrderResultHistory";
+import { url as baseUrl, token } from "../../../../api";
 //import LaboratoryRDE from "./LaboratoryRDE";
 
 const divStyle = {
@@ -11,11 +13,27 @@ const divStyle = {
 
 const LaboratoryModule = (props) => {
     const [key, setKey] = useState('home');
+    const [orderList, setOrderList] = useState([])
     const patientObj = props.patientObj
     useEffect ( () => {
+      LabOrders();
       setKey(props.activeContent.activeTab)
     }, [props.activeContent.id, props.activeContent.activeTab]);
-  
+    //GET Patient Lab order history
+    async function LabOrders() {
+      //setLoading(true)
+      axios
+          .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
+          { headers: {"Authorization" : `Bearer ${token}`} }
+          )
+          .then((response) => {
+              //setLoading(false)
+              setOrderList(response.data);                
+          })
+          .catch((error) => {  
+              //setLoading(false)  
+          });        
+    }
 
   return (
     <Fragment>  
@@ -35,11 +53,11 @@ const LaboratoryModule = (props) => {
                     <CheckedInPatients />
                   </Tab> */}
                   <Tab eventKey="home" title="LAB ORDER & RESULT">                   
-                    <LabOrderResult patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                    <LabOrderResult patientObj={patientObj} setActiveContent={props.setActiveContent} LabOrders={LabOrders}/>
                   </Tab>
                   
                   <Tab eventKey="history" title=" HISTORY">                   
-                   <LabOrderResultHistory patientObj={patientObj} setActiveContent={props.setActiveContent}/> 
+                   <LabOrderResultHistory patientObj={patientObj} setActiveContent={props.setActiveContent} orderList={orderList} LabOrders={LabOrders}/> 
                   </Tab>                   
                 </Tabs>
               </div>
