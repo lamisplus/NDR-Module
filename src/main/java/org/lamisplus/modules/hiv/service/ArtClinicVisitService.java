@@ -2,6 +2,7 @@ package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.audit4j.core.util.Log;
 import org.jetbrains.annotations.NotNull;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.service.ApplicationCodesetService;
@@ -62,6 +63,9 @@ public class ArtClinicVisitService {
 			throw new EntityNotFoundException(Person.class, "personId", "" + personId);
 		Visit visit = hivVisitEncounter.processAndCreateVisit(personId, artClinicVisitDto.getVisitDate());
 		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
+		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 12:00");
+		vitalSignDto.setCaptureDate(captureDate);
+		Log.info("vitalSign dto {}", vitalSignDto);
 		if (visit != null) {
 			vitalSignDto.setVisitId(visit.getId());
 		}
