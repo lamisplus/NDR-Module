@@ -264,7 +264,10 @@ const ClinicVisit = (props) => {
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
-  }, []);
+    if(Object.keys(objValues.viralLoadOrder).length){
+      setTestOrderList([...testOrderList, objValues.viralLoadOrder])
+    }
+  }, [patientObj.id, props.activeContent.id, objValues.viralLoadOrder]);
   const calculate_age = dob => {
     var today = new Date();
     var dateParts = dob.split("-");
@@ -771,30 +774,36 @@ const ClinicVisit = (props) => {
     }
   }
   //Get visit by ID
-  async function GetVisitById(visitID) {
+   function GetVisitById(visitID) {
+    if(visitID!==''){
     axios
       .get(`${baseUrl}hiv/art/clinic-visit/${visitID}`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
           const e = response.data
-          console.log(e)
           setObjValues(e)
           setVitalSignDto({ ...e.vitalSignDto })
+          
           objValues.clinicalNote = e.clinicalNote
           objValues.functionalStatusId= e.functionalStatusId
           objValues.whoStagingId= e.whoStagingId 
           objValues.nextAppointment= e.nextAppointment
           objValues.adherenceLevel = e.adherenceLevel
-          setObjValues(e)
+          //setObjValues(e)
           setTbObj({...e.tbScreen})
           setAdrList([...e.adverseDrugReactions])
           setInfectionList([...e.opportunisticInfections])
+          setTestOrderList([...e.viralLoadOrder])
+          console.log(e.viralLoadOrder)
+          
 
       })
       .catch((error) => {
       });
+    }
   }
+  console.log(testOrderList)
   const getVisitDetail=(e)=>{
       setEnableUpdateButton(true)
       setVisitId(e.id)
@@ -1059,7 +1068,7 @@ const ClinicVisit = (props) => {
                             <Label > {" "}</Label>
                             <InputGroup> 
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                BMI : {(vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2)}
+                            BMI : {(vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2)}
                             </InputGroupText>                   
                            
                             </InputGroup>                
@@ -1067,8 +1076,8 @@ const ClinicVisit = (props) => {
                         )}
                     </div>
                     <div className="form-group mb-3 mt-2 col-md-12">
-                          {
-                            BmiCal((vital.bodyWeight/((vital.height * vital.height)/100)).toFixed(2))
+                        {
+                            BmiCal((vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2))
                           }
                     </div>
               </div>
