@@ -100,7 +100,6 @@ const useStyles = makeStyles(theme => ({
 const ClinicVisit = (props) => {
   let visitId=""
   let patientObj = props.patientObj ? props.patientObj : {}
-  console.log(patientObj)
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
   const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
@@ -656,7 +655,10 @@ const ClinicVisit = (props) => {
         systolic: "",
         pulse:"",
         temperature:"",
-        respiratoryRate:"" 
+        respiratoryRate:"",
+        headCircumference:"",
+        surfaceArea:"",
+        muac:"" 
       })
     }
   }
@@ -756,6 +758,7 @@ const handleInputValueCheckTemperature =(e)=>{
     if(validate()){
     setSaving(true)
     objValues.visitDate = vital.encounterDate
+    vital['captureDate'] = vital.encounterDate
     objValues.adverseDrugReactions = adrList
     objValues.artStatusId = getPatientObj.artCommence.id
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
@@ -764,6 +767,7 @@ const handleInputValueCheckTemperature =(e)=>{
     objValues.viralLoadOrder= tests
     objValues.aRVDrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
+
     axios.post(`${baseUrl}hiv/art/clinic-visit/`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
 
