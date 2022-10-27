@@ -102,7 +102,6 @@ public class HIVStatusTrackerService {
 		String statusAtRegistration = applicationCodesetService.getApplicationCodeset(statusAtRegistrationId).getDisplay();
 		return new StatusDto(statusAtRegistration, dateOfRegistration);
 		
-		
 	}
 	
 	public StatusDto getPersonCurrentHIVStatusByPersonId(Long personId, LocalDate startDate, LocalDate endDate) {

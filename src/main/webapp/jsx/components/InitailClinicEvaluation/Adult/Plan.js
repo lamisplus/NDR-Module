@@ -341,7 +341,8 @@ return (
                             </FormGroup>
                     </div> */}
                     <hr/>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="row"> 
+                    <div className="form-group mb-3 col-md-4">                                    
                       
                             <label
                             className="form-check-label"
@@ -351,7 +352,7 @@ return (
                             </label>
                        
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -369,7 +370,7 @@ return (
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -405,7 +406,7 @@ return (
                             </label>
                         </div>
                     </div>
-                   
+                    </div>
                     <hr/>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>

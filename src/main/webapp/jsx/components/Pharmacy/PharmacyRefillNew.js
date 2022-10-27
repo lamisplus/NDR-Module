@@ -64,7 +64,7 @@ let refillPeriodValue=null
 const Pharmacy = (props) => {
     const patientObj = props.patientObj;
     const [selectedCombinedRegimen, setSelectedCombinedRegimen] = useState([]);
-    const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
+    const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [selectedOption, setSelectedOption] = useState([]);
@@ -142,7 +142,24 @@ const Pharmacy = (props) => {
         CheckEACStatus();
         VitalSigns();
         ChildRegimenLine();
+        GetPatientDTOObj();
     }, [selectedOption]);
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEacStatusObj(response.data);
+               console.log(enrollDate)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
@@ -640,22 +657,7 @@ const Pharmacy = (props) => {
             <form >
             <div className="row">
             <div className="row">
-                <div className="form-group mb-3 col-md-4">
-                    <FormGroup>
-                    <Label for="artDate">Encounter Date * </Label>
-                    <Input
-                        type="date"
-                        name="visitDate"
-                        id="visitDate"
-                        onChange={handleInputChange}
-                        value={objValues.visitDate}
-                        min={enrollDate}
-                        max= {moment(new Date()).format("YYYY-MM-DD") }
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
-                    />
-                    </FormGroup>
-                </div>
+                
             </div>
             {vital.bodyWeight!=='' && vital.height!=='' && (<>
                 <div className="row">
@@ -750,6 +752,22 @@ const Pharmacy = (props) => {
                     
                     </Input>
                     
+                    </FormGroup>
+                </div>
+                <div className="form-group mb-3 col-md-4">
+                    <FormGroup>
+                    <Label for="artDate">Encounter Date * </Label>
+                    <Input
+                        type="date"
+                        name="visitDate"
+                        id="visitDate"
+                        onChange={handleInputChange}
+                        value={objValues.visitDate}
+                        min={enrollDate!=='' ? enrollDate : ""}
+                        max= {moment(new Date()).format("YYYY-MM-DD") }
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                    />
                     </FormGroup>
                 </div>
                 <div className="mt-4 col-md-2" > 

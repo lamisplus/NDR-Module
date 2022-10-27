@@ -161,7 +161,7 @@ const BasicInfo = (props) => {
                     <form >
                     {/* Medical History form inputs */}
                     <div className="row">
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -180,7 +180,7 @@ const BasicInfo = (props) => {
                     </div>
                     {!hideOtherPastArv && (
                         <>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -193,11 +193,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Signif.nausea/vomit
+                            Signif.nausea/<br/>vomit
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -214,7 +214,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -231,7 +231,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -244,11 +244,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Pain in abdomen or muscle
+                            Pain in <br/>abdomen/<br/> muscle
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -265,7 +265,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -278,11 +278,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Insomnia/bad dreams
+                            Insomnia/<br/>bad dreams
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -295,11 +295,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Confussion/Dizzy
+                            Confussion/<br/>Dizzy
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -312,11 +312,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Tingling of extremities
+                            Tingling of <br/>extremities
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -333,7 +333,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -350,7 +350,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -363,11 +363,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Steven Johnson Syndrome
+                            Steven <br/>Johnson<br/> Syndrome
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -384,7 +384,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -401,7 +401,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -414,11 +414,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Weekness/Fatigue
+                            Weekness/<br/>Fatigue
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -431,11 +431,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Fat accumulation or loss
+                            Fat <br/>accumulation/<br/> loss
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -452,7 +452,7 @@ const BasicInfo = (props) => {
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"
@@ -465,11 +465,11 @@ const BasicInfo = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            Kidney Problem
+                            Kidney <br/>Problem
                             </label>
                         </div>
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"

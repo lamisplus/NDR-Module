@@ -23,7 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { Button} from 'semantic-ui-react'
+import { Button, Message} from 'semantic-ui-react'
 import {  Modal } from "react-bootstrap";
 
 
@@ -217,6 +217,31 @@ const BasicInfo = (props) => {
             handleItemClick('appearance', 'physical-examination' ) 
         }                 
     }
+    function BmiCal (bmi){
+        if(bmi<18.5){
+          return (
+            <Message        
+             size='mini'
+             color='brown'
+              content='Underweight'
+            />
+          )      
+        }else if(bmi >=18.5 && bmi<=24.9){
+          <Message        
+             size='mini'
+             color='olive'
+              content='Well nourished'
+            />
+        }
+        else if( bmi>25){
+          <Message        
+             size='mini'
+             color='blue'
+              content='Overweight/Obese'
+            />
+        }
+        
+    }
     
 return (
         <>  
@@ -339,7 +364,7 @@ return (
                         ) : "" }
                         </FormGroup>
                     </div>                                   
-                    <div className="form-group mb-3 col-md-4">
+                    <div className="form-group mb-3 col-md-5">
                         <FormGroup>
                         <Label >Height</Label>
                         <InputGroup> 
@@ -376,7 +401,7 @@ return (
                         ) : "" }
                         </FormGroup>
                     </div>
-                    <div className="form-group mb-3 mt-2 col-md-4">
+                    <div className="form-group mb-3 mt-2 col-md-3">
                         {vital.bodyWeight && vital.height &&(
                             <FormGroup>
                             <Label > {" "}</Label>
@@ -390,8 +415,16 @@ return (
                         )}
                     </div>
                     </div>
+                    {vital.bodyWeight && vital.height!==null && (
+                        
+                      <div className="form-group mb-3 mt-2 col-md-12">
+                            {
+                              BmiCal((vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2))
+                            }
+                      </div>
+                     )}
                     <div className="row">
-                    <div className="form-group mb-3 col-md-8">
+                    <div className="form-group mb-3 col-md-12">
                         <FormGroup>
                         <Label >Blood Pressure</Label>
                         <InputGroup>

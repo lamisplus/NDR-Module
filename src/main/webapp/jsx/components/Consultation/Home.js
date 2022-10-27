@@ -764,7 +764,7 @@ const handleInputValueCheckTemperature =(e)=>{
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
-    objValues.viralLoadOrder= tests
+    objValues.viralLoadOrder= testOrderList
     objValues.aRVDrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
 
@@ -1108,7 +1108,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         </FormGroup>
                     </div>
                    
-                    <div className=" mb-3 col-md-5">
+                    <div className=" mb-3 col-md-4">
                         <FormGroup>
                         <FormLabelName >Body Weight</FormLabelName>
                         <InputGroup> 
@@ -1175,7 +1175,7 @@ const handleInputValueCheckTemperature =(e)=>{
                         ) : "" }
                         </FormGroup>
                     </div>
-                    <div className="form-group mb-3 mt-2 col-md-2">
+                    <div className="form-group mb-3 mt-2 col-md-3">
                         {vital.bodyWeight!=="" && vital.height!=='' && (
                             <FormGroup>
                             <Label > {" "}</Label>
@@ -1188,11 +1188,13 @@ const handleInputValueCheckTemperature =(e)=>{
                             </FormGroup>
                         )}
                     </div>
-                    <div className="form-group mb-3 mt-2 col-md-12">
-                          {
-                            BmiCal((vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2))
-                          }
-                    </div>
+                    {vital.bodyWeight!=='' && vital.height!=='' && (
+                      <div className="form-group mb-3 mt-2 col-md-12">
+                            {
+                              BmiCal((vital.bodyWeight/(((vital.height/100) * (vital.height/100)))).toFixed(2))
+                            }
+                      </div>
+                     )}
               </div>
               <div className="row">
               <div className="form-group mb-3 col-md-12">

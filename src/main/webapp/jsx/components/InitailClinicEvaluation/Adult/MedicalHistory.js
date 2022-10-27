@@ -449,7 +449,8 @@ const MedicalHistory = (props) => {
                     <h4>Medical History</h4>
                     {/* Medical History form inputs */}
                     <div className="row">
-                        <div className="form-group mb-3 col-md-2"> 
+                    <div className="row">
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -468,7 +469,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             <Label >Duration (Days)</Label>
                             <InputGroup> 
@@ -484,12 +485,12 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
                                 >
-                                Nausea/Vomitiing
+                                Nausea /<br/>Vomitiing
                             </label>                                      
                             <div className="form-check custom-checkbox ml-1 ">
                                 <input
@@ -503,7 +504,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             <Label >Duration (Days)</Label>
                             <InputGroup> 
@@ -519,7 +520,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -538,7 +539,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             <Label >Duration (Days)</Label>
                             <InputGroup> 
@@ -554,7 +555,10 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                    </div>
+                    <br/>
+                    <div className="row">
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -572,8 +576,8 @@ const MedicalHistory = (props) => {
                                 />
                                 
                             </div>
-                        </div>
-                        <div className="form-group mb-3 col-md-2">
+                        </div><br/>
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             
                             <InputGroup> 
@@ -589,7 +593,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -608,7 +612,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -625,7 +629,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -644,7 +648,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -660,7 +664,10 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                    </div>
+                    <br/><br/>
+                    <div className="row">
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -679,7 +686,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -695,7 +702,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -714,7 +721,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             
                             <InputGroup> 
@@ -730,7 +737,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -749,7 +756,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             
                             <InputGroup> 
@@ -765,7 +772,10 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                    </div>
+                    <br/><br/>
+                    <div className="row">
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -784,7 +794,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -800,7 +810,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -819,7 +829,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -835,7 +845,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -854,7 +864,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -870,7 +880,10 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                    </div>
+                    <br/><br/>
+                    <div className="row">
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -889,7 +902,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                            
                             <InputGroup> 
@@ -905,7 +918,7 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
@@ -924,7 +937,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                             
                             <InputGroup> 
@@ -940,12 +953,12 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-2"> 
+                        <div className="form-group mb-5 col-md-2"> 
                             <label
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
                                 >
-                                Numbness/tingling
+                                Numbness/<br/>tingling
                             </label>                                      
                             <div className="form-check custom-checkbox ml-1 ">
                                 <input
@@ -959,7 +972,7 @@ const MedicalHistory = (props) => {
                                 
                             </div>
                         </div>
-                        <div className="form-group mb-3 col-md-2">
+                        <div className="form-group mb-5 col-md-2">
                             <FormGroup>
                           
                             <InputGroup> 
@@ -975,6 +988,8 @@ const MedicalHistory = (props) => {
                         
                             </FormGroup>
                         </div>
+                    </div>
+                    
                     </div>
                     {/* end of medical form inputs */}
                     <br/>

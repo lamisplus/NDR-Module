@@ -1113,7 +1113,7 @@ const UserRegistration = (props) => {
                                         </Input>                                                                        
                                     </FormGroup>  
                                     </div>
-                                    {objValues.pregnancyStatusId!=='72' && (
+                                    {objValues.pregnancyStatusId==='73' && (
                                     <>
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
@@ -1186,26 +1186,8 @@ const UserRegistration = (props) => {
                                     </FormGroup>
                                 </div>
                                 ) : ""}
-                                <div className="form-group mb-3 col-md-3">
-                                    
-                                    <div className="form-check custom-checkbox ml-1 ">
-                                        <input
-                                        type="checkbox"
-                                        className="form-check-input"
-                                        name="ovc_enrolled"
-                                        id="ovc_enrolled"                                        
-                                        onChange={handleCheckBox}
-                                        //disabled={locationState.actionType==='update'? false : true}
-                                        />
-                                        <label
-                                        className="form-check-label"
-                                        htmlFor="basic_checkbox_1"
-                                        >
-                                        Enrolled into OVC?
-                                        </label>
-                                    </div>
-                                </div>
-                                {basicInfo.age <=14 && (
+                            
+                                {basicInfo.age <= 14 && (
                                 <div className="form-group mb-3 col-md-3">
                                     
                                     <div className="form-check custom-checkbox ml-1 ">

@@ -377,7 +377,7 @@ const Laboratory = (props) => {
                         <FormGroup>
                             <Label for="encounterDate"> Date Sample Collected*</Label>
                             <Input
-                                type="date"
+                                type="datetime-local"
                                 name="sampleCollectionDate"
                                 id="sampleCollectionDate"
                                 value={tests.sampleCollectionDate}
@@ -396,7 +396,7 @@ const Laboratory = (props) => {
                         <FormGroup>
                             <Label for="encounterDate">Date Result Received</Label>
                             <Input
-                                type="date"
+                                type="datetime-local"
                                 name="dateResultReceived"
                                 id="dateResultReceived"
                                 value={tests.dateResultReceived}

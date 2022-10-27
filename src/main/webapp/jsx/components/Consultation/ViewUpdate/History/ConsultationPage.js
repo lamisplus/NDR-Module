@@ -265,7 +265,7 @@ const ClinicVisit = (props) => {
       setVisitId(props.activeContent.id)
     }
     if(Object.keys(objValues.viralLoadOrder).length){
-      setTestOrderList([...testOrderList, objValues.viralLoadOrder])
+      setTestOrderList([objValues.viralLoadOrder])
     }
   }, [patientObj.id, props.activeContent.id, objValues.viralLoadOrder]);
   const calculate_age = dob => {
@@ -691,12 +691,11 @@ const ClinicVisit = (props) => {
   };
   const addArvDrugOrder = e => { 
     if(validateArvDrug()){
-      const actualRegimen= patientAge <=5 ? adultRegimenLine : childRegimenLine //determine the regimen to filter by age 
-       const regimenName = actualRegimen.find((x)=> x.id===parseInt(arvDrugObj.regimenLine))
-       arvDrugObj.regimenLineName= regimenName.description
-      const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))
+      const actualRegimen= patientAge <=5 ? childRegimenLine : adultRegimenLine //determine the regimen to filter by age 
+      const regimenName = actualRegimen.find((x)=> x.id===parseInt(arvDrugObj.regimenLine))
+      arvDrugObj.regimenLineName= regimenName.description
+      const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))     
       arvDrugObj.regimenDrugName= regimenType.description
-      console.log(regimenType.description)
       setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
     }        
   }
@@ -743,12 +742,14 @@ const ClinicVisit = (props) => {
     if(validate()){
     setSaving(true)
     objValues.visitDate = vital.encounterDate
+    vital['captureDate'] = vital.encounterDate
     objValues.adverseDrugReactions = adrList
     objValues.artStatusId = getPatientObj.artCommence.id
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
-    vital.captureDate= vital.encounterDate
+    objValues.viralLoadOrder= testOrderList
+    objValues.aRVDrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
     axios.put(`${baseUrl}hiv/art/clinic-visit/${visitId}`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
@@ -795,7 +796,7 @@ const ClinicVisit = (props) => {
           setAdrList([...e.adverseDrugReactions])
           setInfectionList([...e.opportunisticInfections])
           setTestOrderList([...e.viralLoadOrder])
-          console.log(e.viralLoadOrder)
+          console.log(e)
           
 
       })
@@ -803,7 +804,7 @@ const ClinicVisit = (props) => {
       });
     }
   }
-  console.log(testOrderList)
+  console.log(objValues)
   const getVisitDetail=(e)=>{
       setEnableUpdateButton(true)
       setVisitId(e.id)
