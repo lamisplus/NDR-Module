@@ -74,6 +74,7 @@ const Laboratory = (props) => {
     const [test, setTest] = useState([]);
     const [vlRequired, setVlRequired]=useState(false)
     const [priority, setPriority]=useState([])
+    const [eacStatusObj, setEacStatusObj] = useState()
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -108,7 +109,8 @@ const Laboratory = (props) => {
         TestGroup();
         PriorityOrder();
         ViraLoadIndication();
-        GetPatientDTOObj();   
+        GetPatientDTOObj(); 
+        CheckEACStatus();  
         }, [props.patientObj.id]);
         const GetPatientDTOObj =()=>{
             axios
@@ -125,7 +127,21 @@ const Laboratory = (props) => {
                //console.log(error);
                });
            
-        } 
+    } 
+    //Get EAC Status
+    const CheckEACStatus =()=>{
+        axios
+           .get(`${baseUrl}hiv/eac/open/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               setEacStatusObj(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
     //Get list of Test Group
     const TestGroup =()=>{
         axios
@@ -401,7 +417,7 @@ const Laboratory = (props) => {
                                 id="sampleCollectionDate"
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
-                                min={enrollDate}
+                                min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -413,7 +429,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={4} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Result Received</Label>
+                            <Label for="encounterDate">Date Result Received *</Label>
                             <Input
                                 type="datetime-local"
                                 name="dateResultReceived"

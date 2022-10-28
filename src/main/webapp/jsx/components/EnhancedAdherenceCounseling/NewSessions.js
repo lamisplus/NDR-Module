@@ -82,6 +82,7 @@ const NEWEACSESSION = (props) => {
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true)
+    const [eacStatusObj, setEacStatusObj] = useState()
     const [selectedBarriers,setSelectedBarriers] = useState([]);
     const [selectedInterventions,setSelectedInterventions] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
@@ -133,7 +134,22 @@ const NEWEACSESSION = (props) => {
 
     useEffect(() => {
         GetPatientDTOObj();
+        CheckEACStatus();
     }, [props.activeContent]);
+    //Get EAC Status
+    const CheckEACStatus =()=>{
+        axios
+           .get(`${baseUrl}hiv/eac/open/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               setEacStatusObj(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
     const GetPatientDTOObj =()=>{
         axios
            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -143,7 +159,7 @@ const NEWEACSESSION = (props) => {
                const patientDTO= response.data.enrollment
                setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
                //setEacStatusObj(response.data);
-               console.log(enrollDate)
+               //console.log(enrollDate)
            })
            .catch((error) => {
            //console.log(error);
@@ -240,7 +256,7 @@ const NEWEACSESSION = (props) => {
                                     type="date"
                                     name="sessionDate"
                                     id="sessionDate"
-                                    min={enrollDate}
+                                    min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                     value={objValues.sessionDate}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}

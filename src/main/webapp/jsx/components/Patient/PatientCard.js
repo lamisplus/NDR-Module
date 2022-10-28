@@ -301,7 +301,7 @@ function PatientCard(props) {
                               <div >
                                   <Typography variant="caption">
                                       <Label color={"red"} size={"mini"}>
-                                          Biometric Not Install
+                                          Biometric Not Installed
                                           
                                       </Label>
                                     

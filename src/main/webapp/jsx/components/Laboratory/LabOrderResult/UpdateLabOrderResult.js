@@ -76,6 +76,7 @@ const Laboratory = (props) => {
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
+    const [eacStatusObj, setEacStatusObj] = useState()
     let temp = { ...errors }
     const [tests, setTests]=useState({
 
@@ -103,10 +104,24 @@ useEffect(() => {
         ViraLoadIndication();
         //PatientVisit();
         CheckLabModule();
+        CheckEACStatus();
         setTests({...props.activeContent.obj})
         //setTest(props.activeContent.obj.labTestId)
     }, [props.patientObj.id, props.activeContent.obj]);
-    console.log(tests)
+     //Get EAC Status
+     const CheckEACStatus =()=>{
+        axios
+           .get(`${baseUrl}hiv/eac/open/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               setEacStatusObj(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
     //Get list of Test Group
     const TestGroup =()=>{
         axios
@@ -330,7 +345,7 @@ useEffect(() => {
                                     id="sampleCollectionDate"
                                     value={tests.sampleCollectionDate}
                                     onChange={handleInputChange}
-                                    min={enrollDate}
+                                    min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required

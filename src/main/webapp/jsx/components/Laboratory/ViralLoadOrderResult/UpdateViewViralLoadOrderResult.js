@@ -287,7 +287,7 @@ const Laboratory = (props) => {
                  
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="labNumber">Lab Number *</Label>
+                                <Label for="labNumber">Lab Number (Sample Number)*</Label>
                                 <Input
                                 type="text"
                                 name="labNumber"
@@ -303,27 +303,6 @@ const Laboratory = (props) => {
                             ) : "" }
                             </FormGroup>
                     </Col>
-                    <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="vlIndication">PCR Lab Name *</Label>
-                                <Input
-                                type="select"
-                                name="pcrLabName"
-                                id="pcrLabName"
-                                value={tests.pcrLabName}
-                                onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
-                                >
-                                <option value="">Select </option>
-                                <option value="Abuja">Abuja Hospital </option>             
-                                    
-                            </Input>
-                            {errors.pcrLabName !=="" ? (
-                                <span className={classes.error}>{errors.pcrLabName}</span>
-                            ) : "" }
-                            </FormGroup>
-                    </Col>
-
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">VL Indication*</Label>
@@ -392,7 +371,46 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
+                    <Col md={6} className="form-group mb-3">
+                        <FormGroup>
+                            <Label for="encounterDate">Collected by *</Label>
+                            <Input
+                                type="text"
+                                name="sampleCollectedBy"
+                                id="sampleCollectedBy"
+                                value={tests.sampleCollectedBy}
+                                
+                                onChange={handleInputChange}
+                                
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.sampleCollectedBy !=="" ? (
+                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </Col>
                     {tests.pcrLabSampleNumber!==null && (<>
+                    <Col md={6} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="vlIndication">PCR Lab Name *</Label>
+                                <Input
+                                type="select"
+                                name="pcrLabName"
+                                id="pcrLabName"
+                                value={tests.pcrLabName}
+                                onChange={handleInputChange}  
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                >
+                                <option value="">Select </option>
+                                <option value="Abuja">Abuja Hospital </option>             
+                                    
+                            </Input>
+                            {errors.pcrLabName !=="" ? (
+                                <span className={classes.error}>{errors.pcrLabName}</span>
+                            ) : "" }
+                            </FormGroup>
+                    </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">PCR Sample No.</Label>
@@ -529,25 +547,7 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Collected by *</Label>
-                            <Input
-                                type="text"
-                                name="sampleCollectedBy"
-                                id="sampleCollectedBy"
-                                value={tests.sampleCollectedBy}
-                                
-                                onChange={handleInputChange}
-                                
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.sampleCollectedBy !=="" ? (
-                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
+                    
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Collected by *</Label>

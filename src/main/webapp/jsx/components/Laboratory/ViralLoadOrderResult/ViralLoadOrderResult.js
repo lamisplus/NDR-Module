@@ -72,12 +72,13 @@ const Laboratory = (props) => {
     const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
     const [vlRequired, setVlRequired]=useState(false)
-    const [priority, setPriority]=useState([])
+    const [showResult, setShowResult]=useState(false)
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [labTestDetail, setLabTestDetail]=useState([])
+    const [eacStatusObj, setEacStatusObj] = useState()
     let temp = { ...errors }
     const [tests, setTests]=useState({
             approvedBy: "",
@@ -112,23 +113,38 @@ const Laboratory = (props) => {
         CheckLabModule();
         ViraLoadIndication();
         LabTestDetail();
-            
+        CheckEACStatus();    
     }, [props.patientObj.id]);
-
-        const LabTestDetail =()=>{
-            axios
-                .get(`${baseUrl}laboratory/labtests/viral%20load`,
-                    { headers: {"Authorization" : `Bearer ${token}`} }
-                )
-                .then((response) => {      
-                    setLabTestDetail(response.data.sampleType);
-                })
-                .catch((error) => {
-                //console.log(error);
-                });
-            
-        }  
-
+    //Get EAC Status
+    const CheckEACStatus =()=>{
+        axios
+           .get(`${baseUrl}hiv/eac/open/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               setEacStatusObj(response.data);
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
+    const LabTestDetail =()=>{
+        axios
+            .get(`${baseUrl}laboratory/labtests/viral%20load`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {      
+                setLabTestDetail(response.data.sampleType);
+                setTestOrderList(response.data)
+                tests.labTestGroupId= response.data.labTestGroupId
+                tests.labTestId= response.data.id 
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }  
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -230,31 +246,31 @@ const Laboratory = (props) => {
 
       //Validations of the forms
       const validate = () => {  
-        temp.approvedBy = tests.approvedBy ? "" : "This field is required"
-        temp.assayedBy = tests.assayedBy ? "" : "This field is required"
+        
         temp.sampleTypeId = tests.sampleTypeId ? "" : "This field is required"
-        temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required"
         temp.sampleCollectionDate =  tests.sampleCollectionDate ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
         temp.labNumber = tests.labNumber ? "" : "This field is required"
+       temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
+       showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
+       showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
+       showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
+       showResult && (temp.result = tests.result ? "" : "This field is required")
+       showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+       showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
+       showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
 
-        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
-        temp.result = tests.result ? "" : "This field is required"
-        temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required"
-        temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required"
-        temp.orderBy = tests.orderBy ? "" : "This field is required"
+       showResult && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+       showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
+       showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
+       showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
+       showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
+       showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
 
-        temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required"
-        temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required"
-        temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required"
-        temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required"
-        temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required"
-        temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required"
-
-        temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required"
-        temp.dateApproved = tests.dateApproved ? "" : "This field is required"
+       showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
+       showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
         //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
-        temp.checkedBy = tests.checkedBy ? "" : "This field is required"
+        showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
  
         
         setErrors({
@@ -274,21 +290,70 @@ const Laboratory = (props) => {
         setSaving(true);
         tests.labTestGroupId= labTestDetail.labTestGroupId
         tests.labTestId= labTestDetail.id
-        axios.post(`${baseUrl}laboratory/vl-results`,tests,
-            { headers: {"Authorization" : `Bearer ${token}`}},)
-            .then(response => {
-                setSaving(false);
-                props.LabOrders();
-                toast.success("Laboratory test order created successful");
-                props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
-            })
-            .catch(error => {
-                setSaving(false);
-                if(error.response && error.response.data){
-                    let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                    toast.error(errorMessage); 
-                }                  
-            }); 
+        
+            if(showResult){
+                axios.post(`${baseUrl}laboratory/vl-results`,tests,
+                { headers: {"Authorization" : `Bearer ${token}`}},)
+                .then(response => {
+                    setSaving(false);
+                    props.LabOrders();
+                    toast.success("Laboratory test order created successful");
+                    props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
+                })
+                .catch(error => {
+                    setSaving(false);
+                    if(error.response && error.response.data){
+                        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                        toast.error(errorMessage); 
+                    }                  
+                }); 
+            
+            }else{
+                delete tests["approvedBy"]
+                delete tests["assayedBy"]
+                delete tests["checkedBy"]
+                delete tests["comment"]
+                delete tests["dateApproved"]
+                delete tests["dateAssayedBy"]
+                delete tests["dateCheckedBy"]
+                delete tests["dateCollectedBy"]
+                delete tests["dateOrderBy"]
+                delete tests["dateReceivedAtPcrLab"]
+                delete tests["dateResultReceived"]
+                delete tests["dateSampleLoggedRemotely"]
+                delete tests["orderBy"]
+                delete tests["pcrLabName"]
+                delete tests["pcrLabSampleNumber"]
+                delete tests["sampleLoggedRemotely"]
+                delete tests["result"]
+                delete tests["orderBy"]
+                delete tests["pcrLabName"]
+                 
+                tests['labTestGroupId']= testOrderList.labTestGroupId
+                tests['labTestId']= testOrderList.id
+                axios.post(`${baseUrl}laboratory/vl-orders`,tests,
+                { headers: {"Authorization" : `Bearer ${token}`}},)
+                .then(response => {
+                    setSaving(false);
+                    props.LabOrders();
+                    toast.success("Laboratory test order created successful");
+                    props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
+                })
+                .catch(error => {
+                    setSaving(false);
+                    if(error.response && error.response.data){
+                        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                        toast.error(errorMessage); 
+                    }                  
+                }); 
+            }
+        }
+    }
+    const handleCheckBox =e =>{
+        if(e.target.checked){
+            setShowResult(true)
+        }else{
+            setShowResult(false)
         }
     }
 
@@ -312,7 +377,7 @@ const Laboratory = (props) => {
                  
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="labNumber">Lab Number *</Label>
+                                <Label for="labNumber">Lab Number (Sample Number)*</Label>
                                 <Input
                                 type="text"
                                 name="labNumber"
@@ -328,26 +393,7 @@ const Laboratory = (props) => {
                             ) : "" }
                             </FormGroup>
                     </Col>
-                    <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="vlIndication">PCR Lab Name *</Label>
-                                <Input
-                                type="select"
-                                name="pcrLabName"
-                                id="pcrLabName"
-                                value={tests.pcrLabName}
-                                onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
-                                >
-                                <option value="">Select </option>
-                                <option value="Abuja">Abuja Hospital </option>             
-                                    
-                            </Input>
-                            {errors.pcrLabName !=="" ? (
-                                <span className={classes.error}>{errors.pcrLabName}</span>
-                            ) : "" }
-                            </FormGroup>
-                    </Col>
+                    
 
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
@@ -408,6 +454,7 @@ const Laboratory = (props) => {
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
                                 min={enrollDate}
+                                //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -416,6 +463,66 @@ const Laboratory = (props) => {
                                 <span className={classes.error}>{errors.sampleCollectionDate}</span>
                             ) : "" }
                         </FormGroup>
+                    </Col>
+                    <Col md={6} className="form-group mb-3">
+                        <FormGroup>
+                            <Label for="encounterDate">Collected by *</Label>
+                            <Input
+                                type="text"
+                                name="sampleCollectedBy"
+                                id="sampleCollectedBy"
+                                value={tests.sampleCollectedBy}
+                                
+                                onChange={handleInputChange}
+                                
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.sampleCollectedBy !=="" ? (
+                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </Col>
+                    <Col md={6} className="mt-4">
+                        <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                       
+                                name="asResult"
+                                id="asResult"
+                                value="asResult"
+                                onChange={handleCheckBox}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                As Result
+                                </label>
+                        </div>
+                    </Col>
+                    <hr/>
+                {showResult && (<>
+                    <Col md={6} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="vlIndication">PCR Lab Name *</Label>
+                                <Input
+                                type="select"
+                                name="pcrLabName"
+                                id="pcrLabName"
+                                value={tests.pcrLabName}
+                                onChange={handleInputChange}  
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                >
+                                <option value="">Select </option>
+                                <option value="Abuja">Abuja Hospital </option>             
+                                    
+                            </Input>
+                            {errors.pcrLabName !=="" ? (
+                                <span className={classes.error}>{errors.pcrLabName}</span>
+                            ) : "" }
+                            </FormGroup>
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
@@ -553,25 +660,7 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Collected by *</Label>
-                            <Input
-                                type="text"
-                                name="sampleCollectedBy"
-                                id="sampleCollectedBy"
-                                value={tests.sampleCollectedBy}
-                                
-                                onChange={handleInputChange}
-                                
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.sampleCollectedBy !=="" ? (
-                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
+                   
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Collected by *</Label>
@@ -747,7 +836,7 @@ const Laboratory = (props) => {
                             
                         </FormGroup>
                     </Col>
-                        
+                </>)}   
                     </Row>
                 </div>
                     

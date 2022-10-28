@@ -767,7 +767,7 @@ const ClinicVisit = (props) => {
         setSaving(false);
         toast.success("Clinic Visit updated successful");
         //GetVisitById(visitId)
-        //props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
+        props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
       })
       .catch(error => {
         setSaving(false);
@@ -802,7 +802,6 @@ const ClinicVisit = (props) => {
       .then((response) => {
           const e = response.data
           setObjValues(e)
-          console.log(e)
           setVitalSignDto({ ...vital, ...e.vitalSignDto })
           objValues.clinicalNote = e.clinicalNote
           objValues.functionalStatusId= e.functionalStatusId
@@ -823,7 +822,6 @@ const ClinicVisit = (props) => {
       });
     }
   }
-  console.log(objValues)
  
   function BmiCal (bmi){
     if(bmi<18.5){

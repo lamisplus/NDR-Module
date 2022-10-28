@@ -236,7 +236,6 @@ const Pharmacy = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
-               console.log(response.data);
                setEacStatusObj(response.data);
            })
            .catch((error) => {

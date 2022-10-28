@@ -94,6 +94,7 @@ const Laboratory = (props) => {
                                         viralLoadIndication: 0,
                                         visitId:"" 
                                     })
+                                    
     useEffect(() => {           
         CheckLabModule();
         LabTestDetail();
@@ -260,7 +261,7 @@ const Laboratory = (props) => {
                     <Row>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate"> Lab Number*</Label>
+                                <Label for="encounterDate"> Lab Number(Sample Number )*</Label>
                                 <Input
                                     type="text"
                                     name="labNumber"
