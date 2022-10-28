@@ -1135,7 +1135,7 @@ const Pharmacy = (props) => {
                         className="form-check-label"
                         htmlFor="basic_checkbox_1"
                         >
-                        As no combination
+                        Has no combination
                         </label>
                     </div>
                         <div className="row">

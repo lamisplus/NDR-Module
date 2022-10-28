@@ -282,16 +282,13 @@ const Laboratory = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();
         if(validate()){
-            tests.labTestGroupId= labTestDetail.labTestGroupId
-            tests.labTestId= labTestDetail.id
+            tests.labTestGroupId= testOrderList.labTestGroupId
+            tests.labTestId= testOrderList.id
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
             tests.dateReceivedAtPcrLab = moment(tests.dateReceivedAtPcrLab).format("YYYY-MM-DD HH:MM:SS")                 
             tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
-        setSaving(true);
-        tests.labTestGroupId= labTestDetail.labTestGroupId
-        tests.labTestId= labTestDetail.id
-        
-            if(showResult){
+            setSaving(true);        
+            //if(showResult){
                 axios.post(`${baseUrl}laboratory/vl-results`,tests,
                 { headers: {"Authorization" : `Bearer ${token}`}},)
                 .then(response => {
@@ -308,45 +305,47 @@ const Laboratory = (props) => {
                     }                  
                 }); 
             
-            }else{
-                delete tests["approvedBy"]
-                delete tests["assayedBy"]
-                delete tests["checkedBy"]
-                delete tests["comment"]
-                delete tests["dateApproved"]
-                delete tests["dateAssayedBy"]
-                delete tests["dateCheckedBy"]
-                delete tests["dateCollectedBy"]
-                delete tests["dateOrderBy"]
-                delete tests["dateReceivedAtPcrLab"]
-                delete tests["dateResultReceived"]
-                delete tests["dateSampleLoggedRemotely"]
-                delete tests["orderBy"]
-                delete tests["pcrLabName"]
-                delete tests["pcrLabSampleNumber"]
-                delete tests["sampleLoggedRemotely"]
-                delete tests["result"]
-                delete tests["orderBy"]
-                delete tests["pcrLabName"]
+            // }else{
+            //     delete tests["approvedBy"]
+            //     delete tests["assayedBy"]
+            //     delete tests["checkedBy"]
+            //     delete tests["comment"]
+            //     delete tests["dateApproved"]
+            //     delete tests["dateAssayedBy"]
+            //     delete tests["dateCheckedBy"]
+            //     delete tests["dateCollectedBy"]
+            //     delete tests["dateOrderBy"]
+            //     delete tests["dateReceivedAtPcrLab"]
+            //     delete tests["dateResultReceived"]
+            //     delete tests["dateSampleLoggedRemotely"]
+            //     delete tests["orderBy"]
+            //     delete tests["pcrLabName"]
+            //     delete tests["pcrLabSampleNumber"]
+            //     delete tests["sampleLoggedRemotely"]
+            //     delete tests["result"]
+            //     delete tests["orderBy"]
+            //     delete tests["pcrLabName"]
                  
-                tests['labTestGroupId']= testOrderList.labTestGroupId
-                tests['labTestId']= testOrderList.id
-                axios.post(`${baseUrl}laboratory/vl-orders`,tests,
-                { headers: {"Authorization" : `Bearer ${token}`}},)
-                .then(response => {
-                    setSaving(false);
-                    props.LabOrders();
-                    toast.success("Laboratory test order created successful");
-                    props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
-                })
-                .catch(error => {
-                    setSaving(false);
-                    if(error.response && error.response.data){
-                        let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                        toast.error(errorMessage); 
-                    }                  
-                }); 
-            }
+            //     tests['labTestGroupId']= testOrderList.labTestGroupId
+            //     tests['labTestId']= testOrderList.id
+            //     tests['comments']=""
+            //     tests['visitId']=""
+            //     axios.post(`${baseUrl}laboratory/vl-orders`,tests,
+            //     { headers: {"Authorization" : `Bearer ${token}`}},)
+            //     .then(response => {
+            //         setSaving(false);
+            //         props.LabOrders();
+            //         toast.success("Laboratory test order created successful");
+            //         props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
+            //     })
+            //     .catch(error => {
+            //         setSaving(false);
+            //         if(error.response && error.response.data){
+            //             let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+            //             toast.error(errorMessage); 
+            //         }                  
+            //     }); 
+            // }
         }
     }
     const handleCheckBox =e =>{
@@ -498,7 +497,7 @@ const Laboratory = (props) => {
                                 className="form-check-label"
                                 htmlFor="basic_checkbox_1"
                                 >
-                                As Result
+                                Has Result ?
                                 </label>
                         </div>
                     </Col>
