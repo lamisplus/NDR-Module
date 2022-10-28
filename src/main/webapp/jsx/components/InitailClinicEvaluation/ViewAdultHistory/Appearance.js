@@ -189,7 +189,13 @@ const BasicInfo = (props) => {
 
     useEffect(() => { 
         console.log(props.observation.data)
+        if(props.observation.data){
+            setGeneralApperance(props.observation.data.generalApperance)
+        }
+        
     }, [props.observation.data])
+
+    console.log(generalApperance)
     const handleGeneralApperance =e =>{
         if(e.target.name!=='other'){
         if(e.target.checked){
@@ -432,6 +438,7 @@ return (
                                     className="form-check-input"                           
                                     name="nsf"
                                     id="nsf"
+                                    checked={generalApperance.nsf}
                                     value={generalApperance.nsf}
                                     onChange={handleGeneralApperance}
                                     />
@@ -452,6 +459,7 @@ return (
                                     className="form-check-input"                           
                                     name="pallor"
                                     id="pallor"
+                                    checked={generalApperance.pallor}
                                     value={generalApperance.pallor}
                                     onChange={handleGeneralApperance}
                                     />
@@ -470,6 +478,7 @@ return (
                                     className="form-check-input"                           
                                     name="febrile"
                                     id="febrile"
+                                    checked={generalApperance.febrile}
                                     value={generalApperance.febrile}
                                     onChange={handleGeneralApperance}
                                     />
@@ -488,6 +497,7 @@ return (
                                     className="form-check-input"                           
                                     name="dehydrated"
                                     id="dehydrated"
+                                    checked={generalApperance.dehydrated}
                                     value={generalApperance.dehydrated}
                                     onChange={handleGeneralApperance}
                                     />
@@ -506,6 +516,7 @@ return (
                                     className="form-check-input"                           
                                     name="peripheral"
                                     id="peripheral"
+                                    checked={generalApperance.peripheral}
                                     value={generalApperance.peripheral}
                                     onChange={handleGeneralApperance}
                                     />
@@ -546,6 +557,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={skin.nsf}
                                 value={skin.nsf}
                                 onChange={handleSkin}
                                 />
@@ -557,7 +569,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {skin.nsf==='' && skin.nsf!=='true' && (
+                        {skin.nsf==='' && skin.nsf===false && (
                         <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -567,6 +579,7 @@ return (
                                 name="pruritic"
                                 id="pruritic"
                                 value={skin.pruritic}
+                                checked={skin.pruritic}
                                 onChange={handleSkin}
                                 />
                                 <label
@@ -584,6 +597,7 @@ return (
                                 className="form-check-input"                           
                                 name="abscesses"
                                 id="abscesses"
+                                checked={skin.abscesses}
                                 value={skin.abscesses}
                                 onChange={handleSkin}
                                 />
@@ -602,6 +616,7 @@ return (
                                 className="form-check-input"                           
                                 name="herpes"
                                 id="herpes"
+                                checked={skin.herpes}
                                 value={skin.herpes}
                                 onChange={handleSkin}
                                 />
@@ -620,6 +635,7 @@ return (
                                 className="form-check-input"                           
                                 name="kaposi"
                                 id="kaposi"
+                                checked={skin.kaposi}
                                 value={skin.kaposi}
                                 onChange={handleSkin}
                                 />
@@ -638,6 +654,7 @@ return (
                                 className="form-check-input"                           
                                 name="suborrheic"
                                 id="suborrheic"
+                                checked={skin.suborrheic}
                                 value={skin.suborrheic}
                                 onChange={handleSkin}
                                 />
@@ -657,6 +674,7 @@ return (
                                 name="fungal"
                                 id="fungal"
                                 value={skin.fungal}
+                                checked={skin.fungal}
                                 onChange={handleSkin}
                                 />
                                 <label
@@ -699,6 +717,7 @@ return (
                                     name="nsf"
                                     id="nsf"
                                     value={eye.nsf}
+                                    checked={eye.nsf}
                                     onChange={handleEye}
                                     />
                                     <label
@@ -709,7 +728,7 @@ return (
                                     </label>
                                 </div>
                             </div>
-                            {eye.nsf==='' && eye.nsf!=='true' && (
+                            {eye.nsf==='' || eye.nsf===false && (
                                 <>
                             <div className="form-group mb-3 col-md-3">                                    
                                 <div className="form-check custom-checkbox ml-1 ">
@@ -718,6 +737,7 @@ return (
                                     className="form-check-input"                           
                                     name="icterus"
                                     id="icterus"
+                                    checked={eye.icterus}
                                     value={eye.icterus}
                                     onChange={handleEye}
                                     />
@@ -736,6 +756,7 @@ return (
                                     className="form-check-input"                           
                                     name="thrush"
                                     id="thrush"
+                                    checked={eye.thrush}
                                     value={eye.thrush}
                                     onChange={handleEye}
                                     />
@@ -754,6 +775,7 @@ return (
                                     className="form-check-input"                           
                                     name="oral"
                                     id="oral"
+                                    checked={eye.oral}
                                     value={eye.oral}
                                     onChange={handleEye}
                                     />
@@ -772,6 +794,7 @@ return (
                                     className="form-check-input"                           
                                     name="abnormal"
                                     id="abnormal"
+                                    checked={eye.abnormal}
                                     value={eye.abnormal}
                                     onChange={handleEye}
                                     />
@@ -816,6 +839,7 @@ return (
                                     className="form-check-input"                           
                                     name="nsf"
                                     id="nsf"
+                                    checked={breast.nsf}
                                     value={breast.nsf}
                                     onChange={handleBreast}
                                     />
@@ -827,7 +851,7 @@ return (
                                     </label>
                                 </div>
                             </div>
-                            {breast.nsf==='' && breast.nsf!=='true' && (
+                            {breast.nsf===''  || breast.nsf==false && (
                                 <>
                             <div className="form-group mb-3 col-md-3">                                    
                                 <div className="form-check custom-checkbox ml-1 ">
@@ -836,7 +860,7 @@ return (
                                     className="form-check-input"                           
                                     name="lumps"
                                     id="lumps"
-                                    value={breast.lumps}
+                                    checked={breast.lumps}
                                     onChange={handleBreast}
                                     />
                                     <label
@@ -854,6 +878,7 @@ return (
                                     className="form-check-input"                           
                                     name="discharge"
                                     id="discharge"
+                                    checked={breast.discharge}
                                     value={breast.discharge}
                                     onChange={handleBreast}
                                     />
@@ -894,6 +919,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={cardiovascular.nsf}
                                 value={cardiovascular.nsf}
                                 onChange={handleCardiovascular}
                                 />
@@ -905,7 +931,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {cardiovascular.nsf==='' && cardiovascular.nsf!=='true' && (
+                        {cardiovascular.nsf==='' && cardiovascular.nsf!==true && (
                         <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -914,6 +940,7 @@ return (
                                 className="form-check-input"                           
                                 name="abnormal_heart_rate"
                                 id="abnormal_heart_rate"
+                                checked={cardiovascular.abnormal_heart_rate}
                                 value={cardiovascular.abnormal_heart_rate}
                                 onChange={handleCardiovascular}
                                 />
@@ -954,6 +981,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={genitalia.nsf}
                                 value={genitalia.nsf}
                                 onChange={handleGenitalia}
                                 />
@@ -975,6 +1003,7 @@ return (
                                 className="form-check-input"                           
                                 name="genital_discharge"
                                 id="genital_discharge"
+                                checked={genitalia.genital_discharge}
                                 value={genitalia.genital_discharge}
                                 onChange={handleGenitalia}
                                 />
@@ -993,6 +1022,7 @@ return (
                                 className="form-check-input"                           
                                 name="genital_ulcer"
                                 id="genital_ulcer"
+                                checked={genitalia.genital_ulcer}
                                 value={genitalia.genital_ulcer}
                                 onChange={handleGenitalia}
                                 />
@@ -1011,6 +1041,7 @@ return (
                                 className="form-check-input"                           
                                 name="inguinal"
                                 id="inguinal"
+                                checked={genitalia.inguinal}
                                 value={genitalia.inguinal}
                                 onChange={handleGenitalia}
                                 />
@@ -1051,6 +1082,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={respiratory.nsf}
                                 value={respiratory.nsf}
                                 onChange={handleRespiratory}
                                 />
@@ -1077,6 +1109,7 @@ return (
                                 className="form-check-input"                           
                                 name="rate"
                                 id="rate"
+                                checked={respiratory.rate}
                                 value={respiratory.rate}
                                 onChange={handleRespiratory}
                                 placeholder='breaths/min'
@@ -1091,6 +1124,7 @@ return (
                                 className="form-check-input"                           
                                 name="labored"
                                 id="labored"
+                                checked={respiratory.labored}
                                 value={respiratory.labored}
                                 onChange={handleRespiratory}
                                 />
@@ -1109,6 +1143,7 @@ return (
                                 className="form-check-input"                           
                                 name="cyanosis"
                                 id="cyanosis"
+                                checked={respiratory.cyanosis}
                                 value={respiratory.cyanosis}
                                 onChange={handleRespiratory}
                                 />
@@ -1127,6 +1162,7 @@ return (
                                 className="form-check-input"                           
                                 name="wheezing"
                                 id="wheezing"
+                                checked={respiratory.wheezing}
                                 value={respiratory.wheezing}
                                 onChange={handleRespiratory}
                                 />
@@ -1145,6 +1181,7 @@ return (
                                 className="form-check-input"                           
                                 name="intercostal"
                                 id="intercostal"
+                                checked={respiratory.intercostal}
                                 value={respiratory.intercostal}
                                 onChange={handleRespiratory}
                                 />
@@ -1163,6 +1200,7 @@ return (
                                 className="form-check-input"                           
                                 name="auscultation_finding"
                                 id="auscultation_finding"
+                                checked={respiratory.auscultation_finding}
                                 value={respiratory.auscultation_finding}
                                 onChange={handleRespiratory}
                                 />
@@ -1204,6 +1242,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={gastrointestinal.nsf}
                                 value={gastrointestinal.nsf}
                                 onChange={handleGastrointestinal}
                                 />
@@ -1224,6 +1263,7 @@ return (
                                 className="form-check-input"                           
                                 name="distention"
                                 id="distention"
+                                checked={gastrointestinal.distention}
                                 value={gastrointestinal.distention}
                                 onChange={handleGastrointestinal}
                                 />
@@ -1242,6 +1282,7 @@ return (
                                 className="form-check-input"                           
                                 name="hepatomegaly"
                                 id="hepatomegaly"
+                                checked={gastrointestinal.hepatomegaly}
                                 value={gastrointestinal.hepatomegaly}
                                 onChange={handleGastrointestinal}
                                 />
@@ -1260,6 +1301,7 @@ return (
                                 className="form-check-input"                           
                                 name="spenomegaly"
                                 id="spenomegaly"
+                                checked={gastrointestinal.spenomegaly}
                                 value={gastrointestinal.spenomegaly}
                                 onChange={handleGastrointestinal}
                                 />
@@ -1278,6 +1320,7 @@ return (
                                 className="form-check-input"                           
                                 name="tenderness"
                                 id="tenderness"
+                                checked={gastrointestinal.tenderness}
                                 value={gastrointestinal.tenderness}
                                 onChange={handleGastrointestinal}
                                 />
@@ -1319,6 +1362,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={neurological.nsf}
                                 value={neurological.nsf}
                                 onChange={handleNeurological}
                                 />
@@ -1339,6 +1383,7 @@ return (
                                 className="form-check-input"                           
                                 name="orientation"
                                 id="orientation"
+                                checked={neurological.orientation}
                                 value={neurological.orientation}
                                 onChange={handleNeurological}
                                 />
@@ -1357,6 +1402,7 @@ return (
                                 className="form-check-input"                           
                                 name="speechSlurs"
                                 id="speechSlurs"
+                                checked={neurological.speechSlurs}
                                 value={neurological.speechSlurs}
                                 onChange={handleNeurological}
                                 />
@@ -1375,6 +1421,7 @@ return (
                                 className="form-check-input"                           
                                 name="neckStiffness"
                                 id="neckStiffness"
+                                checked={neurological.neckStiffness}
                                 value={neurological.neckStiffness}
                                 onChange={handleNeurological}
                                 />
@@ -1393,6 +1440,7 @@ return (
                                 className="form-check-input"                           
                                 name="blindness"
                                 id="blindness"
+                                checked={neurological.blindness}
                                 value={neurological.blindness}
                                 onChange={handleNeurological}
                                 />
@@ -1411,6 +1459,7 @@ return (
                                 className="form-check-input"                           
                                 name="paresis"
                                 id="paresis"
+                                checked={neurological.paresis}
                                 value={neurological.paresis}
                                 onChange={handleNeurological}
                                 />
@@ -1428,6 +1477,7 @@ return (
                                 type="checkbox"
                                 className="form-check-input"                           
                                 name="numbness"
+                                checked={neurological.numbness}
                                 id="numbness"
                                 value={neurological.numbness}
                                 onChange={handleNeurological}
