@@ -225,6 +225,15 @@ const Laboratory = (props) => {
         }else{
             setTests ({...tests,  [e.target.name]: e.target.value}); 
         }
+        if(e.target.name==='dateReceivedAtPcrLab'){
+            const dateReceivedAtPcrLab = moment(e.target.value).format("YYYY-MM-DD HH:MM:SS")   //Math.abs(e.target.value)
+            setTests ({...tests,  [e.target.name]: dateReceivedAtPcrLab});
+        }
+        if(e.target.name==='dateResultReceived'){
+            const dateResultReceived = moment(e.target.value).format("YYYY-MM-DD HH:MM:SS")   //Math.abs(e.target.value)
+            setTests ({...tests,  [e.target.name]: dateResultReceived});
+        }
+       
                       
     }
     const handleInputChangeTest = e => {
@@ -285,8 +294,7 @@ const Laboratory = (props) => {
             tests.labTestGroupId= testOrderList.labTestGroupId
             tests.labTestId= testOrderList.id
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
-            tests.dateReceivedAtPcrLab = moment(tests.dateReceivedAtPcrLab).format("YYYY-MM-DD HH:MM:SS")                 
-            tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
+            
             setSaving(true);        
             //if(showResult){
                 axios.post(`${baseUrl}laboratory/vl-results`,tests,
