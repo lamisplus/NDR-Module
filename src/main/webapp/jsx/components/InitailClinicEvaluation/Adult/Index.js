@@ -69,7 +69,8 @@ const UserRegistration = (props) => {
                 nextAppointment:"",
                 neurological:"",
                 mentalstatus:"",
-                visitDate:""           
+                visitDate:"",
+                clinicianName:""           
         },
         dateOfObservation: null,
         facilityId: null,

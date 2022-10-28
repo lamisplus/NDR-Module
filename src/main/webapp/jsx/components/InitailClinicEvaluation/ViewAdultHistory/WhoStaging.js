@@ -104,14 +104,15 @@ const BasicInfo = (props) => {
     useEffect(() => { 
         if(props.observation.data ){
             setAssesment(props.observation.data.assesment) 
-            setWho(props.observation.data.who)             
+            setWho(props.observation.data.who)   
+            setSelectedOptions1(props.observation.data.who.stage1ValueOption)   
+            setSelectedOptions2(props.observation.data.who.stage2ValueOption)      
+            setSelectedOptions3(props.observation.data.who.stage3ValueOption) 
+            setSelectedOptions4(props.observation.data.who.stage4ValueOption) 
         }
     }, [props.observation.data]);  
     const [who, setWho] = useState({stage:"", stage1Value:"",stage2Value:"", stage3Value:"",stage4Value:"", stage1ValueOption:"",stage2ValueOption:"", stage3ValueOption:"",stage4ValueOption:""});
-    const [hideStage1, setHideStage1] = useState(false);
-    const [hideStage2, setHideStage2] = useState(false);
-    const [hideStage3, setHideStage3] = useState(false);
-    const [hideStage4, setHideStage4] = useState(false);
+
     const [assesment, setAssesment] = useState({assessment:""});
     const handleAssessment =e =>{
         setAssesment({...assesment, [e.target.name]: e.target.value})
@@ -119,32 +120,6 @@ const BasicInfo = (props) => {
     }
     const handleWho =e =>{
         //console.log(e.target.value)
-        if(e.target.value==="stage 1"){
-            setHideStage1(true)
-            setHideStage2(false)
-            setHideStage3(false)
-            setHideStage4(false)
-        }else if(e.target.value==="stage 2"){
-            setHideStage1(false)
-            setHideStage2(true)
-            setHideStage3(false)
-            setHideStage4(false)
-
-        }else if(e.target.value==="stage 3"){
-            setHideStage1(false)
-            setHideStage2(false)
-            setHideStage3(true)
-            setHideStage4(false)
-
-        }else if(e.target.value==="stage 4"){
-            setHideStage1(false)
-            setHideStage2(false)
-            setHideStage3(false)
-            setHideStage4(true)
-
-        }else{
-
-        }
         setWho({...who, [e.target.name]: e.target.value})
     }
     const handleItemClick =(page, completedMenu)=>{
@@ -286,7 +261,7 @@ return (
                             </InputGroup>
                         </FormGroup>
                     </div>
-                    {hideStage1 && (
+                    {who.stage==='stage 1' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 1 options</Label>
@@ -299,7 +274,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideStage2 && (
+                    {who.stage==='stage 2' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 2 options</Label>
@@ -312,7 +287,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideStage3 && (
+                    {who.stage==='stage 3' && (
                     <>
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
@@ -327,7 +302,7 @@ return (
                     </div>
                     </>
                     )}
-                    {hideStage4 && (
+                    {who.stage==='stage 4' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 4 options</Label>

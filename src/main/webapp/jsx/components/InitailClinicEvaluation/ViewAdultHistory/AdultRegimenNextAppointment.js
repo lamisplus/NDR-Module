@@ -96,37 +96,22 @@ const AdultRegimenNextAppointment = (props) => {
     const classes = useStyles()
     const [errors, setErrors] = useState({});
     let temp = { ...errors } 
+    const [saving, setSaving] = useState(false); 
+    const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
+    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
     useEffect(() => { 
         if(props.observation.data ){
         setRegimen(props.observation.data.regimen) 
-        setobjValues(props.observation.data.nextAppointment)             
+        objValues.nextAppointment = props.observation.data.nextAppointment  
+        objValues.clinicianName = props.observation.data.clinicianName          
         }
     }, [props.observation.data]);
-    const [saving, setSaving] = useState(false); 
-    const [hideFirstLine, setHideFirstLine] = useState(false);
-    const [hideSecondLine, setHideSecondLine] = useState(false);
-    const [hideThirdLine, setHideThirdLine] = useState(false);
-    const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
-    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
     const handleRegimen =e =>{
-        if(e.target.value==='first line'){
-            setHideFirstLine(true)
-            setHideSecondLine(false)
-            setHideThirdLine(false)
-        }else if(e.target.value==='second line'){
-            setHideFirstLine(false)
-            setHideSecondLine(true)
-            setHideThirdLine(false)
-
-        }else if(e.target.value==='third line'){
-            setHideFirstLine(false)
-            setHideSecondLine(false)
-            setHideThirdLine(true)
-
-        }
+       
         setRegimen({...regimen, [e.target.name]: e.target.value})
     }
-    const handleInputChangeobjValues = e => {            
+    const handleInputChangeobjValues = e => { 
+        setErrors({...errors, [e.target.name]: ""})            
         setobjValues ({...objValues,  [e.target.name]: e.target.value});
     }
     const handleItemClick =(page, completedMenu)=>{
@@ -194,7 +179,7 @@ return (
                                 </Input>
                         </FormGroup>
                     </div>
-                    {hideFirstLine && (
+                    {regimen.regimenLine==='first line'  && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                             <Label>First Line Regimen</Label>
@@ -216,7 +201,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideSecondLine && (
+                    {regimen.regimenLine==='second line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                             <Label>Second Line Regimen</Label>
@@ -246,7 +231,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideThirdLine && (
+                    {regimen.regimenLine==='third line'  && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                             <Label>Third Line Regimen</Label>

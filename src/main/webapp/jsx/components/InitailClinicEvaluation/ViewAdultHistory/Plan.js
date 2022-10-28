@@ -97,6 +97,7 @@ const BasicInfo = (props) => {
     const history = useHistory();
     const [errors, setErrors] = useState({});
     useEffect(() => { 
+        console.log(props.observation.data)
         if(props.observation.data ){
             setPlan(props.observation.data.plan) 
             setPlanArt(props.observation.data.planArt)            
@@ -358,7 +359,7 @@ return (
                             </FormGroup>
                     </div> */}
                     <hr/>
-                    <div className="form-group mb-3 col-md-2">                                                          
+                    <div className="form-group mb-3 col-md-4">                                                          
                             <label
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
@@ -366,7 +367,7 @@ return (
                             <h3>TB Investigations :</h3>
                             </label>                       
                     </div>
-                    <div className="form-group mb-3 col-md-2">                                    
+                    <div className="form-group mb-3 col-md-3">                                    
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
                             type="checkbox"

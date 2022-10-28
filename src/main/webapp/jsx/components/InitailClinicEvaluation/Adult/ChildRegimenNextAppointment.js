@@ -103,28 +103,11 @@ const ChildRegimenNextAppointment = (props) => {
         }
     }, [props.observation.data]);
     const [saving, setSaving] = useState(false); 
-    const [hideFirstLine, setHideFirstLine] = useState(false);
-    const [hideSecondLine, setHideSecondLine] = useState(false);
-    const [hideThirdLine, setHideThirdLine] = useState(false);
     const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
     const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
     const handleRegimen =e =>{
         setErrors({...errors, [e.target.name]: ""})
-        if(e.target.value==='first line'){
-            setHideFirstLine(true)
-            setHideSecondLine(false)
-            setHideThirdLine(false)
-        }else if(e.target.value==='second line'){
-            setHideFirstLine(false)
-            setHideSecondLine(true)
-            setHideThirdLine(false)
-
-        }else if(e.target.value==='third line'){
-            setHideFirstLine(false)
-            setHideSecondLine(false)
-            setHideThirdLine(true)
-
-        }
+        
         setRegimen({...regimen, [e.target.name]: e.target.value})
     }
     const handleInputChangeobjValues = e => {   
@@ -155,6 +138,7 @@ const ChildRegimenNextAppointment = (props) => {
         props.observation.data.regimen= regimen
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
+        props.observation.data.clinicianName = objValues.clinicianName
         console.log(props.observation)
         if(validate()){
         axios.post(`${baseUrl}observation`, props.observation,
@@ -212,7 +196,7 @@ return (
                                 ) : "" }
                         </FormGroup>
                     </div>
-                    {hideFirstLine && (
+                    {regimen.regimenLine==='first line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                             <Label>First Line Regimen</Label>
@@ -244,7 +228,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideSecondLine && (
+                    {regimen.regimenLine==='second line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                             <Label>Second Line Regimen</Label>
@@ -269,7 +253,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideThirdLine && (
+                    {regimen.regimenLine==='third line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                             <Label>Third Line Regimen</Label>

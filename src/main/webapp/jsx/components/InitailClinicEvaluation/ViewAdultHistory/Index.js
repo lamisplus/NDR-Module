@@ -148,7 +148,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'medical-history'}
                                 onClick={()=>handleItemClick('medical-history')}
                                 style={{backgroundColor:activeItem === 'medical-history' ? '#000': ""}}
-                                //disabled={activeItem !== 'medical-history' ? true : false}
+                                disabled={activeItem !== 'medical-history' ? true : false}
                             >               
                                 <span style={{color:'#fff'}}> Medical History
                                 {completed.includes('medical-history') && (
@@ -163,7 +163,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'past-arv'}
                                 onClick={()=>handleItemClick('past-arv')}
                                 style={{backgroundColor:activeItem === 'past-arv' ? '#000': ""}}
-                                //disabled={activeItem !== 'past-arv' ? true : false}
+                                disabled={activeItem !== 'past-arv' ? true : false}
                             >               
                                 <span style={{color:'#fff'}}>Past/Current ARV 
                                 {completed.includes('past-arv') && (
@@ -178,7 +178,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'physical-examination'}
                                 onClick={()=>handleItemClick('physical-examination')}
                                 style={{backgroundColor:activeItem === 'physical-examination' ? '#000': ""}}
-                                //disabled={activeItem !== 'physical-examination' ? true : false}
+                                disabled={activeItem !== 'physical-examination' ? true : false}
                             >
                             {/* <Label>4</Label> */}
                             <span style={{color:'#fff'}}>Physical Examination
@@ -193,7 +193,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'appearance'}
                                 onClick={()=>handleItemClick('appearance')}
                                 style={{backgroundColor:activeItem === 'appearance' ? '#000': ""}}
-                                //disabled={activeItem !== 'appearance' ? true : false}
+                                disabled={activeItem !== 'appearance' ? true : false}
                             >
                             {/* <Label>4</Label> */}
                             <span style={{color:'#fff'}}>General Appearance
@@ -208,7 +208,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'who'}
                                 onClick={()=>handleItemClick('who')}
                                 style={{backgroundColor:activeItem === 'who' ? '#000': ""}}
-                                //disabled={activeItem !== 'who' ? true : false}
+                                disabled={activeItem !== 'who' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Assessment & WHO 
@@ -222,7 +222,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'plan'}
                                 onClick={()=>handleItemClick('plan')}
                                 style={{backgroundColor:activeItem === 'plan' ? '#000': ""}}
-                                //disabled={activeItem !== 'plan' ? true : false}
+                                disabled={activeItem !== 'plan' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Plan & Enroll In
@@ -237,7 +237,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'regimen'}
                                 onClick={()=>handleItemClick('regimen')}
                                 style={{backgroundColor:activeItem === 'regimen' ? '#000': ""}}
-                                //disabled={activeItem !== 'regimen' ? true : false}
+                                disabled={activeItem !== 'regimen' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Regimen & <br/>Next Appointment 
