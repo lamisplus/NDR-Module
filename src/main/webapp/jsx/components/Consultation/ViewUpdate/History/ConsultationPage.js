@@ -766,17 +766,15 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         toast.success("Clinic Visit updated successful");
-        //GetVisitById(visitId)
-        props.setActiveContent({...props.activeContent, route:'consultation', id:"", activeTab:"history", actionType:"view", obj:{}})
+        GetVisitById(objValues.id)
+        props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history", })
       })
       .catch(error => {
         setSaving(false);
+        console.log(error)
         if(error.response && error.response.data){
           let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
           toast.error(errorMessage);
-        }
-        else{
-          toast.error("Something went wrong. Please try again...");
         }
        
       });

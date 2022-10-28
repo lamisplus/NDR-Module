@@ -11,7 +11,7 @@ const ClinicVisitHistory = (props) => {
     <div>
          <div className="row">
             
-                <ConsultationPage patientObj={patientObj} activeContent={props.activeContent} />  
+                <ConsultationPage patientObj={patientObj} activeContent={props.activeContent} setActiveContent={props.setActiveContent} />  
 
         </div>   
     </div>

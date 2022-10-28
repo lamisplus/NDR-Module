@@ -191,11 +191,20 @@ const BasicInfo = (props) => {
         console.log(props.observation.data)
         if(props.observation.data){
             setGeneralApperance(props.observation.data.generalApperance)
+            setMentalStatus(props.observation.data.mentalstatus)
+            setNeurological(props.observation.data.neurological)
+            setGastrointestinal(props.observation.data.gastrointestinal)
+            setRespiratory(props.observation.data.respiratory)
+            setGenitalia(props.observation.data.genitalia)
+            setCardiovascular(props.observation.data.cardiovascular)
+            setBreast(props.observation.data.breast)
+            setEye(props.observation.data.eye)
+            setSkin(props.observation.data.skin)
         }
         
     }, [props.observation.data])
 
-    console.log(generalApperance)
+    console.log(genitalia.nsf)
     const handleGeneralApperance =e =>{
         if(e.target.name!=='other'){
         if(e.target.checked){
@@ -993,7 +1002,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {genitalia.nsf==='' && genitalia.nsf!=='true' && (
+                        {genitalia.nsf==='' || genitalia.nsf!=='true' && (
                         <>
                     
                         <div className="form-group mb-3 col-md-3">                                    
@@ -1094,7 +1103,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {respiratory.nsf==='' && respiratory.nsf!=='true' && (
+                        {respiratory.nsf==='' || respiratory.nsf!=='true' && (
                             <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -1254,7 +1263,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {gastrointestinal.nsf==='' && gastrointestinal.nsf!=='true' && (
+                        {gastrointestinal.nsf==='' || gastrointestinal.nsf!=='true' && (
                             <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -1519,6 +1528,7 @@ return (
                                 className="form-check-input"                           
                                 name="nsf"
                                 id="nsf"
+                                checked={mentalStatus.nsf}
                                 value={mentalStatus.nsf}
                                 onChange={handleMentalStatus}
                                 />
@@ -1539,6 +1549,7 @@ return (
                                 className="form-check-input"                           
                                 name="mentation"
                                 id="mentation"
+                                checked={mentalStatus.mentation}
                                 value={mentalStatus.mentation}
                                 onChange={handleMentalStatus}
                                 />
@@ -1557,6 +1568,7 @@ return (
                                 className="form-check-input"                           
                                 name="memoryloss"
                                 id="memoryloss"
+                                checked={mentalStatus.memoryloss}
                                 value={mentalStatus.memoryloss}
                                 onChange={handleMentalStatus}
                                 />
@@ -1575,6 +1587,7 @@ return (
                                 className="form-check-input"                           
                                 name="moodSwings"
                                 id="moodSwings"
+                                checked={mentalStatus.moodSwings}
                                 value={mentalStatus.moodSwings}
                                 onChange={handleMentalStatus}
                                 />
@@ -1593,6 +1606,7 @@ return (
                                 className="form-check-input"                           
                                 name="depression"
                                 id="depression"
+                                checked={mentalStatus.depression}
                                 value={mentalStatus.depression}
                                 onChange={handleMentalStatus}
                                 />
@@ -1611,6 +1625,7 @@ return (
                                 className="form-check-input"                           
                                 name="anxiety"
                                 id="anxiety"
+                                checked={mentalStatus.anxiety}
                                 value={mentalStatus.anxiety}
                                 onChange={handleMentalStatus}
                                 />
@@ -1629,6 +1644,7 @@ return (
                                 className="form-check-input"                           
                                 name="ideation"
                                 id="ideation"
+                                checked={mentalStatus.ideation}
                                 value={mentalStatus.ideation}
                                 onChange={handleMentalStatus}
                                 />
@@ -1647,6 +1663,7 @@ return (
                                 className="form-check-input"                           
                                 name="tenderness"
                                 id="tenderness"
+                                checked={mentalStatus.tenderness}
                                 value={mentalStatus.tenderness}
                                 onChange={handleMentalStatus}
                                 />
