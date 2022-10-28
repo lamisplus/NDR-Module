@@ -16,7 +16,7 @@ const PharmacyModule = (props) => {
     
     useEffect ( () => {
       setKey(props.activeContent.activeTab)
-    }, [props.activeContent.id]);
+    }, [props.activeContent.id,  props.activeContent.activeTab]);
     //console.log(key)
 
   return (

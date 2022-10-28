@@ -220,8 +220,8 @@ useEffect(() => {
     const handleSubmit = (e) => {        
         e.preventDefault();            
         setSaving(true);
-
-        //setTestOrderList([...testOrderList, tests])
+        tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
+        tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         axios.put(`${baseUrl}laboratory/rde-orders/tests/${props.activeContent.obj.id}`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
@@ -325,7 +325,7 @@ useEffect(() => {
                             <FormGroup>
                                 <Label for="encounterDate"> Date Sample Collected*</Label>
                                 <Input
-                                    type="date"
+                                    type="datetime-local"
                                     name="sampleCollectionDate"
                                     id="sampleCollectionDate"
                                     value={tests.sampleCollectionDate}
@@ -344,7 +344,7 @@ useEffect(() => {
                             <FormGroup>
                                 <Label for="encounterDate">Date Result Received*</Label>
                                 <Input
-                                    type="date"
+                                    type="datetime-local"
                                     name="dateResultReceived"
                                     id="dateResultReceived"
                                     value={tests.dateResultReceived}

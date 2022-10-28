@@ -213,7 +213,7 @@ const ClinicVisit = (props) => {
     levelOfAdherence: "",
     tbStatus: "",
     tbPrevention: "",
-    aRVDrugsRegimen: {},
+    arvdrugsRegimen: {},
     viralLoadOrder: {},
     tbPrevention:"",
 
@@ -259,15 +259,16 @@ const ClinicVisit = (props) => {
     PREGANACY_STATUS();
     FAMILY_PLANNING_METHOD();
     TestGroup();
-    if(props.activeContent.id!==null){
+    if(props.activeContent.id!==""){
      
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
-    if(Object.keys(objValues.viralLoadOrder).length){
-      setTestOrderList([objValues.viralLoadOrder])
-    }
-  }, [patientObj.id, props.activeContent.id, objValues.viralLoadOrder]);
+    // if(Object.keys(objValues.viralLoadOrder).length){
+    //   setTestOrderList([objValues.viralLoadOrder])
+    // } 
+
+  }, [patientObj.id, props.activeContent.id]);// objValues.viralLoadOrder
   const calculate_age = dob => {
     var today = new Date();
     var dateParts = dob.split("-");
@@ -530,6 +531,7 @@ const ClinicVisit = (props) => {
         setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
       }else{
         setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+        setObjValues({ ...objValues, visitDate: e.target.value });
       }
       
     }
@@ -641,12 +643,12 @@ const ClinicVisit = (props) => {
     }
     //Validations of the forms
     const validate = () => {        
-      temp.encounterDate = vital.encounterDate ? "" : "This field is required"
+      objValues.visitDate === "" && (temp.encounterDate = vital.encounterDate ? "" : "This field is required" )//objValues.visitDate
       temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
       temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
       temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
       temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
-      temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
+      temp.levelOfAdherence = objValues.levelOfAdherence ? "" : "This field is required"
       temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
       temp.systolic = vital.systolic ? "" : "This field is required"
       temp.height = vital.height ? "" : "This field is required"
@@ -739,19 +741,25 @@ const ClinicVisit = (props) => {
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if(validate()){
     setSaving(true)
-    objValues.visitDate = vital.encounterDate
-    vital['captureDate'] = vital.encounterDate
+    objValues.visitDate = vital && vital.encounterDate ? vital.encounterDate : objValues.visitDate
+    vital['captureDate'] = vital && vital.encounterDate ? vital.encounterDate : objValues.visitDate
+    if(vital && !vital.encounterDate){
+      vital['encounterDate'] = vital && vital.encounterDate ? vital.encounterDate : objValues.visitDate
+    }
+    
     objValues.adverseDrugReactions = adrList
     objValues.artStatusId = getPatientObj.artCommence.id
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
     objValues.viralLoadOrder= testOrderList
-    objValues.aRVDrugsRegimen= arvDrugOrderList
+    objValues.arvdrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
-    axios.put(`${baseUrl}hiv/art/clinic-visit/${visitId}`, objValues,
+
+    axios.put(`${baseUrl}hiv/art/clinic-visit/${objValues.id}`, objValues,
       { headers: { "Authorization": `Bearer ${token}` } },
 
     )
@@ -774,6 +782,16 @@ const ClinicVisit = (props) => {
       });
     }
   }
+  const getVisitDetail=(e)=>{
+    if(e.id){
+      setEnableUpdateButton(true)
+      setVisitId(e.id)
+      GetVisitById(e.id) 
+    }      
+  }
+  const EnableUpdateAction =()=>{
+      setEnableUpdate(true)
+  }
   //Get visit by ID
    function GetVisitById(visitID) {
     if(visitID!==''){
@@ -784,20 +802,21 @@ const ClinicVisit = (props) => {
       .then((response) => {
           const e = response.data
           setObjValues(e)
-          setVitalSignDto({ ...e.vitalSignDto })
-          
+          console.log(e)
+          setVitalSignDto({ ...vital, ...e.vitalSignDto })
           objValues.clinicalNote = e.clinicalNote
           objValues.functionalStatusId= e.functionalStatusId
           objValues.whoStagingId= e.whoStagingId 
           objValues.nextAppointment= e.nextAppointment
           objValues.adherenceLevel = e.adherenceLevel
+          vital.captureDate=e.visitDate
+          objValues.visitDate=e.visitDate
           //setObjValues(e)
           setTbObj({...e.tbScreen})
           setAdrList([...e.adverseDrugReactions])
           setInfectionList([...e.opportunisticInfections])
-          setTestOrderList([...e.viralLoadOrder])
-          console.log(e)
-          
+          setTestOrderList(e.viralLoadOrder)
+          setarvDrugOrderList([...e.arvdrugsRegimen])
 
       })
       .catch((error) => {
@@ -805,15 +824,7 @@ const ClinicVisit = (props) => {
     }
   }
   console.log(objValues)
-  const getVisitDetail=(e)=>{
-      setEnableUpdateButton(true)
-      setVisitId(e.id)
-      GetVisitById(e.id)      
-  }
-  const EnableUpdateAction =()=>{
-
-      setEnableUpdate(true)
-  }
+ 
   function BmiCal (bmi){
     if(bmi<18.5){
       return (
@@ -887,7 +898,7 @@ const ClinicVisit = (props) => {
                     <Grid.Column className={classes.root}>
                     <Segment>
                     <Label as='a' color='black' style={{width:'106%', height:'35px'}} ribbon>
-                        <h4 style={{color:'#fff'}}> Visit Date - {vital.encounterDate}</h4>
+                        <h4 style={{color:'#fff'}}> Visit Date - {vital.encounterDate && vital.encounterDate!==""? vital.encounterDate : objValues.visitDate}</h4>
                         </Label>
                         <div className="row">
                         <div className="form-group mb-3 col-md-6">
@@ -897,7 +908,7 @@ const ClinicVisit = (props) => {
                                 type="date"
                                 name="encounterDate"
                                 id="encounterDate"
-                                value={vital.encounterDate}
+                                value={vital.encounterDate && vital.encounterDate!==""? vital.encounterDate : objValues.visitDate}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 onChange={handleInputChangeVitalSignDto}
                                 max={moment(new Date()).format("YYYY-MM-DD")}
@@ -1278,97 +1289,143 @@ const ClinicVisit = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        
                         <div className=" mb-3 col-md-6">
-                            <FormGroup>
-                            <FormLabelName >Level of Adherence *</FormLabelName>
-                            <Input
-                                type="select"
-                                name="adherenceLevel"
-                                id="adherenceLevel"
-                                value={objValues.adherenceLevel}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={!enableUpdate}
-                                required
-                            >
-                                <option value="">Select </option>
+                        <FormGroup>
+                          <FormLabelName >Level of Adherence *</FormLabelName>
+                          <Input
+                            type="select"
+                            name="levelOfAdherence"
+                            id="levelOfAdherence"
+                            value={objValues.levelOfAdherence}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                          >
+                            <option value="select">Select </option>
 
-                                {adherenceLevel.map((value) => (
-                                <option key={value.id} value={value.id}>
-                                    {value.display}
-                                </option>
+                            {adherenceLevel.map((value) => (
+                              <option key={value.id} value={value.id}>
+                                {value.display}
+                              </option>
+                            ))}
+                          </Input>
+                          {errors.levelOfAdherence !=="" ? (
+                              <span className={classes.error}>{errors.levelOfAdherence}</span>
+                          ) : "" }
+                        </FormGroup>
+                      </div>
+                    <div className=" mb-3 col-md-6">
+                      <FormGroup>
+                        <FormLabelName >Cryptococcal Screening Status</FormLabelName>
+                        <Input
+                          type="select"
+                          name="cryptococcalScreeningStatus"
+                          id="cryptococcalScreeningStatus"
+                          value={objValues.cryptococcalScreeningStatus}
+                          onChange={handleInputChange}
+                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                          required
+                        >
+                          <option value="select">Select </option>
+
+                          {cryptococcal.map((value) => (
+                                  <option key={value.code} value={value.code}>
+                                      {value.display}
+                                  </option>
+                              ))}
+                        </Input>
+                      
+                      </FormGroup>
+                    </div>
+                  {patientObj.sex==='Female' && (
+                    <>
+                      <div className=" mb-3 col-md-6">
+                        <FormGroup>
+                          <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
+                          <Input
+                            type="select"
+                            name="cervicalCancerScreeningStatus"
+                            id="cervicalCancerScreeningStatus"
+                            value={objValues.cervicalCancerScreeningStatus}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                          >
+                            <option value="select">Select </option>
+
+                            {cervicalStatus.map((value) => (
+                                    <option key={value.code} value={value.code}>
+                                        {value.display}
+                                    </option>
                                 ))}
-                            </Input>
-                            {errors.adherenceLevel !=="" ? (
-                                <span className={classes.error}>{errors.adherenceLevel}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Level of Adherence *</FormLabelName>
-                  <Input
-                    type="select"
-                    name="levelOfAdherence"
-                    id="levelOfAdherence"
-                    value={objValues.levelOfAdherence}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
+                          </Input>
+                          
+                        </FormGroup>
+                      </div>
+                      <div className=" mb-3 col-md-6">
+                        <FormGroup>
+                          <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
+                          <Input
+                            type="select"
+                            name="cervicalCancerTreatmentProvided"
+                            id="cervicalCancerTreatmentProvided"
+                            value={objValues.cervicalCancerTreatmentProvided}
+                            onChange={handleInputChange}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                          >
+                            <option value="select">Select </option>
 
-                    {adherenceLevel.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.display}
-                      </option>
-                    ))}
-                  </Input>
-                  {errors.adherenceLevel !=="" ? (
-                      <span className={classes.error}>{errors.adherenceLevel}</span>
-                  ) : "" }
-                </FormGroup>
-              </div>
-              <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Cryptococcal Screening Status</FormLabelName>
-                  <Input
-                    type="select"
-                    name="cryptococcalScreeningStatus"
-                    id="cryptococcalScreeningStatus"
-                    value={objValues.cryptococcalScreeningStatus}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
-
-                    {cryptococcal.map((value) => (
-                            <option key={value.code} value={value.code}>
-                                {value.display}
-                            </option>
-                        ))}
-                  </Input>
-                 
-                </FormGroup>
-              </div>
-              {patientObj.sex==='Female' && (
-                <>
-                  <div className=" mb-3 col-md-6">
+                            {cervicalTreatment.map((value) => (
+                                    <option key={value.code} value={value.code}>
+                                        {value.display}
+                                    </option>
+                                ))}
+                          </Input>
+                          
+                        </FormGroup>
+                      </div>
+                      <div className=" mb-3 col-md-6">
                     <FormGroup>
-                      <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
+                      <FormLabelName >Pregnancy Status</FormLabelName>
                       <Input
                         type="select"
-                        name="cervicalCancerScreeningStatus"
-                        id="cervicalCancerScreeningStatus"
-                        value={objValues.cervicalCancerScreeningStatus}
+                        name="pregnancyStatus"
+                        id="pregnancyStatus"
+                        value={objValues.pregnancyStatus}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
                       >
                         <option value="select">Select </option>
 
-                        {cervicalStatus.map((value) => (
+                        {pregnancyStatus.map((value) => (
+                                <option key={value.code} value={value.code}>
+                                    {value.display}
+                                </option>
+                            ))}
+                      </Input>
+                    
+                    </FormGroup>
+                  </div>
+                    </>
+                  )}
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >Hepatitis Screening Result</FormLabelName>
+                      <Input
+                        type="select"
+                        name="hepatitisScreeningResult"
+                        id="hepatitisScreeningResult"
+                        value={objValues.hepatitisScreeningResult}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {hepatitis.map((value) => (
                                 <option key={value.code} value={value.code}>
                                     {value.display}
                                 </option>
@@ -1377,77 +1434,6 @@ const ClinicVisit = (props) => {
                       
                     </FormGroup>
                   </div>
-                  <div className=" mb-3 col-md-6">
-                    <FormGroup>
-                      <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
-                      <Input
-                        type="select"
-                        name="cervicalCancerTreatmentProvided"
-                        id="cervicalCancerTreatmentProvided"
-                        value={objValues.cervicalCancerTreatmentProvided}
-                        onChange={handleInputChange}
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
-                      >
-                        <option value="select">Select </option>
-
-                        {cervicalTreatment.map((value) => (
-                                <option key={value.code} value={value.code}>
-                                    {value.display}
-                                </option>
-                            ))}
-                      </Input>
-                      
-                    </FormGroup>
-                  </div>
-                  <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Pregnancy Status</FormLabelName>
-                  <Input
-                    type="select"
-                    name="pregnancyStatus"
-                    id="pregnancyStatus"
-                    value={objValues.pregnancyStatus}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
-
-                    {pregnancyStatus.map((value) => (
-                            <option key={value.code} value={value.code}>
-                                {value.display}
-                            </option>
-                        ))}
-                  </Input>
-                 
-                </FormGroup>
-              </div>
-                </>
-              )}
-              <div className=" mb-3 col-md-6">
-                <FormGroup>
-                  <FormLabelName >Hepatitis Screening Result</FormLabelName>
-                  <Input
-                    type="select"
-                    name="hepatitisScreeningResult"
-                    id="hepatitisScreeningResult"
-                    value={objValues.hepatitisScreeningResult}
-                    onChange={handleInputChange}
-                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
-                  >
-                    <option value="select">Select </option>
-
-                    {hepatitis.map((value) => (
-                            <option key={value.code} value={value.code}>
-                                {value.display}
-                            </option>
-                        ))}
-                  </Input>
-                  
-                </FormGroup>
-              </div>
               {/* This section is if the patient is Female */}
 
                 <div className=" mb-3 col-md-6">
@@ -1847,16 +1833,18 @@ function TestOrdersList({
   testGroupObj,
   vLIndicationObj,
 }) {
-  
-  const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
-  const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
+
+  const testGroupID= order && order.labTestGroupId ? order.labTestGroupId : ""
+  const testTestID= order && order.labTestId ? order.labTestId : ""
+  const testGroupName= testGroupObj.find((x)=> x.id===parseInt(testGroupID))
+  const testName= testGroupName && testGroupName.labTests.find((x)=> x.id===parseInt(testTestID))
   const vLIndication=vLIndicationObj.length>0 ?
   vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : {}
-
+  
   return (
           <tr>
-              <th>{testGroupName.groupName=='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
-              <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>             
+              <th>{testGroupName && testGroupName.groupName=='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th> 
+              <th>{testGroupName && testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display : testName.labTestName}</th>          
               <th>{vLIndication && vLIndication.display ? vLIndication.display : ""}</th>
               <th></th>
               <th >

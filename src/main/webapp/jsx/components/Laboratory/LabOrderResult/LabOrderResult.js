@@ -63,7 +63,8 @@ const useStyles = makeStyles(theme => ({
 const Laboratory = (props) => {
     let visitId=""
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
+    //const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
+    const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -107,9 +108,24 @@ const Laboratory = (props) => {
         TestGroup();
         PriorityOrder();
         ViraLoadIndication();
-            
+        GetPatientDTOObj();   
         }, [props.patientObj.id]);
-        
+        const GetPatientDTOObj =()=>{
+            axios
+               .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   const patientDTO= response.data.enrollment
+                   setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+                   //setEacStatusObj(response.data);
+                   console.log(enrollDate)
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+        } 
     //Get list of Test Group
     const TestGroup =()=>{
         axios
@@ -217,7 +233,8 @@ const Laboratory = (props) => {
 
     const addOrder = e => {  
         if(validate()){
-            
+            tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
+            tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
             tests.visitId=visitId
             setTestOrderList([...testOrderList, tests])
         }
@@ -247,6 +264,8 @@ const Laboratory = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();            
         setSaving(true);
+        tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
+        tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         axios.post(`${baseUrl}laboratory/rde-orders`,testOrderList,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
@@ -402,7 +421,6 @@ const Laboratory = (props) => {
                                 value={tests.dateResultReceived}
                                 min={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
-                                //min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required

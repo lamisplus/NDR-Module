@@ -288,7 +288,6 @@ const UserRegistration = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
-            //console.log(response.data);
             const getSexId=  response.data.find((x)=> x.display===patientObj.sex)//get patient sex ID by filtering the request
             basicInfo.sexId=getSexId.display
         })
@@ -479,19 +478,18 @@ const UserRegistration = (props) => {
      /*****  Validation  */
      const validate = () => {
         let temp = { ...errors }
-            // temp.firstName = basicInfo.firstName ? "" : "First Name is required"
-            // temp.hospitalNumber = basicInfo.hospitalNumber ? "" : "Hospital Number  is required."
-            //temp.middleName = basicInfo.middleName ? "" : "Middle is required."
-            //temp.landmark = basicInfo.landmark ? "" : "This field is required."
-            // temp.lastName = basicInfo.lastName ? "" : "Last Name  is required."
-            // temp.sexId = basicInfo.sexId ? "" : "Sex is required."
+            temp.firstName = basicInfo.firstName ? "" : "First Name is required"
+            temp.hospitalNumber = basicInfo.hospitalNumber ? "" : "Hospital Number  is required."
+
+            temp.lastName = basicInfo.lastName ? "" : "Last Name  is required."
+            temp.sexId = basicInfo.sexId ? "" : "Sex is required."
             temp.dateOfRegistration1 = basicInfo.dateOfRegistration ? "" : "Date of Registration is required."
-            // temp.educationId = basicInfo.educationId ? "" : "Education is required."
-            // temp.address = basicInfo.address ? "" : "Address is required."
-            // temp.phoneNumber = basicInfo.phoneNumber ? "" : "Phone Number  is required."
-            // temp.countryId = basicInfo.countryId ? "" : "Country is required."    
-            // temp.stateId = basicInfo.stateId ? "" : "State is required."  
-            // temp.district = basicInfo.district ? "" : "Province/LGA is required." 
+            temp.educationId = basicInfo.educationId ? "" : "Education is required."
+            temp.address = basicInfo.address ? "" : "Address is required."
+            temp.phoneNumber = basicInfo.phoneNumber ? "" : "Phone Number  is required."
+            temp.countryId = basicInfo.countryId ? "" : "Country is required."    
+            temp.stateId = basicInfo.stateId ? "" : "State is required."  
+            temp.district = basicInfo.district ? "" : "Province/LGA is required." 
             //HIV FORM VALIDATION
             temp.targetGroupId = objValues.targetGroupId ? "" : "Target group is required."
             temp.dateConfirmedHiv = objValues.dateConfirmedHiv ? "" : "date confirm HIV is required."
@@ -1058,7 +1056,7 @@ const UserRegistration = (props) => {
                                                         >
                                                             <option value={""}>Select</option>
                                                             {genders.map((gender, index) => (
-                                                            <option key={gender.id} value={gender.id}>{gender.display}</option>
+                                                            <option key={gender.id} value={gender.display}>{gender.display}</option>
                                                             ))}
                                                         </select>
                                                         {errors.sexId !=="" ? (
@@ -1218,7 +1216,7 @@ const UserRegistration = (props) => {
                                         </div>
                                         </div>
                                     </div>
-                                </div>
+                            </div>
                             </div>
 
                             <div className="card">

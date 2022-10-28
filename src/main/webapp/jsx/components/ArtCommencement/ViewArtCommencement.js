@@ -446,9 +446,7 @@ const ArtCommencement = (props) => {
             )
               .then(response => {
                   setSaving(false);
-                  props.setArt(true)
-                  props.patientObj.commenced=true
-                  toast.success("Record save successful");
+                  toast.success("Record updated successful");
                   props.setActiveContent({...props.activeContent, route:'recent-history'})
 
               })

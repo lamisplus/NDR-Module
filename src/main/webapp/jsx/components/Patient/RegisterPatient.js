@@ -216,7 +216,7 @@ const UserRegistration = (props) => {
         GetCountry();
     
         if(basicInfo.dateOfRegistration < basicInfo.dob){
-            alert('Date of registration can not be earlier than date of birth')
+            toast.error('Date of registration can not be earlier than date of birth')
         }
           
     }, [basicInfo.dateOfRegistration ]);

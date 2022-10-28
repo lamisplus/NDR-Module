@@ -174,6 +174,7 @@ const Pharmacy = (props) => {
             )
             .then((response) => {
                 const data=response.data
+                console.log(data);
                 setObjValues(data);
                 setRegimenDrugList(data && data.extra ? data.extra.regimens : [])
                 DsdModelType(objValues.dsdModel)
@@ -557,6 +558,7 @@ const Pharmacy = (props) => {
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
         objValues.refillPeriod= e.target.value
+        setObjValues ({...objValues,  refillPeriod: e.target.value})
         setObjValues ({...objValues,  nextAppointment: nextDate})
 
         if(refillcount==="90"){
@@ -613,7 +615,7 @@ const Pharmacy = (props) => {
         .then(response => {
             setSaving(false);
             toast.success("Pharmacy drug refill successful");
-            props.setActiveContent({...props.activeContent, route:'recent-history'})
+            props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
         })
         .catch(error => {
             setSaving(false);
@@ -758,48 +760,64 @@ const Pharmacy = (props) => {
                     
                     </FormGroup>
                 </div>
+                <div className="form-group mb-3 col-md-4">
+                    <FormGroup>
+                    <Label for="artDate">Encounter Date * </Label>
+                    <Input
+                        type="date"
+                        name="visitDate"
+                        id="visitDate"
+                        onChange={handleInputChange}
+                        value={objValues.visitDate}
+                        min={enrollDate!=='' ? enrollDate : ""}
+                        max= {moment(new Date()).format("YYYY-MM-DD") }
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                    />
+                    </FormGroup>
+                </div>
                 <div className="mt-4 col-md-2" > 
                       
-                      <div className="form-check custom-checkbox ml-1 ">
-                          <input
-                          type="radio"
-                          className="form-check-input"                       
-                          name="switch"
-                          id="switch"
-                          value="switch"
-                          onChange={handleCheckBox}
-                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                          />
-                          <label
-                          className="form-check-label"
-                          htmlFor="basic_checkbox_1"
-                          >
-                          Switch
-                          </label>
-                      </div>
-                 
-              </div>
-              <div className="mt-4 col-md-2">        
-                      <div className="form-check custom-checkbox ml-1 ">
-                          <input
-                          type="radio"
-                          className="form-check-input"                       
-                          name="switch"
-                          id="switch"
-                          value="Substitution"
-                          onChange={handleCheckBox}
-                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                          />
-                          <label
-                          className="form-check-label"
-                          htmlFor="basic_checkbox_1"
-                          >
-                          Substitution
-                          </label>
-                      </div>
-              </div>
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="radio"
+                            className="form-check-input"                       
+                            name="switch"
+                            id="switch"
+                            value="switch"
+                            onChange={handleCheckBox}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Switch
+                            </label>
+                        </div>
+                   
                 </div>
-                <div className="row">
+                <div className="mt-4 col-md-2">        
+                        <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="radio"
+                            className="form-check-input"                       
+                            name="switch"
+                            id="switch"
+                            value="Substitution"
+                            onChange={handleCheckBox}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            Substitution
+                            </label>
+                        </div>
+                </div>
+            </div>
+            <div className="row">
                 <div className="form-group mb-3 col-md-4">
                 <FormGroup>
                     <Label >Refill Period(days) *</Label>
@@ -807,6 +825,7 @@ const Pharmacy = (props) => {
                         type="select"
                         name="refillPeriod"
                         id="refillPeriod"
+                        value={objValues.refillPeriod}
                         disabled={objValues.visitDate!==null? false : true}
                         onChange={handlRefillPeriod}   
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
@@ -951,7 +970,7 @@ const Pharmacy = (props) => {
                     <option value="">Select </option>
                     {patientAge >5 &&  (
                           <>
-                            {adultRegimenLine.map((value) => (
+                            {adultArtRegimenLine.map((value) => (
                               <option key={value.id} value={value.id}>
                                 {value.description}
                               </option>
@@ -1191,7 +1210,7 @@ const Pharmacy = (props) => {
                                         type="text"
                                         name="prescribed"
                                         id="prescribed"
-                                        value={input.duration * (input.frequency!==NaN? input.frequency : 1)}
+                                        value={input.duration * (input.frequency && input.frequency!==""? input.frequency : 1)}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         disabled

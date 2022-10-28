@@ -383,7 +383,6 @@ const Pharmacy = (props) => {
     }
     function RegimenDrugOI(id) {        
         let drugId = id
-        console.log(id)
         async function getCharacters(drugId) {            
             try{
             const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
@@ -562,13 +561,13 @@ const Pharmacy = (props) => {
     const handlRefillPeriod = e =>{
         const refillcount= e.target.value
         refillPeriodValue=refillcount
-        
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
         const nextDate =moment(nextrefillDate).format("YYYY-MM-DD")
         objValues.refillPeriod= e.target.value
+        setObjValues ({...objValues,  refillPeriod: e.target.value})
         setObjValues ({...objValues,  nextAppointment: nextDate})
-
+        
         if(refillcount==="90"){
             setShowmmdType(true)
             setmmdType("MMD-3")
@@ -623,7 +622,7 @@ const Pharmacy = (props) => {
         .then(response => {
             setSaving(false);
             toast.success("Pharmacy drug refill successful");
-            props.setActiveContent({...props.activeContent, route:'recent-history'})
+            props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
         })
         .catch(error => {
             setSaving(false);
@@ -810,8 +809,8 @@ const Pharmacy = (props) => {
                             </label>
                         </div>
                 </div>
-                </div>
-                <div className="row">
+            </div>
+            <div className="row">
                 <div className="form-group mb-3 col-md-4">
                 <FormGroup>
                     <Label >Refill Period(days) *</Label>
@@ -819,6 +818,7 @@ const Pharmacy = (props) => {
                         type="select"
                         name="refillPeriod"
                         id="refillPeriod"
+                        value={objValues.refillPeriod}
                         disabled={objValues.visitDate!==null? false : true}
                         onChange={handlRefillPeriod}   
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
@@ -1208,7 +1208,7 @@ const Pharmacy = (props) => {
                                         type="text"
                                         name="prescribed"
                                         id="prescribed"
-                                        value={input.duration * (input.frequency!==NaN? input.frequency : 1)}
+                                        value={input.duration * (input.frequency && input.frequency!==""? input.frequency : 1)}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         disabled

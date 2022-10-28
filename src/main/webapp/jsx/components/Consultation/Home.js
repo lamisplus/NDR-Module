@@ -151,7 +151,7 @@ const ClinicVisit = (props) => {
   const [hepatitis, setHepatitis] = useState([])
   const [pregnancyStatus, setPregnancyStatus] = useState([])
   const [familyPlaining, setFamilyPlaining] = useState([])
-
+  const [enrollDate, setEnrollDate] = useState("");
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                                                                     bodyWeight: "",
@@ -204,7 +204,7 @@ const ClinicVisit = (props) => {
     levelOfAdherence: "",
     tbStatus: "",
     tbPrevention: "",
-    aRVDrugsRegimen: {},
+    arvdrugsRegimen: {},
     viralLoadOrder: {},
     tbPrevention:"",
   });
@@ -268,8 +268,25 @@ const ClinicVisit = (props) => {
     HEPATITIS_SCREENING_RESULT();
     PREGANACY_STATUS();
     FAMILY_PLANNING_METHOD();
+    GetPatientDTOObj();
     //hiv/patient/3
   }, []);
+  const GetPatientDTOObj =()=>{
+    axios
+       .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+           { headers: {"Authorization" : `Bearer ${token}`} }
+       )
+       .then((response) => {
+           const patientDTO= response.data.enrollment
+           setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+           //setEacStatusObj(response.data);
+           console.log(enrollDate)
+       })
+       .catch((error) => {
+       //console.log(error);
+       });
+   
+  }
   const calculate_age = dob => {
     var today = new Date();
     var dateParts = dob.split("-");
@@ -703,7 +720,7 @@ const ClinicVisit = (props) => {
     }else{
     setVitalClinicalSupport({...vitalClinicalSupport, pulse:""})
     }
-}
+  }
 const handleInputValueCheckRespiratoryRate =(e)=>{
     if(e.target.name==="respiratoryRate" && (e.target.value < 10 || e.target.value>70)){      
     const message ="Respiratory Rate must not be greater than 70 and less than 10"
@@ -752,6 +769,7 @@ const handleInputValueCheckTemperature =(e)=>{
     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
     setTests ({...tests,  [e.target.name]: e.target.value});       
   }
+  
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -765,7 +783,7 @@ const handleInputValueCheckTemperature =(e)=>{
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
     objValues.viralLoadOrder= testOrderList
-    objValues.aRVDrugsRegimen= arvDrugOrderList
+    objValues.arvdrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
 
     axios.post(`${baseUrl}hiv/art/clinic-visit/`, objValues,
@@ -883,7 +901,10 @@ const handleInputValueCheckTemperature =(e)=>{
                                   {visit.vitalSignDto && visit.vitalSignDto.systolic!==null && visit.vitalSignDto.diastolic!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Blood Pressure <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.systolic}/{visit.vitalSignDto.diastolic}</b></span></List.Item>)}
                                   {visit.vitalSignDto && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Height <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.height} cm</b></span></List.Item>)}
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
-                                  {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{Math.round(visit.vitalSignDto.bodyWeight/(visit.vitalSignDto.height/100))} kg</b></span></List.Item>)}
+                                  {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{
+                                  
+                                  (visit.vitalSignDto.bodyWeight/(((visit.vitalSignDto.height/100) * (visit.vitalSignDto.height/100)))).toFixed(2)
+                                  } kg/m<sup>2</sup></b></span></List.Item>)}
                               </List>
                             
                           </div>
@@ -995,7 +1016,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     value={vital.encounterDate}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                     onChange={handleInputChangeVitalSignDto}
-                    min={props.patientObj && props.patientObj.artCommence ? props.patientObj.artCommence.visitDate : null}
+                    min={enrollDate}
                     max={moment(new Date()).format("YYYY-MM-DD")}
                     required
                   />
@@ -1588,13 +1609,13 @@ const handleInputValueCheckTemperature =(e)=>{
               <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
             </Label>
             <br /><br />
-            <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} artStartDate={props.patientObj.enrollment.dateOfRegistration} encounterDate={vital.encounterDate}/>
+            <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} artStartDate={enrollDate} encounterDate={vital.encounterDate}/>
             <br />
             <Label as='a' color='pink' style={{width:'106%', height:'35px'}}  ribbon>
             <h4 style={{color:'#fff'}}>ADR </h4>
             </Label>
             <br /><br />
-            <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={props.patientObj.enrollment.dateOfRegistration} encounterDate={vital.encounterDate}/>
+            <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={enrollDate} encounterDate={vital.encounterDate}/>
             <br />
             <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>

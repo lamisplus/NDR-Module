@@ -267,7 +267,10 @@ const Laboratory = (props) => {
         e.preventDefault();
         if(validate()){
             tests.labTestGroupId= labTestDetail.labTestGroupId
-            tests.labTestId= labTestDetail.id                 
+            tests.labTestId= labTestDetail.id
+            tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
+            tests.dateReceivedAtPcrLab = moment(tests.dateReceivedAtPcrLab).format("YYYY-MM-DD HH:MM:SS")                 
+            tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         setSaving(true);
         tests.labTestGroupId= labTestDetail.labTestGroupId
         tests.labTestId= labTestDetail.id

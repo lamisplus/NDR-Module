@@ -84,6 +84,7 @@ const NEWEACSESSION = (props) => {
     const [loading, setLoading] = useState(true)
     const [selectedBarriers,setSelectedBarriers] = useState([]);
     const [selectedInterventions,setSelectedInterventions] = useState([]);
+    const [enrollDate, setEnrollDate] = useState("");
     const [objValues, setObjValues]=useState({
                                                 barriers: null,
                                                 barriersOthers:"",
@@ -131,8 +132,24 @@ const NEWEACSESSION = (props) => {
         ];
 
     useEffect(() => {
-        //EACHistory()
+        GetPatientDTOObj();
     }, [props.activeContent]);
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEacStatusObj(response.data);
+               console.log(enrollDate)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+      }
     ///GET LIST OF EAC
     // const EACHistory =()=>{
     //     setLoading(true)
@@ -223,6 +240,7 @@ const NEWEACSESSION = (props) => {
                                     type="date"
                                     name="sessionDate"
                                     id="sessionDate"
+                                    min={enrollDate}
                                     value={objValues.sessionDate}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -420,7 +438,7 @@ const NEWEACSESSION = (props) => {
                                 id="followUpDate"
                                 value={objValues.followUpDate}
                                 onChange={handleInputChange}
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required

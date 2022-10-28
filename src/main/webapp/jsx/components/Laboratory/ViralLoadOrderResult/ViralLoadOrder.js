@@ -63,13 +63,14 @@ const useStyles = makeStyles(theme => ({
 const Laboratory = (props) => {
     let visitId=""
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
+    //const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [buttonHidden, setButtonHidden]= useState(false);
     const [moduleStatus, setModuleStatus]= useState("0")
     const [labNumber, setLabNum] = useState([]);
+    const [enrollDate, setEnrollDate] = useState("");
     const [test, setTest] = useState([]);
     const [vlRequired, setVlRequired]=useState(false)
     const [labTestDetail, setLabTestDetail]=useState([])
@@ -97,10 +98,25 @@ const Laboratory = (props) => {
         CheckLabModule();
         LabTestDetail();
         ViraLoadIndication();
-            
+        GetPatientDTOObj();  
         }, [props.patientObj.id]);
         
-    
+        const GetPatientDTOObj =()=>{
+            axios
+               .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+                   { headers: {"Authorization" : `Bearer ${token}`} }
+               )
+               .then((response) => {
+                   const patientDTO= response.data.enrollment
+                   setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+                   //setEacStatusObj(response.data);
+                   console.log(enrollDate)
+               })
+               .catch((error) => {
+               //console.log(error);
+               });
+           
+        } 
     //Get list of Test Group
     const LabTestDetail =()=>{
         axios
@@ -171,9 +187,9 @@ const Laboratory = (props) => {
     }
    
     const addOrder = e => {  
-        console.log(errors) 
         if(validate()){
-            
+        tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
+        tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
             tests.visitId=visitId
             setTestOrderList([...testOrderList, tests])
         }
@@ -204,6 +220,7 @@ const Laboratory = (props) => {
         e.preventDefault();
         if(validate()){         
         setSaving(true);
+        
         axios.post(`${baseUrl}laboratory/vl-orders`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
