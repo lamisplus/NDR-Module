@@ -92,6 +92,8 @@ public class ArtClinicVisitService {
 	public ARTClinicVisitDto updateClinicVisit(Long id, ARTClinicVisitDto artClinicVisitDto) {
 		ARTClinical existArtClinical = getExistClinicVisit(id);
 		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
+		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 12:00");
+		vitalSignDto.setCaptureDate(captureDate);
 		vitalSignService.updateVitalSign(existArtClinical.getVitalSign().getId(), vitalSignDto);
 		ARTClinical artClinical = convertDtoToART(artClinicVisitDto, existArtClinical.getVitalSign().getId());
 		artClinical.setVisit(existArtClinical.getVisit());
