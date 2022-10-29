@@ -413,7 +413,7 @@ const ClinicVisit = (props) => {
     async function ClinicVisitListHistory() {
       setLoading(true)
       axios
-          .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
+          .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=1000&personId=${props.patientObj.id}`,
           { headers: {"Authorization" : `Bearer ${token}`} }
           )
           .then((response) => {
@@ -683,6 +683,19 @@ const ClinicVisit = (props) => {
     if(validateLabOrder()){
         tests.visitId=visitId
         setTestOrderList([...testOrderList, tests])
+        setTests({
+          comments: "",
+          dateAssayed: "",
+          labNumber: "",
+          labTestGroupId: "",
+          labTestId: "",
+          dateResultReceived:"",
+          patientId:props.patientObj?props.patientObj.id:"",
+          result: "",
+          sampleCollectionDate: null,
+          viralLoadIndication: 0,
+          visitId:"" 
+        })
     }
   }
   /* Remove ADR  function **/
@@ -699,6 +712,15 @@ const ClinicVisit = (props) => {
       const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))     
       arvDrugObj.regimenDrugName= regimenType.description
       setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
+      setArvDrugObj({
+        regimenLine: "",
+        regimenDrug: "",
+        regimenLineName: "",
+        regimenDrugName: "",
+        dosage: "",
+        regimenAdherance: "",
+     
+      })
     }        
   }
   /* Remove ADR  function **/

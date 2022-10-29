@@ -269,7 +269,7 @@ const Laboratory = (props) => {
        showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
        showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
 
-       showResult && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+       showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
        showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
        showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
        showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
@@ -280,8 +280,6 @@ const Laboratory = (props) => {
        showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
         //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
         showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
- 
-        
         setErrors({
             ...temp
         })
@@ -294,7 +292,7 @@ const Laboratory = (props) => {
             tests.labTestGroupId= testOrderList.labTestGroupId
             tests.labTestId= testOrderList.id
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
-            
+            tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
             setSaving(true);        
             //if(showResult){
                 axios.post(`${baseUrl}laboratory/vl-results`,tests,
@@ -303,6 +301,34 @@ const Laboratory = (props) => {
                     setSaving(false);
                     props.LabOrders();
                     toast.success("Laboratory test order created successful");
+                    setTests({
+                        approvedBy: "",
+                        assayedBy: "",
+                        checkedBy: "",
+                        comment: "",
+                        dateApproved: "",
+                        dateAssayedBy: "",
+                        dateCheckedBy: "",
+                        dateCollectedBy: "",
+                        dateOrderBy: "",
+                        dateReceivedAtPcrLab: "",
+                        dateResultReceived: "",
+                        dateSampleLoggedRemotely: "",
+                        id: "",
+                        labNumber: "",
+                        labTestGroupId: "",
+                        labTestId: "",
+                        orderBy: "",
+                        patientId: props.patientObj?props.patientObj.id:"",
+                        pcrLabName: "",
+                        pcrLabSampleNumber: "",
+                        result: "",
+                        sampleCollectedBy: "",
+                        sampleCollectionDate: "",
+                        sampleLoggedRemotely: "",
+                        sampleTypeId: "",
+                        viralLoadIndication: ""
+                    })
                     props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
                 })
                 .catch(error => {
@@ -558,7 +584,7 @@ const Laboratory = (props) => {
                                 name="sampleLoggedRemotely"
                                 id="sampleLoggedRemotely"
                                 //min={0}
-                                value={tests.labNumber}
+                                value={tests.sampleLoggedRemotely}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -569,6 +595,7 @@ const Laboratory = (props) => {
                             </Input>
                         </FormGroup>
                     </Col>
+                    {tests.sampleLoggedRemotely ==='Yes' && (
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Sample logged remotely *</Label>
@@ -587,6 +614,7 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
+                    )}
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Sample Received at PCR Lab *</Label>
@@ -649,7 +677,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Order by *</Label>
+                            <Label for="encounterDate">Date Ordered  *</Label>
                             <Input
                                 type="date"
                                 name="dateOrderBy"
@@ -670,7 +698,7 @@ const Laboratory = (props) => {
                    
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Collected by *</Label>
+                            <Label for="encounterDate">Date Collected  *</Label>
                             <Input
                                 type="date"
                                 name="dateCollectedBy"
@@ -707,7 +735,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Asseyed by *</Label>
+                            <Label for="encounterDate">Date Asseyed  *</Label>
                             <Input
                                 type="date"
                                 name="dateAssayedBy"
@@ -746,7 +774,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Checked by *</Label>
+                            <Label for="encounterDate">Date Checked *</Label>
                             <Input
                                 type="date"
                                 name="dateCheckedBy"
@@ -785,7 +813,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Approved by *</Label>
+                            <Label for="encounterDate">Date Approved *</Label>
                             <Input
                                 type="date"
                                 name="dateApproved"

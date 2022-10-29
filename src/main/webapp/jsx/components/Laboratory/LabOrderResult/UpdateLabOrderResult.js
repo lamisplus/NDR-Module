@@ -106,6 +106,8 @@ useEffect(() => {
         CheckLabModule();
         CheckEACStatus();
         setTests({...props.activeContent.obj})
+        tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
+        tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         //setTest(props.activeContent.obj.labTestId)
     }, [props.patientObj.id, props.activeContent.obj]);
      //Get EAC Status
@@ -259,7 +261,7 @@ useEffect(() => {
 
         <div className="row">
         <div className="col-md-6">
-        <h2>Laboratory Order & Result</h2>
+        <h2>Laboratory Order & Result </h2>
         </div>
      
         <br/>
@@ -273,7 +275,7 @@ useEffect(() => {
                     <Row>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">laboratory Number* </Label>
+                                <Label for="encounterDate">laboratory Number(Sample Numbe)* </Label>
                                 <Input
                                     type="text"
                                     name="labNumber"

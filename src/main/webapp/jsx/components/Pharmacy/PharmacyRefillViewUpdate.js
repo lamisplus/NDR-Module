@@ -552,7 +552,22 @@ const Pharmacy = (props) => {
         }
     } 
     const handlRefillPeriod = e =>{
-        const refillcount= e.target.value
+        let refillcount= ""
+        if(e.target.value==="30"){
+             refillcount= e.target.value -2
+        }else if(e.target.value==="60"){
+            refillcount= e.target.value -4
+        }else if(e.target.value==="90"){
+        refillcount= e.target.value - 6
+        }else if(e.target.value==="120"){
+            refillcount= e.target.value -8
+        }else if(e.target.value==="160"){
+            refillcount= e.target.value -10
+        }else if(e.target.value==="180"){
+            refillcount= e.target.value -12
+        }else{
+            refillcount= e.target.value
+        }
         refillPeriodValue=refillcount
         const visitDate = objValues.visitDate
         const nextrefillDate= moment(visitDate, "YYYY-MM-DD").add(refillcount, 'days').toDate();
@@ -1210,7 +1225,7 @@ const Pharmacy = (props) => {
                                         type="text"
                                         name="prescribed"
                                         id="prescribed"
-                                        value={input.duration * (input.frequency && input.frequency!==""? input.frequency : 1)}
+                                        value={(input.frequency && input.frequency!==""? input.frequency * input.duration : 0)}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         disabled

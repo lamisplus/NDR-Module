@@ -78,6 +78,7 @@ const Laboratory = (props) => {
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [labTestDetail, setLabTestDetail]=useState([])
+    const [showResult, setShowResult]=useState(false)
     let temp = { ...errors }
     const [tests, setTests]=useState({
             approvedBy: "",
@@ -112,7 +113,9 @@ const Laboratory = (props) => {
         CheckLabModule();
         ViraLoadIndication();
         LabTestDetail();
-        setTests(props.activeContent.obj)    
+        setTests(props.activeContent.obj) 
+        tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
+        tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")   
     }, [props.patientObj.id, props.activeContent.obj]);
 
         const LabTestDetail =()=>{
@@ -165,20 +168,7 @@ const Laboratory = (props) => {
             //console.log(error);
             });        
     }
-    const handleSelectedTestGroup = e =>{
-        setTests ({...tests,  labTestGroupId: e.target.value});
-        const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
-        setTest(getTestList[0].labTests)
-        // if(e.target.value==='4'){            
-        //     setVlRequired(true)
-        // }else{
-        //     setVlRequired(false) 
-        // }
-    }
-    const handleInputChangeObject = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        setTests ({...tests,  [e.target.name]: e.target.value});               
-    }
+
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         //tests.labNumber
@@ -190,52 +180,33 @@ const Laboratory = (props) => {
         }
                       
     }
-    const handleInputChangeTest = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        
-        if(e.target.value==="16"){
-            setShowVLIndication(true)
-            setVlRequired(true)
-            setErrors({...temp, viralLoadIndication:""})
-            
-            setTests ({...tests,  labTestId: e.target.value});
-        }else{
-            setShowVLIndication(false)
-            setVlRequired(false) 
-            setTests ({...tests,  labTestId: e.target.value});
-        }
-        //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
-    }
-
+    
       //Validations of the forms
       const validate = () => {  
-        temp.approvedBy = tests.approvedBy ? "" : "This field is required"
-        temp.assayedBy = tests.assayedBy ? "" : "This field is required"
         temp.sampleTypeId = tests.sampleTypeId ? "" : "This field is required"
-        temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required"
         temp.sampleCollectionDate =  tests.sampleCollectionDate ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
         temp.labNumber = tests.labNumber ? "" : "This field is required"
+       temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
+       showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
+       showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
+       showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
+       showResult && (temp.result = tests.result ? "" : "This field is required")
+       showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+       showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
+       showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
 
-        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
-        temp.result = tests.result ? "" : "This field is required"
-        temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required"
-        temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required"
-        temp.orderBy = tests.orderBy ? "" : "This field is required"
+       showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+       showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
+       showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
+       showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
+       showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
+       showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
 
-        temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required"
-        temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required"
-        temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required"
-        temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required"
-        temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required"
-        temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required"
-
-        temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required"
-        temp.dateApproved = tests.dateApproved ? "" : "This field is required"
+       showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
+       showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
         //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
-        temp.checkedBy = tests.checkedBy ? "" : "This field is required"
- 
-        
+        showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
         setErrors({
             ...temp
         })
@@ -247,10 +218,10 @@ const Laboratory = (props) => {
         if(validate()){
             tests.labTestGroupId= labTestDetail.labTestGroupId
             tests.labTestId= labTestDetail.id                 
-        setSaving(true);
-        tests.labTestGroupId= labTestDetail.labTestGroupId
-        tests.labTestId= labTestDetail.id
-        axios.post(`${baseUrl}laboratory/vl-results`,tests,
+            setSaving(true);
+            tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
+            tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
+            axios.post(`${baseUrl}laboratory/vl-results`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
@@ -266,7 +237,13 @@ const Laboratory = (props) => {
             }); 
         }
     }
-
+    const handleCheckBox =e =>{
+        if(e.target.checked){
+            setShowResult(true)
+        }else{
+            setShowResult(false)
+        }
+    }
   return (      
       <div >
 
@@ -303,6 +280,8 @@ const Laboratory = (props) => {
                             ) : "" }
                             </FormGroup>
                     </Col>
+                    
+
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">VL Indication*</Label>
@@ -356,12 +335,13 @@ const Laboratory = (props) => {
                         <FormGroup>
                             <Label for="encounterDate"> Date Sample Collected*</Label>
                             <Input
-                                type="date"
+                                type="datetime-local"
                                 name="sampleCollectionDate"
                                 id="sampleCollectionDate"
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
                                 min={enrollDate}
+                                //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -390,7 +370,27 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    {tests.pcrLabSampleNumber!==null && (<>
+                    <Col md={6} className="mt-4">
+                        <div className="form-check custom-checkbox ml-1 ">
+                                <input
+                                type="checkbox"
+                                className="form-check-input"                       
+                                name="asResult"
+                                id="asResult"
+                                value="asResult"
+                                onChange={handleCheckBox}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                />
+                                <label
+                                className="form-check-label"
+                                htmlFor="basic_checkbox_1"
+                                >
+                                Has Result ?
+                                </label>
+                        </div>
+                    </Col>
+                    <hr/>
+                {showResult && (<>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">PCR Lab Name *</Label>
@@ -438,7 +438,7 @@ const Laboratory = (props) => {
                                 name="sampleLoggedRemotely"
                                 id="sampleLoggedRemotely"
                                 //min={0}
-                                value={tests.labNumber}
+                                value={tests.sampleLoggedRemotely}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -449,6 +449,7 @@ const Laboratory = (props) => {
                             </Input>
                         </FormGroup>
                     </Col>
+                    {tests.sampleLoggedRemotely ==='Yes' && (
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Sample logged remotely *</Label>
@@ -467,11 +468,12 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
+                    )}
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Sample Received at PCR Lab *</Label>
                             <Input
-                                type="date"
+                                type="datetime-local"
                                 name="dateReceivedAtPcrLab"
                                 id="dateReceivedAtPcrLab"
                                 value={tests.dateReceivedAtPcrLab}
@@ -492,7 +494,7 @@ const Laboratory = (props) => {
                         <FormGroup>
                             <Label for="encounterDate">Date Result Received *</Label>
                             <Input
-                                type="date"
+                                type="datetime-local"
                                 name="dateResultReceived"
                                 id="dateResultReceived"
                                 value={tests.dateResultReceived}
@@ -529,7 +531,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Order by *</Label>
+                            <Label for="encounterDate">Date Ordered  *</Label>
                             <Input
                                 type="date"
                                 name="dateOrderBy"
@@ -547,10 +549,10 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    
+                   
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Collected by *</Label>
+                            <Label for="encounterDate">Date Collected  *</Label>
                             <Input
                                 type="date"
                                 name="dateCollectedBy"
@@ -587,7 +589,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Asseyed by *</Label>
+                            <Label for="encounterDate">Date Asseyed  *</Label>
                             <Input
                                 type="date"
                                 name="dateAssayedBy"
@@ -626,7 +628,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Checked by *</Label>
+                            <Label for="encounterDate">Date Checked *</Label>
                             <Input
                                 type="date"
                                 name="dateCheckedBy"
@@ -665,7 +667,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Approved by *</Label>
+                            <Label for="encounterDate">Date Approved *</Label>
                             <Input
                                 type="date"
                                 name="dateApproved"
@@ -723,7 +725,7 @@ const Laboratory = (props) => {
                             
                         </FormGroup>
                     </Col>
-                    </>)}    
+                </>)}   
                     </Row>
                 </div>
                     

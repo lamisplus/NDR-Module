@@ -246,7 +246,7 @@ const ClinicVisit = (props) => {
     patientId:props.patientObj?props.patientObj.id:"",
     result: "",
     sampleCollectionDate: null,
-    viralLoadIndication: 0,
+    viralLoadIndication: "",
     visitId:"" 
   })
   useEffect(() => {
@@ -630,6 +630,19 @@ const ClinicVisit = (props) => {
     if(validateLabOrder()){
         tests.visitId=visitId
         setTestOrderList([...testOrderList, tests])
+        setTests({
+          comments: "",
+          dateAssayed: "",
+          labNumber: "",
+          labTestGroupId: "",
+          labTestId: "",
+          dateResultReceived:"",
+          patientId:props.patientObj?props.patientObj.id:"",
+          result: "",
+          sampleCollectionDate: null,
+          viralLoadIndication: "",
+          visitId:"" 
+        })
     }
   }
   /* Remove ADR  function **/
@@ -646,13 +659,21 @@ const ClinicVisit = (props) => {
       const regimenType= regimenTypeObj.find((x)=> x.id===parseInt(arvDrugObj.regimenDrug))     
       arvDrugObj.regimenDrugName= regimenType.description
       setarvDrugOrderList([...arvDrugOrderList, arvDrugObj])
+      setArvDrugObj({
+        regimenLine: "",
+        regimenDrug: "",
+        regimenLineName: "",
+        regimenDrugName: "",
+        dosage: "",
+        regimenAdherance: "",
+     
+      })
     }        
   }
   /* Remove ADR  function **/
   const removeArvDrugOrder = index => {       
     arvDrugOrderList.splice(index, 1);
     setarvDrugOrderList([...arvDrugOrderList]);
-      
   };
 
   //Handle CheckBox 

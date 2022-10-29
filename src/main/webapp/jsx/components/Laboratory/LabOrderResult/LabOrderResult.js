@@ -253,6 +253,26 @@ const Laboratory = (props) => {
             tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
             tests.visitId=visitId
             setTestOrderList([...testOrderList, tests])
+            setTests({
+                comments: "",
+                dateAssayed: "",
+                labNumber: "",
+                labTestGroupId: "",
+                labTestId: "",
+                dateResultReceived:"",
+                patientId:props.patientObj?props.patientObj.id:"",
+                result: "",
+                sampleCollectionDate: "",
+                viralLoadIndication: "",
+                visitId:"" ,
+                checkedBy: "",
+                clinicianName: "",
+                dateChecked: "",
+                dateResultReported: "",
+                id: "",
+                orderId: "",
+                resultReportedBy: "",
+            })
         }
     }
     /* Remove ADR  function **/

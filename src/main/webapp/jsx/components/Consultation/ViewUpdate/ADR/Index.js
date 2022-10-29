@@ -62,6 +62,7 @@ const ADR = (props) => {
   const addADR = e => { 
     if(validate()){
         props.setAdrList([...props.adrList, props.adrObj])
+        props.setAdrObj({ adr: "", adrOnsetDate: "" })
     }else{
       toast.error(" Field are required ");
     }

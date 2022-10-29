@@ -61,6 +61,7 @@ const ADR = (props) => {
     const addInfection = e => { 
       if(validate()){
         props.setInfectionList([...props.infectionList, props.infection])
+        props.setInfection({ illnessInfection: "", ondateInfection: "" });
       }else{
         toast.error(" Field are required ");
       }
