@@ -110,6 +110,7 @@ useEffect(() => {
         tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         //setTest(props.activeContent.obj.labTestId)
     }, [props.patientObj.id, props.activeContent.obj]);
+    console.log(props.activeContent.obj)
      //Get EAC Status
      const CheckEACStatus =()=>{
         axios
