@@ -117,7 +117,7 @@ const Laboratory = (props) => {
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")   
     }, [props.patientObj.id, props.activeContent.obj]);
-
+console.log(props.activeContent.obj)
         const LabTestDetail =()=>{
             axios
                 .get(`${baseUrl}laboratory/labtests/viral%20load`,

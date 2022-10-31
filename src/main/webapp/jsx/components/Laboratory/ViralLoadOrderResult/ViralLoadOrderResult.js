@@ -292,7 +292,7 @@ const Laboratory = (props) => {
             tests.labTestGroupId= testOrderList.labTestGroupId
             tests.labTestId= testOrderList.id
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
-            tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
+            tests.dateResultReceived = tests.dateResultReceived!=='' ? moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")  : ""
             setSaving(true);        
             //if(showResult){
                 axios.post(`${baseUrl}laboratory/vl-results`,tests,
