@@ -24,7 +24,7 @@ const LaboratoryModule = (props) => {
     async function LabOrders() {
       //setLoading(true)
       axios
-          .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
+          .get(`${baseUrl}laboratory/vl-results/patients/${props.patientObj.id}`,
           { headers: {"Authorization" : `Bearer ${token}`} }
           )
           .then((response) => {

@@ -120,17 +120,18 @@ const RecentHistory = (props) => {
         });        
   }
   const labStatus =(status)=> {
-      if(status===0){
+    const orderStatus= parseInt(status)
+      if(orderStatus===0){
         return "timeline-badge info"
-      }else if(status===1){
+      }else if(orderStatus===1){
         return "timeline-badge warning"
-      }else if(status===2){
+      }else if(orderStatus===2){
         return "timeline-badge success"
-      }else if(status===3){
+      }else if(orderStatus===3){
         return "timeline-badge danger"
-      }else if(status===4){
+      }else if(orderStatus===4){
         return "timeline-badge primary"
-      }else if(status===5){
+      }else if(orderStatus===5){
         return "timeline-badge info"
       }else {
         return "timeline-badge secondary"

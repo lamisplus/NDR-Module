@@ -191,7 +191,7 @@ const LabHistory = (props) => {
                   { title: "Date Sample Collected", field: "sampleCollectionDate", filtering: false },
                   // { title: "Date Assayed", field: "dateAssayed", filtering: false },
                   { title: "Date Result Received", field: "dateResultReceived", filtering: false },
-                  { title: "VL Indication", field: "viralLoadIndication", filtering: false },
+                  // { title: "VL Indication", field: "viralLoadIndication", filtering: false },
                   { title: "Action", field: "Action", filtering: false },
 
                 ]}
@@ -204,7 +204,7 @@ const LabHistory = (props) => {
                     sampleCollectionDate: row.sampleCollectionDate,    
                     //dateAssayed: row.dateAssayed,
                     dateResultReceived: row.dateResultReceived, 
-                    viralLoadIndication: row.viralLoadIndicationName,
+                    //viralLoadIndication: row.viralLoadIndicationName,
                     Action: 
                    
                     <div>

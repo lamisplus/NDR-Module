@@ -62,6 +62,7 @@ const useStyles = makeStyles(theme => ({
 
 const Laboratory = (props) => {
     let visitId=""
+    let labNumberOption=""
     const patientObj = props.patientObj;
     const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
@@ -79,6 +80,7 @@ const Laboratory = (props) => {
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [labTestDetail, setLabTestDetail]=useState([])
     const [eacStatusObj, setEacStatusObj] = useState()
+    const [labNumbers, setLabNumbers] = useState([]);//
     let temp = { ...errors }
     const [tests, setTests]=useState({
             approvedBy: "",
@@ -113,8 +115,23 @@ const Laboratory = (props) => {
         CheckLabModule();
         ViraLoadIndication();
         LabTestDetail();
-        CheckEACStatus();    
+        CheckEACStatus();  
+        LabNumbers();  
     }, [props.patientObj.id]);
+    //Get list of LabNumbers
+    const LabNumbers =()=>{
+        axios
+            .get(`${baseUrl}laboratory/lab-numbers`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setLabNumbers(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     //Get EAC Status
     const CheckEACStatus =()=>{
         axios
@@ -236,6 +253,10 @@ const Laboratory = (props) => {
        
                       
     }
+    const handleInputChangeLabNumber = e => {
+        labNumberOption=e.target.value
+                      
+    }
     const handleInputChangeTest = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         
@@ -289,6 +310,7 @@ const Laboratory = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();
         if(validate()){
+            tests.labNumber=labNumberOption+"/"+tests.labNumber
             tests.labTestGroupId= testOrderList.labTestGroupId
             tests.labTestId= testOrderList.id
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
@@ -407,10 +429,35 @@ const Laboratory = (props) => {
                 <div className="row">
                     
                     <Row>
-                 
+                    <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">laboratory Number</Label>                                
+                                <Input
+                                    type="select"
+                                    name="labNumberOption"
+                                    id="labNumberOption"
+                                    value={tests.labNumberOption}
+                                    onChange={handleInputChangeLabNumber}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                >
+                                     <option value="">Select </option>
+                                        
+                                        {labNumbers.map((value) => (
+                                            <option key={value.id} value={value.id}>
+                                                {value.labNumber}
+                                            </option>
+                                        ))}
+
+                                </Input>
+                                
+                            </FormGroup>
+                    </Col>
+                    </Row>
+                    <Row>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="labNumber">Lab Number (Sample Number)*</Label>
+                                <Label for="labNumber">Sample Number*</Label>
                                 <Input
                                 type="text"
                                 name="labNumber"

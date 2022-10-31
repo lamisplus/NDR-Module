@@ -62,6 +62,7 @@ const useStyles = makeStyles(theme => ({
 
 const Laboratory = (props) => {
     let visitId=""
+    let labNumberOption=""
     const patientObj = props.patientObj;
     //const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const [enrollDate, setEnrollDate] = useState("");
@@ -79,6 +80,7 @@ const Laboratory = (props) => {
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
+    const [labNumbers, setLabNumbers] = useState([]);//
     
     let temp = { ...errors }
     const [tests, setTests]=useState({
@@ -111,8 +113,9 @@ const Laboratory = (props) => {
         ViraLoadIndication();
         GetPatientDTOObj(); 
         CheckEACStatus();  
-        }, [props.patientObj.id]);
-        const GetPatientDTOObj =()=>{
+        LabNumbers();
+    }, [props.patientObj.id]);
+    const GetPatientDTOObj =()=>{
             axios
                .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
                    { headers: {"Authorization" : `Bearer ${token}`} }
@@ -128,6 +131,20 @@ const Laboratory = (props) => {
                });
            
     } 
+    //Get list of LabNumbers
+    const LabNumbers =()=>{
+        axios
+            .get(`${baseUrl}laboratory/lab-numbers`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setLabNumbers(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     //Get EAC Status
     const CheckEACStatus =()=>{
         axios
@@ -208,7 +225,7 @@ const Laboratory = (props) => {
     const handleSelectedTestGroup = e =>{
         setTests ({...tests,  labTestGroupId: e.target.value});
         const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
-        setTest(getTestList[0].labTests)
+        setTest(getTestList[0].labTests.filter((x)=> x.id!==16))
         // if(e.target.value==='4'){            
         //     setVlRequired(true)
         // }else{
@@ -228,6 +245,10 @@ const Laboratory = (props) => {
         }else{
             setTests ({...tests,  [e.target.name]: e.target.value}); 
         }
+                      
+    }
+    const handleInputChangeLabNumber = e => {
+        labNumberOption=e.target.value
                       
     }
     const handleInputChangeTest = e => {
@@ -252,6 +273,7 @@ const Laboratory = (props) => {
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
             tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
             tests.visitId=visitId
+            tests.labNumber=labNumberOption+"/"+tests.labNumber
             setTestOrderList([...testOrderList, tests])
             setTests({
                 comments: "",
@@ -338,7 +360,31 @@ const Laboratory = (props) => {
                 <Row>
                     <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">laboratory Number</Label>
+                                <Label for="encounterDate">laboratory Number</Label>                                
+                                <Input
+                                    type="select"
+                                    name="labNumberOption"
+                                    id="labNumberOption"
+                                    value={tests.labNumberOption}
+                                    onChange={handleInputChangeLabNumber}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
+                                >
+                                     <option value="">Select </option>
+                                        
+                                        {labNumbers.map((value) => (
+                                            <option key={value.id} value={value.id}>
+                                                {value.labNumber}
+                                            </option>
+                                        ))}
+
+                                </Input>
+                                
+                            </FormGroup>
+                    </Col>
+                    <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Sample Number *</Label>                                
                                 <Input
                                     type="text"
                                     name="labNumber"
@@ -598,9 +644,7 @@ const Laboratory = (props) => {
                                     <th>Test Group</th>
                                     <th>Test</th>
                                     <th>Date Sample Collected</th>
-                                    {/* <th>Date Asseyed</th> */}
                                     <th>Date Result Received</th>
-                                    <th>VL Indication</th>
                                     <th>Result</th>                                        
                                     <th ></th>
                                 </tr>
@@ -613,7 +657,6 @@ const Laboratory = (props) => {
                                 index={index}
                                 order={tests}
                                 testGroupObj={testGroup}
-                                vLIndicationObj={vLIndication}
                                 removeOrder={removeOrder}
                             />
                             ))}
@@ -674,22 +717,21 @@ function TestOrdersList({
     index,
     removeOrder,
     testGroupObj,
-    vLIndicationObj,
+
   }) {
     
     const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
     const testName= testGroupName.labTests.find((x)=> x.id===parseInt(order.labTestId))
-    const vLIndication=vLIndicationObj.length>0 ?
-    vLIndicationObj.find((x)=> x.id===parseInt(order.viralLoadIndication)) : {}
+    
 
     return (
             <tr>
                 <th>{testGroupName.groupName=='Others' && testName.labTestName==='Viral Load'?testName.labTestName: testGroupName.groupName}</th>
-                <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? vLIndication.display :  testName.labTestName}</th>
+                <th>{testGroupName.groupName==='Others' && testName.labTestName==='Viral Load'? testName.labTestName :  testName.labTestName}</th>
                 <th>{order.sampleCollectionDate}</th>
                 {/* <th>{order.dateAssayed}</th> */}
                 <th>{order.dateResultReceived}</th>
-                <th>{vLIndication && vLIndication.display ? vLIndication.display : ""}</th>
+
                 <th>{order.result}</th>
                 <th></th>
                 <th >

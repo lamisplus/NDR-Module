@@ -84,10 +84,12 @@ const Tracking = (props) => {
     const patientObj = props.patientObj;
     const [errors, setErrors] = useState({});
     let temp = { ...errors }
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [selected, setSelected] = useState([]);
+    const [optionsForSelection, setOptionsForSelection] = useState([]);
+    const [optionsForCallOutCome, setOptionsForCallOutCome] = useState([]);
     const [observation, setObservation]=useState({
         data: {},
         dateOfObservation: "yyyy-MM-dd",
@@ -106,8 +108,72 @@ const Tracking = (props) => {
             anyOfTheFollowing:"",
             callDate:"",
     });
-    const optionsForSelection =[]
-    const [attemptList, setAttemptList] = useState([])          
+    const [attemptList, setAttemptList] = useState([])  
+    const [prepSideEffect, setPrepSideEffect] = useState([]);
+    useEffect(() => {
+        GENERAL_FEELING();
+        CALL_OUTCOME();
+        PrepSideEffect();
+        GetPatientDTOObj();
+    }, []); 
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEacStatusObj(response.data);
+               //console.log(enrollDate)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    } 
+    const GENERAL_FEELING =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/GENERAL_FEELING`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setOptionsForSelection(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    const CALL_OUTCOME =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/CALL_OUTCOME`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setOptionsForCallOutCome(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }  
+    //Get list of PrepSideEffect
+    const PrepSideEffect =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+
+                setPrepSideEffect(Object.entries(response.data).map(([key, value]) => ({
+                    label: value.display,
+                    value: value.display,
+                })));
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }     
     const handleInputChangeAttempt = e => {
         //console.log(e.target.value)
         setErrors({...temp, [e.target.name]:""})
@@ -115,9 +181,11 @@ const Tracking = (props) => {
     }
     const onSelect = (selectedValues) => {
         setSelected(selectedValues);
+
     };
     //Validations of the forms
-    const validateAttempt = () => {        
+    const validateAttempt = () => { 
+    attempt.anyOfTheFollowing=selected       
     temp.caller = attempt.caller ? "" : "This field is required"
     temp.callOutcome = attempt.callOutcome ? "" : "This field is required"
     temp.comment = attempt.comment ? "" : "This field is required"
@@ -131,6 +199,7 @@ const Tracking = (props) => {
     return Object.values(temp).every(x => x == "")
   }
     const addAttempt = e => {
+        attempt.anyOfTheFollowing=selected
         if(validateAttempt()){ 
             setAttemptList([...attemptList, attempt])
             setAttempt({caller:"", 
@@ -207,6 +276,7 @@ const Tracking = (props) => {
                                     name="callDate"
                                     id="callDate"
                                     value={attempt.callDate}
+                                    min={enrollDate!=='' ? enrollDate : ""}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
@@ -231,8 +301,11 @@ const Tracking = (props) => {
                                     
                                 >
                                     <option value="">Select</option> 
-                                    <option value="Telephone">Telephone</option> 
-                                    <option value="Home Visit">Home Visit</option> 
+                                    {optionsForSelection.map((value) => (
+                                        <option key={value.code} value={value.display}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                 </Input> 
                                 {errors.howDoYouFeelGenerally !=="" ? (
                                     <span className={classes.error}>{errors.howDoYouFeelGenerally}</span>
@@ -245,7 +318,7 @@ const Tracking = (props) => {
                                 <Label >Do you have any of the following</Label>
                                 <DualListBox
                                 //canFilter
-                                    options={optionsForSelection}
+                                    options={prepSideEffect}
                                     onChange={onSelect}
                                     selected={selected}
                                 /> 
@@ -305,9 +378,12 @@ const Tracking = (props) => {
                                         onChange={handleInputChangeAttempt}
                                         value={attempt.callOutcome}  
                                     >
-                                        <option value=""></option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
+                                        <option value="">Select</option>
+                                        {optionsForCallOutCome.map((value) => (
+                                        <option key={value.code} value={value.display}>
+                                            {value.display}
+                                        </option>
+                                    ))}
                                     </Input>
                                     {errors.callOutcome !=="" ? (
                                     <span className={classes.error}>{errors.callOutcome}</span>
@@ -413,7 +489,7 @@ function AttemptedLists({
             <tr>
                 <th>{attemptObj.callDate}</th>
                 <th>{attemptObj.howDoYouFeelGenerally}</th>
-                <th>{attemptObj.anyOfTheFollowing}</th>
+                <th>{(attemptObj.anyOfTheFollowing).toString()}</th>
                 <th>{attemptObj.missedMedication}</th>
                 <th>{attemptObj.comment}</th>
                 <th>{attemptObj.callOutcome}</th>
