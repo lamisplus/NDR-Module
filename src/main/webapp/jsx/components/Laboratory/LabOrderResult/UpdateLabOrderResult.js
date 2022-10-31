@@ -79,6 +79,7 @@ const Laboratory = (props) => {
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [eacStatusObj, setEacStatusObj] = useState()
+    const [labNumbers, setLabNumbers] = useState([]);//
     let temp = { ...errors }
     const [tests, setTests]=useState({
 
@@ -100,6 +101,7 @@ const Laboratory = (props) => {
                                         id: "",
                                         orderId: "",
                                         resultReportedBy: "",
+                                        sampleNumber:""
                                     })
 useEffect(() => {
         TestGroup();
@@ -108,11 +110,26 @@ useEffect(() => {
         CheckLabModule();
         CheckEACStatus();
         GetPatientDTOObj();
+        LabNumbers();
         setTests({...props.activeContent.obj})
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         //setTest(props.activeContent.obj.labTestId)
     }, [props.patientObj.id, props.activeContent.obj]);
+     //Get list of LabNumbers
+     const LabNumbers =()=>{
+        axios
+            .get(`${baseUrl}laboratory/lab-numbers`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setLabNumbers(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     const GetPatientDTOObj =()=>{
         axios
            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -243,7 +260,7 @@ useEffect(() => {
         temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
         temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
         temp.labTestId = tests.labTestId ? "" : "This field is required"
-        temp.labNumber = tests.labNumber ? "" : "This field is required"
+        temp.sampleNumber = tests.sampleNumber ? "" : "This field is required"
         temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
         tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
         temp.result = tests.result ? "" : "This field is required"
@@ -292,20 +309,44 @@ useEffect(() => {
                 <div className="row">
                     
                     <Row>
-                        <Col md={4} className="form-group mb-3">
+                    <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">laboratory Number(Sample Numbe)* </Label>
+                                <Label for="encounterDate">laboratory Number</Label>                                
                                 <Input
-                                    type="text"
+                                    type="select"
                                     name="labNumber"
                                     id="labNumber"
                                     value={tests.labNumber}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required
+                                >
+                                     <option value="">Select </option>
+                                        
+                                        {labNumbers.map((value) => (
+                                            <option key={value.id} value={value.id}>
+                                                {value.labNumber}
+                                            </option>
+                                        ))}
+
+                                </Input>
+                                
+                            </FormGroup>
+                    </Col>
+                        <Col md={4} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="encounterDate">Sample Numbe* </Label>
+                                <Input
+                                    type="text"
+                                    name="labNumber"
+                                    id="labNumber"
+                                    value={tests.sampleNumber}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    required
                                 />
-                                {errors.labNumber !=="" ? (
-                                    <span className={classes.error}>{errors.labNumber}</span>
+                                {errors.sampleNumber !=="" ? (
+                                    <span className={classes.error}>{errors.sampleNumber}</span>
                                 ) : "" }
                             </FormGroup>
                         </Col>

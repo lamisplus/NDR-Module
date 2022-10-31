@@ -890,6 +890,7 @@ const ClinicVisit = (props) => {
                                 color='black'
                                 content='Visit Date'
                                 //icon='calendar alternate'
+                                size='mini'
                                 onClick={()=>getVisitDetail(visit)}
                                 label={{ basic: true, color: 'grey', pointing: 'left', content: `${visit.visitDate}` }}
                             />

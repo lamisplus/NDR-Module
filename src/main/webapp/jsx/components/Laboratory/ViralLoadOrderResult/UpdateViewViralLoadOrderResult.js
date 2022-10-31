@@ -80,6 +80,7 @@ const Laboratory = (props) => {
     const [labTestDetail, setLabTestDetail]=useState([])
     const [labNumberOption, setLabNumberOption] = useState("")
     const [showResult, setShowResult]=useState(false)
+    const [labNumbers, setLabNumbers] = useState([]);//
     let temp = { ...errors }
     const [tests, setTests]=useState({
             approvedBy: "",
@@ -118,21 +119,34 @@ const Laboratory = (props) => {
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")   
     }, [props.patientObj.id, props.activeContent.obj]);
-
-        const LabTestDetail =()=>{
-            axios
-                .get(`${baseUrl}laboratory/labtests/viral%20load`,
-                    { headers: {"Authorization" : `Bearer ${token}`} }
-                )
-                .then((response) => {
-      
-                    setLabTestDetail(response.data.sampleType);
-                })
-                .catch((error) => {
-                //console.log(error);
-                });
-            
-        }  
+     //Get list of LabNumbers
+     const LabNumbers =()=>{
+        axios
+            .get(`${baseUrl}laboratory/lab-numbers`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                setLabNumbers(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    const LabTestDetail =()=>{
+        axios
+            .get(`${baseUrl}laboratory/labtests/viral%20load`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+    
+                setLabTestDetail(response.data.sampleType);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }  
 
     //Check if Module Exist
     const CheckLabModule =()=>{
@@ -187,27 +201,27 @@ const Laboratory = (props) => {
         temp.sampleTypeId = tests.sampleTypeId ? "" : "This field is required"
         temp.sampleCollectionDate =  tests.sampleCollectionDate ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
-        temp.labNumber = tests.labNumber ? "" : "This field is required"
+        temp.sampleNumber = tests.sampleNumber ? "" : "This field is required"
        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
-       showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
-       showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
-       showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
-       showResult && (temp.result = tests.result ? "" : "This field is required")
-       showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
-       showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
-       showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
+    //    showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
+    //    showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
+    //    showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
+    //    showResult && (temp.result = tests.result ? "" : "This field is required")
+    //    showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+    //    showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
+    //    showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
 
-       showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
-       showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
-       showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
-       showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
-       showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
-       showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
+    //    showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+    //    showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
+    //    showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
+    //    showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
+    //    showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
+    //    showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
 
-       showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
-       showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
-        //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
-        showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
+    //    showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
+    //    showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
+    //     //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
+    //     showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
         setErrors({
             ...temp
         })
@@ -260,24 +274,48 @@ const Laboratory = (props) => {
             {/* {moduleStatus==="1" && ( */}
                 <form >
                 <div className="row">
-                    
-                    <Row>
-                 
-                    <Col md={6} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="labNumber">Lab Number (Sample Number)*</Label>
-                                <Input
-                                type="text"
+                <Row>
+                    <Col md={4} className="form-group mb-3">
+                        <FormGroup>
+                            <Label for="encounterDate">laboratory Number</Label>                                
+                            <Input
+                                type="select"
                                 name="labNumber"
                                 id="labNumber"
                                 value={tests.labNumber}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            >
+                                    <option value="">Select </option>
+                                    
+                                    {labNumbers.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.labNumber}
+                                        </option>
+                                    ))}
+
+                            </Input>
+                            
+                        </FormGroup>
+                    </Col>
+                    </Row>
+                    <Row>
+                    <Col md={6} className="form-group mb-3">
+                            <FormGroup>
+                                <Label for="labNumber">Sample Number*</Label>
+                                <Input
+                                type="text"
+                                name="sampleNumber"
+                                id="sampleNumber"
+                                value={tests.sampleNumber}
                                 onChange={handleInputChange}  
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                 >
                                 
                             </Input>
-                            {errors.labNumber !=="" ? (
-                                <span className={classes.error}>{errors.labNumber}</span>
+                            {errors.sampleNumber !=="" ? (
+                                <span className={classes.error}>{errors.sampleNumber}</span>
                             ) : "" }
                             </FormGroup>
                     </Col>

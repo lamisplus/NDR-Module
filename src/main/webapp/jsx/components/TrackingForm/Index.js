@@ -743,6 +743,27 @@ console.log(errors)
                                 ) : "" }
                             </FormGroup>
                         </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Referred for</Label>
+                            <Input
+                                type="select"
+                                name="referredFor"
+                                id="referredFor"
+                                onChange={handleInputChange}
+                                value={objValues.referredFor} 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            >
+                                <option value=""></option>
+                                <option value="Adherence Counselling">Adherence Counselling</option>
+                                <option value="Others">Others</option>
+                            </Input>
+                            {errors.referredFor !=="" ? (
+                                <span className={classes.error}>{errors.referredFor}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
                         </>)}
                         {objValues.reasonForDiscountinuation==='Death' && (
                         <div className="form-group mb-3 col-md-6">
@@ -851,27 +872,7 @@ console.log(errors)
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Referred for</Label>
-                            <Input
-                                type="select"
-                                name="referredFor"
-                                id="referredFor"
-                                onChange={handleInputChange}
-                                value={objValues.referredFor} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Adherence Counselling">Adherence Counselling</option>
-                                <option value="Others">Others</option>
-                            </Input>
-                            {errors.referredFor !=="" ? (
-                                <span className={classes.error}>{errors.referredFor}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
+                       
                         {objValues.referredFor==='Others' && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>

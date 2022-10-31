@@ -71,6 +71,8 @@ const Pharmacy = (props) => {
     const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
     const [mmdType, setmmdType]=useState();
+    const [errors, setErrors] = useState({});
+    let temp = { ...errors }
     const [dsdModelType, setDsdModelType] = useState([]);
     const [showmmdType, setShowmmdType]=useState(false);
     const [showDsdModel, setShowDsdModel] = useState(false);
@@ -606,10 +608,24 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenDrug (data);
      }
-     const addDrug = e => {
-        setRegimenDrugList([...regimenDrugList, ...regimenDrug])            
+     //Validations of the forms
+     const validateDrugDispense = () => {        
+        temp.dispense = regimenDrug[0].dispense ? "" : "This field is required"
+        temp.frequency = regimenDrug[0].frequency ? "" : "This field is required"
         
-      }
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+    }
+     const addDrug = e => {
+        if(validateDrugDispense()){
+            setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
+        }else{
+            toast.error("All fields are required")
+        }
+                     
+    }
     /* Remove ADR  function **/
     const removeAttempt = index => {       
         regimenDrugList.splice(index, 1);
@@ -1246,7 +1262,9 @@ const Pharmacy = (props) => {
                                         onChange={event => handleFormChange(index, event)}
                                         required
                                         >
-                                        
+                                         {errors.dispense !=="" ? (
+                                            <span className={classes.error}>{errors.dispense}</span>
+                                            ) : "" }
                                     </Input>
                                 
                                     </FormGroup>

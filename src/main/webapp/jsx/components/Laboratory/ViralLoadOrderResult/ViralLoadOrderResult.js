@@ -282,8 +282,8 @@ const Laboratory = (props) => {
         temp.sampleTypeId = tests.sampleTypeId ? "" : "This field is required"
         temp.sampleCollectionDate =  tests.sampleCollectionDate ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
-        temp.labNumber = tests.labNumber ? "" : "This field is required"
-       temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
+        temp.sampleNumber = tests.sampleNumber ? "" : "This field is required"
+        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
     //    showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
     //    showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
     //    showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
@@ -351,7 +351,8 @@ const Laboratory = (props) => {
                         sampleCollectionDate: "",
                         sampleLoggedRemotely: "",
                         sampleTypeId: "",
-                        viralLoadIndication: ""
+                        viralLoadIndication: "",
+                        sampleNumber:""
                     })
                     props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
                 })
@@ -432,28 +433,28 @@ const Laboratory = (props) => {
                     
                     <Row>
                     <Col md={4} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="encounterDate">laboratory Number</Label>                                
-                                <Input
-                                    type="select"
-                                    name="labNumberOption"
-                                    id="labNumberOption"
-                                    value={tests.labNumberOption}
-                                    onChange={handleInputChangeLabNumber}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
-                                >
-                                     <option value="">Select </option>
-                                        
-                                        {labNumbers.map((value) => (
-                                            <option key={value.id} value={value.id}>
-                                                {value.labNumber}
-                                            </option>
-                                        ))}
+                        <FormGroup>
+                            <Label for="encounterDate">laboratory Number</Label>                                
+                            <Input
+                                type="select"
+                                name="labNumber"
+                                id="labNumber"
+                                value={tests.labNumber}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            >
+                                    <option value="">Select </option>
+                                    
+                                    {labNumbers.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.labNumber}
+                                        </option>
+                                    ))}
 
-                                </Input>
-                                
-                            </FormGroup>
+                            </Input>
+                            
+                        </FormGroup>
                     </Col>
                     </Row>
                     <Row>
@@ -462,16 +463,16 @@ const Laboratory = (props) => {
                                 <Label for="labNumber">Sample Number*</Label>
                                 <Input
                                 type="text"
-                                name="labNumber"
-                                id="labNumber"
-                                value={tests.labNumber}
+                                name="sampleNumber"
+                                id="sampleNumber"
+                                value={tests.sampleNumber}
                                 onChange={handleInputChange}  
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                 >
                                 
                             </Input>
-                            {errors.labNumber !=="" ? (
-                                <span className={classes.error}>{errors.labNumber}</span>
+                            {errors.sampleNumber !=="" ? (
+                                <span className={classes.error}>{errors.sampleNumber}</span>
                             ) : "" }
                             </FormGroup>
                     </Col>

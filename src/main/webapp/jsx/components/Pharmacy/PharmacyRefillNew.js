@@ -62,11 +62,14 @@ const useStyles = makeStyles(theme => ({
 let refillPeriodValue=null
 
 const Pharmacy = (props) => {
+    
     const patientObj = props.patientObj;
     const [selectedCombinedRegimen, setSelectedCombinedRegimen] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
+    let temp = { ...errors }
     const [selectedOption, setSelectedOption] = useState([]);
     const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
@@ -611,8 +614,23 @@ const Pharmacy = (props) => {
         data[index][event.target.name] = event.target.value;
         setRegimenDrug (data);
     }
+     //Validations of the forms
+     const validateDrugDispense = () => {        
+        temp.dispense = regimenDrug[0].dispense ? "" : "This field is required"
+        temp.frequency = regimenDrug[0].frequency ? "" : "This field is required"
+        
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+    }
     const addDrug = e => {
-        setRegimenDrugList([...regimenDrugList, ...regimenDrug])              
+        if(validateDrugDispense()){
+            setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
+        }else{
+            toast.error("All fields are required")
+        }
+                     
     }
     /* Remove ADR  function **/
     const removeAttempt = index => {       
@@ -633,8 +651,9 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
-            toast.success("Pharmacy drug refill successful");
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
+            toast.success("Pharmacy drug refill successful");
+            
         })
         .catch(error => {
             setSaving(false);
@@ -1195,7 +1214,9 @@ const Pharmacy = (props) => {
                                         <option value='8'>QDS</option>
                                         <option value='10'>3ce/Week</option>
                                     </Input>
-                                
+                                    {errors.frequency !=="" ? (
+                                    <span className={classes.error}>{errors.frequency}</span>
+                                    ) : "" }
                                     </FormGroup>
                                 </div>
                                 <div className="form-group mb-3 col-md-2">
@@ -1211,7 +1232,7 @@ const Pharmacy = (props) => {
                                         >
                                         
                                     </Input>
-                                
+                                    
                                     </FormGroup>
                                 </div>
                                 <div className="form-group mb-3 col-md-2">
@@ -1227,7 +1248,7 @@ const Pharmacy = (props) => {
                                         >
                                         
                                     </Input>
-                                
+                                    
                                     </FormGroup>
                                 </div>
                                 <div className="form-group mb-3 col-md-2">
@@ -1243,7 +1264,9 @@ const Pharmacy = (props) => {
                                         >
                                         
                                     </Input>
-                                
+                                    {errors.dispense !=="" ? (
+                                    <span className={classes.error}>{errors.dispense}</span>
+                                    ) : "" }
                                     </FormGroup>
                                 </div>
                                 </div>
