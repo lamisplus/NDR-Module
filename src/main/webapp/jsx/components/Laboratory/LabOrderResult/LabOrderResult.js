@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
 
 const Laboratory = (props) => {
     let visitId=""
-    let labNumberOption=""
+    //let =""
     const patientObj = props.patientObj;
     //const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const [enrollDate, setEnrollDate] = useState("");
@@ -76,6 +76,7 @@ const Laboratory = (props) => {
     const [vlRequired, setVlRequired]=useState(false)
     const [priority, setPriority]=useState([])
     const [eacStatusObj, setEacStatusObj] = useState()
+    const [labNumberOption, setLabNumberOption] = useState("")
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -249,6 +250,7 @@ const Laboratory = (props) => {
     }
     const handleInputChangeLabNumber = e => {
         labNumberOption=e.target.value
+        setLabNumberOption(labNumberOption)
                       
     }
     const handleInputChangeTest = e => {
@@ -273,7 +275,7 @@ const Laboratory = (props) => {
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
             tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
             tests.visitId=visitId
-            tests.labNumber=labNumberOption+"/"+tests.labNumber
+            
             setTestOrderList([...testOrderList, tests])
             setTests({
                 comments: "",
@@ -483,7 +485,8 @@ const Laboratory = (props) => {
                                 id="sampleCollectionDate"
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
-                                min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
+                                //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
+                                min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required

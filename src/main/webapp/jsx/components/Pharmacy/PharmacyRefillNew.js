@@ -356,7 +356,6 @@ const Pharmacy = (props) => {
                 setSelectedCombinedRegimen(response.data)         
                 const regimenName = regimenType.find((x) => { 
                     if(x.value==parseInt(drugId)){
-                        console.log(x)
                         return x
                     }
                 })                           

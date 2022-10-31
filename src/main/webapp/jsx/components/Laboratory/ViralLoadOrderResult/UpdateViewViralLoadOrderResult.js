@@ -78,6 +78,7 @@ const Laboratory = (props) => {
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [labTestDetail, setLabTestDetail]=useState([])
+    const [labNumberOption, setLabNumberOption] = useState("")
     const [showResult, setShowResult]=useState(false)
     let temp = { ...errors }
     const [tests, setTests]=useState({

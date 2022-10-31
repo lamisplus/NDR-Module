@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
 
 const Laboratory = (props) => {
     let visitId=""
-    let labNumberOption=""
+    //let labNumberOption=""
     const patientObj = props.patientObj;
     const enrollDate = patientObj && patientObj.artCommence ? patientObj.artCommence.visitDate : null
     const classes = useStyles();
@@ -80,6 +80,7 @@ const Laboratory = (props) => {
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [labTestDetail, setLabTestDetail]=useState([])
     const [eacStatusObj, setEacStatusObj] = useState()
+    const [labNumberOption, setLabNumberOption] = useState("")
     const [labNumbers, setLabNumbers] = useState([]);//
     let temp = { ...errors }
     const [tests, setTests]=useState({
@@ -255,6 +256,7 @@ const Laboratory = (props) => {
     }
     const handleInputChangeLabNumber = e => {
         labNumberOption=e.target.value
+        setLabNumberOption(labNumberOption)
                       
     }
     const handleInputChangeTest = e => {
@@ -282,25 +284,25 @@ const Laboratory = (props) => {
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
         temp.labNumber = tests.labNumber ? "" : "This field is required"
        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
-       showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
-       showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
-       showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
-       showResult && (temp.result = tests.result ? "" : "This field is required")
-       showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
-       showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
-       showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
+    //    showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
+    //    showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
+    //    showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
+    //    showResult && (temp.result = tests.result ? "" : "This field is required")
+    //    showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+    //    showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
+    //    showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
 
-       showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
-       showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
-       showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
-       showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
-       showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
-       showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
+    //    showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+    //    showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
+    //    showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
+    //    showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
+    //    showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
+    //    showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
 
-       showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
-       showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
-        //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
-        showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
+    //    showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
+    //    showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
+    //     //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
+    //     showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
         setErrors({
             ...temp
         })
@@ -310,7 +312,7 @@ const Laboratory = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();
         if(validate()){
-            tests.labNumber=labNumberOption+"/"+tests.labNumber
+            //tests.labNumber=labNumberOption+"/"+tests.labNumber
             tests.labTestGroupId= testOrderList.labTestGroupId
             tests.labTestId= testOrderList.id
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")

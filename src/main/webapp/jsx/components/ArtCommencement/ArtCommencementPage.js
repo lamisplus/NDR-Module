@@ -195,7 +195,8 @@ const ArtCommencement = (props) => {
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                setAdultRegimenLine(response.data);
+                    const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
+                    setAdultRegimenLine(artRegimen);
                 })
                 .catch((error) => {
                 //console.log(error);
@@ -208,7 +209,8 @@ const ArtCommencement = (props) => {
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                setChildRegimenLine(response.data);
+                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
+                setChildRegimenLine(artRegimen);
                 })
                 .catch((error) => {
                 //console.log(error);

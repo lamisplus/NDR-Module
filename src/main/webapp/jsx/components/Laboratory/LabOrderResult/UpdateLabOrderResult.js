@@ -63,8 +63,10 @@ const useStyles = makeStyles(theme => ({
 const Laboratory = (props) => {
     let visitId=""
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    //const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles();
+    const [labNumberOption, setLabNumberOption] = useState("")
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [buttonHidden, setButtonHidden]= useState(false);
@@ -105,12 +107,28 @@ useEffect(() => {
         //PatientVisit();
         CheckLabModule();
         CheckEACStatus();
+        GetPatientDTOObj();
         setTests({...props.activeContent.obj})
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         //setTest(props.activeContent.obj.labTestId)
     }, [props.patientObj.id, props.activeContent.obj]);
-    console.log(props.activeContent.obj)
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEacStatusObj(response.data);
+               console.log(enrollDate)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
      //Get EAC Status
      const CheckEACStatus =()=>{
         axios
@@ -348,7 +366,8 @@ useEffect(() => {
                                     id="sampleCollectionDate"
                                     value={tests.sampleCollectionDate}
                                     onChange={handleInputChange}
-                                    min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
+                                    //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
+                                    min={enrollDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     required

@@ -889,7 +889,7 @@ const ClinicVisit = (props) => {
                             <ButtonSMUI
                                 color='black'
                                 content='Visit Date'
-                                icon='calendar alternate'
+                                //icon='calendar alternate'
                                 onClick={()=>getVisitDetail(visit)}
                                 label={{ basic: true, color: 'grey', pointing: 'left', content: `${visit.visitDate}` }}
                             />
