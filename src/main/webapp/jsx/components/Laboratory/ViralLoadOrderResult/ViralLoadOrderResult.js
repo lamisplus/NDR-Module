@@ -74,6 +74,7 @@ const Laboratory = (props) => {
     const [test, setTest] = useState([]);
     const [vlRequired, setVlRequired]=useState(false)
     const [showResult, setShowResult]=useState(false)
+    const [showPcrLabDetail, setShowPcrLabDetail]=useState(false)
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -283,26 +284,26 @@ const Laboratory = (props) => {
         temp.sampleCollectionDate =  tests.sampleCollectionDate ? "" : "This field is required"
         temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required"
         temp.sampleNumber = tests.sampleNumber ? "" : "This field is required"
-        temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required"
-    //    showResult && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
-    //    showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
-    //    showResult && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
-    //    showResult && (temp.result = tests.result ? "" : "This field is required")
-    //    showResult && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
-    //    showResult && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
-    //    showResult && (temp.orderBy = tests.orderBy ? "" : "This field is required")
+        
+        showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
+        showResult && (temp.assayedBy = tests.assayedBy ? "" : "This field is required")
+        showResult && (temp.result = tests.result ? "" : "This field is required")
+        showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
 
-    //    showResult && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
-    //    showResult && (temp.dateResultReceived = tests.dateResultReceived ? "" : "This field is required")
-    //    showResult && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
-    //    showResult && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
-    //    showResult && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
-    //    showResult && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
 
-    //    showResult && (temp.dateAssayedBy = tests.dateAssayedBy ? "" : "This field is required")
-    //    showResult && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
-    //     //temp.collectedBy = tests.collectedBy ? "" : "This field is required"
-    //     showResult &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
+        showPcrLabDetail && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
+        showPcrLabDetail && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
+        showPcrLabDetail && (temp.orderBy = tests.orderBy ? "" : "This field is required")
+        showPcrLabDetail && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+        showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
+        showPcrLabDetail && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
+        showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+        showPcrLabDetail && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
+        showPcrLabDetail && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
+        showPcrLabDetail && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
+        showPcrLabDetail &&  (temp.checkedBy = tests.checkedBy ? "" : "This field is required")
+        showPcrLabDetail && (temp.approvedBy = tests.approvedBy ? "" : "This field is required")
+        showPcrLabDetail && (temp.sampleCollectedBy = tests.sampleCollectedBy ? "" : "This field is required")
         setErrors({
             ...temp
         })
@@ -364,47 +365,7 @@ const Laboratory = (props) => {
                     }                  
                 }); 
             
-            // }else{
-            //     delete tests["approvedBy"]
-            //     delete tests["assayedBy"]
-            //     delete tests["checkedBy"]
-            //     delete tests["comment"]
-            //     delete tests["dateApproved"]
-            //     delete tests["dateAssayedBy"]
-            //     delete tests["dateCheckedBy"]
-            //     delete tests["dateCollectedBy"]
-            //     delete tests["dateOrderBy"]
-            //     delete tests["dateReceivedAtPcrLab"]
-            //     delete tests["dateResultReceived"]
-            //     delete tests["dateSampleLoggedRemotely"]
-            //     delete tests["orderBy"]
-            //     delete tests["pcrLabName"]
-            //     delete tests["pcrLabSampleNumber"]
-            //     delete tests["sampleLoggedRemotely"]
-            //     delete tests["result"]
-            //     delete tests["orderBy"]
-            //     delete tests["pcrLabName"]
-                 
-            //     tests['labTestGroupId']= testOrderList.labTestGroupId
-            //     tests['labTestId']= testOrderList.id
-            //     tests['comments']=""
-            //     tests['visitId']=""
-            //     axios.post(`${baseUrl}laboratory/vl-orders`,tests,
-            //     { headers: {"Authorization" : `Bearer ${token}`}},)
-            //     .then(response => {
-            //         setSaving(false);
-            //         props.LabOrders();
-            //         toast.success("Laboratory test order created successful");
-            //         props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
-            //     })
-            //     .catch(error => {
-            //         setSaving(false);
-            //         if(error.response && error.response.data){
-            //             let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-            //             toast.error(errorMessage); 
-            //         }                  
-            //     }); 
-            // }
+           
         }
     }
     const handleCheckBox =e =>{
@@ -412,6 +373,13 @@ const Laboratory = (props) => {
             setShowResult(true)
         }else{
             setShowResult(false)
+        }
+    }
+    const handleCheckBoxPCR =e =>{
+        if(e.target.checked){
+            setShowPcrLabDetail(true)
+        }else{
+            setShowPcrLabDetail(false)
         }
     }
 
@@ -476,8 +444,6 @@ const Laboratory = (props) => {
                             ) : "" }
                             </FormGroup>
                     </Col>
-                    
-
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">VL Indication*</Label>
@@ -547,26 +513,8 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Collected by *</Label>
-                            <Input
-                                type="text"
-                                name="sampleCollectedBy"
-                                id="sampleCollectedBy"
-                                value={tests.sampleCollectedBy}
-                                
-                                onChange={handleInputChange}
-                                
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.sampleCollectedBy !=="" ? (
-                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
-                    <Col md={6} className="mt-4">
+                    
+                    <Col md={6} className="mt-4 mb-3">
                         <div className="form-check custom-checkbox ml-1 ">
                                 <input
                                 type="checkbox"
@@ -586,7 +534,132 @@ const Laboratory = (props) => {
                         </div>
                     </Col>
                     <hr/>
-                {showResult && (<>
+                    </Row>
+                    {showResult && (<>
+                        <Row>
+                            <Col md={6} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="encounterDate">Asseyed by *</Label>
+                                    <Input
+                                        type="text"
+                                        name="assayedBy"
+                                        id="assayedBy"
+                                        value={tests.assayedBy}                              
+                                        onChange={handleInputChange}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        required
+                                    />
+                                    {errors.assayedBy !=="" ? (
+                                        <span className={classes.error}>{errors.assayedBy}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
+                            <Col md={6} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="encounterDate">Date Asseyed  *</Label>
+                                    <Input
+                                        type="date"
+                                        name="dateAssayedBy"
+                                        id="dateAssayedBy"
+                                        value={tests.dateAssayedBy}
+                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        onChange={handleInputChange}
+                                        //min={tests.sampleCollectionDate}
+                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        required
+                                    />
+                                    {errors.dateAssayedBy !=="" ? (
+                                        <span className={classes.error}>{errors.dateAssayedBy}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
+                            <Col md={6} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="encounterDate">Date Result Received *</Label>
+                                    <Input
+                                        type="datetime-local"
+                                        name="dateResultReceived"
+                                        id="dateResultReceived"
+                                        value={tests.dateResultReceived}
+                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        onChange={handleInputChange}
+                                        //min={tests.sampleCollectionDate}
+                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        required
+                                    />
+                                    {errors.dateResultReceived !=="" ? (
+                                        <span className={classes.error}>{errors.dateResultReceived}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
+                            <Col md={6} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="priority">Result *</Label>
+                                    <InputGroup>
+                                    <Input
+                                        type="number"
+                                        name="result"
+                                        id="result"
+                                        value={tests.result}
+                                        onChange={handleInputChange}  
+                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
+                                    />
+
+                                    {/* <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                        
+                                    </InputGroupText> */}
+                                    </InputGroup>
+                                    {errors.result !=="" ? (
+                                        <span className={classes.error}>{errors.result}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
+                            <Col md={6} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="priority">Comment</Label>
+                                    <Input
+                                        type="textarea"
+                                        name="comment"
+                                        id="comment"
+                                        value={tests.comment}
+                                        onChange={handleInputChange}  
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                        >
+                                        
+                                    </Input>
+                                    
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    <Row>
+                        <Col md={6} className="mt-4 mb-3">
+                            <div className="form-check custom-checkbox ml-1 ">
+                                    <input
+                                    type="checkbox"
+                                    className="form-check-input"                       
+                                    name="asResultPCR"
+                                    id="asResultPCR"
+                                    value="asResultPCR"
+                                    onChange={handleCheckBoxPCR}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    />
+                                    <label
+                                    className="form-check-label"
+                                    htmlFor="basic_checkbox_1"
+                                    >
+                                    Has PCR Lab Details ?
+                                    </label>
+                            </div>
+                        </Col>
+                    </Row>
+                    <br/>
+                    <br/>
+                    <hr/>
+                    </>)} 
+                    {showPcrLabDetail && (<>
+                    <Row>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="vlIndication">PCR Lab Name *</Label>
@@ -625,7 +698,45 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                   
+                    <Col md={6} className="form-group mb-3">
+                        <FormGroup>
+                            <Label for="encounterDate">Collected by *</Label>
+                            <Input
+                                type="text"
+                                name="sampleCollectedBy"
+                                id="sampleCollectedBy"
+                                value={tests.sampleCollectedBy}
+                                
+                                onChange={handleInputChange}
+                                
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                required
+                            />
+                            {errors.sampleCollectedBy !=="" ? (
+                                <span className={classes.error}>{errors.sampleCollectedBy}</span>
+                            ) : "" }
+                        </FormGroup>
+                    </Col>
+                    <Col md={6} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="encounterDate">Date Collected *</Label>
+                                    <Input
+                                        type="date"
+                                        name="dateCollectedBy"
+                                        id="dateCollectedBy"
+                                        value={tests.dateCollectedBy}
+                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        onChange={handleInputChange}
+                                        //min={tests.sampleCollectionDate}
+                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        required
+                                    />
+                                    {errors.dateCollectedBy !=="" ? (
+                                        <span className={classes.error}>{errors.dateCollectedBy}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Sample logged remotely </Label>
@@ -645,7 +756,7 @@ const Laboratory = (props) => {
                             </Input>
                         </FormGroup>
                     </Col>
-                    {tests.sampleLoggedRemotely ==='Yes' && (
+                    {tests.sampleLoggedRemotely ==='1' && (
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Date Sample logged remotely *</Label>
@@ -685,27 +796,6 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                   
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Date Result Received *</Label>
-                            <Input
-                                type="datetime-local"
-                                name="dateResultReceived"
-                                id="dateResultReceived"
-                                value={tests.dateResultReceived}
-                                min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
-                                onChange={handleInputChange}
-                                //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.dateResultReceived !=="" ? (
-                                <span className={classes.error}>{errors.dateResultReceived}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Order by *</Label>
@@ -726,82 +816,24 @@ const Laboratory = (props) => {
                         </FormGroup>
                     </Col>
                     <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Date Ordered  *</Label>
-                            <Input
-                                type="date"
-                                name="dateOrderBy"
-                                id="dateOrderBy"
-                                value={tests.dateOrderBy}
-                                min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
-                                onChange={handleInputChange}
-                                //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.dateOrderBy !=="" ? (
-                                <span className={classes.error}>{errors.dateOrderBy}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
-                   
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Date Collected  *</Label>
-                            <Input
-                                type="date"
-                                name="dateCollectedBy"
-                                id="dateCollectedBy"
-                                value={tests.dateCollectedBy}
-                                min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
-                                onChange={handleInputChange}
-                                //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.dateCollectedBy !=="" ? (
-                                <span className={classes.error}>{errors.dateCollectedBy}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Asseyed by *</Label>
-                            <Input
-                                type="text"
-                                name="assayedBy"
-                                id="assayedBy"
-                                value={tests.assayedBy}                              
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.assayedBy !=="" ? (
-                                <span className={classes.error}>{errors.assayedBy}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="encounterDate">Date Asseyed  *</Label>
-                            <Input
-                                type="date"
-                                name="dateAssayedBy"
-                                id="dateAssayedBy"
-                                value={tests.dateAssayedBy}
-                                min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
-                                onChange={handleInputChange}
-                                //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                            />
-                            {errors.dateAssayedBy !=="" ? (
-                                <span className={classes.error}>{errors.dateAssayedBy}</span>
-                            ) : "" }
-                        </FormGroup>
+                                <FormGroup>
+                                    <Label for="encounterDate">Date Ordered  *</Label>
+                                    <Input
+                                        type="date"
+                                        name="dateOrderBy"
+                                        id="dateOrderBy"
+                                        value={tests.dateOrderBy}
+                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        onChange={handleInputChange}
+                                        //min={tests.sampleCollectionDate}
+                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                        required
+                                    />
+                                    {errors.dateOrderBy !=="" ? (
+                                        <span className={classes.error}>{errors.dateOrderBy}</span>
+                                    ) : "" }
+                                </FormGroup>
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
@@ -881,48 +913,9 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="priority">Result *</Label>
-                            <InputGroup>
-                            <Input
-                                type="number"
-                                name="result"
-                                id="result"
-                                value={tests.result}
-                                onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
-                            />
-
-                            {/* <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                
-                            </InputGroupText> */}
-                            </InputGroup>
-                            {errors.result !=="" ? (
-                                <span className={classes.error}>{errors.result}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
-
-                    <Col md={6} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="priority">Comment</Label>
-                            <Input
-                                type="textarea"
-                                name="comment"
-                                id="comment"
-                                value={tests.comment}
-                                onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
-                                >
-                                
-                            </Input>
-                            
-                        </FormGroup>
-                    </Col>
-                </>)}   
-                    </Row>
+                    </Row>           
+                    </>)}   
+                    
                 </div>
                     
                     {saving ? <Spinner /> : ""}

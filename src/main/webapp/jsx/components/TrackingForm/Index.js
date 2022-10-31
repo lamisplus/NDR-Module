@@ -214,7 +214,8 @@ const Tracking = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                setreasonDiscountinuation(response.data.filter((x)=> x.code!=='REASON_DISCONTINUATION_INTERRUPTION_IN_TREATMENT'));
+                setreasonDiscountinuation(response.data)
+                //setreasonDiscountinuation(response.data.filter((x)=> x.code!=='REASON_DISCONTINUATION_INTERRUPTION_IN_TREATMENT'));
             })
             .catch((error) => {
             //console.log(error);
@@ -271,8 +272,8 @@ const Tracking = (props) => {
     {objValues.careInFacilityDiscountinued==='Yes' && (temp.reasonForDiscountinuation = objValues.reasonForDiscountinuation ? "" : "This field is required")}
     {objValues.reasonForDiscountinuation==='Loss to follow-up' && (temp.reasonForLossToFollowUp = objValues.reasonForLossToFollowUp ? "" : "This field is required")}
     {objValues.reasonForDiscountinuation==='Death' && (temp.causeOfDeath = objValues.causeOfDeath ? "" : "This field is required")}
-    temp.dateReturnToCare = objValues.dateReturnToCare ? "" : "This field is required"
-    temp.referredFor = objValues.referredFor ? "" : "This field is required"
+   // objValues.careInFacilityDiscountinued==='Yes' && (temp.dateReturnToCare = objValues.dateReturnToCare ? "" : "This field is required")
+    objValues.careInFacilityDiscountinued==='No' && objValues.dateReturnToCare!=="" && (temp.referredFor = objValues.referredFor ? "" : "This field is required")
     {objValues.referredFor==='Others' && (temp.referredForOthers = objValues.referredForOthers ? "" : "This field is required")}
     {objValues.reasonForTracking==='Others' && (temp.reasonForTrackingOthers = objValues.reasonForTrackingOthers ? "" : "This field is required")}
     {objValues.causeOfDeath==='Unknown' || objValues.causeOfDeath==='Other cause of death' || objValues.causeOfDeath==='Suspected Opportunistic Infection' && (temp.causeOfDeathOthers = objValues.causeOfDeathOthers ? "" : "This field is required")}
@@ -699,6 +700,67 @@ console.log(errors)
                                 ) : "" }
                             </FormGroup>
                         </div>
+                        {objValues.careInFacilityDiscountinued==='No' && (<>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for=""> Date Returned to Care</Label>
+                            <Input
+                                type="date"
+                                name="dateReturnToCare"
+                                id="dateReturnToCare"
+                                onChange={handleInputChange}
+                                value={objValues.dateReturnToCare} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                            {errors.dateReturnToCare !=="" ? (
+                                <span className={classes.error}>{errors.dateReturnToCare}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Referred for</Label>
+                            <Input
+                                type="select"
+                                name="referredFor"
+                                id="referredFor"
+                                onChange={handleInputChange}
+                                value={objValues.referredFor} 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            >
+                                <option value=""></option>
+                                <option value="Adherence Counselling">Adherence Counselling</option>
+                                <option value="Others">Others</option>
+                            </Input>
+                            {errors.referredFor !=="" ? (
+                                <span className={classes.error}>{errors.referredFor}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        {objValues.referredFor==='Others' && (
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Referred for - (Others specify ) </Label>
+                            <Input
+                                type="textarea"
+                                name="referredForOthers"
+                                id="referredForOthers"
+                                onChange={handleInputChange}
+                                value={objValues.referredForOthers} 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                             {errors.referredForOthers !=="" ? (
+                                <span className={classes.error}>{errors.referredForOthers}</span>
+                                ) : "" } 
+                            </FormGroup>
+                        </div>
+                      )}
+                        </>)}
                         {objValues.careInFacilityDiscountinued==='Yes' && (<>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
@@ -743,27 +805,7 @@ console.log(errors)
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Referred for</Label>
-                            <Input
-                                type="select"
-                                name="referredFor"
-                                id="referredFor"
-                                onChange={handleInputChange}
-                                value={objValues.referredFor} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Adherence Counselling">Adherence Counselling</option>
-                                <option value="Others">Others</option>
-                            </Input>
-                            {errors.referredFor !=="" ? (
-                                <span className={classes.error}>{errors.referredFor}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
+                        
                         </>)}
                         {objValues.reasonForDiscountinuation==='Death' && (
                         <div className="form-group mb-3 col-md-6">
@@ -853,45 +895,9 @@ console.log(errors)
                             </FormGroup>
                         </div>
                         )}
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for=""> Date Returned to Care</Label>
-                            <Input
-                                type="date"
-                                name="dateReturnToCare"
-                                id="dateReturnToCare"
-                                onChange={handleInputChange}
-                                value={objValues.dateReturnToCare} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            />
-                            {errors.dateReturnToCare !=="" ? (
-                                <span className={classes.error}>{errors.dateReturnToCare}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
+                        
                        
-                        {objValues.referredFor==='Others' && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Referred for - (Others specify ) </Label>
-                            <Input
-                                type="textarea"
-                                name="referredForOthers"
-                                id="referredForOthers"
-                                onChange={handleInputChange}
-                                value={objValues.referredForOthers} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            />
-                             {errors.referredForOthers !=="" ? (
-                                <span className={classes.error}>{errors.referredForOthers}</span>
-                                ) : "" } 
-                            </FormGroup>
-                        </div>
-                      )}
+                       
                     </div>
                     
                     {saving ? <Spinner /> : ""}
