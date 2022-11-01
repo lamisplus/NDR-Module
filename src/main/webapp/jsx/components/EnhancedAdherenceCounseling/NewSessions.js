@@ -258,6 +258,7 @@ const NEWEACSESSION = (props) => {
                                     id="sessionDate"
                                     min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                     value={objValues.sessionDate}
+                                    max= {moment(new Date()).format("YYYY-MM-DD") }
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     

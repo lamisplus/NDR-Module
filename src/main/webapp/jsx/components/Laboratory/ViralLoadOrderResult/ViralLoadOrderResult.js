@@ -598,7 +598,7 @@ const Laboratory = (props) => {
                         <Row>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Asseyed by *</Label>
+                                    <Label for="encounterDate">Assayed by *</Label>
                                     <Input
                                         type="text"
                                         name="assayedBy"
@@ -615,7 +615,7 @@ const Laboratory = (props) => {
                             </Col>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Date Asseyed  *</Label>
+                                    <Label for="encounterDate">Date Assayed  *</Label>
                                     <Input
                                         type="date"
                                         name="dateAssayedBy"
@@ -644,7 +644,7 @@ const Laboratory = (props) => {
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />

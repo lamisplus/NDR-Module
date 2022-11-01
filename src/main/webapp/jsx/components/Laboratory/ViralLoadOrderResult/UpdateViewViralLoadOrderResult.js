@@ -426,7 +426,7 @@ const Laboratory = (props) => {
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==null && tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -527,7 +527,7 @@ const Laboratory = (props) => {
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -547,7 +547,7 @@ const Laboratory = (props) => {
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -772,7 +772,7 @@ const Laboratory = (props) => {
                                 min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                 onChange={handleInputChange}
                                 //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==null && tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
@@ -811,7 +811,7 @@ const Laboratory = (props) => {
                                 min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                 onChange={handleInputChange}
                                 //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==null && tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

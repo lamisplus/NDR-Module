@@ -314,7 +314,7 @@ const EAC = (props) => {
                             <FormGroup>
                             <Label for="">Current Viral Load Result Date </Label>
                             <Input
-                                type="date"
+                                type="datetime-local"
                                 name="dateResultReceived"
                                 id="dateResultReceived"
                                 //value={objValues.dateResultReceived}
