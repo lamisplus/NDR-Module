@@ -129,7 +129,12 @@ const BasicInfo = (props) => {
                                 respiratoryRate:""
                             })
     const handleInputChangeVitalSignDto = e => {
-        setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+        setErrors({...errors, [e.target.name]: ""})
+        if(e.target.name==='muac'){
+            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+        } else{
+            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+        }
     }
     //to check the input value for clinical decision 
     const handleInputValueCheckHeight =(e)=>{

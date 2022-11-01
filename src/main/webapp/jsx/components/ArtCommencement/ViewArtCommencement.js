@@ -346,8 +346,12 @@ const ArtCommencement = (props) => {
             }
         }
         const handleInputChangeVitalSignDto = e => { 
-            setErrors({...temp, [e.target.name]:""})           
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            setErrors({...errors, [e.target.name]: ""})
+            if(e.target.name==='muac'){
+                setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            } else{
+                setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            }
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value

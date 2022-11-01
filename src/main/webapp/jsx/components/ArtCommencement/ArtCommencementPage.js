@@ -188,6 +188,7 @@ const ArtCommencement = (props) => {
         ChildRegimenLine();
          gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.patientObj]);
+      
         //GET AdultRegimenLine 
         const AdultRegimenLine =()=>{
             axios
@@ -342,8 +343,12 @@ const ArtCommencement = (props) => {
                 
         }
         const handleInputChangeVitalSignDto = e => { 
-            setErrors({...temp, [e.target.name]:""})           
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            setErrors({...temp, [e.target.name]:""})  
+            if(e.target.name==='muac'){
+                setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            } else{
+                setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            }
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
@@ -501,7 +506,6 @@ const ArtCommencement = (props) => {
         }
         
     }
-        
 
   return (      
       <div >
@@ -1084,9 +1088,9 @@ const ArtCommencement = (props) => {
                                 <InputGroup> 
                                     <Input 
                                         type="select"
-                                        name="muac2"
-                                        id="muac2"
-                                        value={vital.muac2} 
+                                        name="muac"
+                                        id="muac"
+                                        value={vital.muac} 
                                         onChange={handleInputChangeVitalSignDto} 
                                         
                                     >
