@@ -176,7 +176,7 @@ const Pharmacy = (props) => {
             )
             .then((response) => {
                 const data=response.data
-                console.log(data);
+                
                 setObjValues(data);
                 setRegimenDrugList(data && data.extra ? data.extra.regimens : [])
                 DsdModelType(objValues.dsdModel)
@@ -184,9 +184,9 @@ const Pharmacy = (props) => {
             })
             .catch((error) => {
             //console.log(error);
-            });
-        
+            });       
     }
+    console.log(regimenDrugList);
     //Get list of DSD Model Type
     function DsdModelType (dsdmodel) {
         const dsd = dsdmodel ==='Facility' ? 'DSD_MODEL_FACILITY' : 'DSD_MODEL_COMMUNITY'
@@ -606,6 +606,7 @@ const Pharmacy = (props) => {
     const handleFormChange = (index, event) => {
         let data = [...regimenDrug];
         data[index][event.target.name] = event.target.value;
+        data[index]['prescribed'] = data[index]['frequency'] * data[index]['duration']
         setRegimenDrug (data);
      }
      //Validations of the forms
@@ -645,6 +646,7 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
+            props.PharmacyList();
             toast.success("Pharmacy drug refill successful");
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
         })

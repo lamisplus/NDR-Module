@@ -185,7 +185,7 @@ const ArtCommencement = (props) => {
         RegimenLine();
         GetARTCommencement();
         AdultRegimenLine();
-        ChildRegimenLine();
+        ChildRegimenLineObj();
         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.activeContent.id]);
       //GET AdultRegimenLine 
@@ -195,20 +195,22 @@ const ArtCommencement = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-            setAdultRegimenLine(response.data);
+                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
+                setAdultRegimenLine(artRegimen);
             })
             .catch((error) => {
             //console.log(error);
             });        
     }
     //GET ChildRegimenLine 
-    const ChildRegimenLine =()=>{
+    const ChildRegimenLineObj =()=>{
         axios
             .get(`${baseUrl}hiv/regimen/arv/children`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-            setChildRegimenLine(response.data);
+                const artRegimenChildren=response.data.filter((x)=> (x.id===3 || x.id===4 ))
+                setChildRegimenLine(artRegimenChildren);
             })
             .catch((error) => {
             //console.log(error);
@@ -517,7 +519,7 @@ const ArtCommencement = (props) => {
             }
             
         }
-        
+ console.log(patientAge)       
 
   return (      
       <div >
@@ -595,24 +597,24 @@ const ArtCommencement = (props) => {
                                 >
                                     <option value=""> Select</option>
             
-                                    {patientAge >5 &&  (
-                                <>
-                                    {adultRegimenLine.map((value) => (
-                                    <option key={value.id} value={value.id}>
-                                        {value.description}
-                                    </option>
-                                    ))}
-                                </>
-                                )}
-                                {patientAge <=5 &&  (
-                                <>
-                                    {childRegimenLine.map((value) => (
-                                    <option key={value.id} value={value.id}>
-                                        {value.description}
-                                    </option>
-                                    ))}
-                                </>
-                                )}
+                                    {patientAge && patientAge >5 &&  (
+                                    <>
+                                        {adultRegimenLine.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                        ))}
+                                    </>
+                                    )}
+                                    {patientAge && patientAge <=5 &&  (
+                                    <>
+                                        {childRegimenLine.map((value) => (
+                                        <option key={value.id} value={value.id}>
+                                            {value.description}
+                                        </option>
+                                        ))}
+                                    </>
+                                     )}
                             </Input>
                             {errors.regimenId !=="" ? (
                                 <span className={classes.error}>{errors.regimenId}</span>

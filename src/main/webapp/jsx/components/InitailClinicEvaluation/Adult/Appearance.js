@@ -553,7 +553,8 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {skin.nsf==='' && skin.nsf!=='true' && (
+                        
+                        {(skin.nsf==='' || skin.nsf===false) && (
                         <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -705,7 +706,8 @@ return (
                                     </label>
                                 </div>
                             </div>
-                            {eye.nsf==='' && eye.nsf!=='true' && (
+                            
+                            {(eye.nsf==='' || eye.nsf===false) && (
                                 <>
                             <div className="form-group mb-3 col-md-3">                                    
                                 <div className="form-check custom-checkbox ml-1 ">
@@ -823,7 +825,8 @@ return (
                                     </label>
                                 </div>
                             </div>
-                            {breast.nsf==='' && breast.nsf!=='true' && (
+                           
+                            {(breast.nsf==='' || breast.nsf===false) && (
                                 <>
                             <div className="form-group mb-3 col-md-3">                                    
                                 <div className="form-check custom-checkbox ml-1 ">
@@ -901,7 +904,8 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {cardiovascular.nsf==='' && cardiovascular.nsf!=='true' && (
+                       
+                        {(cardiovascular.nsf==='' || cardiovascular.nsf===false) && (
                         <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -961,7 +965,8 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {genitalia.nsf==='' && genitalia.nsf!=='true' && (
+                       
+                        {(genitalia.nsf==='' || genitalia.nsf===false ) && (
                         <>
                     
                         <div className="form-group mb-3 col-md-3">                                    
@@ -1058,7 +1063,8 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {respiratory.nsf==='' && respiratory.nsf!=='true' && (
+                       
+                        {(respiratory.nsf==='' || respiratory.nsf===false) && (
                             <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -1211,7 +1217,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {gastrointestinal.nsf==='' && gastrointestinal.nsf!=='true' && (
+                        {(gastrointestinal.nsf==='' || gastrointestinal.nsf===false) && (
                             <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -1326,7 +1332,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {neurological.nsf==='' && neurological.nsf!=='true' && (
+                        {(neurological.nsf==='' || neurological.nsf===false) && (
                             <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">
@@ -1476,7 +1482,7 @@ return (
                                 </label>
                             </div>
                         </div>
-                        {mentalStatus.nsf==='' && mentalStatus.nsf!==true && (
+                        {(mentalStatus.nsf==='' || mentalStatus.nsf===false) && (
                             <>
                         <div className="form-group mb-3 col-md-3">                                    
                             <div className="form-check custom-checkbox ml-1 ">

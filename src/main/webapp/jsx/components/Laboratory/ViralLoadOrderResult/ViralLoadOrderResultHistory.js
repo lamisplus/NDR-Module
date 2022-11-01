@@ -104,7 +104,7 @@ const LabHistory = (props) => {
 
     useEffect(() => {
       //CheckLabModule();
-    }, []);
+    }, [props.orderList]);
 
   //Check if Module Exist
     // const CheckLabModule =()=>{
@@ -188,8 +188,9 @@ const LabHistory = (props) => {
                   { title: "Lab Number", field: "labNumber", filtering: false },
                   { title: "Sample Number", field: "sampleNumber", filtering: false },
                   { title: "Date Sample Collected", field: "sampleCollectionDate", filtering: false },
-                  // { title: "Date Assayed", field: "dateAssayed", filtering: false },
+                  
                   { title: "Date Result Received", field: "dateResultReceived", filtering: false },
+                  { title: "Result", field: "result", filtering: false },
                   { title: "VL Indication", field: "viralLoadIndication", filtering: false },
                   { title: "Action", field: "Action", filtering: false },
 
@@ -199,11 +200,12 @@ const LabHistory = (props) => {
                     //Id: manager.id,
                     testGroup:row.labTestGroupName,
                     testName: row.labTestName,
-                    labNumber: row.sampleNumber,
+                    labNumber: row.labNumber,
                     sampleNumber: row.sampleNumber,
                     sampleCollectionDate: row.sampleCollectionDate,    
-                    //dateAssayed: row.dateAssayed,
+                    
                     dateResultReceived: row.dateResultReceived, 
+                    result: row.result,
                     viralLoadIndication: row.viralLoadIndicationName,
                     Action: 
                     

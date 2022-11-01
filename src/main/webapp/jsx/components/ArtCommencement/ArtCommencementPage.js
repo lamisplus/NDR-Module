@@ -209,8 +209,8 @@ const ArtCommencement = (props) => {
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
-                setChildRegimenLine(artRegimen);
+                    const artRegimenChildren=response.data.filter((x)=> (x.id===3 || x.id===4))
+                    setChildRegimenLine(artRegimenChildren);
                 })
                 .catch((error) => {
                 //console.log(error);
@@ -237,7 +237,9 @@ const ArtCommencement = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
+
                     const obj1 =response.data.find(x=> x.type==='Clinical evaluation')
+                    console.log(obj1)
                     setVitalSignDto({...obj1.data.physicalExamination})
             })
             .catch((error) => {
@@ -580,7 +582,7 @@ const ArtCommencement = (props) => {
                             >
                                 <option value=""> Select</option>
         
-                                {patientAge >5 &&  (
+                                {patientAge && patientAge >5 &&  (
                                 <>
                                     {adultRegimenLine.map((value) => (
                                     <option key={value.id} value={value.id}>
@@ -589,7 +591,7 @@ const ArtCommencement = (props) => {
                                     ))}
                                 </>
                                 )}
-                                {patientAge <=5 &&  (
+                                {patientAge && patientAge <=5 &&  (
                                 <>
                                     {childRegimenLine.map((value) => (
                                     <option key={value.id} value={value.id}>
@@ -1082,10 +1084,11 @@ const ArtCommencement = (props) => {
                                 <InputGroup> 
                                     <Input 
                                         type="select"
-                                        name="muac"
-                                        id="muac"
+                                        name="muac2"
+                                        id="muac2"
+                                        value={vital.muac2} 
                                         onChange={handleInputChangeVitalSignDto} 
-                                        value={vital.muac} 
+                                        
                                     >
                                     <option value="">Select</option>
                                     <option value="Normal">Normal</option>
@@ -1098,7 +1101,8 @@ const ArtCommencement = (props) => {
                                 </InputGroup>
                             
                                 </FormGroup>
-                        </div>
+                    </div>
+                    
                     </div>
                     )}
                     <div className="form-group mb-3 col-md-12">

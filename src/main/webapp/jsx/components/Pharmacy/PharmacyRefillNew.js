@@ -612,6 +612,7 @@ const Pharmacy = (props) => {
     const handleFormChange = (index, event) => {
         let data = [...regimenDrug];
         data[index][event.target.name] = event.target.value;
+        data[index]['prescribed'] = data[index]['frequency'] * data[index]['duration']
         setRegimenDrug (data);
     }
      //Validations of the forms
@@ -625,7 +626,7 @@ const Pharmacy = (props) => {
         return Object.values(temp).every(x => x == "")
     }
     const addDrug = e => {
-        if(validateDrugDispense()){
+           if(validateDrugDispense()){
             setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
         }else{
             toast.error("All fields are required")
@@ -651,6 +652,7 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
+            props.PharmacyList();
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
             toast.success("Pharmacy drug refill successful");
             

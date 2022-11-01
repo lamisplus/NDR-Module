@@ -106,7 +106,7 @@ const LabHistory = (props) => {
     useEffect(() => {
         //CheckLabModule();
         //LabOrders()
-      }, []);
+      }, [props.orderList]);
 
   //Check if Module Exist
   const CheckLabModule =()=>{

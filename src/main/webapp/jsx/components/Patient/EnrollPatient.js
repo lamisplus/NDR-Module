@@ -262,6 +262,7 @@ const UserRegistration = (props) => {
             basicInfo.email=email && email.value ? email.value :""
             basicInfo.address=country  && country.city ? country.city :""
             basicInfo.landmark=country.line && country.line.length>0 ? country.line[0]: ""
+            console.log(basicInfo.landmark)
             basicInfo.countryId=country && country.countryId  ? country.countryId  :""
             setStateByCountryId(country.countryId); 
             getProvincesId(country && country.stateId  ? country.stateId  :"")
@@ -1374,6 +1375,7 @@ const UserRegistration = (props) => {
                                                     type="text"
                                                     name="address"
                                                     id="address"
+                                                    value={basicInfo.address}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                    
@@ -1392,6 +1394,7 @@ const UserRegistration = (props) => {
                                                     type="text"
                                                     name="landmark"
                                                     id="landmark"
+                                                    value={basicInfo.landmark}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     

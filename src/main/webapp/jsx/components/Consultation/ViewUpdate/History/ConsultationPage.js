@@ -1676,7 +1676,7 @@ const ClinicVisit = (props) => {
                         {/* END ARV DRUGS Regimen */}
                         <br />
                         <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
-                        <h4 style={{color:'#fff'}}>Viral Load  Order</h4>
+                        <h4 style={{color:'#fff'}}>Lab & Viral Load  Order</h4>
                         </Label>
                         <br /><br />
                         {/* Viral Load  Form */}

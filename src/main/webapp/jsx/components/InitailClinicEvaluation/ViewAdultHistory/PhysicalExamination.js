@@ -113,7 +113,10 @@ const BasicInfo = (props) => {
         systolic:"",
         pulse:"",
         temperature:"",
-        respiratoryRate:"" 
+        respiratoryRate:"" ,
+        muac:"",
+        surfaceArea:"",
+        headCircumference:""
     })
     //Vital signs clinical decision support 
     const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
@@ -213,7 +216,7 @@ const BasicInfo = (props) => {
             handleItemClick('appearance', 'physical-examination' ) 
         }                 
     }
-    console.log(props.observation.data)
+
     
 return (
         <>  

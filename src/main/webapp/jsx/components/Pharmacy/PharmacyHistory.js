@@ -99,48 +99,24 @@ const useStyles = makeStyles(theme => ({
 
 
 const PharmacyHistory = (props) => {    
-    const [refillList, setRefillList] = useState([])
+    
     const [loading, setLoading] = useState(true)
     
     useEffect(() => {
-        PharmacyList()
-      }, [props.patientObj.id]);
-    //GET LIST Drug Refill
-    async function PharmacyList() {
-        setLoading(true)
-        axios
-            .get(`${baseUrl}hiv/art/pharmacy/patient?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                
-                setLoading(false)
-                setRefillList(response.data);                
-            })
-            .catch((error) => {  
-                setLoading(false)  
-            });        
-    }
-    const regimenName =(regimenObj)=> {
-      let regimenArr = []
-      regimenObj.forEach(function (value, index, array) { 
-        console.log(value)      
-          regimenArr.push(<li key={index}>{value['name']}</li>)
-      })
-      return regimenArr; 
-      }
+
+      }, [props.patientObj.id, props.refillList]);
+
     const onClickHome = (row, actionType) =>{  
        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
         props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:actionType, obj:row})
     }
-    const LoadDeletePage = (row) =>{ 
-        console.log(row) 
+    const LoadDeletePage = (row) =>{  
         axios.delete(`${baseUrl}art/pharmacy/${row.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
                 toast.success("Record Deleted Successfully");
-                PharmacyList()
+                props.PharmacyList()
             })
             .catch((error) => {
                 if(error.response && error.response.data){
@@ -152,7 +128,14 @@ const PharmacyHistory = (props) => {
                   }
             }); 
      }
-    
+     const regimenName =(regimenObj)=> {
+        let regimenArr = []
+        regimenObj.forEach(function (value, index, array) { 
+          console.log(value)      
+            regimenArr.push(<li key={index}>{value['name']}</li>)
+        })
+        return regimenArr; 
+        }
 
   return (
     <div>
@@ -180,8 +163,8 @@ const PharmacyHistory = (props) => {
                 { title: "Action", field: "Action", filtering: false },
 
               ]}
-              isLoading={loading}
-              data={ refillList.map((row) => ({
+              isLoading={props.loading}
+              data={ props.refillList.map((row) => ({
                   //Id: manager.id,
                   visitDate:row.visitDate,
                   refillPeriod: row.refillPeriod,
