@@ -71,8 +71,6 @@ const Pharmacy = (props) => {
     const [selectedOptionAdr, setSelectedOptionAdr] = useState();
     const [prepSideEffect, setPrepSideEffect] = useState([]);
     const [mmdType, setmmdType]=useState();
-    const [errors, setErrors] = useState({});
-    let temp = { ...errors }
     const [dsdModelType, setDsdModelType] = useState([]);
     const [showmmdType, setShowmmdType]=useState(false);
     const [showDsdModel, setShowDsdModel] = useState(false);
@@ -138,7 +136,7 @@ const Pharmacy = (props) => {
         CheckEACStatus();
         VitalSigns();
         ChildRegimenLine();
-    }, [props.activeContent.obj, props.activeContent.id]);
+    }, [props.activeContent.obj, props.activeContent.id, objValues]);
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
@@ -176,17 +174,18 @@ const Pharmacy = (props) => {
             )
             .then((response) => {
                 const data=response.data
-                
+                console.log(data);
                 setObjValues(data);
                 setRegimenDrugList(data && data.extra ? data.extra.regimens : [])
                 DsdModelType(objValues.dsdModel)
+                objValues.dsdModelType=data.dsdModelType
                 //}
             })
             .catch((error) => {
             //console.log(error);
-            });       
+            });
+        
     }
-    console.log(regimenDrugList);
     //Get list of DSD Model Type
     function DsdModelType (dsdmodel) {
         const dsd = dsdmodel ==='Facility' ? 'DSD_MODEL_FACILITY' : 'DSD_MODEL_COMMUNITY'
@@ -195,7 +194,6 @@ const Pharmacy = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
-               console.log(response.data);
                setDsdModelType(response.data);
            })
            .catch((error) => {
@@ -609,24 +607,10 @@ const Pharmacy = (props) => {
         data[index]['prescribed'] = data[index]['frequency'] * data[index]['duration']
         setRegimenDrug (data);
      }
-     //Validations of the forms
-     const validateDrugDispense = () => {        
-        temp.dispense = regimenDrug[0].dispense ? "" : "This field is required"
-        temp.frequency = regimenDrug[0].frequency ? "" : "This field is required"
-        
-        setErrors({
-            ...temp
-        })
-        return Object.values(temp).every(x => x == "")
-    }
      const addDrug = e => {
-        if(validateDrugDispense()){
-            setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
-        }else{
-            toast.error("All fields are required")
-        }
-                     
-    }
+        setRegimenDrugList([...regimenDrugList, ...regimenDrug])            
+        
+      }
     /* Remove ADR  function **/
     const removeAttempt = index => {       
         regimenDrugList.splice(index, 1);
@@ -646,7 +630,6 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
-            props.PharmacyList();
             toast.success("Pharmacy drug refill successful");
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
         })
@@ -913,7 +896,7 @@ const Pharmacy = (props) => {
             </div>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                    <Label >DSD Model Type</Label>
+                    <Label >DSD Model Type </Label>
                     <Input
                         type="select"
                         name="dsdModelType"
@@ -1264,9 +1247,7 @@ const Pharmacy = (props) => {
                                         onChange={event => handleFormChange(index, event)}
                                         required
                                         >
-                                         {errors.dispense !=="" ? (
-                                            <span className={classes.error}>{errors.dispense}</span>
-                                            ) : "" }
+                                        
                                     </Input>
                                 
                                     </FormGroup>
