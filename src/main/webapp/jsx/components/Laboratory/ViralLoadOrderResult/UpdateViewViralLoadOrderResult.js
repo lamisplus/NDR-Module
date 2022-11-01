@@ -88,7 +88,7 @@ const Laboratory = (props) => {
             approvedBy: "",
             assayedBy: "",
             checkedBy: "",
-            comment: "",
+            comments: "",
             dateApproved: "",
             dateAssayedBy: "",
             dateCheckedBy: "",
@@ -526,9 +526,9 @@ console.log(errors)
                                     <Label for="priority">Comment</Label>
                                     <Input
                                         type="textarea"
-                                        name="comment"
-                                        id="comment"
-                                        value={tests.comment}
+                                        name="comments"
+                                        id="comments"
+                                        value={tests.comments}
                                         onChange={handleInputChange}  
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                         >
