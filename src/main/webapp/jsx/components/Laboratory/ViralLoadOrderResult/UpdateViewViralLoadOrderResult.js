@@ -120,15 +120,16 @@ const Laboratory = (props) => {
         setTests(props.activeContent.obj) 
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=props.activeContent.obj.dateResultReceived!==null && props.activeContent.obj.dateResultReceived!=="" ? moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")  : ""
-        showObj.isPcr=props.activeContent.obj.pcrLabName!==null && props.activeContent.obj.pcrLabName!==""!==""?true :false
+        showObj.isPcr=props.activeContent.obj.pcrLabSampleNumber!==null && props.activeContent.obj.pcrLabSampleNumber!==""!==""?true :false
         showObj.hasResult=props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null ?true :false
-        if(props.activeContent.obj.pcrLabName!==null && props.activeContent.obj.pcrLabName!==""){
+        if(props.activeContent.obj.pcrLabSampleNumber!==null && props.activeContent.obj.pcrLabSampleNumber!==""){
             setShowPcrLabDetail(true)
         } 
         if(props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null){
             setShowResult(true)
         }  
     }, [props.patientObj.id, props.activeContent.obj]);
+    console.log(props.activeContent.obj)
      //Get list of LabNumbers
      const LabNumbers =()=>{
         axios
@@ -222,7 +223,7 @@ const Laboratory = (props) => {
         showPcrLabDetail && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
         showPcrLabDetail && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
         showPcrLabDetail && (temp.orderBy = tests.orderBy ? "" : "This field is required")
-        showPcrLabDetail && tests.sampleLoggedRemotely ==='1' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+        showPcrLabDetail && (tests.sampleLoggedRemotely ==='1'  || tests.sampleLoggedRemotely ===1 ) && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
         showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
         showPcrLabDetail && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
         showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
