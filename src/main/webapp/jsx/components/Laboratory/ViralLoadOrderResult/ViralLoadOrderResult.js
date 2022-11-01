@@ -294,7 +294,7 @@ const Laboratory = (props) => {
         showPcrLabDetail && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
         showPcrLabDetail && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
         showPcrLabDetail && (temp.orderBy = tests.orderBy ? "" : "This field is required")
-        showPcrLabDetail && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+        showPcrLabDetail && tests.sampleLoggedRemotely ==='1' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
         showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
         showPcrLabDetail && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
         showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
@@ -729,7 +729,7 @@ const Laboratory = (props) => {
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -767,6 +767,7 @@ const Laboratory = (props) => {
                                 id="dateSampleLoggedRemotely"
                                 //min={0}
                                 value={tests.dateSampleLoggedRemotely}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -827,7 +828,7 @@ const Laboratory = (props) => {
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -866,7 +867,7 @@ const Laboratory = (props) => {
                                 min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                 onChange={handleInputChange}
                                 //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
@@ -905,7 +906,7 @@ const Laboratory = (props) => {
                                 min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                 onChange={handleInputChange}
                                 //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

@@ -129,7 +129,6 @@ const Laboratory = (props) => {
             setShowResult(true)
         }  
     }, [props.patientObj.id, props.activeContent.obj]);
-    console.log(props.activeContent.obj)
      //Get list of LabNumbers
      const LabNumbers =()=>{
         axios
@@ -223,7 +222,7 @@ const Laboratory = (props) => {
         showPcrLabDetail && ( temp.dateCheckedBy = tests.dateCheckedBy ? "" : "This field is required")
         showPcrLabDetail && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
         showPcrLabDetail && (temp.orderBy = tests.orderBy ? "" : "This field is required")
-        showPcrLabDetail && tests.sampleLoggedRemotely ==='Yes' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
+        showPcrLabDetail && tests.sampleLoggedRemotely ==='1' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
         showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
         showPcrLabDetail && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
         showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
@@ -247,6 +246,7 @@ const Laboratory = (props) => {
             setSaving(true);
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
             tests.dateResultReceived =tests.dateResultReceived!==null && tests.dateResultReceived!=="" ? moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS") : ""
+            tests.dateReceivedAtPcrLab =tests.dateReceivedAtPcrLab!==null && tests.dateReceivedAtPcrLab!=="" ? moment(tests.dateReceivedAtPcrLab).format("YYYY-MM-DD HH:MM:SS") : ""
             axios.put(`${baseUrl}laboratory/vl-results/${props.activeContent.obj.id}`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
@@ -731,7 +731,7 @@ console.log(errors)
                                         min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {tests.dateResultReceived!==null && tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -770,7 +770,7 @@ console.log(errors)
                                 min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                 onChange={handleInputChange}
                                 //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                max= {tests.dateResultReceived!==null && tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
@@ -809,7 +809,7 @@ console.log(errors)
                                 min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                 onChange={handleInputChange}
                                 //min={tests.sampleCollectionDate}
-                                max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
+                                max= {tests.dateResultReceived!==null && tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
