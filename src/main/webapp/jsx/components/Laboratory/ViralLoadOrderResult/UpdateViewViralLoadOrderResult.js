@@ -501,7 +501,7 @@ const Laboratory = (props) => {
                         <Row>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Asseyed by *</Label>
+                                    <Label for="encounterDate">Assayed by *</Label>
                                     <Input
                                         type="text"
                                         name="assayedBy"
@@ -518,7 +518,7 @@ const Laboratory = (props) => {
                             </Col>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Date Asseyed  *</Label>
+                                    <Label for="encounterDate">Date Assayed  *</Label>
                                     <Input
                                         type="date"
                                         name="dateAssayedBy"
