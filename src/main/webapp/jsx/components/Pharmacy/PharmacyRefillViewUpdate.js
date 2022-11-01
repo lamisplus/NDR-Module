@@ -136,7 +136,7 @@ const Pharmacy = (props) => {
         CheckEACStatus();
         VitalSigns();
         ChildRegimenLine();
-    }, [props.activeContent.obj, props.activeContent.id, objValues]);
+    }, [props.activeContent.obj, props.activeContent.id, objValues.dsdModelType]);
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");

@@ -82,7 +82,7 @@ const Tracking = (props) => {
     const patientObj = props.patientObj;
     const [errors, setErrors] = useState({});
     let temp = { ...errors }
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    //const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [reasonTracking, setReasonTracking] = useState([]);
@@ -93,6 +93,7 @@ const Tracking = (props) => {
     const [personContact, setpersonContact] = useState([]);
     const [modeCommunication, setmodeCommunication] = useState([]);
     const [dsdStatus, setdsdStatus] = useState([]);
+    const [enrollDate, setEnrollDate] = useState("");
     
     const [observation, setObservation]=useState({
         data: {},
@@ -145,6 +146,22 @@ const Tracking = (props) => {
         ModeOfCommunication();
         PersonContact();
     }, []);
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEacStatusObj(response.data);
+               //console.log(enrollDate)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
     const ReasonForTracking =()=>{
         axios
             .get(`${baseUrl}application-codesets/v2/REASON_TRACKING`,
@@ -483,7 +500,7 @@ console.log(errors)
                                 id="dateLastAppointment"
                                 onChange={handleInputChange}
                                 value={objValues.dateLastAppointment} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
@@ -502,7 +519,7 @@ console.log(errors)
                                 id="dateMissedAppointment"
                                 onChange={handleInputChange}
                                 value={objValues.dateMissedAppointment} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
@@ -525,6 +542,7 @@ console.log(errors)
                                     value={attempt.attemptDate}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    min={enrollDate!=='' ? enrollDate : ""}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     
                                     > 
@@ -710,7 +728,7 @@ console.log(errors)
                                 id="dateReturnToCare"
                                 onChange={handleInputChange}
                                 value={objValues.dateReturnToCare} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
@@ -771,7 +789,7 @@ console.log(errors)
                                 id="dateOfDiscontinuation"
                                 onChange={handleInputChange}
                                 value={objValues.dateOfDiscontinuation} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
@@ -851,10 +869,10 @@ console.log(errors)
                             </FormGroup>
                         </div>
                         )}
-                        {objValues.reasonForDiscountinuation==='Loss to follow-up' && (
+                        {objValues.reasonForDiscountinuation==='Interruption in Treatment (Confirmed)' && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Reason for Loss to follow-up</Label>
+                            <Label for="">Reason for Interruption in Treatment</Label>
                             <Input
                                 type="select"
                                 name="reasonForLossToFollowUp"
@@ -881,13 +899,13 @@ console.log(errors)
                         {objValues.reasonForLossToFollowUp==='Others' && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Reason for Loss to follow-up - Others specify</Label>
+                            <Label for="">Reason for Interruption in Treatment - Others specify</Label>
                             <Input
                                 type="textarea"
                                 name="reasonForLossToFollowUpOthers"
                                 id="reasonForLossToFollowUpOthers"
                                 onChange={handleInputChange}
-                                value={objValues.reasonForLossToFollowUp} 
+                                value={objValues.reasonForLossToFollowUpOthers} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
