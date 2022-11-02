@@ -86,14 +86,12 @@ const useStyles = makeStyles(theme => ({
 const CervicalCancer = (props) => {
     const patientObj = props.patientObj;
     let history = useHistory();
-    const classes = useStyles()
-    const [clinicalStage, setClinicalStage] = useState([])
-    const [values, setValues] = useState([]);
+    const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
-    const [tbStatus, setTbStatus] = useState([]);
-    const [regimenLine, setRegimenLine] = useState([]);
-    const [regimenType, setRegimenType] = useState([]);
+    const [result, setResult] = useState([]);
+    const [method, setMethod] = useState([]);
+    const [type, setType] = useState([]);
     const [objValues, setObjValues] = useState({
                                                     personId:patientObj.id,
                                                     screeningResult:"",
@@ -113,96 +111,92 @@ const CervicalCancer = (props) => {
 
     useEffect(() => {
         //FunctionalStatus();
-        WhoStaging();
-        TBStatus();
-        //PreganacyStatus();
-        RegimenLine();
+        Result();
+        Type();
+        Method();
       }, []);
-      //Get list of WhoStaging
-      const WhoStaging =()=>{
+
+    const Method =()=>{
+    axios
+        .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_METHOD`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setMethod(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    }
+    const Type =()=>{
         axios
-           .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setClinicalStage(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-        }
-        //Get list of RegimenLine
-        const RegimenLine =()=>{
-        axios
-           .get(`${baseUrl}hiv/regimen/types`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {
-               //console.log(response.data);
-               setRegimenLine(response.data);
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
-       
-        }
-
-
-        // TB STATUS
-        const TBStatus =()=>{
-            axios
-               .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setTbStatus(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-         }
-        const handleInputChange = e => {
-            setObjValues ({...objValues,  [e.target.name]: e.target.value});
-        }
-
-        //FORM VALIDATION
-        const validate = () => {
-            let temp = { ...errors }
-            //temp.name = details.name ? "" : "This field is required"
-            //temp.description = details.description ? "" : "This field is required"
-            setErrors({
-                ...temp
-                })    
-            return Object.values(temp).every(x => x == "")
-        }
-          
-        /**** Submit Button Processing  */
-        const handleSubmit = (e) => {                  
-            e.preventDefault();                     
-            setSaving(true);
-            observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
-            observation.personId =patientObj.id
-            observation.data=objValues
-            axios.post(`${baseUrl}observation`,observation,
-            { headers: {"Authorization" : `Bearer ${token}`}},
-            
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_TYPE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
             )
-              .then(response => {
-                  setSaving(false);
-                  toast.success("Record save successful");
-                  props.setActiveContent({...props.activeContent, route:'recent-history'})
-              })
-              .catch(error => {
+            .then((response) => {
+                //console.log(response.data);
+                setType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    const Result =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_RESULT`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setResult(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+
+    const handleInputChange = e => {
+        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+    }
+
+    //FORM VALIDATION
+    const validate = () => {
+        let temp = { ...errors }
+        //temp.name = details.name ? "" : "This field is required"
+        //temp.description = details.description ? "" : "This field is required"
+        setErrors({
+            ...temp
+            })    
+        return Object.values(temp).every(x => x == "")
+    }
+        
+    /**** Submit Button Processing  */
+    const handleSubmit = (e) => {                  
+        e.preventDefault();                     
+        setSaving(true);
+        observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+        observation.personId =patientObj.id
+        observation.data=objValues
+        axios.post(`${baseUrl}observation`,observation,
+        { headers: {"Authorization" : `Bearer ${token}`}},
+        
+        )
+            .then(response => {
                 setSaving(false);
-                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                toast.error(errorMessage);
-              });
-          
-        }
+                toast.success("Record save successful");
+                props.setActiveContent({...props.activeContent, route:'recent-history'})
+            })
+            .catch(error => {
+            setSaving(false);
+            let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+            toast.error(errorMessage);
+            });
+        
+    }
 
   return (      
          <div>                 
@@ -222,6 +216,9 @@ const CervicalCancer = (props) => {
                                 value={objValues.dateOfScreening}
                                 required
                             />
+                            {errors.screenType !=="" ? (
+                                <span className={classes.error}>{errors.screenType}</span>
+                            ) : "" }
                             </FormGroup>
                         </div>
 
@@ -236,14 +233,17 @@ const CervicalCancer = (props) => {
                                 onChange={handleInputChange}
                                 required
                                 >
-                                    <option value="Select"> </option>
+                                    <option value="Select"> Select</option>
             
-                                    {regimenLine.map((value) => (
-                                        <option key={value.id} value={value.id}>
+                                    {type.map((value) => (
+                                        <option key={value.id} value={value.code}>
                                             {value.description}
                                         </option>
                                     ))}
                             </Input>
+                            {errors.screenType !=="" ? (
+                                <span className={classes.error}>{errors.screenType}</span>
+                            ) : "" }
                         </FormGroup>
                         </div>
                         
@@ -258,17 +258,17 @@ const CervicalCancer = (props) => {
                                 onChange={handleInputChange}
                                 required
                                 >
-                                    <option value="Select"> </option>
+                                    <option value="Select"> Select</option>
             
-                                    {regimenType.map((value) => (
+                                    {method.map((value) => (
                                         <option key={value.id} value={value.id}>
                                             {value.description}
                                         </option>
                                     ))}
                             </Input> 
-                        {/* {errors.last_name !=="" ? (
-                                <span className={classes.error}>{errors.last_name}</span>
-                            ) : "" } */}
+                        {errors.screenMethod !=="" ? (
+                                <span className={classes.error}>{errors.screenMethod}</span>
+                            ) : "" }
                         </FormGroup>
                         </div>
 
@@ -285,13 +285,15 @@ const CervicalCancer = (props) => {
                                 >
                                     <option value="Select"> </option>
             
-                                    {clinicalStage.map((value) => (
+                                    {result.map((value) => (
                                         <option key={value.id} value={value.id}>
                                             {value.display}
                                         </option>
                                     ))}
                             </Input>
-                            
+                            {errors.screeningResult !=="" ? (
+                                <span className={classes.error}>{errors.screeningResult}</span>
+                            ) : "" }
                             </FormGroup>
                         </div>
 
@@ -307,6 +309,7 @@ const CervicalCancer = (props) => {
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
+                    disabled={objValues.screeningResult==="" || objValues.screenMethod==="" || objValues.screenType==="" || objValues.dateOfScreening===""  ? true : false}
                     onClick={handleSubmit}
                 >
                     {!saving ? (
