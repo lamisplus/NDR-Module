@@ -599,7 +599,7 @@ const ClinicVisit = (props) => {
   }
   const handleInputChangeVitalSignDto = e => {
     setErrors({...errors, [e.target.name]: ""})
-  if(e.target.name!=='encounterDate' || e.target.name!=='muac'){
+  if(e.target.name!=='encounterDate' && e.target.name!=='muac'){
     setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
   }else{
     setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
