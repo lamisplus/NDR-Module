@@ -562,17 +562,17 @@ const Pharmacy = (props) => {
     const handlRefillPeriod = e =>{
         let refillcount= ""
         if(e.target.value==="30"){
-             refillcount= e.target.value -2
+             refillcount= e.target.value 
         }else if(e.target.value==="60"){
-            refillcount= e.target.value -4
+            refillcount= e.target.value 
         }else if(e.target.value==="90"){
-        refillcount= e.target.value - 6
+        refillcount= e.target.value 
         }else if(e.target.value==="120"){
-            refillcount= e.target.value -8
+            refillcount= e.target.value 
         }else if(e.target.value==="160"){
-            refillcount= e.target.value -10
+            refillcount= e.target.value 
         }else if(e.target.value==="180"){
-            refillcount= e.target.value -12
+            refillcount= e.target.value 
         }else{
             refillcount= e.target.value
         }
