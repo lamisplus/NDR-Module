@@ -621,7 +621,7 @@ const Laboratory = (props) => {
                                         name="dateAssayedBy"
                                         id="dateAssayedBy"
                                         value={tests.dateAssayedBy}
-                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        min={tests.sampleCollectionDate}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
                                         max= {tests.dateResultReceived!==''? tests.dateResultReceived :moment(new Date()).format("YYYY-MM-DD") }
