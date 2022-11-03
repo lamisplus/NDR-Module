@@ -175,7 +175,7 @@ const PatientnHistory = (props) => {
         }else if(row.path==='Intensive-follow-up'){
             props.setActiveContent({...props.activeContent, route:'intensive-follow-up-update', id:row.id, activeTab:"history", actionType:action, })
       
-        }else if(row.path==='Client-tracker'){
+        }else if(row.path==='client-tracker'){
             props.setActiveContent({...props.activeContent, route:'client-tracker', id:row.id, activeTab:"history", actionType:action, })
       
         }else{

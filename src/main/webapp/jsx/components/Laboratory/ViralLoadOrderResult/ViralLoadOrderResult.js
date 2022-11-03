@@ -402,7 +402,7 @@ const Laboratory = (props) => {
                 <form >
                 <div className="row">
                     <Row>
-                    <Col md={4} className="form-group mb-3">
+                    <Col md={6} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">laboratory Number</Label>                                
                             <Input

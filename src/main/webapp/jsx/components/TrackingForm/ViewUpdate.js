@@ -964,7 +964,7 @@ console.log(errors)
                     
                     {saving ? <Spinner /> : ""}
                     <br />
-                
+                    {props.activeContent.actionType ==='update' ? (
                     <MatButton
                     type="submit"
                     variant="contained"
@@ -981,7 +981,9 @@ console.log(errors)
                     <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                     </MatButton>
-                
+                    )
+                    :" "
+                    }
                     </form>
                 </CardBody>
             </Card>                    

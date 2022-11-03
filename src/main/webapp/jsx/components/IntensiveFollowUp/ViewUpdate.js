@@ -500,23 +500,23 @@ const Tracking = (props) => {
                     <br />
                     {props.activeContent.actionType ==='update' ?
                         (
-                    <MatButton
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    startIcon={<SaveIcon />}
-                    onClick={handleSubmit}
-                    style={{backgroundColor:"#014d88"}}
-                    disabled={attemptList.length <=0  ? true : false}
-                    >
-                    {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Update</span>
-                    ) : (
-                    <span style={{ textTransform: "capitalize" }}>Updating...</span>
-                    )}
-                    </MatButton>
-                    )
+                        <MatButton
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}
+                        startIcon={<SaveIcon />}
+                        onClick={handleSubmit}
+                        style={{backgroundColor:"#014d88"}}
+                        disabled={attemptList.length <=0  ? true : false}
+                        >
+                        {!saving ? (
+                        <span style={{ textTransform: "capitalize" }}>Update</span>
+                        ) : (
+                        <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                        )}
+                        </MatButton>
+                        )
                     :""
                     }
                     </form>
