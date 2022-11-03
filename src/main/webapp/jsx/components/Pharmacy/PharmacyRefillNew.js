@@ -802,7 +802,7 @@ const Pharmacy = (props) => {
                     />
                     </FormGroup>
                 </div>
-                <div className="mt-4 col-md-2" > 
+                {/* <div className="mt-4 col-md-2" > 
                       
                         <div className="form-check custom-checkbox ml-1 ">
                             <input
@@ -841,6 +841,27 @@ const Pharmacy = (props) => {
                             Substitution
                             </label>
                         </div>
+                </div> */}
+                <div className="form-group mb-3 col-md-4">
+                <FormGroup>
+                    <Label >Substitution/Switch </Label>
+                    <Input
+                        type="select"
+                        name="switch"
+                        id="switch"
+                        value={objValues.switch}
+        
+                        onChange={handleInputChange}   
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        >
+                        <option value="">Select </option>
+                        <option value="None">None </option>
+                        <option value="Switch">Switch</option>
+                        <option value="Substitution">Substitution </option>
+                        
+                    </Input>
+                    
+                    </FormGroup>
                 </div>
             </div>
             <div className="row">
@@ -1230,7 +1251,7 @@ const Pharmacy = (props) => {
                                         value={input.duration}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
-                                        disabled
+                                        //disabled
                                         >
                                         
                                     </Input>
