@@ -92,6 +92,7 @@ const CervicalCancer = (props) => {
     const [result, setResult] = useState([]);
     const [method, setMethod] = useState([]);
     const [type, setType] = useState([]);
+    const [enrollDate, setEnrollDate] = useState("");
     const [objValues, setObjValues] = useState({
                                                     personId:patientObj.id,
                                                     screeningResult:"",
@@ -115,7 +116,24 @@ const CervicalCancer = (props) => {
         Type();
         Method();
         GetDetail();
+        GetPatientDTOObj();
     }, [props.activeContent.id]);
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEacStatusObj(response.data);
+               //console.log(enrollDate)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    }
      //Get Mental Health Object
      const GetDetail =()=>{
         axios
@@ -132,24 +150,24 @@ const CervicalCancer = (props) => {
            //console.log(error);
            });
        
-        }
+    }
     const Method =()=>{
-    axios
-        .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_METHOD`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-        )
-        .then((response) => {
-            //console.log(response.data);
-            setMethod(response.data);
-        })
-        .catch((error) => {
-        //console.log(error);
-        });
-    
+            axios
+                .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_METHOD`,
+                    { headers: {"Authorization" : `Bearer ${token}`} }
+                )
+                .then((response) => {
+                    //console.log(response.data);
+                    setMethod(response.data);
+                })
+                .catch((error) => {
+                //console.log(error);
+                });
+            
     }
     const Type =()=>{
         axios
-            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_TYPE`,
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_TREATMENT`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
@@ -175,7 +193,6 @@ const CervicalCancer = (props) => {
             });
         
     }
-
     const handleInputChange = e => {
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }
@@ -229,6 +246,8 @@ const CervicalCancer = (props) => {
                                 name="dateOfScreening"
                                 id="dateOfScreening"
                                 onChange={handleInputChange}
+                                min={enrollDate}
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 value={objValues.dateOfScreening}
                                 required
                             />
@@ -253,7 +272,7 @@ const CervicalCancer = (props) => {
             
                                     {type.map((value) => (
                                         <option key={value.id} value={value.code}>
-                                            {value.description}
+                                            {value.display}
                                         </option>
                                     ))}
                             </Input>
@@ -277,8 +296,8 @@ const CervicalCancer = (props) => {
                                     <option value="Select"> Select</option>
             
                                     {method.map((value) => (
-                                        <option key={value.id} value={value.id}>
-                                            {value.description}
+                                        <option key={value.id} value={value.code}>
+                                            {value.display}
                                         </option>
                                     ))}
                             </Input> 
@@ -302,7 +321,7 @@ const CervicalCancer = (props) => {
                                     <option value="Select"> </option>
             
                                     {result.map((value) => (
-                                        <option key={value.id} value={value.id}>
+                                        <option key={value.id} value={value.code}>
                                             {value.display}
                                         </option>
                                     ))}
