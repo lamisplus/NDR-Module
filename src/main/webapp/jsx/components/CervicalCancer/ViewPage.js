@@ -141,8 +141,8 @@ const CervicalCancer = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {            
-                const cancerObj= response.data.find((x)=> x.type==='Cervical cancer') 
-                //console.log(mentalObj)
+                const cancerObj= response.data
+                console.log(response.data)
                 setObjValues({...cancerObj.data})
                   //setViralLoad(LabObject)
            })
