@@ -1073,7 +1073,7 @@ const Pharmacy = (props) => {
             <br/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >OI Drug</Label>
+                <Label >OI's</Label>
                 <Input
                     type="select"
                     name="regimen"
@@ -1125,7 +1125,7 @@ const Pharmacy = (props) => {
             <br/>
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >TB Treatment Drug</Label>
+                <Label >TB Treatment </Label>
                 <Input
                     type="select"
                     name="regimen"
