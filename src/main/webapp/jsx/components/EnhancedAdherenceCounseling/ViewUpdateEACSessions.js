@@ -140,7 +140,7 @@ const NEWEACSESSION = (props) => {
     //Get EAC Object
     const GetFormDetail =()=>{
         axios
-           .get(`${baseUrl}hiv/eac/session/eac/${props.patientObj.id}`,
+           .get(`${baseUrl}hiv/eac/session/eac/${props.activeContent.id}`,
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {            
@@ -248,7 +248,7 @@ const NEWEACSESSION = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                    <h2>Update EAC Session 
+                    <h2>EAC Session  - {props.activeContent.actionType ==='update' ? "Update " : "View" }
                     {/* <ButtonMui
                         variant="contained"
                         color="primary"
