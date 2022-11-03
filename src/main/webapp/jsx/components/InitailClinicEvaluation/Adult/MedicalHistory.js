@@ -181,6 +181,7 @@ const MedicalHistory = (props) => {
                                                 parentChildMarriageStatus:"",  
                                                 howManySibiling:"", 
                                                 immunisationComplete:"",
+                                                modeOfInfantFeeding:""
                                                 });
     let temp = { ...errors }
     const [hideOtherPatientDisclosure, setHideOtherPatientDisclosure]=useState(false)
@@ -430,10 +431,10 @@ const MedicalHistory = (props) => {
                             <Label >Mode of infant({"<=6"} months) feeding </Label>
                             <Input 
                                     type="select"
-                                    name="immunisationComplete"
-                                    id="immunisationComplete"
+                                    name="modeOfInfantFeeding"
+                                    id="modeOfInfantFeeding"
                                     onChange={handleMedicalHistory}  
-                                    value={objValues.immunisationComplete} 
+                                    value={objValues.modeOfInfantFeeding} 
                                 >
                                 <option value="">Select</option>
                                 <option value="EBF">EBF</option>
