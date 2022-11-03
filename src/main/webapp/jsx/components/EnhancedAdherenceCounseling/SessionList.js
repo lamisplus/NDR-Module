@@ -32,6 +32,7 @@ import 'semantic-ui-css/semantic.min.css';
 import "react-widgets/dist/css/react-widgets.css";
 import { toast} from "react-toastify";
 import StopEac from './StopEac'
+import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -142,7 +143,32 @@ const LabHistory = (props) => {
             setArtModal(!artModal)
     }
    //const LabObj = [{"id":16,"orderId":13,"patientId":9,"visitId":0,"labTestGroupId":4,"labTestGroupName":"Others","labTestId":16,"labTestName":"Viral Load","labNumber":"788","sampleCollectionDate":"2022-09-08","dateAssayed":"2022-09-09","result":"78","dateResultReceived":"2022-09-09","comments":"good","viralLoadIndication":297,"viralLoadIndicationName":"Targeted Monitoring"}]
-   
+   const LoadViewPage =(row,action)=>{
+        props.setActiveContent({...props.activeContent, route:'eac-session-update', id:row.id, actionType:action, obj:row})
+    }
+    const LoadDeletePage =(row)=>{
+
+            axios
+            .delete(`${baseUrl}hiv/eac/delete/${row.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                LabOrders()
+                toast.success("Record Deleted Successfully");
+                
+            })
+            .catch((error) => {
+                if(error.response && error.response.data){
+                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                    toast.error(errorMessage);
+                }
+                else{
+                    toast.error("Something went wrong. Please try again...");
+                }
+            }); 
+
+    }
+
   return (
     <div>
             {props.activeContent.obj.status!=='COMPLETED' && props.activeContent.obj.status!=='STOPPED' && (
@@ -211,6 +237,22 @@ const LabHistory = (props) => {
                   intervention: Object.keys(row.intervention).length > 0 ? Object.keys(row.intervention).length + "  Interventions" : "No Interventions",
                   comment:row.comment,   
                   status: row.status,
+                  action:<div>
+                  <Menu.Menu position='right'  >
+                  <Menu.Item >
+                      <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                      <Dropdown item text='Action'>
+
+                      <Dropdown.Menu style={{ marginTop:"10px", }}>
+                       <Dropdown.Item onClick={()=>LoadViewPage(row, 'view')}> <Icon name='eye' />View  </Dropdown.Item>
+                          <Dropdown.Item  onClick={()=>LoadViewPage(row, 'update')}><Icon name='edit' />Edit</Dropdown.Item>
+                          <Dropdown.Item  onClick={()=>LoadDeletePage(row, 'delete')}> <Icon name='trash' /> Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                  </Dropdown>
+                      </Button>
+                  </Menu.Item>
+                  </Menu.Menu>
+              </div>
                  
                   }))}
             

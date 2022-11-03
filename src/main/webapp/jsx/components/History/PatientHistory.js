@@ -394,23 +394,22 @@ const PatientnHistory = (props) => {
                    name: row.name,
                    date: row.date,
                    actions:
-            
-                    <div>
-                        <Menu.Menu position='right'  >
-                        <Menu.Item >
-                            <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
-                            <Dropdown item text='Action'>
+                        <div>
+                            <Menu.Menu position='right'  >
+                            <Menu.Item >
+                                <Button style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                                <Dropdown item text='Action'>
 
-                            <Dropdown.Menu style={{ marginTop:"10px", }}>
-                                {row.viewable && ( <Dropdown.Item onClick={()=>LoadViewPage(row, 'view')}> <Icon name='eye' />View  </Dropdown.Item>)}
-                                {row.viewable && ( <Dropdown.Item  onClick={()=>LoadViewPage(row, 'update')}><Icon name='edit' />Edit</Dropdown.Item>)}
-                                {row.viewable && ( <Dropdown.Item  onClick={()=>LoadDeletePage(row, 'delete')}> <Icon name='trash' /> Delete</Dropdown.Item>)} 
-                            </Dropdown.Menu>
-                        </Dropdown>
-                            </Button>
-                        </Menu.Item>
-                        </Menu.Menu>
-                  </div>
+                                <Dropdown.Menu style={{ marginTop:"10px", }}>
+                                    {row.viewable && ( <Dropdown.Item onClick={()=>LoadViewPage(row, 'view')}> <Icon name='eye' />View  </Dropdown.Item>)}
+                                    {row.viewable && ( <Dropdown.Item  onClick={()=>LoadViewPage(row, 'update')}><Icon name='edit' />Edit</Dropdown.Item>)}
+                                    {row.viewable && ( <Dropdown.Item  onClick={()=>LoadDeletePage(row, 'delete')}> <Icon name='trash' /> Delete</Dropdown.Item>)} 
+                                </Dropdown.Menu>
+                            </Dropdown>
+                                </Button>
+                            </Menu.Item>
+                            </Menu.Menu>
+                        </div>
                   
                   }))}
             

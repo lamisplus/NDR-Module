@@ -299,7 +299,7 @@ const Patients = (props) => {
                           exportButton: false,
                           searchFieldAlignment: 'left',
                           pageSizeOptions:[10,20,100],
-                          pageSize:10,
+                          pageSize:20,
                           debounceInterval: 400
                       }}
             />

@@ -1006,7 +1006,7 @@ const Pharmacy = (props) => {
               <h4 style={{color:'#fff'}}>ART DRUGS</h4>
             </LabelSui>
             <br/>
-            <div className="form-group mb-3 col-md-6">
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >Select Regimen Line </Label>
                 <Input
@@ -1043,7 +1043,7 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
 
-            <div className="form-group mb-3 col-md-6">
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >Regimen </Label>
                 
@@ -1071,7 +1071,7 @@ const Pharmacy = (props) => {
               <h4 style={{color:'#fff'}}>OI DRUGS</h4>
             </LabelSui>
             <br/>
-            <div className="form-group mb-3 col-md-6">
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >OI's</Label>
                 <Input
@@ -1095,7 +1095,7 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
 
-            <div className="form-group mb-3 col-md-6">
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >Drugs</Label>
                 
@@ -1123,7 +1123,7 @@ const Pharmacy = (props) => {
               <h4 style={{color:'#fff'}}>TB DRUG</h4>
             </LabelSui>
             <br/>
-            <div className="form-group mb-3 col-md-6">
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >TB Treatment </Label>
                 <Input
@@ -1146,7 +1146,7 @@ const Pharmacy = (props) => {
                 
                 </FormGroup>
             </div>
-            <div className="form-group mb-3 col-md-6">
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >Drugs </Label>
                 

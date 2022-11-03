@@ -94,10 +94,10 @@ const Tracking = (props) => {
     const [modeCommunication, setmodeCommunication] = useState([]);
     const [dsdStatus, setdsdStatus] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
-    const [attemptList, setAttemptList] = useState([]) 
+    
     const [observation, setObservation]=useState({
         data: {},
-        dateOfObservation: "yyyy-MM-dd",
+        dateOfObservation: "",
         facilityId: null,
         personId: 0,
         type: "Tracking form",
@@ -135,7 +135,7 @@ const Tracking = (props) => {
                 trackOutcome: "",
                 visitId: ""
               }
-    })
+            })
     useEffect(() => {
         ReasonForTracking();
         LostToFollowUp();
@@ -146,28 +146,7 @@ const Tracking = (props) => {
         ModeOfCommunication();
         PersonContact();
         GetPatientDTOObj();
-        //GetFormDetail();
-        if(props.activeContent && props.activeContent.obj){
-            setObjValues({...props.activeContent.obj})
-                setAttemptList(props.activeContent.obj.attempts)
-                
-        }
-    }, [props.activeContent, props.activeContent.id]);
-    //Get Tracking Form Object
-    // const GetFormDetail =()=>{
-    //     axios
-    //        .get(`${baseUrl}patient-tracker/patient/${props.activeContent.id}`,
-    //            { headers: {"Authorization" : `Bearer ${token}`} }
-    //        )
-    //        .then((response) => {            
-    //             const Obj= response.data 
-                
-    //        })
-    //        .catch((error) => {
-    //        //console.log(error);
-    //        });
-       
-    // } 
+    }, []);
     const GetPatientDTOObj =()=>{
         axios
            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -291,11 +270,11 @@ const Tracking = (props) => {
     const handleInputChangeObservation = e => {
         setErrors({...temp, [e.target.name]:""})
         setObservation ({...observation,  [e.target.name]: e.target.value});
-    } 
+    }  
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
                 modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""
     });
-         
+    const [attemptList, setAttemptList] = useState([])          
     const handleInputChangeAttempt = e => {
         //console.log(e.target.value)
         setErrors({...temp, [e.target.name]:""})
@@ -364,37 +343,25 @@ const Tracking = (props) => {
                 observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")                  
                 observation.personId =patientObj.id
                 observation.data=objValues 
-                if(objValues.statusTracker===null){
-                    const statusStrackerObj= {
-                        agreedDate: "",
-                        causeOfDeath: "",
-                        facilityId: "",
-                        hivStatus: "",
-                        personId:props.patientObj.id,
-                        reasonForInterruption: "",
-                        statusDate: "",
-                        trackDate: "",
-                        trackOutcome: "",
-                        visitId: ""
-                      }
-                      objValues.statusTracker=statusStrackerObj
-                }else{
-                    objValues.statusTracker.causeOfDeath=objValues.causeOfDeath
-                    objValues.statusTracker.hivStatus=objValues.reasonForDiscountinuation
-                    objValues.statusTracker.reasonForInterruption=objValues.reasonForDiscountinuation
-                    objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation
-                    objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation
-                    objValues.statusTracker.trackOutcome=objValues.reasonForTracking
-                }
+                objValues.statusTracker.causeOfDeath=objValues.causeOfDeath
+                objValues.statusTracker.hivStatus=objValues.reasonForDiscountinuation
+                objValues.statusTracker.reasonForInterruption=objValues.reasonForDiscountinuation
+                objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
+                objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
+                objValues.statusTracker.trackOutcome=objValues.reasonForTracking
+                
                 setSaving(true);
-                axios.put(`${baseUrl}patient-tracker/${props.activeContent.id}`,objValues,
+                axios.post(`${baseUrl}patient-tracker`,objValues,
                 { headers: {"Authorization" : `Bearer ${token}`}},
                 
                 )
                     .then(response => {
                         setSaving(false);
+                        props.TrackingDetails();
                         toast.success(" Save successful");
-                        props.setActiveContent({...props.activeContent, route:'tracking-form', id:props.activeContent.obj.id, activeTab:"history", actionType:"update", obj:props.activeContent.obj})
+                        props.setActiveContent({...props.activeContent, route:'tracking-form', activeTab:"history", })
+                        //props.setActiveContent({...props.activeContent, route:'recent-history'})
+                        //props.setActiveContent('recent-history')
 
                     })
                     .catch(error => {
@@ -412,15 +379,14 @@ const Tracking = (props) => {
                 }
             }  
     }
-
-
+console.log(errors)
   return (      
         <div>                   
             <Card className={classes.root}>
                 <CardBody>
                 <form >
                     <div className="row">
-                    <h2>Client Tracking & Discontinuation Form - {props.activeContent.actionType ==='update' ? "Update " : "View" }</h2>
+                    <h2>Client Tracking & Discontinuation Form</h2>
                         <br/>
                         <br/>
                         <div className="row">
@@ -492,7 +458,7 @@ const Tracking = (props) => {
                         {objValues.dsdStatus==='TRACKING_DSD_STATUS_DEVOLVED' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">DSD Model *</Label>
+                            <Label for="">DSD Model*</Label>
 
                                 <Input 
                                     type="select"
@@ -983,7 +949,7 @@ const Tracking = (props) => {
                     
                     {saving ? <Spinner /> : ""}
                     <br />
-                    {props.activeContent.actionType ==='update' ? (
+                
                     <MatButton
                     type="submit"
                     variant="contained"
@@ -995,14 +961,12 @@ const Tracking = (props) => {
                     disabled={objValues.dateOfEac1==="" ? true : false}
                     >
                     {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Update</span>
+                    <span style={{ textTransform: "capitalize" }}>Save</span>
                     ) : (
-                    <span style={{ textTransform: "capitalize" }}>Updating...</span>
+                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
                     )}
                     </MatButton>
-                    )
-                    :" "
-                    }
+                
                     </form>
                 </CardBody>
             </Card>                    
