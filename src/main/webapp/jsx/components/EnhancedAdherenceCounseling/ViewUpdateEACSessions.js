@@ -249,7 +249,7 @@ const NEWEACSESSION = (props) => {
                 <form >
                     <div className="row">
                     <h2>Update EAC Session 
-                    <ButtonMui
+                    {/* <ButtonMui
                         variant="contained"
                         color="primary"
                         className=" float-end ms-2 mr-2 mt-2 "
@@ -260,7 +260,7 @@ const NEWEACSESSION = (props) => {
 
                         >
                             <span style={{ textTransform: "capitalize" }}>Back To EAC Session</span>
-                    </ButtonMui>
+                    </ButtonMui> */}
                     </h2>
                     <br/>
                     <br/>
