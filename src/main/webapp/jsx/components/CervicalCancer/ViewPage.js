@@ -134,10 +134,10 @@ const CervicalCancer = (props) => {
            });
        
     }
-     //Get Mental Health Object
+     //Get Cervical Cancer  Object
      const GetDetail =()=>{
         axios
-           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+           .get(`${baseUrl}observation/${props.activeContent.id}`,
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {            
@@ -212,7 +212,7 @@ const CervicalCancer = (props) => {
     const handleSubmit = (e) => {                  
         e.preventDefault();                     
         setSaving(true);
-        observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+        observation.dateOfObservation= objValues.dateOfScreening       
         observation.personId =patientObj.id
         observation.data=objValues
         axios.put(`${baseUrl}observation/${props.activeContent.id}`,observation,

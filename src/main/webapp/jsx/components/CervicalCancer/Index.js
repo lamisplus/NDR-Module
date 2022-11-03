@@ -195,7 +195,7 @@ const CervicalCancer = (props) => {
     const handleSubmit = (e) => {                  
         e.preventDefault();                     
         setSaving(true);
-        observation.dateOfObservation= moment(new Date()).format("YYYY-MM-DD")       
+        observation.dateOfObservation= objValues.dateOfScreening       
         observation.personId =patientObj.id
         observation.data=objValues
         axios.post(`${baseUrl}observation`,observation,

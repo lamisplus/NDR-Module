@@ -181,6 +181,9 @@ const PatientnHistory = (props) => {
         }else if(row.path==='eac-session'){
             props.setActiveContent({...props.activeContent, route:'eac-session-update', id:row.id, activeTab:"history", actionType:action, })
       
+        }else if(row.path==='Cervical-cancer'){
+            props.setActiveContent({...props.activeContent, route:'cervical-cancer-update', id:row.id, activeTab:"history", actionType:action, })
+      
         }else{
 
         }

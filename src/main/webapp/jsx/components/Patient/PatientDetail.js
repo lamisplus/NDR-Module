@@ -22,6 +22,7 @@ import PrEPVisit from './../PrepServices/PrEPVisit';
 import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
 import EnhancedAdherenceCounseling from '../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
+import CervicalCancerUpdate from './../CervicalCancer/ViewPage';
 import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 //import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index__'
 import AdultClinicEvaluationForm from '../InitailClinicEvaluation/Adult/Index'
@@ -129,6 +130,7 @@ function PatientCard(props) {
           {activeContent.route==='prep-registration' &&( <PrEPRegistrationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)} 
           {activeContent.route==='counseling' &&( <EnhancedAdherenceCounseling patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='cervical-cancer' &&( <CervicalCancer patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='cervical-cancer-update' &&( <CervicalCancerUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='status-update' &&( <ClientStatusUpdate patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='adult-evaluation' &&( <AdultClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
