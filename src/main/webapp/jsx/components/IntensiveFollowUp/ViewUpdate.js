@@ -92,7 +92,7 @@ const Tracking = (props) => {
     const [optionsForCallOutCome, setOptionsForCallOutCome] = useState([]);
     const [observation, setObservation]=useState({
         data: {},
-        dateOfObservation: "",
+        dateOfObservation: "yyyy-MM-dd",
         facilityId: null,
         personId: 0,
         type: "Intensive follow up",
@@ -115,7 +115,25 @@ const Tracking = (props) => {
         CALL_OUTCOME();
         PrepSideEffect();
         GetPatientDTOObj();
-    }, []); 
+        GetFormDetail()
+    }, [props.patientObj.id]);
+    //Get Intensive Form Object
+    const GetFormDetail =()=>{
+        axios
+           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {            
+                const Obj= response.data.find((x)=> x.type==='Intensive follow up') 
+                setObservation({...Obj})
+                setAttemptList(Obj.data)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    } 
+        
     const GetPatientDTOObj =()=>{
         axios
            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -123,14 +141,14 @@ const Tracking = (props) => {
            )
            .then((response) => {
                const patientDTO= response.data.enrollment
-               setEnrollDate (patientDTO.dateOfRegistration)
+               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
                //setEacStatusObj(response.data);
-               //
+               //console.log(enrollDate)
            })
            .catch((error) => {
            //console.log(error);
            });
-           console.log(enrollDate)
+       
     } 
     const GENERAL_FEELING =()=>{
         axios
@@ -229,11 +247,11 @@ const Tracking = (props) => {
     const handleSubmit = (e) => {        
         e.preventDefault();
             if(attemptList.length >0){
-                observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")       
-                observation.personId =patientObj.id
+                observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")             
+                //observation.personId =patientObj.id
                 observation.data=attemptList        
                 setSaving(true);
-                axios.post(`${baseUrl}observation`,observation,
+                axios.put(`${baseUrl}observation/${props.activeContent.id}`,observation,
                 { headers: {"Authorization" : `Bearer ${token}`}},
                 
                 )
@@ -302,7 +320,7 @@ const Tracking = (props) => {
                                     name="callDate"
                                     id="callDate"
                                     value={attempt.callDate}
-                                    min={enrollDate}
+                                    min={enrollDate!=='' ? enrollDate : ""}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
@@ -480,7 +498,8 @@ const Tracking = (props) => {
                     
                     {saving ? <Spinner /> : ""}
                     <br />
-                
+                    {props.activeContent.actionType ==='update' ?
+                        (
                     <MatButton
                     type="submit"
                     variant="contained"
@@ -492,12 +511,14 @@ const Tracking = (props) => {
                     disabled={attemptList.length <=0  ? true : false}
                     >
                     {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Save</span>
+                    <span style={{ textTransform: "capitalize" }}>Update</span>
                     ) : (
-                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                    <span style={{ textTransform: "capitalize" }}>Updating...</span>
                     )}
                     </MatButton>
-                
+                    )
+                    :""
+                    }
                     </form>
                 </CardBody>
             </Card>                    

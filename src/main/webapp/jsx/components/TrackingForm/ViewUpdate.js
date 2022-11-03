@@ -94,7 +94,7 @@ const Tracking = (props) => {
     const [modeCommunication, setmodeCommunication] = useState([]);
     const [dsdStatus, setdsdStatus] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
-    
+    const [attemptList, setAttemptList] = useState([]) 
     const [observation, setObservation]=useState({
         data: {},
         dateOfObservation: "yyyy-MM-dd",
@@ -135,7 +135,7 @@ const Tracking = (props) => {
                 trackOutcome: "",
                 visitId: ""
               }
-            })
+    })
     useEffect(() => {
         ReasonForTracking();
         LostToFollowUp();
@@ -146,7 +146,24 @@ const Tracking = (props) => {
         ModeOfCommunication();
         PersonContact();
         GetPatientDTOObj();
-    }, []);
+        GetFormDetail();
+    }, [props.activeContent.id]);
+    //Get Tracking Form Object
+    const GetFormDetail =()=>{
+        axios
+           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {            
+                const Obj= response.data.find((x)=> x.type==='Client tracker') 
+                setObservation({...Obj})
+                setAttemptList(Obj.data.attempts)
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+       
+    } 
     const GetPatientDTOObj =()=>{
         axios
            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -274,7 +291,7 @@ const Tracking = (props) => {
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
                 modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""
     });
-    const [attemptList, setAttemptList] = useState([])          
+         
     const handleInputChangeAttempt = e => {
         //console.log(e.target.value)
         setErrors({...temp, [e.target.name]:""})
@@ -351,7 +368,7 @@ const Tracking = (props) => {
                 objValues.statusTracker.trackOutcome=objValues.reasonForTracking
                 
                 setSaving(true);
-                axios.post(`${baseUrl}patient-tracker`,objValues,
+                axios.put(`${baseUrl}observation/${props.activeContent.id}`,observation,
                 { headers: {"Authorization" : `Bearer ${token}`}},
                 
                 )

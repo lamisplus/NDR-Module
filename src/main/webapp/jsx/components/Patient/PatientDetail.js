@@ -43,6 +43,7 @@ import ViewLaboratory from './../Laboratory/ViewLaboratory'
 import PharmacyRefillViewUpdate from './../Pharmacy/PharmacyRefillViewUpdate'
 import Biometrics from './Biometric'
 import TrackingForm from './../TrackingForm/Index'
+import TrackingFormUpdate from './../TrackingForm/ViewUpdate'
 import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
 import EACOUTCOME from '../EnhancedAdherenceCounseling/EacOutCome'
 import EACSESSION from './../EnhancedAdherenceCounseling/SessionList'
@@ -50,6 +51,7 @@ import NEWEACSESSION from './../EnhancedAdherenceCounseling/NewSessions'
 import ChronicCare from './../ChronicCare/Index'
 import LabOrderResult from './../Laboratory/LabOrderResult/index'
 import ViralLoadOrderResult from './../Laboratory/ViralLoadOrderResult/index'
+import IntensiveFollowUpUpdate from './../IntensiveFollowUp/ViewUpdate'
 import IntensiveFollowUp from './../IntensiveFollowUp/Index'
 import TransferForm from './../TransferForm/Index'
 import ViewUpdateLabOrderResult from './../Laboratory/LabOrderResult/UpdateLabOrderResult'
@@ -144,6 +146,7 @@ function PatientCard(props) {
           {activeContent.route==='lab-view' &&( <ViewLaboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='pharmacy-update' &&( <PharmacyRefillViewUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='tracking-form' &&( <TrackingForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='client-tracker' &&( <TrackingFormUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='first-eac' &&( <FirstEacPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='eac-outcome' &&( <EACOUTCOME patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='eac-session' &&( <EACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
@@ -152,6 +155,7 @@ function PatientCard(props) {
           {activeContent.route==='laboratoryOrderResult' &&( <LabOrderResult patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='laboratoryViralLoadOrderResult' &&( <ViralLoadOrderResult patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='intensive-followup' &&( <IntensiveFollowUp patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='intensive-follow-up-update' &&( <IntensiveFollowUpUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='transfer-form' &&( <TransferForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           
           {activeContent.route==='lab-view-viral-load-order-result' &&( <UpdateViewViralLoadOrderResult patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
