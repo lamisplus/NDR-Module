@@ -464,7 +464,7 @@ const Laboratory = (props) => {
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
                                 
-                                min={tests.dateOrderBy!==null && tests.dateOrderBy!==''? tests.dateOrderBy :enrollDate}
+                                min={tests.dateOrderBy!==null && tests.dateOrderBy!==''? moment(tests.dateOrderBy).format("YYYY-MM-DD HH:MM:SS") :moment(enrollDate).format("YYYY-MM-DD HH:MM:SS")}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
