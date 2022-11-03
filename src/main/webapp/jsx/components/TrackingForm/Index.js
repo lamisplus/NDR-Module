@@ -346,8 +346,8 @@ const Tracking = (props) => {
                 objValues.statusTracker.causeOfDeath=objValues.causeOfDeath
                 objValues.statusTracker.hivStatus=objValues.reasonForDiscountinuation
                 objValues.statusTracker.reasonForInterruption=objValues.reasonForDiscountinuation
-                objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation
-                objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation
+                objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
+                objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
                 objValues.statusTracker.trackOutcome=objValues.reasonForTracking
                 
                 setSaving(true);
