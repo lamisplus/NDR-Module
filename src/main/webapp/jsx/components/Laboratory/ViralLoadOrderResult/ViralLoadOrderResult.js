@@ -521,9 +521,8 @@ const Laboratory = (props) => {
                                         name="dateOrderBy"
                                         id="dateOrderBy"
                                         value={tests.dateOrderBy}
-                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
-                                        //min={tests.sampleCollectionDate}
+                                        min={enrollDate}
                                         max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
@@ -561,7 +560,7 @@ const Laboratory = (props) => {
                                 id="sampleCollectionDate"
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
-                                min={enrollDate}
+                                min={tests.dateOrderBy!==null && tests.dateOrderBy!==''? tests.dateOrderBy :enrollDate}
                                 //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
