@@ -130,7 +130,11 @@ const ArtCommencement = (props) => {
                                                 regimenId:0,
                                                 viralLoadAtStartOfArt:"",
                                                 isViralLoadAtStartOfArt :null,
-                                                dateOfViralLoadAtStartOfArt: null                                                    
+                                                dateOfViralLoadAtStartOfArt: null,
+                                                cd4Count:"",
+                                                cd4SemiQuantitative:"",
+                                                cd4FlowCyteometry:""
+
 
                                                 });
 
@@ -586,6 +590,66 @@ const ArtCommencement = (props) => {
                         />
                         
                         </FormGroup>
+                        </div>
+                        <div className="row">
+                        <div className="form-group  col-md-4">
+                                <FormGroup>
+                                    <Label>CD4 Count </Label>
+                                    <select
+                                        className="form-control"
+                                        name="cd4Count"
+                                        id="cd4Count"
+                                        value={objValues.cd4Count}
+                                        onChange={handleInputChange}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    >
+                                        <option value={""}></option>
+                                        <option value="Semi-Quantitative">Semi-Quantitative</option>
+                                        <option value="Flow Cyteometry">Flow Cyteometry</option>
+                                        
+                                    </select>
+                                    
+                                </FormGroup>
+                        </div>
+                        {objValues.cd4Count ==='Semi-Quantitative' && (
+                        <div className="form-group  col-md-4">
+                            <FormGroup>
+                                <Label>CD4 Count Value</Label>
+                                <select
+                                    className="form-control"
+                                    name="cd4SemiQuantitative"
+                                    id="cd4SemiQuantitative"
+                                    value={objValues.cd4SemiQuantitative}
+                                    onChange={handleInputChange}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                >
+                                    <option value={""}></option>
+                                    <option value="Semi-Quantitative">{"<200"}</option>
+                                    <option value="Flow Cyteometry">{">=200"}</option>
+                                    
+                                </select>
+                                
+                            </FormGroup>
+                        </div>
+                        )}
+                        {objValues.cd4Count ==='Flow Cyteometry' && (
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">CD4 Count Value</Label>
+                            <Input
+                                type="number"
+                                min={1}
+                                name="cd4FlowCyteometry"
+                                id="cd4FlowCyteometry"
+                                value={objValues.cd4FlowCyteometry}
+                                onChange={handleInputChange}
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                                
+                            </FormGroup>
+                        </div>
+                        )}
                         </div>
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
