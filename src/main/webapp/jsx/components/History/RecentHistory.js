@@ -202,7 +202,10 @@ const RecentHistory = (props) => {
   }else if(row.path==='client-tracker'){
     props.setActiveContent({...props.activeContent, route:'client-tracker', id:row.id, activeTab:"history", actionType:action, })
 
-}else{
+  }else if(row.path==='eac-session'){
+    props.setActiveContent({...props.activeContent, route:'eac-session-update', id:row.id, activeTab:"history", actionType:action, })
+
+  }else{
 
   }
     

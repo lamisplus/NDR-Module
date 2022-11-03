@@ -47,6 +47,7 @@ import TrackingFormUpdate from './../TrackingForm/ViewUpdate'
 import FirstEacPage from './../EnhancedAdherenceCounseling/FirstEAC'
 import EACOUTCOME from '../EnhancedAdherenceCounseling/EacOutCome'
 import EACSESSION from './../EnhancedAdherenceCounseling/SessionList'
+import EACSESSIONUPDATE from './../EnhancedAdherenceCounseling/ViewUpdateEACSessions'
 import NEWEACSESSION from './../EnhancedAdherenceCounseling/NewSessions'
 import ChronicCare from './../ChronicCare/Index'
 import LabOrderResult from './../Laboratory/LabOrderResult/index'
@@ -150,6 +151,7 @@ function PatientCard(props) {
           {activeContent.route==='first-eac' &&( <FirstEacPage patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='eac-outcome' &&( <EACOUTCOME patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='eac-session' &&( <EACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {activeContent.route==='eac-session-update' &&( <EACSESSIONUPDATE patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='new-eac-session' &&( <NEWEACSESSION patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='chronic-care' &&( <ChronicCare patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='laboratoryOrderResult' &&( <LabOrderResult patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
