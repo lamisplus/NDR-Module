@@ -97,7 +97,7 @@ const Tracking = (props) => {
     
     const [observation, setObservation]=useState({
         data: {},
-        dateOfObservation: "yyyy-MM-dd",
+        dateOfObservation: "",
         facilityId: null,
         personId: 0,
         type: "Tracking form",
@@ -269,7 +269,7 @@ const Tracking = (props) => {
     } 
     const handleInputChangeObservation = e => {
         setErrors({...temp, [e.target.name]:""})
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
+        setObservation ({...observation,  [e.target.name]: e.target.value});
     }  
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
                 modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""

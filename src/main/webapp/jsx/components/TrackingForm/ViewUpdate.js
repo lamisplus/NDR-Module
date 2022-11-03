@@ -286,8 +286,8 @@ const Tracking = (props) => {
     } 
     const handleInputChangeObservation = e => {
         setErrors({...temp, [e.target.name]:""})
-        setObjValues ({...objValues,  [e.target.name]: e.target.value});
-    }  
+        setObservation ({...observation,  [e.target.name]: e.target.value});
+    } 
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
                 modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""
     });
