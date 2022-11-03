@@ -151,7 +151,7 @@ const Tracking = (props) => {
     //Get Tracking Form Object
     const GetFormDetail =()=>{
         axios
-           .get(`${baseUrl}observation/person/${props.patientObj.id}`,
+           .get(`${baseUrl}patient-tracker/patient/${props.patientObj.id}`,
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {            
@@ -368,7 +368,7 @@ const Tracking = (props) => {
                 objValues.statusTracker.trackOutcome=objValues.reasonForTracking
                 
                 setSaving(true);
-                axios.put(`${baseUrl}observation/${props.activeContent.id}`,observation,
+                axios.put(`${baseUrl}patient-tracker/patient/${props.activeContent.id}`,observation,
                 { headers: {"Authorization" : `Bearer ${token}`}},
                 
                 )
