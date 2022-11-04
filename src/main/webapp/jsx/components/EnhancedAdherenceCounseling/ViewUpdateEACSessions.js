@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const NEWEACSESSION = (props) => {
-
+    console.log(props.activeContent)
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -99,7 +99,8 @@ const NEWEACSESSION = (props) => {
                                                 status: "",
                                                 visitId:"",
                                                 eacId:"",
-                                                sessionDate:""
+                                                sessionDate:"",
+                                                missedDrug:""
                                             })
         const optionsForBarriers = [
             { value: 'Forgot', label: 'Forgot' },
@@ -135,26 +136,31 @@ const NEWEACSESSION = (props) => {
     useEffect(() => {
         GetPatientDTOObj();
         CheckEACStatus();
-        GetFormDetail();
+        //GetFormDetail();
+        if(props.activeContent && props.activeContent.obj){
+            setObjValues({...props.activeContent.obj})
+            setSelectedBarriers(Object.values(props.activeContent.obj.barriers))
+            setSelectedInterventions(Object.values(props.activeContent.obj.intervention))
+        }
     }, [props.activeContent, props.patientObj.id]);
-    //Get EAC Object
-    const GetFormDetail =()=>{
-        axios
-           .get(`${baseUrl}hiv/eac/session/eac/${props.activeContent.id}`,
-               { headers: {"Authorization" : `Bearer ${token}`} }
-           )
-           .then((response) => {            
-                //const Obj= response.data.find((x)=> x.type==='Intensive follow up') 
-                setObjValues({...response.data})
-                setSelectedBarriers([response.data.barriers])
-                setSelectedInterventions([response.data.intervention])
-                //setAttemptList(Obj.data)
-           })
-           .catch((error) => {
-           //console.log(error);
-           });
+    // //Get EAC Object
+    // const GetFormDetail =()=>{
+    //     axios
+    //        .get(`${baseUrl}hiv/eac/session/eac/${props.activeContent.id}`,
+    //            { headers: {"Authorization" : `Bearer ${token}`} }
+    //        )
+    //        .then((response) => {            
+    //             //const Obj= response.data.find((x)=> x.type==='Intensive follow up') 
+    //             setObjValues({...response.data})
+    //             setSelectedBarriers([response.data.barriers])
+    //             setSelectedInterventions([response.data.intervention])
+    //             //setAttemptList(Obj.data)
+    //        })
+    //        .catch((error) => {
+    //        //console.log(error);
+    //        });
        
-    } 
+    // } 
     //Get EAC Status
     const CheckEACStatus =()=>{
         axios
@@ -248,7 +254,7 @@ const NEWEACSESSION = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                    <h2>EAC Session  - {props.activeContent.actionType ==='update' ? "Update " : "View" }
+                    <h2>EAC Session ({props.activeContent.obj.status}) - {props.activeContent.actionType ==='update' ? "Update " : "View" }
                     {/* <ButtonMui
                         variant="contained"
                         color="primary"

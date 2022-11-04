@@ -225,7 +225,7 @@ const LabHistory = (props) => {
                 { title: "Interventions", field: "intervention", filtering: false },
                 { title: "Comment", field: "comment", filtering: false },
                 { title: "Status", field: "status", filtering: false },
-
+                { title: "Actions", field: "action", filtering: false },
 
               ]}
               isLoading={loading}

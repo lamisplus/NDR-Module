@@ -33,6 +33,7 @@ const RecentHistory = (props) => {
   const [loadingRecent, setLoadingRecent] = useState(true)
   const [loadingLab, setLoadingLab] = useState(true)
   const [loadingPharmacy, setLoadingPharmacy] = useState(true)
+  const [notToBeUpdated, setNotToBeUpdated] = useState(['eac', 'eac-session', 'client-tracker']);
   let history = useHistory();
   const [
     activeAccordionHeaderShadow,
@@ -460,6 +461,7 @@ const redirectLink=()=>{
                                   {activity.date}
                                   </small>
                                 </div>
+                                {!notToBeUpdated.includes(activity.path) ? (
                                 <Dropdown className="dropdown">
                                   <Dropdown.Toggle
                                   variant=" light"
@@ -509,6 +511,7 @@ const redirectLink=()=>{
                                     )}
                                   </Dropdown.Menu>
                                 </Dropdown>
+                                ):""}
                                 </div>
                               </li>
                             </>

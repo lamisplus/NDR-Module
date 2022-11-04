@@ -102,6 +102,7 @@ const PatientnHistory = (props) => {
     const [recentActivities, setRecentActivities] = useState([])
     const [loading, setLoading] = useState(true)
     let history = useHistory();
+    const [notToBeUpdated, setNotToBeUpdated] = useState(['eac', 'eac-session', 'client-tracker']);
     let patientHistoryObject = []
     useEffect(() => {
         PatientHistory()
@@ -396,7 +397,7 @@ const PatientnHistory = (props) => {
               data={recentActivities && recentActivities.map((row) => ({
                    name: row.name,
                    date: row.date,
-                   actions:
+                   actions: !notToBeUpdated.includes(row.path) ? (
                         <div>
                             <Menu.Menu position='right'  >
                             <Menu.Item >
@@ -413,6 +414,7 @@ const PatientnHistory = (props) => {
                             </Menu.Item>
                             </Menu.Menu>
                         </div>
+                   ):""
                   
                   }))}
             
@@ -429,7 +431,7 @@ const PatientnHistory = (props) => {
                           exportButton: false,
                           searchFieldAlignment: 'left',
                           pageSizeOptions:[10,20,100],
-                          pageSize:10,
+                          pageSize:50,
                           debounceInterval: 400
                       }}
             />
