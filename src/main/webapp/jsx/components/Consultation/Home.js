@@ -257,7 +257,7 @@ const ClinicVisit = (props) => {
     VitalSigns();
     GetPatientObj();
     ClinicVisitList();
-    PatientDetaild();
+    PatientDetailId();
     ViraLoadIndication();
     TestGroup();
     AdultRegimenLine();
@@ -475,7 +475,7 @@ const ClinicVisit = (props) => {
       });
     }
     //Check for the Patient Object
-    const PatientDetaild = () => {
+    const PatientDetailId = () => {
       axios
         .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
           { headers: { "Authorization": `Bearer ${token}` } }
@@ -813,7 +813,7 @@ const handleInputValueCheckTemperature =(e)=>{
 
     )
       .then(response => {
-        PatientDetaild();
+        PatientDetailId();
         setSaving(false);
         toast.success("Clinic Visit save successful");
         props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history"})
