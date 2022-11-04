@@ -237,7 +237,7 @@ const CervicalCancer = (props) => {
                 <CardBody>
                 <form >
                     <div className="row">
-                        <h2> Cervical Cancer </h2>
+                        <h2> Cervical Cancer -{props.activeContent.actionType ==='update' ? "Update " : "View" }</h2>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label for="artDate">Date of Screening * </Label>
@@ -336,8 +336,9 @@ const CervicalCancer = (props) => {
                     </div>
                     
                     {saving ? <Spinner /> : ""}
-                <br />
-                
+                    <br />
+                    {props.activeContent.actionType ==='update' ?
+                        (
                     <MatButton
                     type="submit"
                     variant="contained"
@@ -346,23 +347,23 @@ const CervicalCancer = (props) => {
                     startIcon={<SaveIcon />}
                     disabled={objValues.screeningResult==="" || objValues.screenMethod==="" || objValues.screenType==="" || objValues.dateOfScreening===""  ? true : false}
                     onClick={handleSubmit}
-                >
+                    >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Update</span>
                     ) : (
                     <span style={{ textTransform: "capitalize" }}>Updating...</span>
                     )}
-                </MatButton>
-                
-                <MatButton
+                    </MatButton>
+                    ) :""}
+                    {/* <MatButton
                     variant="contained"
                     className={classes.button}
                     startIcon={<CancelIcon />}
                     
-                >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
-                
+                    >
+                        <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                    </MatButton>
+                 */}
                     </form>
                 </CardBody>
             </Card>                     

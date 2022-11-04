@@ -152,7 +152,7 @@ const ViewMentalHealthScreening = (props) => {
                 <form >
                     <div className="row">
                     <div className="col-md-6">
-                        <h2>Mental Health Screening Form </h2>
+                        <h2>Mental Health Screening Form -{props.activeContent.actionType ==='update' ? "Update " : "View" }</h2>
                     </div>
                     {/* <div className="col-md-6">
                         <Button icon color='teal' className='float-end'><Icon name='eye' /> Previous History</Button>
