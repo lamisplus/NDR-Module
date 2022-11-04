@@ -201,9 +201,9 @@ function PatientCard(props) {
   
   return (
     <div className={classes.root}>
-       <ExpansionPanel defaultExpanded>
+       <ExpansionPanel >
 
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <ExpansionPanelSummary >
                 
                 <Row>
                 
@@ -215,6 +215,7 @@ function PatientCard(props) {
                         {/* < span style={{color:'green'}}>
                             {": "+"Active"}
                           </span> */}
+                          
                         </b>
                         <Link to={"/"} >
                         <ButtonMui
@@ -267,7 +268,19 @@ function PatientCard(props) {
                         Address :<b style={{color:'#0B72AA'}}>{getAddress(patientObj.address)} </b>
                     </span>
                     </Col>
+                    <Col md={12}>
 
+                              <div >
+                                  <Typography variant="caption">
+                                      <Label color={"teal"} size={"mini"}>
+                                        HIV STATUS : {props.patientObj.currentStatus}
+                                          
+                                      </Label>
+                                    
+                                  </Typography>
+                              </div>
+                  
+                    </Col>     
                     <Col md={12}>
                       {biometricStatus===true ? (
                           <>
@@ -315,65 +328,7 @@ function PatientCard(props) {
                 </Row>
             
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.details}>
-                
-                    {/* <Button
-                      color='red'
-                      content='BloodType'
-                      //icon='heart'
-                      label={{ basic: true, color: 'red', pointing: 'left', content: 'AB+' }}
-                    /> */}                                  
-                    {/* <Button
-                        basic
-                        color='blue'
-                        content='Height'
-                        icon='fork'
-                        label={{
-                            as: 'a',
-                            basic: true,
-                            color: 'blue',
-                            pointing: 'left',
-                            content: '74.5 in',
-                        }}
-                      />               */}
-                      {/* <Button
-                        basic
-                        color='blue'
-                        content='Weight'
-                        icon='fork'
-                        label={{
-                            as: 'a',
-                            basic: true,
-                            color: 'blue',
-                            pointing: 'left',
-                            content: '74.5 in',
-                        }}
-                      /> */}
-                               
-                {/* <div className={classes.column}>
-                  <Button primary  floated='left' onClick={() => get_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY")) > 5 ? loadAdultEvaluation(patientObj) :loadChildEvaluation(patientObj) }><span style={{fontSize:"11px"}}>Initial Clinic Evaluation</span></Button>
-                </div> */}
-                {/* {patientCurrentStatus !==true && props.patientObj.enrollment.targetGroupId !=="456" ?                   
-                  (
-                    <>
-                      <div className={classes.column}>
-                        <Button primary  floated='left' onClick={() => loadMentalHealthScreening(patientObj) }><span style={{fontSize:"11px"}}>Mental Health Screening</span></Button>
-                      </div>
-                    </>
-                  ) :""           
-                } */}
-               {/* {patientObj.commenced!==true && (
-                <div className={classes.column} style={{paddingLeft:"20px"}}>
-                {" "}<Button primary onClick={() => loadArt(patientObj)} ><span style={{fontSize:"11px"}}>ART Commencement </span></Button>
-                </div>
-                )
-               }
-                     */}
-                </ExpansionPanelDetails>
-                <Divider />
-                <ExpansionPanelActions expandIcon={<ExpandMoreIcon />}>
-                
-                </ExpansionPanelActions>
+              
             </ExpansionPanel>
      
       {/* <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus} setArt={props.setArt}/> */}
