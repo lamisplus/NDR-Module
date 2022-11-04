@@ -249,7 +249,7 @@ const ClinicVisit = (props) => {
     TBStatus();
     VitalSigns()
     GetPatientObj();
-    ClinicVisitListHistory();
+    //ClinicVisitListHistory();
     AdultRegimenLine();
     ChildRegimenLine();
     CRYPTOCOCCAL_SCREENING_STATUS();
@@ -410,20 +410,20 @@ const ClinicVisit = (props) => {
           });        
     }
     //GET LIST Drug Refill
-    async function ClinicVisitListHistory() {
-      setLoading(true)
-      axios
-          .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=1000&personId=${props.patientObj.id}`,
-          { headers: {"Authorization" : `Bearer ${token}`} }
-          )
-          .then((response) => {
-              setLoading(false)
-              setClinicVisitList(response.data.filter((x)=> x.isCommencement!==true));              
-          })
-          .catch((error) => {  
-              setLoading(false)  
-          });        
-    }
+    // async function ClinicVisitListHistory() {
+    //   setLoading(true)
+    //   axios
+    //       .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=1000&personId=${props.patientObj.id}`,
+    //       { headers: {"Authorization" : `Bearer ${token}`} }
+    //       )
+    //       .then((response) => {
+    //           setLoading(false)
+    //           setClinicVisitList(response.data.filter((x)=> x.isCommencement!==true));              
+    //       })
+    //       .catch((error) => {  
+    //           setLoading(false)  
+    //       });        
+    // }
     //Check for the last Vital Signs
     const VitalSigns = () => {
       axios
@@ -788,6 +788,7 @@ const ClinicVisit = (props) => {
     )
       .then(response => {
         setSaving(false);
+        props.ClinicVisitListHistory()
         toast.success("Clinic Visit updated successful");
         GetVisitById(objValues.id)
         props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history", })
@@ -884,7 +885,7 @@ const ClinicVisit = (props) => {
                         id="DZ_W_Todo1"
                         className="widget-media dz-scroll ps ps--active-y"
                     >
-                    {clinicVisitList.map((visit,index)=>(	
+                    {props.clinicVisitList.map((visit,index)=>(	
                     <div className="media pb-3 border-bottom mb-0 align-items-center" key={index}>								
                       <div className="media-body">
                             <ButtonSMUI

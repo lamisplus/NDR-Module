@@ -50,7 +50,7 @@ const ClinicVisitPage = (props) => {
                 >
 
                   <Tab eventKey="home" title="CLINIC VISIT ">                   
-                    <ConsultationPage patientObj={patientObj} setActiveContent={props.setActiveContent}/>
+                    <ConsultationPage patientObj={patientObj} setActiveContent={props.setActiveContent}  ClinicVisitListHistory={ClinicVisitListHistory}/>
                   </Tab>  
                   <Tab eventKey="history" title=" HISTORY">                   
                     <ClinicHistoryPage patientObj={patientObj} activeContent={props.activeContent} setActiveContent={props.setActiveContent} clinicVisitList={clinicVisitList} ClinicVisitListHistory={ClinicVisitListHistory}/>

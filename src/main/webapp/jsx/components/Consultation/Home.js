@@ -814,6 +814,7 @@ const handleInputValueCheckTemperature =(e)=>{
     )
       .then(response => {
         PatientDetailId();
+        props.ClinicVisitListHistory()
         setSaving(false);
         toast.success("Clinic Visit save successful");
         props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history"})
