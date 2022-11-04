@@ -462,55 +462,55 @@ const redirectLink=()=>{
                                   </small>
                                 </div>
                                 {!notToBeUpdated.includes(activity.path) ? (
-                                <Dropdown className="dropdown">
-                                  <Dropdown.Toggle
-                                  variant=" light"
-                                  className="i-false p-0 btn-info sharp"
-                                  >
-                                  <svg
-                                    width="18px"
-                                    height="18px"
-                                    viewBox="0 0 24 24"
-                                    version="1.1"
-                                  >
-                                    <g
-                                    stroke="none"
-                                    strokeWidth="1"
-                                    fill="none"
-                                    fillRule="evenodd"
+                                  <Dropdown className="dropdown">
+                                    <Dropdown.Toggle
+                                    variant=" light"
+                                    className="i-false p-0 btn-info sharp"
                                     >
-                                    <rect x="0" y="0" width="24" height="24" />
-                                    <circle fill="#000000" cx="5" cy="12" r="2" />
-                                    <circle fill="#000000" cx="12" cy="12" r="2" />
-                                    <circle fill="#000000" cx="19" cy="12" r="2" />
-                                    </g>
-                                  </svg>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu className="dropdown-menu">
-                                  {activity.viewable && ( <Dropdown.Item
-                                    className="dropdown-item"
-                                    onClick={()=>LoadViewPage(activity,'view')}
+                                    <svg
+                                      width="18px"
+                                      height="18px"
+                                      viewBox="0 0 24 24"
+                                      version="1.1"
                                     >
-                                    View
-                                    </Dropdown.Item>
-                                  )}
-                                  {activity.viewable && ( <Dropdown.Item
-                                    className="dropdown-item"
-                                    onClick={()=>LoadViewPage(activity,'update')}
-                                    >
-                                    Update
-                                    </Dropdown.Item>
-                                  )}
-                                    {activity.deletable && (<Dropdown.Item
-                                    className="dropdown-item"
-                                    to="/widget-basic"
-                                    onClick={()=>LoadDeletePage(activity)}
-                                    >
-                                    Delete
-                                    </Dropdown.Item>
+                                      <g
+                                      stroke="none"
+                                      strokeWidth="1"
+                                      fill="none"
+                                      fillRule="evenodd"
+                                      >
+                                      <rect x="0" y="0" width="24" height="24" />
+                                      <circle fill="#000000" cx="5" cy="12" r="2" />
+                                      <circle fill="#000000" cx="12" cy="12" r="2" />
+                                      <circle fill="#000000" cx="19" cy="12" r="2" />
+                                      </g>
+                                    </svg>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu className="dropdown-menu">
+                                    {activity.viewable && ( <Dropdown.Item
+                                      className="dropdown-item"
+                                      onClick={()=>LoadViewPage(activity,'view')}
+                                      >
+                                      View
+                                      </Dropdown.Item>
                                     )}
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                                    {activity.viewable && ( <Dropdown.Item
+                                      className="dropdown-item"
+                                      onClick={()=>LoadViewPage(activity,'update')}
+                                      >
+                                      Update
+                                      </Dropdown.Item>
+                                    )}
+                                      {activity.deletable && (<Dropdown.Item
+                                      className="dropdown-item"
+                                      to="/widget-basic"
+                                      onClick={()=>LoadDeletePage(activity)}
+                                      >
+                                      Delete
+                                      </Dropdown.Item>
+                                      )}
+                                    </Dropdown.Menu>
+                                  </Dropdown>
                                 ):""}
                                 </div>
                               </li>
