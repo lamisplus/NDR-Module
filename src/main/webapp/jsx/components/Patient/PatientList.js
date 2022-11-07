@@ -288,12 +288,12 @@ const Patients = (props) => {
 
                         data={query =>
                             new Promise((resolve, reject) =>
-                                axios.get(`${baseUrl}hiv/patients?size=${query.pageSize}&page=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
+                                axios.get(`${baseUrl}hiv/patients?pageSize=${query.pageSize}&pageNo=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
                                     .then(response => response)
                                     .then(result => {
                                     
                                         resolve({
-                                            data: result.data.map((row) => ({
+                                            data: result.data.records.map((row) => ({
                                             name:row.currentStatus!== "Not Enrolled" ?
                                                 (
                                                 <>
@@ -407,12 +407,13 @@ const Patients = (props) => {
                                         </div>
                                                 })),
                                             page: query.page,
-                                            totalCount: result.headers['x-total-count'],
+                                            totalCount: result.data.totalRecords,
                                         })
                                     })
                             )}
             
                         options={{
+                            search: true,
                           headerStyle: {
                               backgroundColor: "#014d88",
                               color: "#fff",
