@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Long> {
     Optional<HivEnrollment> getHivEnrollmentByPersonAndArchived(Person person, Integer archived);
     List<HivEnrollment> getHivEnrollmentByArchived(Integer archived);
+    List<HivEnrollment> getHivEnrollmentByFacilityIdAndArchived(Long facilityId, Integer archived);
 }

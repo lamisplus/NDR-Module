@@ -3,6 +3,7 @@ package org.lamisplus.modules.hiv.service;
 import lombok.RequiredArgsConstructor;
 import org.audit4j.core.util.Log;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.base.domain.dto.PageDTO;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
@@ -19,7 +20,6 @@ import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -81,41 +81,42 @@ public class HivPatientService {
     }
 
 
-    public List<HivPatientDto> getHivPatients() {
-        return personService.getAllPerson ()
-                .stream ()
-                .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
-                .map (p -> convertPersonHivPatientDto (p.getId ()))
-                .collect (Collectors.toList ());
+//    public List<HivPatientDto> getHivPatients() {
+//        return personService.getAllPerson ()
+//                .stream ()
+//                .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
+//                .collect (Collectors.toList ());
+//    }
+    
+    public PageDTO getHivPatientsPage(String searchValue, Pageable pageable) {
+        if(searchValue != null && !searchValue.isEmpty()) {
+            Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
+            Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
+            return getPageDto(persons);
+        }
+        Page<Person> persons  =  personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
+        return getPageDto(persons);
     }
     
-    public Page<HivPatientDto> getHivPatientsPage(String searchValue, Pageable pageable) {
-        if(searchValue != null && searchValue.length() > 0) {
-            List<HivPatientDto>  persons =  personService.getAllPerson()
-                    .stream()
-                    .filter(p -> p.getFacilityId().equals(currentUserOrganizationService.getCurrentUserOrganization()))
-                    .filter(person -> person.getOtherName().contains(searchValue) ||
-                                     person.getSurname().contains(searchValue) ||
-                                      person.getSex().contains(searchValue) ||
-                                     person.getFirstName().contains(searchValue))
-                    .map (p -> convertPersonHivPatientDto (p.getId ()))
-                    .collect (Collectors.toList ());
-            return new PageImpl<>(persons);
-                    
-         }
-         List<HivPatientDto>  persons =
-                 personService.getAllPersonPageable(pageable.getPageNumber(), pageable.getPageSize())
-                         .stream ()
-                         .filter(p -> p.getFacilityId().equals(currentUserOrganizationService.getCurrentUserOrganization()))
-                         .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
-                         .map (p -> convertPersonHivPatientDto (p.getId ()))
-                         .collect (Collectors.toList ());
-        return new PageImpl<>(persons);
+    private  PageDTO getPageDto(Page<Person> persons) {
+         List<HivPatientDto> content = persons.getContent()
+                .stream()
+                 .filter(Objects::nonNull)
+                .map(p -> convertPersonHivPatientDto(p.getId()))
+                .collect(Collectors.toList());
+       return PageDTO.builder()
+                .pageNumber(persons.getNumber())
+                .pageSize(persons.getSize())
+                .totalPages(persons.getTotalPages())
+                .totalRecords(persons.getTotalPages())
+                .records(content)
+                .build();
     }
     
     public List<HivPatientDto> getIITHivPatients() {
         return personService.getAllPerson()
                 .stream()
+                .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(PersonResponseDto::getId).reversed())
                 .map(p -> convertPersonHivPatientDto(p.getId()))
                 .filter(Objects::nonNull)
@@ -132,15 +133,15 @@ public class HivPatientService {
         if (Boolean.TRUE.equals (personService.isPersonExist (personId))) {
             Person person = getPerson (personId);
             PersonResponseDto bioData = personService.getPersonById (personId);
-            Optional<HivEnrollmentDto> enrollment = hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (bioData.getId ());
-            Optional<ARTClinical> artCommencement = artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
-            List<ARTClinical> artClinics = artClinicalRepository.findAllByPersonAndIsCommencementIsFalseAndArchived (person, 0);
+            Optional<HivEnrollmentDto> enrollment =
+                    hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (bioData.getId ());
+            Optional<ARTClinical> artCommencement =
+                    artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
             processAndSetObservationStatus(person, hivPatientDto);
             addEnrollmentInfo (enrollment, hivPatientDto);
             addArtCommencementInfo (person.getId (), artCommencement, hivPatientDto);
-            addArtClinicalInfo (artClinics, hivPatientDto);
             return hivPatientDto;
         }
         return null;
@@ -148,14 +149,16 @@ public class HivPatientService {
 
 
     private void addArtClinicalInfo(List<ARTClinical> artClinics, HivPatientDto hivPatientDto) {
-        hivPatientDto.setArtClinicVisits (artClinics.stream ().map (artClinicVisitService::convertToClinicVisitDto).collect (Collectors.toList ()));
+        hivPatientDto.setArtClinicVisits (artClinics.stream ()
+                        .filter(Objects::nonNull)
+                        .map (artClinicVisitService::convertToClinicVisitDto).collect (Collectors.toList ()));
     }
 
 
     private void addArtCommencementInfo(Long personId, Optional<ARTClinical> artCommencement, HivPatientDto hivPatientDto) {
+        Log.info("art commencement : {}", artCommencement.isPresent());
         if (artCommencement.isPresent ()) {
             hivPatientDto.setCommenced (true);
-            hivPatientDto.setArtCommence (commenceService.convertArtToResponseDto (artCommencement.get ()));
             hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
         }
     }
@@ -164,7 +167,6 @@ public class HivPatientService {
     private void addEnrollmentInfo(Optional<HivEnrollmentDto> enrollment, HivPatientDto hivPatientDto) {
         if (enrollment.isPresent ()) {
             hivPatientDto.setEnrolled (true);
-            hivPatientDto.setEnrollment (enrollment.get ());
             Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (enrollment.get ().getStatusAtRegistrationId ());
             status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
         } else {

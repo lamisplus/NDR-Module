@@ -2,20 +2,16 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.base.util.PaginationUtil;
+import org.lamisplus.modules.base.domain.dto.PageDTO;
 import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.service.HivEnrollmentService;
 import org.lamisplus.modules.hiv.service.HivPatientService;
 import org.lamisplus.modules.hiv.service.PatientActivityService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 import java.util.List;
 
@@ -42,18 +38,20 @@ public class HivEnrollmentController {
     }
 
     @GetMapping(value = "patients", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<HivPatientDto>> getHivPatient() {
-        return ResponseEntity.ok (patientService.getHivPatients ());
+    public ResponseEntity<PageDTO> getHivPatient(
+            @RequestParam (required = false ) String searchValue,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return ResponseEntity.ok (patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize)));
     }
     
-    @GetMapping( "/patients/pageable")
-    public ResponseEntity<List<HivPatientDto>> getAllPerson(
-            @RequestParam (required = false, defaultValue = "*") String searchValue,
-            @PageableDefault(value = 30) Pageable pageable) {
-        Page<HivPatientDto> page = patientService.getHivPatientsPage(searchValue, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
+//    @GetMapping( "/patients/pageable")
+//    public ResponseEntity<PageDTO> getAllPerson(
+//            @RequestParam (required = false ) String searchValue,
+//            @RequestParam(defaultValue = "0") Integer pageNo,
+//            @RequestParam(defaultValue = "10") Integer pageSize) {
+//         return ResponseEntity.ok(patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize)));
+//    }
   
     
     @GetMapping(value = "patients/iit", produces = MediaType.APPLICATION_JSON_VALUE)
