@@ -2,13 +2,20 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.lamisplus.modules.base.util.PaginationUtil;
 import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.service.HivEnrollmentService;
 import org.lamisplus.modules.hiv.service.HivPatientService;
 import org.lamisplus.modules.hiv.service.PatientActivityService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -38,6 +45,16 @@ public class HivEnrollmentController {
     public ResponseEntity<List<HivPatientDto>> getHivPatient() {
         return ResponseEntity.ok (patientService.getHivPatients ());
     }
+    
+    @GetMapping( "/patients/pageable")
+    public ResponseEntity<List<HivPatientDto>> getAllPerson(
+            @RequestParam (required = false, defaultValue = "*") String searchValue,
+            @PageableDefault(value = 30) Pageable pageable) {
+        Page<HivPatientDto> page = patientService.getHivPatientsPage(searchValue, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+  
     
     @GetMapping(value = "patients/iit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<HivPatientDto>> getIItHivPatient() {

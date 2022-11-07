@@ -27,7 +27,7 @@ public class PatientTrackerActivityProvider implements PatientActivityProvider {
 	
 	@NotNull
 	private PatientActivity buildPatientActivity(PatientTracker patientTracker) {
-		String name = "client tracker";
+		String name = "Client Tracker";
 		assert patientTracker.getId() != null;
 		return new PatientActivity(patientTracker.getId(), name, patientTracker.getDateLastAppointment(), "", "client-tracker");
 	}

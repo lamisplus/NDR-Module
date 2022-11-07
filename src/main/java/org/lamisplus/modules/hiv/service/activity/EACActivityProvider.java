@@ -30,7 +30,7 @@ public class EACActivityProvider implements PatientActivityProvider {
 	
 	@NotNull
 	private PatientActivity buildPatientActivity(HIVEac e) {
-		String name = "eac";
+		String name = "EAC";
 		assert e.getId() != null;
 		return new PatientActivity(e.getId(), name, e.getDateOfLastViralLoad(), "", "eac");
 	}

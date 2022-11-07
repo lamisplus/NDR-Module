@@ -18,6 +18,9 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -84,6 +87,30 @@ public class HivPatientService {
                 .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
                 .map (p -> convertPersonHivPatientDto (p.getId ()))
                 .collect (Collectors.toList ());
+    }
+    
+    public Page<HivPatientDto> getHivPatientsPage(String searchValue, Pageable pageable) {
+        if(searchValue != null && searchValue.length() > 0) {
+            List<HivPatientDto>  persons =  personService.getAllPerson()
+                    .stream()
+                    .filter(p -> p.getFacilityId().equals(currentUserOrganizationService.getCurrentUserOrganization()))
+                    .filter(person -> person.getOtherName().contains(searchValue) ||
+                                     person.getSurname().contains(searchValue) ||
+                                      person.getSex().contains(searchValue) ||
+                                     person.getFirstName().contains(searchValue))
+                    .map (p -> convertPersonHivPatientDto (p.getId ()))
+                    .collect (Collectors.toList ());
+            return new PageImpl<>(persons);
+                    
+         }
+         List<HivPatientDto>  persons =
+                 personService.getAllPersonPageable(pageable.getPageNumber(), pageable.getPageSize())
+                         .stream ()
+                         .filter(p -> p.getFacilityId().equals(currentUserOrganizationService.getCurrentUserOrganization()))
+                         .sorted (Comparator.comparing (PersonResponseDto::getId).reversed ())
+                         .map (p -> convertPersonHivPatientDto (p.getId ()))
+                         .collect (Collectors.toList ());
+        return new PageImpl<>(persons);
     }
     
     public List<HivPatientDto> getIITHivPatients() {

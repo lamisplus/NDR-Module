@@ -27,7 +27,7 @@ public class EACSessionActivityProvider implements PatientActivityProvider {
 	
 	@NotNull
 	private PatientActivity buildPatientActivity(HIVEacSession session) {
-		String name = "eac session";
+		String name = "EAC Session";
 		assert session.getId() != null;
 		return new PatientActivity(session.getId(), name, session.getFollowUpDate(), "", "eac-session");
 	}
