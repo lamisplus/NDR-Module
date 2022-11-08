@@ -116,7 +116,8 @@ const Pharmacy = (props) => {
             refillType:"",
             switch:"",
             substitute:"",
-            dsdModelType:""
+            dsdModelType:"",
+            iptType:""
     });
     const [vital, setVitalSignDto]= useState({
         bodyWeight: "",
@@ -847,17 +848,18 @@ const Pharmacy = (props) => {
                     <Label >Substitution/Switch </Label>
                     <Input
                         type="select"
-                        name="switch"
-                        id="switch"
-                        value={objValues.switch}
+                        name="refillType"
+                        id="refillType"
+                        value={objValues.refillType}
         
                         onChange={handleInputChange}   
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                         >
                         <option value="">Select </option>
-                        <option value="None">None </option>
+                        
                         <option value="Switch">Switch</option>
                         <option value="Substitution">Substitution </option>
+                        <option value="None">None </option>
                         
                     </Input>
                     
@@ -1119,6 +1121,31 @@ const Pharmacy = (props) => {
                 
                 </FormGroup>
             </div>
+            {objValues.drugName ==='15' && ( 
+            <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <FormGroup>
+                <Label >IPT Type</Label>
+                
+                <Input
+                    type="select"
+                    name="iptType"
+                    id="iptType"
+                    value={objValues.iptType}
+                    onChange={handleInputChange} 
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                   
+                    >
+                    <option value="">Select </option>
+                    <option value="Start initiation">Start initiation </option>
+                    <option value="Start Refill">Start Refill</option>
+                    <option value="follow-up initiation">follow-up initiation </option>
+                    <option value="follow-up Refill">follow-up Refill</option>
+                      
+                </Input>
+                
+                </FormGroup>
+            </div>
+            )}
             <LabelSui as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>TB DRUG</h4>
             </LabelSui>
