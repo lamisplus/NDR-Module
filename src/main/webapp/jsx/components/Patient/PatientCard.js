@@ -11,20 +11,20 @@ import { Link } from 'react-router-dom'
 import ButtonMui from "@material-ui/core/Button";
 import { TiArrowBack } from 'react-icons/ti'
 //import Chip from '@material-ui/core/Chip';
-import Divider from '@material-ui/core/Divider';
-import { Button } from 'semantic-ui-react';
-import {Label,} from "semantic-ui-react";
+// import Divider from '@material-ui/core/Divider';
+// import { Button } from 'semantic-ui-react';
+import {Label,Sticky} from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
 import { Col, Row } from "reactstrap";
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-import ClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom';
-import ArtCommencement from './../ArtCommencement/ArtCommencement';
+// import ClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom';
+// import ArtCommencement from './../ArtCommencement/ArtCommencement';
 import axios from "axios";
 import { url as baseUrl, token } from "./../../../api";
 import Typography from '@material-ui/core/Typography';
-import CaptureBiometric from './CaptureBiometric';
+//import CaptureBiometric from './CaptureBiometric';
 
 //Dtate Picker package
 Moment.locale("en");
@@ -200,6 +200,7 @@ function PatientCard(props) {
 
   
   return (
+    <Sticky >
     <div className={classes.root}>
        <ExpansionPanel >
 
@@ -334,6 +335,7 @@ function PatientCard(props) {
       {/* <ArtCommencement  toggle={Arttoggle} showModal={artModal} patientObj={patientObj} PatientCurrentStatus={PatientCurrentStatus} setArt={props.setArt}/> */}
       {/* <CaptureBiometric modalstatus={biometricModal} togglestatus={BiometricModalToggle} patientId={patientObj.id} biometricDevices={devices} setPatientBiometricStatus={setPatientBiometricStatus} /> */}
     </div>
+    </Sticky>
   );
 }
 
