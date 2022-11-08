@@ -90,7 +90,7 @@ const RecentHistory = (props) => {
    
   }
    //GET LIST Drug Refill
-   async function PharmacyList() {
+   const PharmacyList =()=> {
     setLoading(true)
     axios
         .get(`${baseUrl}hiv/art/pharmacy/patient?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
@@ -106,7 +106,7 @@ const RecentHistory = (props) => {
         });        
   }
    //GET LIST Drug Refill
-   async function ClinicVisitList() {
+   const  ClinicVisitList=()=> {
     setLoading(true)
     axios
         .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
@@ -156,7 +156,7 @@ const RecentHistory = (props) => {
   }
   const regimenName =(regimenObj)=> {
     let regimenArr = []
-    regimenObj.forEach(function (value, index, array) {
+    regimenObj && regimenObj.forEach(function (value, index, array) {
       //console.log(value)
         regimenArr.push(value['name'])
     })

@@ -33,7 +33,7 @@ const ADR = (props) => {
   //Get list of PrepSideEffect
   const PrepSideEffect =()=>{
     axios
-        .get(`${baseUrl}application-codesets/v2/PREP_SIDE_EFFECTS`,
+        .get(`${baseUrl}application-codesets/v2/OPPORTUNISTIC_INFECTION_ILLNESS`,
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
@@ -44,7 +44,7 @@ const ADR = (props) => {
         //console.log(error);
         });
     
-    }
+  }
   const handleInfectionInputChange = e => {
   props.setInfection ({...props.infection,  [e.target.name]: e.target.value});
   }

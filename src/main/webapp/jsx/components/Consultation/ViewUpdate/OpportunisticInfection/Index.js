@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {  Table  } from "react-bootstrap";
 import { Input, Label, FormGroup, } from "reactstrap";
 import { makeStyles } from '@material-ui/core/styles'
@@ -7,6 +7,9 @@ import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { toast } from "react-toastify";
+import { url as baseUrl,token } from "./../../../../../api";
+import axios from "axios";
+
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -23,8 +26,26 @@ const ADR = (props) => {
   const [errors, setErrors] = useState({});
   const classes = useStyles()
   let temp = { ...errors }
+  useEffect(() => {
+    PrepSideEffect();
+  }, []);
   const handleInfectionInputChange = e => {
   props.setInfection ({...props.infection,  [e.target.name]: e.target.value});
+  }
+
+  const PrepSideEffect =()=>{
+    axios
+        .get(`${baseUrl}application-codesets/v2/OPPORTUNISTIC_INFECTION_ILLNESS`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            props.setPrepSideEffect(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
   }
   //Validations of the forms
   const validate = () => {        
@@ -81,15 +102,21 @@ const ADR = (props) => {
           <FormGroup>
               <Label > Illness</Label>
               <Input
-                  type="text"
-                  name="illnessInfection"
-                  id="illnessInfection"
-                  value={props.infection.illnessInfection}
-                  onChange={handleInfectionInputChange}
-                  style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                  required
-                  > 
-              </Input>
+                type="select"
+                name="illnessInfection"
+                id="illnessInfection"
+                value={props.infection.illnessInfection}
+                onChange={handleInfectionInputChange}
+                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                required
+                >
+                  <option value=""> Select</option>
+                    {props.prepSideEffect.map((value) => (
+                        <option key={value.id} value={value.display}>
+                            {value.display}
+                        </option>
+                    ))} 
+            </Input>
               {errors.illnessInfection !=="" ? (
                   <span className={classes.error}>{errors.illnessInfection}</span>
               ) : "" }
