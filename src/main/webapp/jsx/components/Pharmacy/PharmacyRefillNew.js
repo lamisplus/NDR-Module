@@ -95,6 +95,8 @@ const Pharmacy = (props) => {
     const [tbRegimenLine, setTbRegimenLine] = useState([]);
     const [othersRegimenLine, setOthersRegimenLine] = useState([]);
     const [childRegimenLine, setChildRegimenLine] = useState([]);
+    const [iptType, setIPT_TYPE] = useState([]);
+    //IPT_TYPE
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -137,6 +139,7 @@ const Pharmacy = (props) => {
         PrepSideEffect();
         VitalSigns();
         AdultRegimenLine();
+        IPT_TYPE();
         setRegimenList(
             Object.entries(selectedOption && selectedOption.length>0? selectedOption : []).map(([key, value]) => ({
                 id: value.value,
@@ -193,6 +196,21 @@ const Pharmacy = (props) => {
             //console.log(error);
             });        
     }
+    const IPT_TYPE =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/IPT_TYPE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setIPT_TYPE(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    //IPT_TYPE
      //GET AdultRegimenLine 
      const AdultRegimenLine =()=>{
         axios
@@ -1136,10 +1154,12 @@ const Pharmacy = (props) => {
                                    
                     >
                     <option value="">Select </option>
-                    <option value="Start initiation">Start initiation </option>
-                    <option value="Start Refill">Start Refill</option>
-                    <option value="follow-up initiation">follow-up initiation </option>
-                    <option value="follow-up Refill">follow-up Refill</option>
+                    
+                    {iptType.map((value) => (
+                        <option key={value.id} value={value.code}>
+                            {value.display}
+                        </option>
+                    ))}
                       
                 </Input>
                 
