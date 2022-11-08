@@ -34,7 +34,9 @@ public class HandleHIVVisitEncounter {
 	public Visit processAndCreateVisit(Long personId, LocalDate visitDate) {
 		Log.info("person id in creating visit {}", personId);
 		PersonResponseDto personDto = personService.getPersonById(personId);
+		Log.info("person surname in creating visit {}", personDto.getSurname());
 		Optional<Person> personOptional = personRepository.findById(personId);
+		Log.info("person personOptional in creating visit {}", personOptional.isPresent());
 		if (personDto.getVisitId() != null) {
 			Optional<Visit> visitOptional = visitRepository.findById(personDto.getVisitId());
 			if (visitOptional.isPresent()) {
@@ -48,15 +50,23 @@ public class HandleHIVVisitEncounter {
 				return visitOptional.get();
 			}
 		} else {
+			Log.info(" final creating visit {}", personOptional.isPresent());
 			Visit visit = new Visit();
 			personOptional.ifPresent(visit::setPerson);
-			visit.setFacilityId(visit.getFacilityId());
+			personOptional.ifPresent(person -> visit.setFacilityId(person.getFacilityId()));
 			visit.setVisitStartDate(visitDate.atStartOfDay());
 			visit.setArchived(0);
 			visit.setUuid(UUID.randomUUID().toString());
-			Visit currentVisit = visitRepository.save(visit);
-			createHivVisitEncounter(personOptional, visit);
-			return currentVisit;
+			Log.info("about saving visit {}", personOptional.isPresent());
+			try {
+				Visit currentVisit = visitRepository.save(visit);
+				Log.info("finished saving visit => id {}", currentVisit.getId() ) ;
+				createHivVisitEncounter(personOptional, visit);
+				Log.info("finished saving encounter", personOptional.isPresent());
+				return currentVisit;
+			}catch (Exception e) {
+			    e.printStackTrace();
+			}
 		}
 		return null;
 	}

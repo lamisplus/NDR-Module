@@ -31,17 +31,23 @@ public class ObservationService {
    private final HandleHIVVisitEncounter handleHIVisitEncounter;
 
     public ObservationDto createAnObservation(ObservationDto observationDto) {
+        System.out.println(1);
         Long personId = observationDto.getPersonId ();
         Person person = getPerson (personId);
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
+        System.out.println("person "+ person.getFirstName());
         if (getAnExistingObservationType (observationDto, person, orgId).isPresent ()) {
+            System.out.println(2);
             throw new RecordExistException (Observation.class, "type", observationDto.getType ());
         }
+        System.out.println(3 + " org -> : " + orgId);
         observationDto.setFacilityId (orgId);
         Visit visit = handleHIVisitEncounter.processAndCreateVisit (personId, observationDto.getDateOfObservation());
         if (visit != null) {
+            System.out.println(4);
             observationDto.setVisitId (visit.getId ());
         }
+        System.out.println(5);
         Observation observation = new Observation ();
         BeanUtils.copyProperties (observationDto, observation);
         observation.setPerson (person);
@@ -50,10 +56,12 @@ public class ObservationService {
         observation.setArchived (0);
         Observation saveObservation = observationRepository.save (observation);
         observationDto.setId (saveObservation.getId ());
+        System.out.println(6);
         return observationDto;
     }
 
     private Optional<Observation> getAnExistingObservationType(ObservationDto observationDto, Person person, Long orgId) {
+        System.out.println("person name: "+person.getSurname());
         return observationRepository.getAllByTypeAndPersonAndFacilityId (observationDto.getType (), person, orgId);
     }
 

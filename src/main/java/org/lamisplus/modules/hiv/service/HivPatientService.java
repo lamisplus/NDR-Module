@@ -6,10 +6,7 @@ import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.domain.dto.PageDTO;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
-import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
-import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
-import org.lamisplus.modules.hiv.domain.dto.HivPatientEnrollmentDto;
-import org.lamisplus.modules.hiv.domain.dto.PatientActivity;
+import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
@@ -127,13 +124,6 @@ public class HivPatientService {
                  .map(p -> personService.getPersonById(p.getId()))
                  .filter(Objects::nonNull)
                  .map(person -> convertPersonHivPatientDto(person.getId()))
-                 .filter(Objects::nonNull)
-                 .filter(hivPatientDto -> {
-                    if(hivPatientDto.isEnrolled()){
-                        return  hivPatientDto.getEnrollment().getStatusAtRegistrationId() != null;
-                    }
-                    return  true;
-                 })
                  .collect(Collectors.toList());
        return PageDTO.builder()
                 .pageNumber(persons.getNumber())
@@ -189,7 +179,10 @@ public class HivPatientService {
         Log.info("art commencement : {}", artCommencement.isPresent());
         if (artCommencement.isPresent ()) {
             hivPatientDto.setCommenced (true);
-           // hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
+            ARTClinicalCommenceDto artClinicalCommenceDto =
+                    commenceService.convertArtToResponseDto(artCommencement.get());
+            hivPatientDto.setArtCommence(artClinicalCommenceDto);
+            hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
         }
     }
 
