@@ -99,11 +99,14 @@ public class HivPatientService {
     }
     
     private  PageDTO getPageDto(Page<Person> persons) {
+        Log.info("patient size {}",persons.getContent().size());
          List<HivPatientDto> content = persons.getContent()
-                .stream()
+                 .stream()
                  .filter(Objects::nonNull)
-                .map(p -> convertPersonHivPatientDto(p.getId()))
-                .collect(Collectors.toList());
+                 .map(p -> personService.getPersonById(p.getId()))
+                 .filter(Objects::nonNull)
+                 .map(person -> convertPersonHivPatientDto(person.getId()))
+                 .collect(Collectors.toList());
        return PageDTO.builder()
                 .pageNumber(persons.getNumber())
                 .pageSize(persons.getSize())
@@ -139,9 +142,9 @@ public class HivPatientService {
                     artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
-            processAndSetObservationStatus(person, hivPatientDto);
             addEnrollmentInfo (enrollment, hivPatientDto);
             addArtCommencementInfo (person.getId (), artCommencement, hivPatientDto);
+            processAndSetObservationStatus(person, hivPatientDto);
             return hivPatientDto;
         }
         return null;
@@ -159,7 +162,7 @@ public class HivPatientService {
         Log.info("art commencement : {}", artCommencement.isPresent());
         if (artCommencement.isPresent ()) {
             hivPatientDto.setCommenced (true);
-            hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
+           // hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
         }
     }
 
@@ -167,8 +170,14 @@ public class HivPatientService {
     private void addEnrollmentInfo(Optional<HivEnrollmentDto> enrollment, HivPatientDto hivPatientDto) {
         if (enrollment.isPresent ()) {
             hivPatientDto.setEnrolled (true);
-            Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (enrollment.get ().getStatusAtRegistrationId ());
-            status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
+            Long enrollStatus = enrollment.get ().getStatusAtRegistrationId ();
+            if(enrollStatus !=  null){
+                Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (enrollStatus);
+                status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
+            }else {
+                hivPatientDto.setCurrentStatus("Enrolled but status not known");
+            }
+            hivPatientDto.setEnrollment(enrollment.get());
         } else {
             hivPatientDto.setCurrentStatus ("Not Enrolled");
         }
