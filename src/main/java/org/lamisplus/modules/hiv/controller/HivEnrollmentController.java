@@ -45,18 +45,14 @@ public class HivEnrollmentController {
         return ResponseEntity.ok (patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize)));
     }
     
-//    @GetMapping( "/patients/pageable")
-//    public ResponseEntity<PageDTO> getAllPerson(
-//            @RequestParam (required = false ) String searchValue,
-//            @RequestParam(defaultValue = "0") Integer pageNo,
-//            @RequestParam(defaultValue = "10") Integer pageSize) {
-//         return ResponseEntity.ok(patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize)));
-//    }
   
     
     @GetMapping(value = "patients/iit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<HivPatientDto>> getIItHivPatient() {
-        return ResponseEntity.ok (patientService.getIITHivPatients ());
+    public ResponseEntity<PageDTO> getIItHivPatient(
+            @RequestParam (required = false ) String searchValue,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return ResponseEntity.ok (patientService.getIITHivPatients (searchValue,PageRequest.of(pageNo, pageSize)));
     }
 
     @PostMapping(value = "patient", produces = MediaType.APPLICATION_JSON_VALUE)
