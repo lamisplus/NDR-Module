@@ -91,6 +91,7 @@ const Pharmacy = (props) => {
     const [tbRegimenLine, setTbRegimenLine] = useState([]);
     const [othersRegimenLine, setOthersRegimenLine] = useState([]);
     const [childRegimenLine, setChildRegimenLine] = useState([]);
+    const [iptType, setIPT_TYPE] = useState([]);
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -135,9 +136,24 @@ const Pharmacy = (props) => {
         AdultRegimenLine();
         PharmacyRefillDetail();
         CheckEACStatus();
+        IPT_TYPE();
         VitalSigns();
         ChildRegimenLine();
     }, [props.activeContent.obj, props.activeContent.id, objValues.dsdModelType]);
+    const IPT_TYPE =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/IPT_TYPE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setIPT_TYPE(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
@@ -1121,11 +1137,11 @@ const Pharmacy = (props) => {
                                    
                     >
                     <option value="">Select </option>
-                    <option value="Start initiation">Start initiation </option>
-                    <option value="Start Refill">Start Refill</option>
-                    <option value="follow-up initiation">follow-up initiation </option>
-                    <option value="follow-up Refill">follow-up Refill</option>
-                      
+                    {iptType.map((value) => (
+                        <option key={value.id} value={value.code}>
+                            {value.display}
+                        </option>
+                    ))}
                 </Input>
                 
                 </FormGroup>
