@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -92,14 +91,32 @@ public class HivPatientService {
         if(searchValue != null && !searchValue.isEmpty()) {
             Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
             Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
-            return getPageDto(persons);
+            return getPageDto(persons, false);
         }
         Page<Person> persons  =  personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
-        return getPageDto(persons);
+        return getPageDto(persons, false);
     }
     
-    private  PageDTO getPageDto(Page<Person> persons) {
+    private  PageDTO getPageDto(Page<Person> persons,  boolean isIIT) {
         Log.info("patient size {}",persons.getContent().size());
+        if(isIIT){
+            List<HivPatientDto> content = persons.getContent()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(p -> personService.getPersonById(p.getId()))
+                    .filter(Objects::nonNull)
+                    .map(person -> convertPersonHivPatientDto(person.getId()))
+                    .filter(Objects::nonNull)
+                    .filter(p -> p.getCurrentStatus().equalsIgnoreCase("IIT"))
+                    .collect(Collectors.toList());
+            return PageDTO.builder()
+                    .pageNumber(persons.getNumber())
+                    .pageSize(persons.getSize())
+                    .totalPages(persons.getTotalPages())
+                    .totalRecords(persons.getTotalPages())
+                    .records(content)
+                    .build();
+        }
          List<HivPatientDto> content = persons.getContent()
                  .stream()
                  .filter(Objects::nonNull)
@@ -116,15 +133,14 @@ public class HivPatientService {
                 .build();
     }
     
-    public List<HivPatientDto> getIITHivPatients() {
-        return personService.getAllPerson()
-                .stream()
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(PersonResponseDto::getId).reversed())
-                .map(p -> convertPersonHivPatientDto(p.getId()))
-                .filter(Objects::nonNull)
-                .filter(p -> p.getCurrentStatus().equalsIgnoreCase("IIT"))
-                .collect (Collectors.toList ());
+    public  PageDTO  getIITHivPatients(String searchValue, Pageable pageable) {
+        if(searchValue != null && !searchValue.isEmpty()) {
+            Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
+            Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
+            return getPageDto(persons, true);
+        }
+        Page<Person> persons  =  personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
+        return getPageDto(persons,true);
     }
 
     public HivPatientDto getHivPatientById(Long personId) {
