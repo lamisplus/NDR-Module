@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+
 const UserRegistration = (props) => {
     //const classes = useStyles();
     const location = useLocation();
@@ -106,8 +107,7 @@ const UserRegistration = (props) => {
 
     return (
         <>
-
-            
+        <div class="ui sticky">
             <Card >
                 <CardBody>
               
@@ -256,7 +256,8 @@ const UserRegistration = (props) => {
                         </form>                                 
                     </div>
                 </CardBody>
-            </Card>                                 
+            </Card>  
+            </div>                               
         </>
     );
 };

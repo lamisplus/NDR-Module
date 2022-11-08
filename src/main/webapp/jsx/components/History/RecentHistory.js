@@ -97,6 +97,7 @@ const RecentHistory = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
+          console.log(response.data)
             setLoading(false)
             setLoadingPharmacy(false)
             setRefillList(response.data);                
@@ -155,6 +156,7 @@ const RecentHistory = (props) => {
       }
   }
   const regimenName =(regimenObj)=> {
+    console.log(regimenObj)
     let regimenArr = []
     regimenObj && regimenObj.forEach(function (value, index, array) {
       //console.log(value)
