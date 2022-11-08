@@ -11,7 +11,7 @@ import {Link, useHistory, useLocation} from "react-router-dom";
 //import {TiArrowBack} from 'react-icons/ti'
 //import {token, url as baseUrl } from "../../../api";
 import 'react-phone-input-2/lib/style.css'
-import { Icon, Menu } from 'semantic-ui-react'
+import { Icon, Menu, Sticky } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
 import MedicalHistory from './MedicalHistory'
 import PastArv from './PastArv'
@@ -142,6 +142,7 @@ const UserRegistration = (props) => {
                         <br/>
                         <form >
                         <div className="col-md-3 float-start">
+                        <Sticky>
                         <Menu  size='large'  vertical  style={{backgroundColor:"#014D88"}}>
                             <Menu.Item
                                 name='inbox'
@@ -247,6 +248,7 @@ const UserRegistration = (props) => {
                                 </span>                            
                             </Menu.Item>
                         </Menu>
+                        </Sticky>
                         </div>
                         <div className="col-md-9 float-end" style={{ backgroundColor:"#fff", }}>
                             {activeItem==='medical-history' && (<MedicalHistory handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}
