@@ -91,6 +91,10 @@ const CervicalCancer = (props) => {
     const [errors, setErrors] = useState({});
     const [result, setResult] = useState([]);
     const [method, setMethod] = useState([]);
+    const [areas, setAreas] = useState([]);
+    const [gross, setGross] = useState([]);
+    const [visible, setVisible] = useState([]);
+    const [referrals, setReferrals] = useState([]);
     const [type, setType] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
     const [objValues, setObjValues] = useState({
@@ -98,7 +102,11 @@ const CervicalCancer = (props) => {
                                                     screeningResult:"",
                                                     screenMethod:"",
                                                     screenType:"",
-                                                    dateOfScreening:"",                                                  
+                                                    dateOfScreening:"", 
+                                                    screeningArea:"",
+                                                    screeningGross:"",
+                                                    screeningRefferal:"",
+                                                    screeningVisible:""                                                 
 
                                                 });
     const [observation, setObservation]=useState({
@@ -115,6 +123,10 @@ const CervicalCancer = (props) => {
         Result();
         Type();
         Method();
+        Gross();
+        Referrals();
+        Areas();
+        Visible();
         GetPatientDTOObj();
     }, []);
     const GetPatientDTOObj =()=>{
@@ -146,6 +158,62 @@ const CervicalCancer = (props) => {
         //console.log(error);
         });
     
+    }
+    const Gross =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/GROSS_CERVICAL_LESIONS`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setGross(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    const Areas =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_POSITIVE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setAreas(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    const Visible =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/NEW_SQUAMOCOLUMNAR_JUNCTION_VISIBLE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setVisible(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    }
+    const Referrals =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/REASON_FOR_CERVICAL_CANCER_REFERRAL`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setReferrals(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
     }
     const Type =()=>{
         axios
@@ -240,10 +308,9 @@ const CervicalCancer = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
-
                         <div className="form-group mb-3 col-md-6">
                         <FormGroup>
-                        <Label >Screen Type</Label>
+                        <Label >Screening Treatment</Label>
                         <Input
                                 type="select"
                                 name="screenType"
@@ -264,8 +331,7 @@ const CervicalCancer = (props) => {
                                 <span className={classes.error}>{errors.screenType}</span>
                             ) : "" }
                         </FormGroup>
-                        </div>
-                        
+                        </div>                        
                         <div className="form-group mb-3 col-md-6">
                         <FormGroup>
                         <Label >Screening Method</Label>
@@ -290,7 +356,6 @@ const CervicalCancer = (props) => {
                             ) : "" }
                         </FormGroup>
                         </div>
-
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Screening Result *</Label>
@@ -315,8 +380,126 @@ const CervicalCancer = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
-
-
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Referral *</Label>
+                            <Input
+                                type="select"
+                                name="screeningResult"
+                                id="screeningResult"
+                                value={objValues.screeningResult}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {result.map((value) => (
+                                        <option key={value.id} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>
+                            {errors.screeningResult !=="" ? (
+                                <span className={classes.error}>{errors.screeningResult}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >If positive, size of an action white area *</Label>
+                            <Input
+                                type="select"
+                                name="screeningArea"
+                                id="screeningArea"
+                                value={objValues.screeningArea}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {areas.map((value) => (
+                                        <option key={value.id} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>
+                            {errors.screeningArea !=="" ? (
+                                <span className={classes.error}>{errors.screeningArea}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >New Squamocolumnar junction visible *</Label>
+                            <Input
+                                type="select"
+                                name="screeningVisible"
+                                id="screeningVisible"
+                                value={objValues.screeningVisible}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {visible.map((value) => (
+                                        <option key={value.id} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>
+                            {errors.screeningVisible !=="" ? (
+                                <span className={classes.error}>{errors.screeningVisible}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Gross Cervical Lesions seen *</Label>
+                            <Input
+                                type="select"
+                                name="screeningGross"
+                                id="screeningGross"
+                                value={objValues.screeningGross}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {gross.map((value) => (
+                                        <option key={value.id} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>
+                            {errors.screeningGross !=="" ? (
+                                <span className={classes.error}>{errors.screeningGross}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Referral *</Label>
+                            <Input
+                                type="select"
+                                name="screeningRefferal"
+                                id="screeningRefferal"
+                                value={objValues.screeningRefferal}
+                                onChange={handleInputChange}
+                                required
+                                >
+                                    <option value="Select"> </option>
+            
+                                    {referrals.map((value) => (
+                                        <option key={value.id} value={value.code}>
+                                            {value.display}
+                                        </option>
+                                    ))}
+                            </Input>
+                            {errors.screeningRefferal !=="" ? (
+                                <span className={classes.error}>{errors.screeningRefferal}</span>
+                            ) : "" }
+                            </FormGroup>
+                        </div>
                     </div>
                     
                     {saving ? <Spinner /> : ""}
