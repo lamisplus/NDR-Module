@@ -152,6 +152,8 @@ const ClinicVisit = (props) => {
   const [pregnancyStatus, setPregnancyStatus] = useState([])
   const [familyPlaining, setFamilyPlaining] = useState([])
   const [enrollDate, setEnrollDate] = useState("");
+  const [loadClinicHistory, setLoadClinicHistory] = useState(true);
+  const [loadVitalHistory, setLoadVitalHistory] = useState(true);
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                                                                     bodyWeight: "",
@@ -452,9 +454,11 @@ const ClinicVisit = (props) => {
           )
           .then((response) => {
               setLoading(false)
+              setLoadClinicHistory(false)
               setClinicVisitList(response.data);                
           })
-          .catch((error) => {  
+          .catch((error) => { 
+              setLoadClinicHistory(false) 
               setLoading(false)  
           });        
     }
@@ -465,6 +469,7 @@ const ClinicVisit = (props) => {
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
+        setLoadVitalHistory(false)
          const lastVitalSigns = response.data[response.data.length - 1]
          //console.log(lastVitalSigns)
         if (lastVitalSigns.captureDate >= moment(new Date()).format("YYYY-MM-DD")) {
@@ -473,6 +478,7 @@ const ClinicVisit = (props) => {
         }
       })
       .catch((error) => {
+        setLoadVitalHistory(false)
         //console.log(error);
       });
     }
@@ -866,7 +872,7 @@ const handleInputValueCheckTemperature =(e)=>{
               <h4 style={{color:'#fff'}}>Vital Signs</h4>
               </Label>
               <br />
-
+              {loadVitalHistory===false ? (<>
                <PerfectScrollbar
                 style={{ height: "370px" }}
                 id="DZ_W_Todo1"
@@ -923,8 +929,8 @@ const handleInputValueCheckTemperature =(e)=>{
                           </div>
                         </Accordion.Collapse>
                       </div>
-                    )}
-                    </>
+                        )}
+                        </>
                     </Accordion>             
 
                 ):
@@ -942,13 +948,19 @@ const handleInputValueCheckTemperature =(e)=>{
                     </ul>
                
                 </PerfectScrollbar>
+                </>)
+                :
+                <>
+                <p>Loading please wait...</p>
+                </>
+              }
             </Segment>
             <Segment>
               <Label as='a' color='teal' style={{width:'110%', height:'35px'}} ribbon>
                 <h4 style={{color:'#fff'}}>Previous Clinical Notes</h4>
               </Label>
-               
-             <PerfectScrollbar
+              {loadClinicHistory===false ? (<>
+              <PerfectScrollbar
                style={{ height: "370px" }}
                id="DZ_W_Todo1"
                className="widget-media dz-scroll ps ps--active-y"
@@ -1007,8 +1019,13 @@ const handleInputValueCheckTemperature =(e)=>{
                      </>
                    )}
                </ul>
-               </PerfectScrollbar>
-               
+              </PerfectScrollbar>
+               </>)
+               :
+               <>
+               <p>Loading please wait...</p>
+               </>
+             } 
          </Segment>
          
         </Grid.Column>

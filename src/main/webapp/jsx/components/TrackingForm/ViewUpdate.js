@@ -386,6 +386,9 @@ const Tracking = (props) => {
                     objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation
                     objValues.statusTracker.trackOutcome=objValues.reasonForTracking
                 }
+                if(objValues.careInFacilityDiscountinued==='No'){
+                    objValues.statusTracker=null
+                }
                 setSaving(true);
                 axios.put(`${baseUrl}patient-tracker/${props.activeContent.id}`,objValues,
                 { headers: {"Authorization" : `Bearer ${token}`}},

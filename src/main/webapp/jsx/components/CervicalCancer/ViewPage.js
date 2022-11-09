@@ -91,6 +91,10 @@ const CervicalCancer = (props) => {
     const [errors, setErrors] = useState({});
     const [result, setResult] = useState([]);
     const [method, setMethod] = useState([]);
+    const [areas, setAreas] = useState([]);
+    const [gross, setGross] = useState([]);
+    const [visible, setVisible] = useState([]);
+    const [referrals, setReferrals] = useState([]);
     const [type, setType] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
     const [objValues, setObjValues] = useState({

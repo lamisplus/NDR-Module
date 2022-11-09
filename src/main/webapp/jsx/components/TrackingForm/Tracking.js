@@ -349,7 +349,9 @@ const Tracking = (props) => {
                 objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
                 objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
                 objValues.statusTracker.trackOutcome=objValues.reasonForTracking
-                
+                if(objValues.careInFacilityDiscountinued==='No'){
+                    objValues.statusTracker=null
+                }
                 setSaving(true);
                 axios.post(`${baseUrl}patient-tracker`,objValues,
                 { headers: {"Authorization" : `Bearer ${token}`}},

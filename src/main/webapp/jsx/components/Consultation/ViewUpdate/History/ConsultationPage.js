@@ -147,6 +147,7 @@ const ClinicVisit = (props) => {
   const [familyPlaining, setFamilyPlaining] = useState([])
   const [vLIndication, setVLIndication] = useState([]);
   const [testOrderList, setTestOrderList] = useState([]);//Test Order List
+  const [loadClinicHistory, setLoadClinicHistory] = useState(true);
   const [arvDrugObj, setArvDrugObj] = useState({
     regimenLine: "",
     regimenDrug: "",
@@ -283,7 +284,7 @@ const ClinicVisit = (props) => {
                 return m;
             }
             return age_now;
-};
+  };
   const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
   //Get list of Test Group
   const TestGroup =()=>{
@@ -794,7 +795,6 @@ const ClinicVisit = (props) => {
       })
       .catch(error => {
         setSaving(false);
-        console.log(error)
         if(error.response && error.response.data){
           let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
           toast.error(errorMessage);
