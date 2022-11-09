@@ -296,7 +296,7 @@ const Tracking = (props) => {
                         <h3>Attempted to Contact</h3>
                         <div className="form-group mb-3 col-md-4">        
                             <FormGroup>
-                                <Label >Date of call</Label>
+                                <Label >Date of call *</Label>
                                 <Input
                                     type="date"
                                     name="callDate"
@@ -316,7 +316,7 @@ const Tracking = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
-                                <Label >How do you feel generally?</Label>
+                                <Label >How do you feel generally? *</Label>
                                 <Input
                                     type="select"
                                     name="howDoYouFeelGenerally"
@@ -341,7 +341,7 @@ const Tracking = (props) => {
                             
                             <div className="form-group mb-3 col-md-12">
                                 <FormGroup>
-                                <Label >Do you have any of the following</Label>
+                                <Label >Do you have any of the following *</Label>
                                 <DualListBox
                                 //canFilter
                                     options={prepSideEffect}
@@ -357,7 +357,7 @@ const Tracking = (props) => {
                             <div className="row">
                                 <div className="form-group mb-3 col-md-4">
                                     <FormGroup>
-                                    <Label >Have you missed any doses of your medications in the past 7 days</Label>
+                                    <Label >Have you missed any doses of your medications in the past 7 days *</Label>
                                     <Input
                                         type="select"
                                         name="missedMedication"
@@ -378,7 +378,7 @@ const Tracking = (props) => {
                                 </div>
                                 <div className="form-group mb-3 col-md-4">
                                     <FormGroup>
-                                    <Label >Comment </Label>
+                                    <Label >Comment *</Label>
                                     <Input
                                         type="text"
                                         name="comment"
@@ -395,7 +395,7 @@ const Tracking = (props) => {
                                 </div>
                                 <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
-                                <Label for="">Outcome of the call </Label>
+                                <Label for="">Outcome of the call *</Label>
 
                                     <Input 
                                         type="select"
@@ -419,7 +419,7 @@ const Tracking = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
-                                <Label >Initials of the caller </Label>
+                                <Label >Initials of the caller *</Label>
                                 <Input
                                     type="text"
                                     name="caller"
