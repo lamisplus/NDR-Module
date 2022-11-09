@@ -315,7 +315,7 @@ return (
                     </div>
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Temperature *</Label>
+                        <Label >Temperature </Label>
                         <InputGroup> 
                             <Input 
                                 type="text"

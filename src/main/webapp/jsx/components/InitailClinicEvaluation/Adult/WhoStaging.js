@@ -104,7 +104,11 @@ const BasicInfo = (props) => {
     useEffect(() => { 
         if(props.observation.data ){
             setAssesment(props.observation.data.assesment) 
-            setWho(props.observation.data.who)             
+            setWho(props.observation.data.who) 
+            setSelectedOptions1(props.observation.data.who.stage1ValueOption)   
+            setSelectedOptions2(props.observation.data.who.stage2ValueOption)      
+            setSelectedOptions3(props.observation.data.who.stage3ValueOption) 
+            setSelectedOptions4(props.observation.data.who.stage4ValueOption)             
         }
     }, [props.observation.data]);  
     const [who, setWho] = useState({stage:"", stage1Value:"",stage2Value:"", stage3Value:"",stage4Value:"", stage1ValueOption:"",stage2ValueOption:"", stage3ValueOption:"",stage4ValueOption:""});
@@ -161,23 +165,22 @@ const BasicInfo = (props) => {
         e.preventDefault();  
         props.observation.data.assesment = assesment
         props.observation.data.who=who 
-        who.stage1ValueOption= selectedOptions1
-        who.stage2ValueOption= selectedOptions2
-        who.stage3ValueOption= selectedOptions3
-        who.stage4ValueOption= selectedOptions4
-        //toast.success("Record save successful");
-        handleItemClick('plan', 'who' )                  
+        handleItemClick('plan', 'who' )                
     }
      const onSelectedOption1 = (selectedValues) => {
+        setWho({...who, stage1ValueOption: selectedValues})
         setSelectedOptions1(selectedValues);
     };
     const onSelectedOption2 = (selectedValues) => {
+        setWho({...who, stage2ValueOption: selectedValues})
         setSelectedOptions2(selectedValues);
     };
     const onSelectedOption3 = (selectedValues) => {
         setSelectedOptions3(selectedValues);
+        setWho({...who, stage3ValueOption: selectedValues})
     };
     const onSelectedOption4 = (selectedValues) => {
+        setWho({...who, stage4ValueOption: selectedValues})
         setSelectedOptions4(selectedValues);
     };
     const options1 = [
@@ -240,7 +243,7 @@ return (
                     <form >
                     {/* Medical History form inputs */}
                     <div className="row">
-                    <h3>Assessment</h3>
+                    <h3>Assessment </h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                         <InputGroup> 
@@ -262,7 +265,7 @@ return (
                     </div>
                     <div className="form-group mb-3 col-md-6"> </div>
                     <hr/>
-                    <h3>WHO staging criteria (History of any of the following)</h3>
+                    <h3>WHO staging criteria (History of any of the following) </h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                         <Label >WHO STAGE</Label>
@@ -285,7 +288,7 @@ return (
                             </InputGroup>
                         </FormGroup>
                     </div>
-                    {hideStage1 && (
+                    {who.stage==='stage 1' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 1 options</Label>
@@ -298,7 +301,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideStage2 && (
+                    {who.stage==='stage 2' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 2 options</Label>
@@ -311,7 +314,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {hideStage3 && (
+                    {who.stage==='stage 3' && (
                     <>
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
@@ -326,7 +329,7 @@ return (
                     </div>
                     </>
                     )}
-                    {hideStage4 && (
+                    {who.stage==='stage 4' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 4 options</Label>
