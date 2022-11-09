@@ -646,7 +646,7 @@ const ClinicVisit = (props) => {
       objValues.visitDate === "" && (temp.encounterDate = vital.encounterDate ? "" : "This field is required" )//objValues.visitDate
       temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
       temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-      temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
+      //temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
       temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
       temp.levelOfAdherence = objValues.levelOfAdherence ? "" : "This field is required"
       temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
@@ -788,7 +788,7 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         props.ClinicVisitListHistory()
-        toast.success("Clinic Visit updated successful");
+        toast.success("Clinic Visit updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
         GetVisitById(objValues.id)
         props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history", })
       })
@@ -801,6 +801,8 @@ const ClinicVisit = (props) => {
         }
        
       });
+    }else{
+      toast.error("All field are required", {position: toast.POSITION.BOTTOM_CENTER})
     }
   }
   const getVisitDetail=(e)=>{
@@ -1029,7 +1031,7 @@ const ClinicVisit = (props) => {
                    
                     <div className=" mb-3 col-md-5">
                         <FormGroup>
-                        <FormLabelName >Body Weight</FormLabelName>
+                        <FormLabelName >Body Weight *</FormLabelName>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -1056,7 +1058,7 @@ const ClinicVisit = (props) => {
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <FormLabelName >Height</FormLabelName>
+                        <FormLabelName >Height *</FormLabelName>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
@@ -1116,7 +1118,7 @@ const ClinicVisit = (props) => {
               <div className="row">
               <div className="form-group mb-3 col-md-8">
                   <FormGroup>
-                  <FormLabelName >Blood Pressure</FormLabelName>
+                  <FormLabelName >Blood Pressure *</FormLabelName>
                   <InputGroup>
                   <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                           systolic(mmHg)

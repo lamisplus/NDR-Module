@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {Dropdown, Menu, Segment } from "semantic-ui-react";
+import {Dropdown, Menu, Segment,Sticky } from "semantic-ui-react";
 import { makeStyles } from "@material-ui/core/styles";
 import { url as baseUrl, token } from "../../../api";
 
@@ -124,6 +124,7 @@ function SubMenu(props) {
 
     return (
          <div>
+            
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
             {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )?

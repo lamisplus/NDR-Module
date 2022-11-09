@@ -749,7 +749,7 @@ const handleInputValueCheckTemperature =(e)=>{
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
     temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
     temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-    temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
+    //temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
     temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
     //temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
     temp.diastolic = vital.diastolic ? "" : "This field is required"
@@ -801,7 +801,7 @@ const handleInputValueCheckTemperature =(e)=>{
         PatientDetailId();
         props.ClinicVisitListHistory()
         setSaving(false);
-        toast.success("Clinic Visit save successful");
+        toast.success("Clinic Visit save successful", {position: toast.POSITION.BOTTOM_CENTER});
         props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history"})
       })
       .catch(error => {
@@ -815,6 +815,8 @@ const handleInputValueCheckTemperature =(e)=>{
         }
        
       });
+    }else{
+      toast.error("All field are required", {position: toast.POSITION.BOTTOM_CENTER})
     }
   }
 
@@ -1139,7 +1141,7 @@ const handleInputValueCheckTemperature =(e)=>{
                    
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <FormLabelName >Body Weight</FormLabelName>
+                        <FormLabelName >Body Weight *</FormLabelName>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -1166,7 +1168,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <FormLabelName >Height</FormLabelName>
+                        <FormLabelName >Height *</FormLabelName>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
@@ -1228,7 +1230,7 @@ const handleInputValueCheckTemperature =(e)=>{
               <div className="row">
               <div className="form-group mb-3 col-md-12">
                   <FormGroup>
-                  <FormLabelName >Blood Pressure</FormLabelName>
+                  <FormLabelName >Blood Pressure *</FormLabelName>
                   <InputGroup>
                   <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                           systolic(mmHg)
