@@ -135,24 +135,22 @@ const BasicInfo = (props) => {
         e.preventDefault();  
         props.observation.data.assesment = assesment
         props.observation.data.who=who 
-        who.stage1ValueOption= selectedOptions1
-        who.stage2ValueOption= selectedOptions2
-        who.stage3ValueOption= selectedOptions3
-        who.stage4ValueOption= selectedOptions4 
-        //toast.success("Record save successful");
         handleItemClick('plan', 'who' )                  
     }
-
     const onSelectedOption1 = (selectedValues) => {
+        setWho({...who, stage1ValueOption: selectedValues})
         setSelectedOptions1(selectedValues);
     };
     const onSelectedOption2 = (selectedValues) => {
+        setWho({...who, stage2ValueOption: selectedValues})
         setSelectedOptions2(selectedValues);
     };
     const onSelectedOption3 = (selectedValues) => {
         setSelectedOptions3(selectedValues);
+        setWho({...who, stage3ValueOption: selectedValues})
     };
     const onSelectedOption4 = (selectedValues) => {
+        setWho({...who, stage4ValueOption: selectedValues})
         setSelectedOptions4(selectedValues);
     };
     const options1 = [

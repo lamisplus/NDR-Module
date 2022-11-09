@@ -167,7 +167,7 @@ const BasicInfo = (props) => {
         props.observation.data.who=who 
         handleItemClick('plan', 'who' )                
     }
-     const onSelectedOption1 = (selectedValues) => {
+    const onSelectedOption1 = (selectedValues) => {
         setWho({...who, stage1ValueOption: selectedValues})
         setSelectedOptions1(selectedValues);
     };
