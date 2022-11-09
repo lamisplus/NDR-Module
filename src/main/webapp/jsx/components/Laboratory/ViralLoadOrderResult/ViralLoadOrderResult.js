@@ -327,7 +327,7 @@ const Laboratory = (props) => {
                 .then(response => {
                     setSaving(false);
                     props.LabOrders();
-                    toast.success("Laboratory test order created successful");
+                    toast.success("Laboratory test order created successful",  {position: toast.POSITION.BOTTOM_CENTER});
                     setTests({
                         approvedBy: "",
                         assayedBy: "",
@@ -363,7 +363,9 @@ const Laboratory = (props) => {
                     setSaving(false);
                     if(error.response && error.response.data){
                         let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                        toast.error(errorMessage); 
+                        toast.error(errorMessage,  {position: toast.POSITION.BOTTOM_CENTER}); 
+                    }else{
+                        toast.error("Something went wrong. Please try again...",  {position: toast.POSITION.BOTTOM_CENTER}); 
                     }                  
                 }); 
             

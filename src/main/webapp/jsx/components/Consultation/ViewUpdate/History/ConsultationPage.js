@@ -248,7 +248,7 @@ const ClinicVisit = (props) => {
     AdherenceLevel();
     TBStatus();
     VitalSigns()
-    GetPatientObj();
+
     //ClinicVisitListHistory();
     AdultRegimenLine();
     ChildRegimenLine();
@@ -260,7 +260,7 @@ const ClinicVisit = (props) => {
     FAMILY_PLANNING_METHOD();
     TestGroup();
     if(props.activeContent.id!==""){
-     
+      GetPatientObj();
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }

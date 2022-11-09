@@ -255,7 +255,7 @@ const ClinicVisit = (props) => {
     AdherenceLevel();
     TBStatus();
     VitalSigns();
-    ClinicVisitList();
+
     PatientDetailId();
     ViraLoadIndication();
     TestGroup();
@@ -268,8 +268,11 @@ const ClinicVisit = (props) => {
     PREGANACY_STATUS();
     FAMILY_PLANNING_METHOD();
     GetPatientDTOObj();
+    if(props.patientObj.id){
+      ClinicVisitList();
+    }
     //hiv/patient/3
-  }, []);
+  }, [props.patientObj]);
   const GetPatientDTOObj =()=>{
     axios
        .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -929,8 +932,8 @@ const handleInputValueCheckTemperature =(e)=>{
                   <>
                   <br/>
                   <Alert
-                      variant="info"
-                      className="alert-dismissible solid fade show"
+                      variant="primary"
+                      className="alert-dismissible   "
                     >
                       <p>No Vital Signs</p>
                     </Alert>
@@ -996,8 +999,8 @@ const handleInputValueCheckTemperature =(e)=>{
                      <>
                      <br/>
                      <Alert
-                         variant="info"
-                         className="alert-dismissible solid fade show"
+                         variant="primary"
+                         className="alert-dismissible  "
                        >
                          <p>No Clinical Notes</p>
                        </Alert>
