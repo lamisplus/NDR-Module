@@ -676,7 +676,31 @@ const Pharmacy = (props) => {
             props.PharmacyList();
             toast.success("Pharmacy drug refill successful", {position: toast.POSITION.BOTTOM_CENTER});           
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
-            
+            setObjValues({
+                adherence: "",
+                adrScreened: "",
+                adverseDrugReactions: {},
+                dsdModel:"",
+                isDevolve:"",
+                extra: {},
+                facilityId: 2,
+                mmdType:null,
+                nextAppointment: null,
+                personId: props.patientObj.id,
+                refillPeriod:null,
+                prescriptionError: null,
+                regimenId: [],
+                regimenTypeId:"",
+                visitDate: null,
+                visitId: 0,
+                refill:"",
+                refillType:"",
+                switch:"",
+                substitute:"",
+                dsdModelType:"",
+                iptType:""
+            });
+            setRegimenDrugList([]);
             
         })
         .catch(error => {
