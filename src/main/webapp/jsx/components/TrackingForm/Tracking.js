@@ -358,7 +358,7 @@ const Tracking = (props) => {
                     .then(response => {
                         setSaving(false);
                         props.TrackingDetails();
-                        toast.success(" Save successful");
+                        toast.success(" Save successful",  {position: toast.POSITION.BOTTOM_CENTER});
                         props.setActiveContent({...props.activeContent, route:'tracking-form', activeTab:"history", })
                         //props.setActiveContent({...props.activeContent, route:'recent-history'})
                         //props.setActiveContent('recent-history')
@@ -371,11 +371,11 @@ const Tracking = (props) => {
                             toast.error(errorMessage);
                         }
                         else{
-                            toast.error("Something went wrong. Please try again...");
+                            toast.error("Something went wrong. Please try again...",  {position: toast.POSITION.BOTTOM_CENTER});
                         }
                     });
                 }else{
-                    toast.error("Attempt to Contact can not be empty");
+                    toast.error("Attempt to Contact can not be empty",  {position: toast.POSITION.BOTTOM_CENTER});
                 }
             }  
     }

@@ -125,7 +125,7 @@ const UserRegistration = (props) => {
                         <br/>
                         <form >
                         <div className="col-md-3 float-start">
-                        <Sticky>
+                       
                         <Menu  size='large'  vertical  style={{backgroundColor:"#014D88"}}>
                             <Menu.Item
                                 name='inbox'
@@ -192,7 +192,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'who'}
                                 onClick={()=>handleItemClick('who')}
                                 style={{backgroundColor:activeItem === 'who' ? '#000': ""}}
-                                disabled={activeItem !== 'who' ? true : false}
+                                //disabled={activeItem !== 'who' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Assessment & WHO 
@@ -231,7 +231,7 @@ const UserRegistration = (props) => {
                                 </span>                            
                             </Menu.Item>
                         </Menu>
-                        </Sticky>
+                       
                         </div>
                         <div className="col-md-9 float-end" style={{ backgroundColor:"#fff", }}>
                             {activeItem==='medical-history' && (<MedicalHistory handleItemClick={handleItemClick} setCompleted={setCompleted} completed={completed} setPatientObj={setPatientObj} patientObj={patientObj} setObservation={setObservation} observation={observation} patientAge={patientAge}/>)}

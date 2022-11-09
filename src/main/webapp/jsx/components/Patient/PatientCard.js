@@ -291,20 +291,7 @@ function PatientCard(props) {
                                           Biometric Status
                                           <Label.Detail>{props.patientObj.biometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
                                       </Label>
-                                      {props.patientObj.biometricStatus!==true ? (
-                                    
-                                          <>
-                                             
-                                                  <>
-                                                  <Label as='a' color='teal' onClick={() => capturePatientBiometric(patientObj)} tag>
-                                                      Capture Now
-                                                  </Label>
-                                                  </>
-                                            
-                                          </>
-                                      )
-                                      :""
-                                      }
+                                     
                                       
                                   </Typography>
                               </div>
@@ -312,7 +299,7 @@ function PatientCard(props) {
                           )
                           :
                           <>
-                              <div >
+                              {/* <div >
                                   <Typography variant="caption">
                                       <Label color={"red"} size={"mini"}>
                                           Biometric Not Installed
@@ -320,7 +307,7 @@ function PatientCard(props) {
                                       </Label>
                                     
                                   </Typography>
-                              </div>
+                              </div> */}
                           </>
                       }
                     </Col>

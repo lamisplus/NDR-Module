@@ -633,7 +633,7 @@ const redirectLink=()=>{
                         >
                           <h6 className="mb-0">
                             Regimen
-                            {regimenName(regimen.extra.regimens)}
+                            {regimenName(regimen && regimen.extra ? regimen.extra.regimens : null)}
                             
                           </h6>
                           <strong className="text-teal">

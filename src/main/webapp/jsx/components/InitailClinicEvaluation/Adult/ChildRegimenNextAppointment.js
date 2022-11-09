@@ -148,7 +148,7 @@ const ChildRegimenNextAppointment = (props) => {
               setSaving(false);
               handleItemClick('', 'regimen' ) 
               props.patientObj.clinicalEvaluation=true
-              toast.success("Initial Clinic Evaluation successful");
+              toast.success("Initial Clinic Evaluation successful",  {position: toast.POSITION.BOTTOM_CENTER});
               props.setActiveContent({...props.activeContent, route:'recent-history'})
           })
           .catch(error => {
@@ -156,8 +156,10 @@ const ChildRegimenNextAppointment = (props) => {
               //console.log(error.response)
               if(error.response && error.response.data){
                 let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                toast.error(errorMessage); 
-            }
+                toast.error(errorMessage,  {position: toast.POSITION.BOTTOM_CENTER}); 
+              }else{
+                toast.error("Something went wrong, please try again...",  {position: toast.POSITION.BOTTOM_CENTER}); 
+              }
              
           });
         }
@@ -177,7 +179,7 @@ return (
                     <h3>Regimen</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Regimen Line</Label>
+                            <Label>Regimen Line *</Label>
                             <Input 
                                     type="select"
                                     name="regimenLine"
@@ -199,7 +201,7 @@ return (
                     {regimen.regimenLine==='first line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>First Line Regimen</Label>
+                            <Label>First Line Regimen *</Label>
                             <Input 
                                     type="select"
                                     name="regimen"
@@ -231,7 +233,7 @@ return (
                     {regimen.regimenLine==='second line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Second Line Regimen</Label>
+                            <Label>Second Line Regimen *</Label>
                             <Input 
                                     type="select"
                                     name="regimen"
@@ -256,7 +258,7 @@ return (
                     {regimen.regimenLine==='third line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Third Line Regimen</Label>
+                            <Label>Third Line Regimen *</Label>
                             <Input 
                                     type="select"
                                     name="regimen"
@@ -281,7 +283,7 @@ return (
                     <div className="row">
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Next appointment</Label>
+                            <Label >Next appointment *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"

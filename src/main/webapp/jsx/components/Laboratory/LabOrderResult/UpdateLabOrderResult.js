@@ -279,14 +279,16 @@ useEffect(() => {
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
-                toast.success("Laboratory test order updated successful");
+                toast.success("Laboratory test order updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
                 props.setActiveContent({...props.activeContent, route:'laboratoryOrderResult', id:props.activeContent.obj.id, activeTab:"history", actionType:"update", obj:props.activeContent.obj})
             })
             .catch(error => {
                 setSaving(false);
                 if(error.response && error.response.data){
                     let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                    toast.error(errorMessage); 
+                    toast.error(errorMessage,  {position: toast.POSITION.BOTTOM_CENTER}); 
+                }else{
+                    toast.error("Something went wrong. Please try again...",  {position: toast.POSITION.BOTTOM_CENTER}); 
                 }                  
             }); 
     }

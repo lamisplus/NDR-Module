@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css';
+import {Sticky } from "semantic-ui-react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import PatientCardDetail from './PatientCard'
@@ -111,8 +112,10 @@ function PatientCard(props) {
 		  </div>
       <Card >
         <CardContent>
-            <PatientCardDetail patientObj={patientObj} setArt={setArt} setActiveContent={setActiveContent}/>            
+            <PatientCardDetail patientObj={patientObj} setArt={setArt} setActiveContent={setActiveContent}/>
+            <Sticky>           
             <SubMenu patientObj={patientObj} art={art} setActiveContent={setActiveContent}/>
+            </Sticky>
             <br/>
           {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='biometrics' &&(<Biometrics patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}

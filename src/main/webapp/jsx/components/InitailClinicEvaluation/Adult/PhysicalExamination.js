@@ -204,8 +204,8 @@ const BasicInfo = (props) => {
     const validate = () => {        
         temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
         temp.height = vital.height ? "" : "This field is required" 
-        temp.temperature = vital.temperature ? "" : "This field is required"
-        temp.pulse = vital.pulse ? "" : "This field is required"   
+        temp.systolic = vital.systolic ? "" : "This field is required"
+        temp.diastolic = vital.diastolic ? "" : "This field is required"   
        
         setErrors({
             ...temp
@@ -261,7 +261,7 @@ return (
                     <div className="row">
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Pulse</Label>
+                        <Label >Pulse </Label>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -343,7 +343,7 @@ return (
                    
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Body Weight</Label>
+                        <Label >Body Weight *</Label>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -370,7 +370,7 @@ return (
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <Label >Height</Label>
+                        <Label >Height *</Label>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
@@ -430,7 +430,7 @@ return (
                     <div className="row">
                     <div className="form-group mb-3 col-md-12">
                         <FormGroup>
-                        <Label >Blood Pressure</Label>
+                        <Label >Blood Pressure *</Label>
                         <InputGroup>
                         <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 systolic(mmHg)
@@ -482,7 +482,7 @@ return (
                     <div className="row">
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Head circumference </Label>
+                        <Label >Head circumference</Label>
                         <InputGroup> 
                             <Input 
                                 type="text"
@@ -524,7 +524,7 @@ return (
                     </div>
                     <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >MUAC</Label>
+                                <Label >MUAC </Label>
                                 <InputGroup> 
                                     <Input 
                                         type="select"
