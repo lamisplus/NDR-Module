@@ -105,10 +105,6 @@ public class HivPatientService {
                     .map(person -> convertPersonHivPatientDto(person.getId()))
                     .filter(Objects::nonNull)
                     .filter(p -> p.getCurrentStatus().equalsIgnoreCase("IIT"))
-                    .filter(hivPatientDto -> {
-                        if(hivPatientDto.getEnrollment() == null) return true;
-                        return  hivPatientDto.getEnrollment().getStatusAtRegistrationId() != null;
-                    })
                     .collect(Collectors.toList());
             return PageDTO.builder()
                     .pageNumber(persons.getNumber())
