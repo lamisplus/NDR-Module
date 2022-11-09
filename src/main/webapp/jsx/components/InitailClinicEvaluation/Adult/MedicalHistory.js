@@ -257,7 +257,7 @@ const MedicalHistory = (props) => {
                     <div className="row">
                     <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Visit Date</Label>
+                            <Label >Visit Date *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"

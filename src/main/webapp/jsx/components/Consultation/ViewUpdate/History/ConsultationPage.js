@@ -445,14 +445,13 @@ const ClinicVisit = (props) => {
       //Get The updated patient objeect
       const GetPatientObj = () => {
         axios
-          .get(`${baseUrl}hiv/patients`,
-            { headers: { "Authorization": `Bearer ${token}` } }
-          )
-          .then((response) => {
-            const patObJ= response.data.filter((x)=> x.id===props.patientObj.id)
-
-            setGetPatientObj(patObJ[0])
-          })
+        .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        )
+        .then((response) => {
+          setGetPatientObj(response.data)
+            //patientObj=response.data
+        })
           .catch((error) => {
             //console.log(error);
           });

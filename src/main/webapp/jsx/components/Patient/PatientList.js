@@ -169,7 +169,7 @@ const Patients = (props) => {
                 { title: "ART Status", field: "status", filtering: false },
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
-              isLoading={loading}
+             // isLoading={loading}
             //   data={ patientList.map((row) => ({
             //       //Id: manager.id,
             //         name:row.currentStatus!== "Not Enrolled" ?
@@ -291,7 +291,7 @@ const Patients = (props) => {
                                 axios.get(`${baseUrl}hiv/patients?pageSize=${query.pageSize}&pageNo=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
                                     .then(response => response)
                                     .then(result => {
-                                    
+                                      
                                         resolve({
                                             data: result.data.records.map((row) => ({
                                             name:row.currentStatus!== "Not Enrolled" ?
@@ -408,8 +408,10 @@ const Patients = (props) => {
                                                 })),
                                             page: query.page,
                                             totalCount: result.data.totalRecords,
+                                            
                                         })
                                     })
+                                    
                             )}
             
                         options={{

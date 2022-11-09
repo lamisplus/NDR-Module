@@ -255,7 +255,6 @@ const ClinicVisit = (props) => {
     AdherenceLevel();
     TBStatus();
     VitalSigns();
-    GetPatientObj();
     ClinicVisitList();
     PatientDetailId();
     ViraLoadIndication();
@@ -481,27 +480,13 @@ const ClinicVisit = (props) => {
           { headers: { "Authorization": `Bearer ${token}` } }
         )
         .then((response) => {
+          setGetPatientObj(response.data)
             patientObj=response.data
         })
         .catch((error) => {
           //console.log(error);
         });
       }
-    //Get The updated patient objeect
-    const GetPatientObj = () => {
-      axios
-        .get(`${baseUrl}hiv/patients`,
-          { headers: { "Authorization": `Bearer ${token}` } }
-        )
-        .then((response) => {
-          const patObJ= response.data.filter((x)=> x.id===props.patientObj.id)
-
-          setGetPatientObj(patObJ[0])
-        })
-        .catch((error) => {
-          //console.log(error);
-        });
-    }
 
   //Get list of WhoStaging
   const WhoStaging = () => {

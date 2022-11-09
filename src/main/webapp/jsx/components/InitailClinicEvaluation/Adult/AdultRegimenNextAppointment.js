@@ -178,7 +178,7 @@ return (
                     <h3>Regimen</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Regimen Line</Label>
+                            <Label>Regimen Line*</Label>
                             <Input 
                                     type="select"
                                     name="regimenLine"
@@ -200,7 +200,7 @@ return (
                     {regimen.regimenLine==='first line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>First Line Regimen</Label>
+                            <Label>First Line Regimen*</Label>
                             <Input 
                                     type="select"
                                     name="regimen"
@@ -225,7 +225,7 @@ return (
                     {regimen.regimenLine==='second line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Second Line Regimen</Label>
+                            <Label>Second Line Regimen*</Label>
                             <Input 
                                     type="select"
                                     name="regimen"
@@ -258,7 +258,7 @@ return (
                     {regimen.regimenLine==='third line' && (
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                            <Label>Third Line Regimen</Label>
+                            <Label>Third Line Regimen *</Label>
                             <Input 
                                     type="select"
                                     name="regimen"
@@ -291,7 +291,7 @@ return (
                     <div className="row">
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Next appointment</Label>
+                            <Label >Next appointment *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"
