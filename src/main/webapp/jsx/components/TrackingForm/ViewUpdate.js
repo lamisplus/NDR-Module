@@ -134,7 +134,8 @@ const Tracking = (props) => {
                 trackDate: "",
                 trackOutcome: "",
                 visitId: ""
-              }
+              },
+            dateOfObservation:""
     })
     useEffect(() => {
         ReasonForTracking();
@@ -290,7 +291,7 @@ const Tracking = (props) => {
     } 
     const handleInputChangeObservation = e => {
         setErrors({...temp, [e.target.name]:""})
-        setObservation ({...observation,  [e.target.name]: e.target.value});
+        setObjValues ({...objValues,  dateOfObservation: e.target.value});
     } 
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
                 modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""
@@ -361,7 +362,7 @@ const Tracking = (props) => {
         if(validate()){
             if(attemptList.length >0){
                 objValues.attempts=attemptList
-                observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")                  
+                //observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")                  
                 observation.personId =patientObj.id
                 observation.data=objValues 
                 if(objValues.statusTracker===null){
@@ -434,7 +435,7 @@ const Tracking = (props) => {
                                     type="date"
                                     name="dateOfObservation"
                                     id="dateOfObservation"
-                                    value={observation.dateOfObservation}
+                                    value={objValues.dateOfObservation}
                                     min={enrollDate}
                                     onChange={handleInputChangeObservation}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
