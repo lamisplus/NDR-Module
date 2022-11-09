@@ -135,6 +135,12 @@ public class ArtClinicVisitService {
 	
 	
 	private ARTClinicalVisitDisplayDto getArtClinicalVisitDisplayDto(ARTClinical visit) {
+		Long whoStagingId = visit.getWhoStagingId();
+		StringBuilder whoStage = new StringBuilder();
+		if(whoStagingId != null) {
+			String who = applicationCodesetService.getApplicationCodeset(whoStagingId).getDisplay();
+			whoStage.append(who);
+		}
 		return ARTClinicalVisitDisplayDto.builder()
 				.id(visit.getId())
 				.visitDate(visit.getVisitDate())
@@ -153,7 +159,7 @@ public class ArtClinicVisitService {
 				.visitId(visit.getVisit().getId())
 				.vitalSignDto(vitalSignService.getVitalSignById(visit.getVitalSign().getId()))
 				.tbScreen(visit.getTbScreen())
-				.whoStaging(applicationCodesetService.getApplicationCodeset(visit.getWhoStagingId()).getDisplay())
+				.whoStaging(whoStage.toString())
 				.opportunisticInfections(visit.getOpportunisticInfections())
 				.cryptococcalScreeningStatus(visit.getCryptococcalScreeningStatus())
 				.familyPlaning(visit.getFamilyPlaning())
