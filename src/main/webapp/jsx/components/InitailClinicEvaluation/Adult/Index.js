@@ -192,7 +192,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'who'}
                                 onClick={()=>handleItemClick('who')}
                                 style={{backgroundColor:activeItem === 'who' ? '#000': ""}}
-                                //disabled={activeItem !== 'who' ? true : false}
+                                disabled={activeItem !== 'who' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Assessment & WHO 

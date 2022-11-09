@@ -691,7 +691,7 @@ const Pharmacy = (props) => {
         return prev + +current.dispense
       }, 0);
       let TotalPrescribed = regimenDrug.reduce(function(prev, current) {
-        const duration =current.frequency * current.duration
+        const duration = (current && current.frequency ? current.frequency : "") * current.duration
         return prev + +duration
       }, 0);
       
