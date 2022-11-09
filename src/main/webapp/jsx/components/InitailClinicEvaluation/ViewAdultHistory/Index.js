@@ -223,7 +223,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'plan'}
                                 onClick={()=>handleItemClick('plan')}
                                 style={{backgroundColor:activeItem === 'plan' ? '#000': ""}}
-                                disabled={activeItem !== 'plan' ? true : false}
+                                //disabled={activeItem !== 'plan' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Plan & Enroll In
@@ -238,7 +238,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'regimen'}
                                 onClick={()=>handleItemClick('regimen')}
                                 style={{backgroundColor:activeItem === 'regimen' ? '#000': ""}}
-                                disabled={activeItem !== 'regimen' ? true : false}
+                               // disabled={activeItem !== 'regimen' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Regimen & <br/>Next Appointment 

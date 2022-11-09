@@ -149,7 +149,7 @@ const BasicInfo = (props) => {
               setSaving(false);
               handleItemClick('', 'regimen' ) 
               props.patientObj.clinicalEvaluation=true
-              toast.success("Initial Clinic Evaluation successful");
+              toast.success("Initial Clinic Evaluation successful",  {position: toast.POSITION.BOTTOM_CENTER});
               props.setActiveContent({...props.activeContent, route:'recent-history'})
           })
           .catch(error => {
@@ -157,7 +157,9 @@ const BasicInfo = (props) => {
               //console.log(error.response)
               if(error.response && error.response.data){
                 let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                toast.error(errorMessage); 
+                toast.error(errorMessage,  {position: toast.POSITION.BOTTOM_CENTER}); 
+            }else{
+                toast.error("Something went wrong, please try again...",  {position: toast.POSITION.BOTTOM_CENTER}); 
             }
              
           });
