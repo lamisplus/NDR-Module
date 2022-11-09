@@ -76,7 +76,7 @@ const Pharmacy = (props) => {
     const [dsdModelType, setDsdModelType] = useState([]);
     const [mmdType, setmmdType]=useState();
     const [showmmdType, setShowmmdType]=useState(false);
-    const [showDsdModel, setShowDsdModel] = useState(false);
+    const [showIptType, setIptType] = useState(false);
     const [showAdr, setShowAdr] = useState(false);
     const [showRegimen, setShowRegimen] = useState(false);
     const [regimen, setRegimen] = useState([]);
@@ -491,9 +491,11 @@ const Pharmacy = (props) => {
     }
     const handleSelectedRegimenOI = e => {
         const regimenId= e.target.value
-        
         if(regimenId!==""){
             RegimenTypeOI(regimenId)
+            if(regimenId==='15'){
+                setIptType(true)
+            }
         }else{
             setRegimenTypeOI([])
         }
@@ -694,7 +696,8 @@ const Pharmacy = (props) => {
         const duration = (current && current.frequency ? current.frequency : "") * current.duration
         return prev + +duration
       }, 0);
-      
+   
+   console.log(objValues.drugName)   
 
   return (      
       <div>
@@ -1140,7 +1143,7 @@ const Pharmacy = (props) => {
                 
                 </FormGroup>
             </div>
-            {objValues.drugName ==='15' && ( 
+            {showIptType && ( 
             <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >IPT Type</Label>
