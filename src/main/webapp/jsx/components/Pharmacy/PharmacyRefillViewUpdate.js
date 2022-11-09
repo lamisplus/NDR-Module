@@ -92,6 +92,7 @@ const Pharmacy = (props) => {
     const [othersRegimenLine, setOthersRegimenLine] = useState([]);
     const [childRegimenLine, setChildRegimenLine] = useState([]);
     const [iptType, setIPT_TYPE] = useState([]);
+    const [showIptType, setIptType] = useState(false);
     const [objValues, setObjValues] = useState({
             adherence: "",
             adrScreened: "",
@@ -486,6 +487,9 @@ const Pharmacy = (props) => {
         
         if(regimenId!==""){
             RegimenTypeOI(regimenId)
+            if(regimenId==='15'){
+                setIptType(true)
+            }
         }else{
             setRegimenTypeOI([])
         }
@@ -666,7 +670,7 @@ const Pharmacy = (props) => {
         return prev + +current.dispense
       }, 0);
       let TotalPrescribed = regimenDrug.reduce(function(prev, current) {
-        const duration =current.frequency * current.duration
+        const duration = (current && current.frequency ? current.frequency : "") * current.duration
         return prev + +duration
       }, 0);
 
@@ -1124,7 +1128,7 @@ const Pharmacy = (props) => {
                 
                 </FormGroup>
             </div>
-            {objValues.drugName ==='15' && ( 
+            {showIptType || objValues.iptType!=='' && ( 
             <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
                 <Label >IPT Type</Label>
