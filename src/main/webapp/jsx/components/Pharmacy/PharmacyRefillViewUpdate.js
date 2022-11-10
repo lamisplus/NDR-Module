@@ -489,6 +489,8 @@ const Pharmacy = (props) => {
             RegimenTypeOI(regimenId)
             if(regimenId==='15'){
                 setIptType(true)
+            }else{
+                setIptType(false)
             }
         }else{
             setRegimenTypeOI([])
@@ -651,7 +653,7 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
-            props.PharmacyList();
+            //props.PharmacyList();
             toast.success("Pharmacy drug refill successful", {position: toast.POSITION.BOTTOM_CENTER});           
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
             setObjValues({
@@ -681,6 +683,7 @@ const Pharmacy = (props) => {
             setRegimenDrugList([])
         })
         .catch(error => {
+          
             setSaving(false);
             if(error.response && error.response.data){
                 let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";

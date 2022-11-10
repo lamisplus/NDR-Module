@@ -24,7 +24,7 @@ const PharmacyModule = (props) => {
     //console.log(key)
 
         //GET LIST Drug Refill
-        async function PharmacyList() {
+        const PharmacyList =() =>{
           setLoading(true)
           axios
               .get(`${baseUrl}hiv/art/pharmacy/patient?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,

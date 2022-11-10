@@ -257,9 +257,10 @@ const Laboratory = (props) => {
                 toast.success("Laboratory test order updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
                 //props.LabOrders();
                 props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
-                props.LabOrders();
+                //props.LabOrders();
             })
             .catch(error => {
+                console.log(error)
                 setSaving(false);
                 if(error.response && error.response.data){
                     let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
@@ -842,9 +843,9 @@ const Laboratory = (props) => {
                         onClick={handleSubmit}
                         >
                         {!saving ? (
-                        <span style={{ textTransform: "capitalize" }}>Save</span>
+                        <span style={{ textTransform: "capitalize" }}>Update</span>
                         ) : (
-                        <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                        <span style={{ textTransform: "capitalize" }}>Updating...</span>
                         )}
                     </MatButton>
                 

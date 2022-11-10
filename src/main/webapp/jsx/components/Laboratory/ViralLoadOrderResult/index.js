@@ -21,7 +21,7 @@ const LaboratoryModule = (props) => {
       setKey(props.activeContent.activeTab)
     }, [props.activeContent.id, props.activeContent.activeTab]);
     //GET Patient Lab order history
-    async function LabOrders() {
+    const  LabOrders=()=> {
       //setLoading(true)
       axios
           .get(`${baseUrl}laboratory/vl-results/patients/${props.patientObj.id}`,

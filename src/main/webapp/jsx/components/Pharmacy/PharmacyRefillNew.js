@@ -495,6 +495,8 @@ const Pharmacy = (props) => {
             RegimenTypeOI(regimenId)
             if(regimenId==='15'){
                 setIptType(true)
+            }else{
+                setIptType(false)
             }
         }else{
             setRegimenTypeOI([])
