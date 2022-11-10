@@ -103,7 +103,6 @@ public class HivPatientService {
                     .map(p -> personService.getPersonById(p.getId()))
                     .filter(Objects::nonNull)
                     .map(person -> convertPersonHivPatientDto(person.getId()))
-                    .filter(Objects::nonNull)
                     .filter(p -> p.getCurrentStatus().equalsIgnoreCase("IIT"))
                     .collect(Collectors.toList());
             return PageDTO.builder()
@@ -191,6 +190,7 @@ public class HivPatientService {
                 Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (enrollStatus);
                 status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
             }else {
+                System.out.println("I am here status is not known");
                 hivPatientDto.setCurrentStatus("Enrolled but status not known");
             }
             hivPatientDto.setEnrollment(enrollment.get());
