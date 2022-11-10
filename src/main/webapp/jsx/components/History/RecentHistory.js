@@ -66,7 +66,7 @@ const RecentHistory = (props) => {
   //Get list of LaboratoryHistory
   const LaboratoryHistory =()=>{
     axios
-       .get(`${baseUrl}laboratory/rde-orders/patients/${props.patientObj.id}`,
+       .get(`${baseUrl}laboratory/rde-all-orders/patients/${props.patientObj.id}`,
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
