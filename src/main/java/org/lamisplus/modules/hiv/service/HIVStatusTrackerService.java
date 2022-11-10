@@ -140,7 +140,7 @@ public class HIVStatusTrackerService {
 						.stream()
 						.findAny();
 		artPharmacy.ifPresent(p -> statusDate.set(p.getNextAppointment()));
-		List<String> staticStatus = Arrays.asList("Stopped Treatment", "Died (Confirmed)", "ART Transfer Out");
+		List<String> staticStatus = Arrays.asList("Stopped Treatment", "Died (Confirmed)", "ART Transfer Out", "HIV_NEGATIVE");
 		if (staticStatus.contains(statusTracker.getHivStatus())) {
 			return new StatusDto(statusTracker.getHivStatus(), statusTracker.getStatusDate());
 		} else {
@@ -152,9 +152,7 @@ public class HIVStatusTrackerService {
 				return new StatusDto("IIT", iitDate);
 				
 			}
-			
 			return new StatusDto("Active on Treatment", statusDate.get());
-			
 		}
 	}
 	
