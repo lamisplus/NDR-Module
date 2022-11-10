@@ -252,7 +252,10 @@ const Laboratory = (props) => {
             const dateResultReceived = moment(e.target.value).format("YYYY-MM-DD HH:MM:SS")   //Math.abs(e.target.value)
             setTests ({...tests,  [e.target.name]: dateResultReceived});
         }
-       
+        if(e.target.name==='pcrLabName'){
+            setTests ({...tests,  [e.target.name]: e.target.value});
+        }
+        //setTests ({...tests,  [e.target.name]: e.target.value});
                       
     }
     const handleInputChangeLabNumber = e => {
@@ -298,7 +301,7 @@ const Laboratory = (props) => {
         //showPcrLabDetail && (temp.dateCollectedBy =  tests.dateCollectedBy ? "" : "This field is required")
         showPcrLabDetail && tests.sampleLoggedRemotely ==='1' && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
         showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
-        showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+        //showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
         showPcrLabDetail && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
         showPcrLabDetail && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
         showPcrLabDetail && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
@@ -310,13 +313,38 @@ const Laboratory = (props) => {
         })
         return Object.values(temp).every(x => x == "")
     }
-    
+    const pcr_lab = [
+        {name: "NRL", labNo: "LIMS150002"},
+        {name: "ASOKORO Testing Lab", labNo: "LIMS150003"},
+        {name: "PLASVIREC TESTING LAB", labNo: "LIMS320002"},
+        {name: "ABUTH Testing Lab", labNo: "LIMS190001"},
+        {name: "University College Hospital (UCH) Ibadan", labNo: "LIMS310001"},
+        {name: "NIMR Testing Lab", labNo: "LIMS250002"},
+        {name: "LASUTH Testing Lab", labNo: "LIMS250001"},
+        {name: "JUTH Testing Lab", labNo: "LIMS320001"},
+        {name: "AKTH Testing Lab", labNo: "LIMS200001"},
+        {name: "FMCG Testing Lab", labNo: "LIMS160001"},
+        {name: "FMCMK Testing Lab", labNo: "LIMS070001"},
+        {name: "OAUTHC Testing Lab", labNo: "LIMS300001"},
+        {name: "UMTH Testing Lab", labNo: "LIMS080001"},
+        {name: "FMCJAL Testing Lab", labNo: "LIMS350001"},
+        {name: "NAUTH Testing Lab", labNo: "LIMS040002"},
+        {name: "UUTH Testing Lab", labNo: "LIMS320001"},
+        {name: "AKTH Testing Lab", labNo: "LIMS030001"},
+        {name: "DRL Testing Lab", labNo: "LIMS150001"},
+        {name: "68 MRH Testing Lab", labNo: "LIMS250003"},
+        {name: "UATH Abuja Testing Lab", labNo: "LIMS150004"},
+        {name: "RSUTH Testing Lab", labNo: "LIMS330001"},
+        {name: "COOUTH Testing Lab", labNo: "LIMS040001"},
+        {name: "OAUTHC ANNEX", labNo: "LIMS290001"},
+    ]
     const handleSubmit = (e) => {        
         e.preventDefault();
         if(validate()){
             //tests.labNumber=labNumberOption+"/"+tests.labNumber
             tests.labTestGroupId= testOrderList.labTestGroupId
             tests.labTestId= testOrderList.id
+            tests.pcrLabSampleNumber=tests.pcrLabName
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
             tests.dateResultReceived =tests.dateResultReceived!==null && tests.dateResultReceived!=="" ? moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS") : ""
             tests.dateReceivedAtPcrLab =tests.dateReceivedAtPcrLab!==null && tests.dateReceivedAtPcrLab!=="" ? moment(tests.dateReceivedAtPcrLab).format("YYYY-MM-DD HH:MM:SS") : ""
@@ -732,7 +760,11 @@ const Laboratory = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                 >
                                 <option value="">Select </option>
-                                <option value="Abuja">Abuja Hospital </option>             
+                                {pcr_lab.map((value) => (
+                                        <option key={value.labNo} value={value.labNo}>
+                                            {value.name}
+                                        </option>
+                                    ))}             
                                     
                             </Input>
                             {errors.pcrLabName !=="" ? (
@@ -741,22 +773,21 @@ const Laboratory = (props) => {
                             </FormGroup>
                     </Col>
                     <Col md={6} className="form-group mb-3">
+                        {tests.pcrLabName!=="" && (
                         <FormGroup>
                             <Label for="encounterDate">PCR Sample No.</Label>
                             <Input
                                 type="text"
                                 name="pcrLabSampleNumber"
                                 id="pcrLabSampleNumber"
-                                //min={0}
-                                value={tests.pcrLabSampleNumber}
+                                value={tests.pcrLabName}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled
                             />
-                            {errors.pcrLabSampleNumber !=="" ? (
-                                <span className={classes.error}>{errors.pcrLabSampleNumber}</span>
-                            ) : "" }
+                           
                         </FormGroup>
+                        )}
                     </Col>
                    
                    
