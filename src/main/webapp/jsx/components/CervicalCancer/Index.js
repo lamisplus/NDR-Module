@@ -310,7 +310,7 @@ const CervicalCancer = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                         <FormGroup>
-                        <Label >Screening Treatment</Label>
+                        <Label >Screening Treatment *</Label>
                         <Input
                                 type="select"
                                 name="screenType"
@@ -334,7 +334,7 @@ const CervicalCancer = (props) => {
                         </div>                        
                         <div className="form-group mb-3 col-md-6">
                         <FormGroup>
-                        <Label >Screening Method</Label>
+                        <Label >Screening Method *</Label>
                         <Input
                                 type="select"
                                 name="screenMethod"
@@ -380,33 +380,10 @@ const CervicalCancer = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        {objValues.screeningResult ==='CERVICAL_CANCER_RESULT_POSITIVE' && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Referral *</Label>
-                            <Input
-                                type="select"
-                                name="screeningResult"
-                                id="screeningResult"
-                                value={objValues.screeningResult}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> </option>
-            
-                                    {result.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.screeningResult !=="" ? (
-                                <span className={classes.error}>{errors.screeningResult}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >If positive, size of an action white area *</Label>
+                            <Label >size of an action white area </Label>
                             <Input
                                 type="select"
                                 name="screeningArea"
@@ -428,6 +405,7 @@ const CervicalCancer = (props) => {
                             ) : "" }
                             </FormGroup>
                         </div>
+                        )}
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >New Squamocolumnar junction visible *</Label>
@@ -511,7 +489,7 @@ const CervicalCancer = (props) => {
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
-                    disabled={objValues.screeningResult==="" || objValues.screenMethod==="" || objValues.screenType==="" || objValues.dateOfScreening===""  ? true : false}
+                    disabled={objValues.screeningResult==="" || objValues.screenMethod==="" || objValues.screenType==="" || objValues.visible==="" || objValues.screeningResult===""  || objValues.gross==="" || objValues.referrals==="" ? true : false}
                     onClick={handleSubmit}
                 >
                     {!saving ? (

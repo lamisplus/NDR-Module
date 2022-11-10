@@ -133,8 +133,11 @@ const Tracking = (props) => {
                 statusDate: "",
                 trackDate: "",
                 trackOutcome: "",
-                visitId: ""
-              }
+                visitId: "",
+                
+              },
+            dateOfObservation:""
+
             })
     useEffect(() => {
         ReasonForTracking();
@@ -269,7 +272,8 @@ const Tracking = (props) => {
     } 
     const handleInputChangeObservation = e => {
         setErrors({...temp, [e.target.name]:""})
-        setObservation ({...observation,  [e.target.name]: e.target.value});
+        //setObservation ({...observation,  [e.target.name]: e.target.value});
+        setObjValues ({...objValues,  dateOfObservation: e.target.value});
     }  
     const [attempt, setAttempt] = useState({ attemptDate: "", whoAttemptedContact: "", 
                 modeOfConatct: "", personContacted: "", reasonForDefaulting: "", reasonForDefaultingOthers:""
@@ -340,7 +344,7 @@ const Tracking = (props) => {
         if(validate()){
             if(attemptList.length >0){
                 objValues.attempts=attemptList
-                observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")                  
+                //observation.dateOfObservation= observation.dateOfObservation !=="" ? observation.dateOfObservation : moment(new Date()).format("YYYY-MM-DD")                  
                 observation.personId =patientObj.id
                 observation.data=objValues 
                 objValues.statusTracker.causeOfDeath=objValues.causeOfDeath
@@ -349,7 +353,9 @@ const Tracking = (props) => {
                 objValues.statusTracker.statusDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
                 objValues.statusTracker.trackDate=objValues.dateOfDiscontinuation!==null && objValues.dateOfDiscontinuation!=="" ? objValues.dateOfDiscontinuation : objValues.dateReturnToCare
                 objValues.statusTracker.trackOutcome=objValues.reasonForTracking
-                
+                if(objValues.careInFacilityDiscountinued==='No'){
+                    objValues.statusTracker=null
+                }
                 setSaving(true);
                 axios.post(`${baseUrl}patient-tracker`,objValues,
                 { headers: {"Authorization" : `Bearer ${token}`}},
@@ -397,7 +403,7 @@ console.log(errors)
                                     type="date"
                                     name="dateOfObservation"
                                     id="dateOfObservation"
-                                    value={observation.dateOfObservation}
+                                    value={objValues.dateOfObservation}
                                     min={enrollDate}
                                     onChange={handleInputChangeObservation}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
