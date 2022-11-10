@@ -1360,7 +1360,7 @@ const ClinicVisit = (props) => {
                       
                       </FormGroup>
                     </div>
-                  {patientObj.sex==='Female' && (
+                  {(patientObj.sex==='Female' || patientObj.sex==='FEMALE' || patientObj.sex==='female') && (
                     <>
                       <div className=" mb-3 col-md-6">
                         <FormGroup>

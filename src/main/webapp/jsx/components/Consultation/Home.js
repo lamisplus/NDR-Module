@@ -1514,7 +1514,7 @@ const handleInputValueCheckTemperature =(e)=>{
                 </FormGroup>
               </div>
               {/* This section is if the patient is Female */}
-              {patientObj.sex==='Female' && (
+              {(patientObj.sex==='Female' || patientObj.sex==='FEMALE' || patientObj.sex==='female') && (
                 <>
                   <div className=" mb-3 col-md-6">
                     <FormGroup>

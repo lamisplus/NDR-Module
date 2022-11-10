@@ -174,15 +174,15 @@ function SubMenu(props) {
                     {!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==473) && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                    
-                    {props.patientObj.sex==='Female' ? 
+                    {(props.patientObj.sex==='Female' || props.patientObj.sex==='FEMALE' || props.patientObj.sex==='female') ? 
                         (
                             <>
-                           
+        
                             <Menu.Item onClick={() => loadCervicalCancer(patientObj)} name='cancer'
-                    active={activeItem === 'cancer'}>Cervical Cancer</Menu.Item>
+                            active={activeItem === 'cancer'}>Cervical Cancer</Menu.Item>
                             </>
-                        )
-                        :""
+                            )
+                            :""
                     }  
                     <Menu.Item onClick={() => loadTrackingForm(patientObj)} name='tracking'
                     active={activeItem === 'tracking'}>Tracking Form</Menu.Item>

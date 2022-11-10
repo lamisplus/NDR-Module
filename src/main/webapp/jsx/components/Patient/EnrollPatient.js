@@ -1849,7 +1849,7 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
-                                {(basicInfo.sexId==='377' && basicInfo.age > 9) && (
+                                {((basicInfo.sexId==='377' || basicInfo.sexId==='Female' || basicInfo.sexId==='FEMALE' || basicInfo.sexId==='female') && basicInfo.age > 9) && (
                                     <>
                                    
                                     <div className = "form-group mb-3 col-md-6" >
