@@ -142,6 +142,9 @@ public class HIVStatusTrackerService {
 		artPharmacy.ifPresent(p -> statusDate.set(p.getNextAppointment()));
 		List<String> staticStatus = Arrays.asList("Stopped Treatment", "Died (Confirmed)", "ART Transfer Out", "HIV_NEGATIVE");
 		if (staticStatus.contains(statusTracker.getHivStatus())) {
+			if(statusTracker.getHivStatus().equalsIgnoreCase("HIV_NEGATIVE")){
+				return new StatusDto("Not Enrolled", statusTracker.getStatusDate());
+			}
 			return new StatusDto(statusTracker.getHivStatus(), statusTracker.getStatusDate());
 		} else {
 			int months = Period.between(statusDate.get(), LocalDate.now()).getMonths();

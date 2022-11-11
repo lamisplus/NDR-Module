@@ -17,12 +17,11 @@ import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.patient.service.PersonService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,31 +87,14 @@ public class HivPatientService {
         if(searchValue != null && !searchValue.isEmpty()) {
             Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
             Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
-            return getPageDto(persons, false);
+            return getPageDto(persons);
         }
         Page<Person> persons  =  personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
-        return getPageDto(persons, false);
+        return getPageDto(persons);
     }
     
-    private  PageDTO getPageDto(Page<Person> persons,  boolean isIIT) {
+    private  PageDTO getPageDto(Page<Person> persons) {
         Log.info("patient size {}",persons.getContent().size());
-        if(isIIT){
-            List<HivPatientDto> content = persons.getContent()
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(p -> personService.getPersonById(p.getId()))
-                    .filter(Objects::nonNull)
-                    .map(person -> convertPersonHivPatientDto(person.getId()))
-                    .filter(p -> p.getCurrentStatus().equalsIgnoreCase("IIT"))
-                    .collect(Collectors.toList());
-            return PageDTO.builder()
-                    .pageNumber(persons.getNumber())
-                    .pageSize(persons.getSize())
-                    .totalPages(persons.getTotalPages())
-                    .totalRecords(persons.getTotalPages())
-                    .records(content)
-                    .build();
-        }
          List<HivPatientDto> content = persons.getContent()
                  .stream()
                  .filter(Objects::nonNull)
@@ -133,10 +115,38 @@ public class HivPatientService {
         if(searchValue != null && !searchValue.isEmpty()) {
             Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
             Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
-            return getPageDto(persons, true);
+            List<HivPatientDto> content = persons.getContent()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(p -> personService.getPersonById(p.getId()))
+                    .filter(Objects::nonNull)
+                    .map(person -> convertPersonHivPatientDto(person.getId()))
+                    .filter(Objects::nonNull)
+                    .filter(p -> p.getCurrentStatus().equals("IIT"))
+                    .collect(Collectors.toList());
+            return PageDTO.builder()
+                    .pageNumber(persons.getNumber())
+                    .pageSize(persons.getSize())
+                    .totalPages(persons.getTotalPages())
+                    .totalRecords(persons.getTotalPages())
+                    .records(content)
+                    .build();
         }
-        Page<Person> persons  =  personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
-        return getPageDto(persons,true);
+        List<HivPatientDto> iit = hivEnrollmentService.getAll()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(p -> p.isEnrolled() && p.getCurrentStatus().equals("IIT"))
+                .collect(Collectors.toList());
+        System.out.println("size: "+iit.size());
+        PageImpl<HivPatientDto> page = new PageImpl<>(iit);
+        return PageDTO.builder()
+                .pageNumber(page.getNumber())
+                .pageSize(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalRecords(page.getTotalPages())
+                .records(iit)
+                .build();
+        
     }
 
     public HivPatientDto getHivPatientById(Long personId) {
@@ -190,7 +200,6 @@ public class HivPatientService {
                 Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById (enrollStatus);
                 status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
             }else {
-                System.out.println("I am here status is not known");
                 hivPatientDto.setCurrentStatus("Enrolled but status not known");
             }
             hivPatientDto.setEnrollment(enrollment.get());
