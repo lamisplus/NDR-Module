@@ -8,9 +8,12 @@ import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.controller.apierror.RecordExistException;
 import org.lamisplus.modules.base.domain.entities.ApplicationCodeSet;
 import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetRepository;
+import org.lamisplus.modules.hiv.domain.dto.ARTClinicalCommenceDto;
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDto;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
+import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
+import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Encounter;
@@ -45,6 +48,12 @@ public class HivEnrollmentService {
 	private final CurrentUserOrganizationService currentUserOrganizationService;
 	
 	private final HandleHIVVisitEncounter hivVisitEncounter;
+	
+	private final ArtCommenceService commenceService;
+	
+	private final HIVStatusTrackerService statusTrackerService;
+	
+	private final ARTClinicalRepository artClinicalRepository;
 	
 	
 	public HivEnrollmentDto createHivEnrollment(HivEnrollmentDto hivEnrollmentDto) {
@@ -128,12 +137,26 @@ public class HivEnrollmentService {
 		BeanUtils.copyProperties(bioData, hivPatientDto);
 		hivPatientDto.setEnrolled(true);
 		Long statusAtRegistrationId = entity.getStatusAtRegistrationId();
+		Optional<ARTClinical> artCommencement =
+				artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
 		Optional<ApplicationCodeSet> status = applicationCodesetRepository.findById(statusAtRegistrationId);
 		status.ifPresent(applicationCodeSet -> hivPatientDto.setCurrentStatus(applicationCodeSet.getDisplay()));
 		hivPatientDto.setEnrollment(hivEnrollmentDto);
+		addArtCommencementInfo(person.getId(), artCommencement, hivPatientDto);
 		return hivPatientDto;
 	}
 	
+	
+	private void addArtCommencementInfo(Long personId, Optional<ARTClinical> artCommencement, HivPatientDto hivPatientDto) {
+		Log.info("art commencement : {}", artCommencement.isPresent());
+		if (artCommencement.isPresent ()) {
+			hivPatientDto.setCommenced (true);
+			ARTClinicalCommenceDto artClinicalCommenceDto =
+					commenceService.convertArtToResponseDto(artCommencement.get());
+			hivPatientDto.setArtCommence(artClinicalCommenceDto);
+			hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
+		}
+	}
 	
 	public Optional<HivEnrollmentDto> getHivEnrollmentByPersonIdAndArchived(Long personId) {
 		Person person = getPerson(personId);

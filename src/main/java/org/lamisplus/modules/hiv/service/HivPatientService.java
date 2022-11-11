@@ -154,7 +154,7 @@ public class HivPatientService {
     }
 
 
-    private HivPatientDto convertPersonHivPatientDto(Long personId) {
+    public HivPatientDto convertPersonHivPatientDto(Long personId) {
         if (Boolean.TRUE.equals (personService.isPersonExist (personId))) {
             Person person = getPerson (personId);
             PersonResponseDto bioData = personService.getPersonById (personId);
