@@ -675,7 +675,7 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
-            props.PharmacyList();
+            //props.PharmacyList();
             toast.success("Pharmacy drug refill successful", {position: toast.POSITION.BOTTOM_CENTER});           
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
             setObjValues({
@@ -726,8 +726,7 @@ const Pharmacy = (props) => {
         const duration = (current && current.frequency ? current.frequency : "") * current.duration
         return prev + +duration
       }, 0);
-   
-   console.log(objValues.drugName)   
+     
 
   return (      
       <div>

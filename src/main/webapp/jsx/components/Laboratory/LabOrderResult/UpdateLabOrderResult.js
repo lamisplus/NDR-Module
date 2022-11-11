@@ -337,7 +337,7 @@ useEffect(() => {
                     </Col>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Sample Numbe* </Label>
+                                <Label for="encounterDate">Sample Number* </Label>
                                 <Input
                                     type="text"
                                     name="labNumber"

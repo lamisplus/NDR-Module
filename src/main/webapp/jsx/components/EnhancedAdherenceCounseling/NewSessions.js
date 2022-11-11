@@ -455,8 +455,8 @@ const NEWEACSESSION = (props) => {
                                 id="followUpDate"
                                 value={objValues.followUpDate}
                                 onChange={handleInputChange}
-                                min={enrollDate}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                min={objValues.sessionDate}
+                                //max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

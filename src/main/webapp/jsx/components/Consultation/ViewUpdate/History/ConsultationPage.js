@@ -1635,6 +1635,7 @@ const ClinicVisit = (props) => {
                                         {value.display}
                                       </option>
                                     ))}
+                                    <option value="None">None </option>
                                   </Input>
                                   {errors.regimenAdherance !=="" ? (
                                             <span className={classes.error}>{errors.regimenAdherance}</span>
