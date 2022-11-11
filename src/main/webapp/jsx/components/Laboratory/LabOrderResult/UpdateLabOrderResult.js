@@ -279,7 +279,7 @@ useEffect(() => {
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
-                toast.success("Laboratory test order updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
+                toast.success("Laboratory order & result updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
                 props.setActiveContent({...props.activeContent, route:'laboratoryOrderResult', id:props.activeContent.obj.id, activeTab:"history", actionType:"update", obj:props.activeContent.obj})
             })
             .catch(error => {

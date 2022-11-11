@@ -332,7 +332,7 @@ const Laboratory = (props) => {
             .then(response => {
                 setSaving(false);
                 props.LabOrders();
-                toast.success("Laboratory test order created successful",  {position: toast.POSITION.BOTTOM_CENTER});
+                toast.success("Laboratory order & result created successful!",  {position: toast.POSITION.BOTTOM_CENTER});
                 props.setActiveContent({...props.activeContent, route:'laboratoryOrderResult', activeTab:"history"})
             })
             .catch(error => {

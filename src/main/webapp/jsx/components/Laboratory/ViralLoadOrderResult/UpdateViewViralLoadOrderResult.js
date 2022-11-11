@@ -280,7 +280,7 @@ const Laboratory = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
-                toast.success("Laboratory test order updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
+                toast.success("Viral Load order & result updated successful!",  {position: toast.POSITION.BOTTOM_CENTER});
                 //props.LabOrders();
                 props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
                 //props.LabOrders();

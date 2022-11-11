@@ -355,7 +355,7 @@ const Laboratory = (props) => {
                 .then(response => {
                     setSaving(false);
                     props.LabOrders();
-                    toast.success("Laboratory test order created successful",  {position: toast.POSITION.BOTTOM_CENTER});
+                    toast.success("Viral Load order & result created successful!",  {position: toast.POSITION.BOTTOM_CENTER});
                     setTests({
                         approvedBy: "",
                         assayedBy: "",
