@@ -495,6 +495,8 @@ const Pharmacy = (props) => {
             RegimenTypeOI(regimenId)
             if(regimenId==='15'){
                 setIptType(true)
+            }else{
+                setIptType(false)
             }
         }else{
             setRegimenTypeOI([])
@@ -706,8 +708,12 @@ const Pharmacy = (props) => {
         .catch(error => {
             setSaving(false);
             if(error.response && error.response.data){
-                let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                toast.error(errorMessage); 
+                let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                if(error.response.data.apierror && error.response.data.apierror.message!=="" && error.response.data.apierror && error.response.data.apierror.subErrors[0].message!==""){
+                  toast.error(error.response.data.apierror.message + " : " + error.response.data.apierror.subErrors[0].field + " " + error.response.data.apierror.subErrors[0].message, {position: toast.POSITION.BOTTOM_CENTER});
+                }else{
+                  toast.error(errorMessage, {position: toast.POSITION.BOTTOM_CENTER});
+                }
             }
                        
         }); 
@@ -1381,7 +1387,7 @@ const Pharmacy = (props) => {
                         </div>
                         <div className="row">
                         <div className="form-group mb-3 col-md-2 float-end">
-                            <LabelSui as='a' color='black'  onClick={addDrug}  size='tiny' style={{ marginTop:35}}>
+                            <LabelSui as='a' color='black'  onClick={addDrug}  size='small' style={{ marginTop:35}}>
                                 <Icon name='plus' /> Add
                             </LabelSui>
                         </div>

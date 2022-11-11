@@ -120,18 +120,22 @@ const Laboratory = (props) => {
         setTests(props.activeContent.obj) 
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=props.activeContent.obj.dateResultReceived!==null && props.activeContent.obj.dateResultReceived!=="" ? moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")  : ""
-        showObj.isPcr=props.activeContent.obj.pcrLabSampleNumber!==null && props.activeContent.obj.pcrLabSampleNumber!==""!==""?true :false
-        showObj.hasResult=props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null ?true :false
-        if(props.activeContent.obj.pcrLabSampleNumber!==null && props.activeContent.obj.pcrLabSampleNumber!==""){
+        showObj.isPcr=props.activeContent.obj.pcrLabName!==null && props.activeContent.obj.pcrLabName!=="" ? true :false
+        showObj.hasResult=props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null ? true :false
+        if(props.activeContent.obj.pcrLabName!==null && props.activeContent.obj.pcrLabName!==""){
             setShowPcrLabDetail(true)
+        }else{
+            setShowPcrLabDetail(false) 
         } 
         if(props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null){
             setShowResult(true)
+        }else{
+            setShowResult(false)  
         }  
     }, [props.patientObj.id, props.activeContent.obj]);
     console.log(props.activeContent.obj)
      //Get list of LabNumbers
-     const LabNumbers =()=>{
+    const LabNumbers =()=>{
         axios
             .get(`${baseUrl}laboratory/lab-numbers`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
@@ -158,7 +162,6 @@ const Laboratory = (props) => {
             });
         
     }  
-
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -179,8 +182,7 @@ const Laboratory = (props) => {
             //console.log(error);
             });
         
-    }
-   
+    }  
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios
@@ -194,7 +196,6 @@ const Laboratory = (props) => {
             //console.log(error);
             });        
     }
-
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         //tests.labNumber
@@ -228,7 +229,7 @@ const Laboratory = (props) => {
         showPcrLabDetail && (tests.sampleLoggedRemotely ==='1'  || tests.sampleLoggedRemotely ===1 ) && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
         showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
         //showPcrLabDetail && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
-        showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+        //showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
         showPcrLabDetail && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
         showPcrLabDetail && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
         showPcrLabDetail && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
@@ -240,12 +241,37 @@ const Laboratory = (props) => {
         })
         return Object.values(temp).every(x => x == "")
     }
-    
+    const pcr_lab = [
+        {name: "NRL", labNo: "LIMS150002"},
+        {name: "ASOKORO Testing Lab", labNo: "LIMS150003"},
+        {name: "PLASVIREC TESTING LAB", labNo: "LIMS320002"},
+        {name: "ABUTH Testing Lab", labNo: "LIMS190001"},
+        {name: "University College Hospital (UCH) Ibadan", labNo: "LIMS310001"},
+        {name: "NIMR Testing Lab", labNo: "LIMS250002"},
+        {name: "LASUTH Testing Lab", labNo: "LIMS250001"},
+        {name: "JUTH Testing Lab", labNo: "LIMS320001"},
+        {name: "AKTH Testing Lab", labNo: "LIMS200001"},
+        {name: "FMCG Testing Lab", labNo: "LIMS160001"},
+        {name: "FMCMK Testing Lab", labNo: "LIMS070001"},
+        {name: "OAUTHC Testing Lab", labNo: "LIMS300001"},
+        {name: "UMTH Testing Lab", labNo: "LIMS080001"},
+        {name: "FMCJAL Testing Lab", labNo: "LIMS350001"},
+        {name: "NAUTH Testing Lab", labNo: "LIMS040002"},
+        {name: "UUTH Testing Lab", labNo: "LIMS320001"},
+        {name: "AKTH Testing Lab", labNo: "LIMS030001"},
+        {name: "DRL Testing Lab", labNo: "LIMS150001"},
+        {name: "68 MRH Testing Lab", labNo: "LIMS250003"},
+        {name: "UATH Abuja Testing Lab", labNo: "LIMS150004"},
+        {name: "RSUTH Testing Lab", labNo: "LIMS330001"},
+        {name: "COOUTH Testing Lab", labNo: "LIMS040001"},
+        {name: "OAUTHC ANNEX", labNo: "LIMS290001"},
+    ]
     const handleSubmit = (e) => {        
         e.preventDefault();
         if(validate()){
             tests.labTestGroupId= labTestDetail.labTestGroupId
-            tests.labTestId= labTestDetail.id                 
+            tests.labTestId= labTestDetail.id   
+            tests.pcrLabSampleNumber=tests.pcrLabName              
             setSaving(true);
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
             tests.dateResultReceived =tests.dateResultReceived!==null && tests.dateResultReceived!=="" ? moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS") : ""
@@ -254,12 +280,13 @@ const Laboratory = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
                 setSaving(false);
-                toast.success("Laboratory test order updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
+                toast.success("Viral Load order & result updated successful!",  {position: toast.POSITION.BOTTOM_CENTER});
                 //props.LabOrders();
                 props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', activeTab:"history"})
-                props.LabOrders();
+                //props.LabOrders();
             })
             .catch(error => {
+                console.log(error)
                 setSaving(false);
                 if(error.response && error.response.data){
                     let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
@@ -637,7 +664,11 @@ const Laboratory = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                                 >
                                 <option value="">Select </option>
-                                <option value="Abuja">Abuja Hospital </option>             
+                                {pcr_lab.map((value) => (
+                                        <option key={value.labNo} value={value.labNo}>
+                                            {value.name}
+                                        </option>
+                                    ))}               
                                     
                             </Input>
                             {errors.pcrLabName !=="" ? (
@@ -646,6 +677,7 @@ const Laboratory = (props) => {
                             </FormGroup>
                     </Col>
                     <Col md={6} className="form-group mb-3">
+                    {tests.pcrLabName!=="" && (
                         <FormGroup>
                             <Label for="encounterDate">PCR Sample No.</Label>
                             <Input
@@ -653,15 +685,14 @@ const Laboratory = (props) => {
                                 name="pcrLabSampleNumber"
                                 id="pcrLabSampleNumber"
                                 //min={0}
-                                value={tests.pcrLabSampleNumber}
+                                value={tests.pcrLabName}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
-                            {errors.pcrLabSampleNumber !=="" ? (
-                                <span className={classes.error}>{errors.pcrLabSampleNumber}</span>
-                            ) : "" }
+                            
                         </FormGroup>
+                    )}
                     </Col>
                     
                     {/* <Col md={6} className="form-group mb-3">
@@ -842,9 +873,9 @@ const Laboratory = (props) => {
                         onClick={handleSubmit}
                         >
                         {!saving ? (
-                        <span style={{ textTransform: "capitalize" }}>Save</span>
+                        <span style={{ textTransform: "capitalize" }}>Update</span>
                         ) : (
-                        <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                        <span style={{ textTransform: "capitalize" }}>Updating...</span>
                         )}
                     </MatButton>
                 

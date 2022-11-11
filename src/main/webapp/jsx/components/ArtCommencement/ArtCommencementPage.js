@@ -813,15 +813,15 @@ const ArtCommencement = (props) => {
                     </div>
                     {objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-8"></div>)}
                     {!objValues.isViralLoadAtStartOfArt && objValues.isViralLoadAtStartOfArt!==null && (<div className="form-group mb-3 col-md-4"></div>)}
-                    {props.patientObj.sex==="Female" ? (
+                    {(props.patientObj.sex==="Female" || props.patientObj.sex==="FEMALE" || props.patientObj.sex==="female") ? (
                         <>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label >Pregnancy Status</Label>
                             <Input
                                 type="select"
-                                name="address"
-                                id="address"
+                                name="pregancyStatus"
+                                id="pregancyStatus"
                                 disabled
                                 onChange={handleInputChange}
                                 value="72"

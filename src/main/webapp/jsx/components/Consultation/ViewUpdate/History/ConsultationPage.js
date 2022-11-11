@@ -789,7 +789,7 @@ const ClinicVisit = (props) => {
       .then(response => {
         setSaving(false);
         props.ClinicVisitListHistory()
-        toast.success("Clinic Visit updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
+        toast.success("Clinic Visit(Care card) updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
         GetVisitById(objValues.id)
         props.setActiveContent({...props.activeContent, route:'consultation', activeTab:"history", })
       })
@@ -797,7 +797,12 @@ const ClinicVisit = (props) => {
         setSaving(false);
         if(error.response && error.response.data){
           let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-          toast.error(errorMessage);
+          if(error.response.data.apierror && error.response.data.apierror.message!=="" && error.response.data.apierror && error.response.data.apierror.subErrors[0].message!==""){
+            toast.error(error.response.data.apierror.message + " : " + error.response.data.apierror.subErrors[0].field + " " + error.response.data.apierror.subErrors[0].message, {position: toast.POSITION.BOTTOM_CENTER});
+          }else{
+            toast.error(errorMessage, {position: toast.POSITION.BOTTOM_CENTER});
+          }
+
         }
        
       });
@@ -1360,7 +1365,7 @@ const ClinicVisit = (props) => {
                       
                       </FormGroup>
                     </div>
-                  {patientObj.sex==='Female' && (
+                  {(patientObj.sex==='Female' || patientObj.sex==='FEMALE' || patientObj.sex==='female') && (
                     <>
                       <div className=" mb-3 col-md-6">
                         <FormGroup>

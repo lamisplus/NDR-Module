@@ -287,126 +287,102 @@ const CervicalCancer = (props) => {
          <div>                 
             <Card className={classes.root}>
                 <CardBody>
-                <form >
-                    <div className="row">
-                        <h2> Cervical Cancer </h2>
-                        <div className="form-group mb-3 col-md-6">
+                    <form >
+                        <div className="row">
+                            <h2> Cervical Cancer </h2>
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label for="artDate">Date of Screening * </Label>
+                                <Input
+                                    type="date"
+                                    name="dateOfScreening"
+                                    id="dateOfScreening"
+                                    onChange={handleInputChange}
+                                    min={enrollDate}
+                                    max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    value={objValues.dateOfScreening}
+                                    required
+                                />
+                                {errors.screenType !=="" ? (
+                                    <span className={classes.error}>{errors.screenType}</span>
+                                ) : "" }
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="artDate">Date of Screening * </Label>
+                            <Label >Screening Method *</Label>
                             <Input
-                                type="date"
-                                name="dateOfScreening"
-                                id="dateOfScreening"
-                                onChange={handleInputChange}
-                                min={enrollDate}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                value={objValues.dateOfScreening}
-                                required
-                            />
-                            {errors.screenType !=="" ? (
-                                <span className={classes.error}>{errors.screenType}</span>
-                            ) : "" }
+                                    type="select"
+                                    name="screenMethod"
+                                    id="screenMethod"
+                                    value={objValues.screenMethod}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> Select</option>
+                
+                                        {method.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input> 
+                            {errors.screenMethod !=="" ? (
+                                    <span className={classes.error}>{errors.screenMethod}</span>
+                                ) : "" }
                             </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                        <FormGroup>
-                        <Label >Screening Treatment *</Label>
-                        <Input
-                                type="select"
-                                name="screenType"
-                                id="screenType"
-                                value={objValues.screenType}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> Select</option>
-            
-                                    {type.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.screenType !=="" ? (
-                                <span className={classes.error}>{errors.screenType}</span>
-                            ) : "" }
-                        </FormGroup>
-                        </div>                        
-                        <div className="form-group mb-3 col-md-6">
-                        <FormGroup>
-                        <Label >Screening Method *</Label>
-                        <Input
-                                type="select"
-                                name="screenMethod"
-                                id="screenMethod"
-                                value={objValues.screenMethod}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> Select</option>
-            
-                                    {method.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input> 
-                        {errors.screenMethod !=="" ? (
-                                <span className={classes.error}>{errors.screenMethod}</span>
-                            ) : "" }
-                        </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Screening Result *</Label>
-                            <Input
-                                type="select"
-                                name="screeningResult"
-                                id="screeningResult"
-                                value={objValues.screeningResult}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> </option>
-            
-                                    {result.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.screeningResult !=="" ? (
-                                <span className={classes.error}>{errors.screeningResult}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        {objValues.screeningResult ==='CERVICAL_CANCER_RESULT_POSITIVE' && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >size of an action white area </Label>
-                            <Input
-                                type="select"
-                                name="screeningArea"
-                                id="screeningArea"
-                                value={objValues.screeningArea}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> </option>
-            
-                                    {areas.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.screeningArea !=="" ? (
-                                <span className={classes.error}>{errors.screeningArea}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        )}
-                        <div className="form-group mb-3 col-md-6">
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Screening Result *</Label>
+                                <Input
+                                    type="select"
+                                    name="screeningResult"
+                                    id="screeningResult"
+                                    value={objValues.screeningResult}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> </option>
+                
+                                        {result.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input>
+                                {errors.screeningResult !=="" ? (
+                                    <span className={classes.error}>{errors.screeningResult}</span>
+                                ) : "" }
+                                </FormGroup>
+                            </div>
+                            {objValues.screeningResult ==='CERVICAL_CANCER_RESULT_POSITIVE' && (
+                            <>
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Size of an acetowhite  area </Label>
+                                <Input
+                                    type="select"
+                                    name="screeningArea"
+                                    id="screeningArea"
+                                    value={objValues.screeningArea}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> </option>
+                
+                                        {areas.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input>
+                                {errors.screeningArea !=="" ? (
+                                    <span className={classes.error}>{errors.screeningArea}</span>
+                                ) : "" }
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >New Squamocolumnar junction visible *</Label>
                             <Input
@@ -429,85 +405,111 @@ const CervicalCancer = (props) => {
                                 <span className={classes.error}>{errors.screeningVisible}</span>
                             ) : "" }
                             </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Gross Cervical Lesions seen *</Label>
-                            <Input
-                                type="select"
-                                name="screeningGross"
-                                id="screeningGross"
-                                value={objValues.screeningGross}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> </option>
-            
-                                    {gross.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.screeningGross !=="" ? (
-                                <span className={classes.error}>{errors.screeningGross}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Referral *</Label>
-                            <Input
-                                type="select"
-                                name="screeningRefferal"
-                                id="screeningRefferal"
-                                value={objValues.screeningRefferal}
-                                onChange={handleInputChange}
-                                required
-                                >
-                                    <option value="Select"> </option>
-            
-                                    {referrals.map((value) => (
-                                        <option key={value.id} value={value.code}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>
-                            {errors.screeningRefferal !=="" ? (
-                                <span className={classes.error}>{errors.screeningRefferal}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                    </div>
-                    
-                    {saving ? <Spinner /> : ""}
-                <br />
+                            </div>
+                            </>
+                            )}
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Gross Cervical Lesions seen *</Label>
+                                <Input
+                                    type="select"
+                                    name="screeningGross"
+                                    id="screeningGross"
+                                    value={objValues.screeningGross}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> </option>
                 
+                                        {gross.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input>
+                                {errors.screeningGross !=="" ? (
+                                    <span className={classes.error}>{errors.screeningGross}</span>
+                                ) : "" }
+                                </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Screening Treatment *</Label>
+                            <Input
+                                    type="select"
+                                    name="screenType"
+                                    id="screenType"
+                                    value={objValues.screenType}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> Select</option>
+                
+                                        {type.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input>
+                                {errors.screenType !=="" ? (
+                                    <span className={classes.error}>{errors.screenType}</span>
+                                ) : "" }
+                            </FormGroup>
+                            </div>                        
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label >Referral *</Label>
+                                <Input
+                                    type="select"
+                                    name="screeningRefferal"
+                                    id="screeningRefferal"
+                                    value={objValues.screeningRefferal}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> </option>
+                
+                                        {referrals.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input>
+                                {errors.screeningRefferal !=="" ? (
+                                    <span className={classes.error}>{errors.screeningRefferal}</span>
+                                ) : "" }
+                                </FormGroup>
+                            </div>
+                        </div>
+                        
+                        {saving ? <Spinner /> : ""}
+                        <br />
+                    
+                        <MatButton
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}
+                        startIcon={<SaveIcon />}
+                        disabled={objValues.screeningResult==="" || objValues.screenMethod==="" || objValues.screenType==="" || objValues.visible==="" || objValues.screeningResult===""  || objValues.gross==="" || objValues.referrals==="" ? true : false}
+                        onClick={handleSubmit}
+                    >
+                        {!saving ? (
+                        <span style={{ textTransform: "capitalize" }}>Save</span>
+                        ) : (
+                        <span style={{ textTransform: "capitalize" }}>Saving...</span>
+                        )}
+                    </MatButton>
+                    
                     <MatButton
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    startIcon={<SaveIcon />}
-                    disabled={objValues.screeningResult==="" || objValues.screenMethod==="" || objValues.screenType==="" || objValues.visible==="" || objValues.screeningResult===""  || objValues.gross==="" || objValues.referrals==="" ? true : false}
-                    onClick={handleSubmit}
-                >
-                    {!saving ? (
-                    <span style={{ textTransform: "capitalize" }}>Save</span>
-                    ) : (
-                    <span style={{ textTransform: "capitalize" }}>Saving...</span>
-                    )}
-                </MatButton>
-                
-                <MatButton
-                    variant="contained"
-                    className={classes.button}
-                    startIcon={<CancelIcon />}
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<CancelIcon />}
+                        
+                    >
+                        <span style={{ textTransform: "capitalize" }}>Cancel</span>
+                    </MatButton>
                     
-                >
-                    <span style={{ textTransform: "capitalize" }}>Cancel</span>
-                </MatButton>
-                
                     </form>
                 </CardBody>
             </Card>                     

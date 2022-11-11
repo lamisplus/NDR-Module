@@ -1108,7 +1108,7 @@ const MedicalHistory = (props) => {
                     </div>
                     {/* end of Drug Allergies  */}
                     <div className="row">
-                    {props.patientObj.sex==='Female' && (<>
+                    {(props.patientObj.sex==='Female' || props.patientObj.sex==='FEMALE' || props.patientObj.sex==='female') && (<>
                     {props.patientAge>14 && (
                         <div className="form-group mb-3 col-md-6">
                                 <FormGroup>

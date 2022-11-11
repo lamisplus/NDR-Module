@@ -852,7 +852,7 @@ const ArtCommencement = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </div> */}
-                        {props.patientObj.sex==="Female" ? (
+                        {(props.patientObj.sex==="Female" || props.patientObj.sex==="FEMALE" || props.patientObj.sex==="female")  ? (
                         <>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
