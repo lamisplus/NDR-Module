@@ -397,7 +397,7 @@ const Tracking = (props) => {
                 )
                     .then(response => {
                         setSaving(false);
-                        toast.success(" Save successful");
+                        toast.success("Tracking form updated successful", {position: toast.POSITION.BOTTOM_CENTER});
                         props.setActiveContent({...props.activeContent, route:'tracking-form', id:props.activeContent.obj.id, activeTab:"history", actionType:"update", obj:props.activeContent.obj})
 
                     })
@@ -405,14 +405,19 @@ const Tracking = (props) => {
                         setSaving(false);
                         if(error.response && error.response.data){
                             let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                            toast.error(errorMessage);
+                            if(error.response.data.apierror && error.response.data.apierror.message!=="" && error.response.data.apierror && error.response.data.apierror.subErrors[0].message!==""){
+                                toast.error(error.response.data.apierror.message + " : " + error.response.data.apierror.subErrors[0].field + " " + error.response.data.apierror.subErrors[0].message, {position: toast.POSITION.BOTTOM_CENTER});
+                            }else{
+                                toast.error(errorMessage, {position: toast.POSITION.BOTTOM_CENTER});
+                            }
+
                         }
                         else{
-                            toast.error("Something went wrong. Please try again...");
+                            toast.error("Something went wrong. Please try again...", {position: toast.POSITION.BOTTOM_CENTER});
                         }
                     });
                 }else{
-                    toast.error("Attempt to Contact can not be empty");
+                    toast.error("Attempt to Contact can not be empty", {position: toast.POSITION.BOTTOM_CENTER});
                 }
             }  
     }
