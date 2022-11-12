@@ -692,13 +692,13 @@ const UserRegistration = (props) => {
                 setTransferIn(false)
             }
         }  
-        if(e.target.name ==="pregnancyStatusId" ){
-            if(e.target.value==="72"){
-                setTransferIn(true)
-            }else{
-                setTransferIn(false)
-            }
-        }                
+        // if(e.target.name ==="pregnancyStatusId" ){
+        //     if(e.target.value==="72"){
+        //         setTransferIn(true)
+        //     }else{
+        //         setTransferIn(false)
+        //     }
+        // }                
     }    
     
     const checkPhoneNumber=(e, inputName)=>{

@@ -714,6 +714,8 @@ const Pharmacy = (props) => {
                 }else{
                   toast.error(errorMessage, {position: toast.POSITION.BOTTOM_CENTER});
                 }
+            }else{
+                toast.error("Something went wrong, please try again...", {position: toast.POSITION.BOTTOM_CENTER});
             }
                        
         }); 
