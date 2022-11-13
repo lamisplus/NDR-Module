@@ -80,6 +80,7 @@ const NEWEACSESSION = (props) => {
 
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
+    const [lastEACDate, setLastEACDate] = useState("");
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true)
     const [eacStatusObj, setEacStatusObj] = useState()
@@ -144,6 +145,8 @@ const NEWEACSESSION = (props) => {
            )
            .then((response) => {
                setEacStatusObj(response.data);
+               const newEacDate= response.data && response.data.eacsession && response.data.eacsession!=='Default' ? moment(response.data.eacsessionDate, "YYYY-MM-DD").add(30, 'days').calendar() :enrollDate
+               setLastEACDate(newEacDate) 
            })
            .catch((error) => {
            //console.log(error);
@@ -164,8 +167,8 @@ const NEWEACSESSION = (props) => {
            .catch((error) => {
            //console.log(error);
            });
-       
       }
+    console.log(moment(lastEACDate).format("YYYY-MM-DD"))
     ///GET LIST OF EAC
     // const EACHistory =()=>{
     //     setLoading(true)
@@ -224,7 +227,7 @@ const NEWEACSESSION = (props) => {
               });
           
     }
-
+   
   return (      
         <div>                    
             <Card className={classes.root}>
@@ -256,9 +259,9 @@ const NEWEACSESSION = (props) => {
                                     type="date"
                                     name="sessionDate"
                                     id="sessionDate"
-                                    min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
+                                    min={moment(lastEACDate).format("YYYY-MM-DD")}
                                     value={objValues.sessionDate}
-                                    max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    max= {moment(lastEACDate).format("YYYY-MM-DD")}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     
