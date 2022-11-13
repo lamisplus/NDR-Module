@@ -326,7 +326,8 @@ const UserRegistration = (props) => {
             let age_now = today.getFullYear() - birthDate.getFullYear();
             const m = today.getMonth() - birthDate.getMonth();
                 if(m<18){
-                    alert("The child is less than 18months")
+                    //alert()
+                    toast.error("The child is less than 18months",  {position: toast.POSITION.TOP_RIGHT})
                     setDisabledAgeBaseOnAge(true)
                 }else{
                     setDisabledAgeBaseOnAge(false)
