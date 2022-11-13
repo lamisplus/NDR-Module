@@ -130,11 +130,12 @@ const BasicInfo = (props) => {
                             })
     const handleInputChangeVitalSignDto = e => {
         setErrors({...errors, [e.target.name]: ""})
-        if(e.target.name==='muac'){
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
-        } else{
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
-        }
+        setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+        // if(e.target.name==='muac'){
+        //     setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+        // } else{
+        //     setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+        // }
     }
     //to check the input value for clinical decision 
     const handleInputValueCheckHeight =(e)=>{
@@ -404,7 +405,7 @@ return (
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -418,7 +419,7 @@ return (
                             diastolic(mmHg)
                             </InputGroupText>
                                 <Input 
-                                type="text"
+                                type="number"
                                 name="diastolic"
                                 id="diastolic"
                                 min={0}
@@ -453,7 +454,7 @@ return (
                         <Label >Head circumference </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="headCircumference"
                                 id="headCircumference"
                                 onChange={handleInputChangeVitalSignDto}
@@ -475,7 +476,7 @@ return (
                         <Label >Surface Area </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="surfaceArea"
                                 id="surfaceArea"
                                 onChange={handleInputChangeVitalSignDto}

@@ -527,11 +527,12 @@ const ClinicVisit = (props) => {
     }
     const handleInputChangeVitalSignDto = e => {
       setErrors({...errors, [e.target.name]: ""})
-      if(e.target.name!=='encounterDate' && e.target.name!=='muac'){
-        setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
-      }else{
-        setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
-      }
+      setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+      // if(e.target.name!=='encounterDate' && e.target.name!=='muac'){
+      //   setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
+      // }else{
+      //   setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+      // }
 
       
     }
@@ -961,7 +962,7 @@ const ClinicVisit = (props) => {
                         <FormLabelName >Pulse</FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -988,7 +989,7 @@ const ClinicVisit = (props) => {
                         <FormLabelName >Respiratory Rate </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1015,7 +1016,7 @@ const ClinicVisit = (props) => {
                         <FormLabelName >Temperature </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1043,7 +1044,7 @@ const ClinicVisit = (props) => {
                         <FormLabelName >Body Weight *</FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1078,7 +1079,7 @@ const ClinicVisit = (props) => {
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="text"
+                                type="number"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}

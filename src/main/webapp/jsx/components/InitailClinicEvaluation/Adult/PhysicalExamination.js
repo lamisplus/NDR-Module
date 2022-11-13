@@ -129,12 +129,13 @@ const BasicInfo = (props) => {
                                 respiratoryRate:""
                             })
     const handleInputChangeVitalSignDto = e => {
-        setErrors({...errors, [e.target.name]: ""})  
-        if(e.target.name==='muac'){
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
-        } else{
-            setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
-        }
+        setErrors({...errors, [e.target.name]: ""}) 
+        setVitalSignDto({ ...vital, [e.target.name]: e.target.value }); 
+        // if(e.target.name==='muac'){
+        //     setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+        // } else{
+        //     setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+        // }
     }
     //to check the input value for clinical decision 
     const handleInputValueCheckHeight =(e)=>{
@@ -264,7 +265,7 @@ return (
                         <Label >Pulse </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -291,7 +292,7 @@ return (
                         <Label >Respiratory Rate </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -318,7 +319,7 @@ return (
                         <Label >Temperature </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -346,7 +347,7 @@ return (
                         <Label >Body Weight *</Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -380,7 +381,7 @@ return (
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="text"
+                                type="number"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -436,7 +437,7 @@ return (
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -450,7 +451,7 @@ return (
                             diastolic(mmHg)
                             </InputGroupText>
                                 <Input 
-                                type="text"
+                                type="number"
                                 name="diastolic"
                                 id="diastolic"
                                 min={0}
@@ -485,7 +486,7 @@ return (
                         <Label >Head circumference</Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="headCircumference"
                                 id="headCircumference"
                                 onChange={handleInputChangeVitalSignDto}
@@ -507,7 +508,7 @@ return (
                         <Label >Surface Area </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="surfaceArea"
                                 id="surfaceArea"
                                 onChange={handleInputChangeVitalSignDto}

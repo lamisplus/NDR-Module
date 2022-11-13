@@ -351,11 +351,12 @@ const ArtCommencement = (props) => {
         }
         const handleInputChangeVitalSignDto = e => { 
             setErrors({...temp, [e.target.name]:""})  
-            if(e.target.name==='muac'){
-                setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
-            } else{
-                setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
-            }
+            setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+            // if(e.target.name==='muac'){
+            //     setVitalSignDto ({...vital,  [e.target.name]: e.target.value});
+            // } else{
+            //     setVitalSignDto ({...vital,  [e.target.name]: e.target.value.replace(/\D/g, '')});
+            // }
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
@@ -602,7 +603,7 @@ const ArtCommencement = (props) => {
                         {objValues.cd4Count ==='Semi-Quantitative' && (
                         <div className="form-group  col-md-4">
                             <FormGroup>
-                                <Label>CD4 Count Value</Label>
+                                <Label>CD4 Count Value(Semi-Quantitative)</Label>
                                 <select
                                     className="form-control"
                                     name="cd4SemiQuantitative"
@@ -623,7 +624,7 @@ const ArtCommencement = (props) => {
                         {objValues.cd4Count ==='Flow Cyteometry' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">CD4 Count Value</Label>
+                            <Label for="">CD4 Count Value (Flow Cyteometry)</Label>
                             <Input
                                 type="number"
                                 min={1}
@@ -890,7 +891,7 @@ const ArtCommencement = (props) => {
                         <Label >Pulse</Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -917,7 +918,7 @@ const ArtCommencement = (props) => {
                         <Label >Respiratory Rate </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -944,7 +945,7 @@ const ArtCommencement = (props) => {
                         <Label >Temperature </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -972,7 +973,7 @@ const ArtCommencement = (props) => {
                         <Label >Body Weight</Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1006,7 +1007,7 @@ const ArtCommencement = (props) => {
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="text"
+                                type="number"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1062,7 +1063,7 @@ const ArtCommencement = (props) => {
                                 systolic(mmHg)
                         </InputGroupText> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="systolic"
                                 id="systolic"
                                 min="90"
@@ -1112,7 +1113,7 @@ const ArtCommencement = (props) => {
                         <Label >Head Circumference </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="headCircumference"
                                 id="headCircumference"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1134,7 +1135,7 @@ const ArtCommencement = (props) => {
                         <Label >Surface Area </Label>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="surfaceArea"
                                 id="surfaceArea"
                                 onChange={handleInputChangeVitalSignDto}
