@@ -650,12 +650,26 @@ const Pharmacy = (props) => {
     }
     const addDrug = e => {
            if(validateDrugDispense()){
+            console.log(regimenDrug)
             setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
+            const drugObj=[{
+                dispense:"",
+                prescribed:"",
+                dosage:"",
+                freqency:"",
+                duration:"",
+                name:"",
+                regimenId:"",
+                regimenName:"",
+
+            }]                
+            setRegimenDrug([])
         }else{
             toast.error("All fields are required")
         }
                      
     }
+    console.log(regimenDrug)
     /* Remove ADR  function **/
     const removeAttempt = index => {       
         regimenDrugList.splice(index, 1);
@@ -675,7 +689,7 @@ const Pharmacy = (props) => {
         { headers: {"Authorization" : `Bearer ${token}`}},)
         .then(response => {
             setSaving(false);
-            props.PharmacyList();
+            //props.PharmacyList();
             toast.success("Pharmacy drug refill successful", {position: toast.POSITION.BOTTOM_CENTER});           
             props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"history" })
             setObjValues({
@@ -714,6 +728,8 @@ const Pharmacy = (props) => {
                 }else{
                   toast.error(errorMessage, {position: toast.POSITION.BOTTOM_CENTER});
                 }
+            }else{
+                toast.error("Something went wrong, please try again...", {position: toast.POSITION.BOTTOM_CENTER});
             }
                        
         }); 
@@ -726,8 +742,7 @@ const Pharmacy = (props) => {
         const duration = (current && current.frequency ? current.frequency : "") * current.duration
         return prev + +duration
       }, 0);
-   
-   console.log(objValues.drugName)   
+     
 
   return (      
       <div>
@@ -1252,7 +1267,6 @@ const Pharmacy = (props) => {
                 </FormGroup>
             </div>
             {regimenDrug && regimenDrug.length >0 ? 
-
                 (
                     <>
                         <Card>
@@ -1305,14 +1319,14 @@ const Pharmacy = (props) => {
                                         type="select"
                                         name="frequency"
                                         id="frequency"
-                                        value={input.frequency}
+                                        //value={input.frequency}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         onChange={event => handleFormChange(index, event)}
                                         required
                                     >
-                                        <option value=''>Select</option>
-                                        <option value='2'>BD</option>
+                                        <option value='' selected>Select</option>
                                         <option value='1'>OD</option>
+                                        <option value='2'>BD</option>
                                         <option value='4'>2BD</option>
                                         <option value='6'>OD/BD</option>
                                         <option value='8'>QDS</option>
@@ -1391,47 +1405,49 @@ const Pharmacy = (props) => {
                                 <Icon name='plus' /> Add
                             </LabelSui>
                         </div>
-                        {regimenDrugList.length >0 
-                            ?
-                                <List>
-                                <Table  striped responsive>
-                                    <thead >
-                                        <tr>
-                                            <th>Regimen Drug</th>
-                                            <th>Frequency</th>
-                                            <th>Duration</th>
-                                            <th>Quantity Prescribed</th>
-                                            <th>Quantity Dispensed </th>
-                                            
-                                            <th ></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {regimenDrugList.map((regimenDrugObj, index) => (
-
-                                    <DrugDispensedLists
-                                        key={index}
-                                        index={index}
-                                        regimenDrugObj={regimenDrugObj}
-                                        removeAttempt={removeAttempt}
-                                    />
-                                    ))}
-                                    </tbody>
-                                </Table>
-                                </List>
-                                :
-                                ""
-                            }     
+                        
                         </div>
+                        
                         </CardBody>
                         </Card>
                         <br/>
                         <br/>
                     </>                  
-                    )
-                    :
-                    ""
+                )
+                :
+                ""
                 }
+                 {regimenDrugList.length >0 
+                    ?
+                        <List>
+                        <Table  striped responsive>
+                            <thead >
+                                <tr>
+                                    <th>Regimen Drug</th>
+                                    <th>Frequency</th>
+                                    <th>Duration</th>
+                                    <th>Quantity Prescribed</th>
+                                    <th>Quantity Dispensed </th>
+                                    
+                                    <th ></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {regimenDrugList.map((regimenDrugObj, index) => (
+
+                            <DrugDispensedLists
+                                key={index}
+                                index={index}
+                                regimenDrugObj={regimenDrugObj}
+                                removeAttempt={removeAttempt}
+                            />
+                            ))}
+                            </tbody>
+                        </Table>
+                        </List>
+                        :
+                        ""
+                }    
             </div>                              
             {saving ? <Spinner /> : ""}
             <br />

@@ -130,7 +130,7 @@ const Tracking = (props) => {
            .catch((error) => {
            //console.log(error);
            });
-           console.log(enrollDate)
+          
     } 
     const GENERAL_FEELING =()=>{
         axios

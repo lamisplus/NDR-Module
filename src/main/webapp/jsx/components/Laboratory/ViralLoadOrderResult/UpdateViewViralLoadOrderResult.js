@@ -229,7 +229,7 @@ const Laboratory = (props) => {
         showPcrLabDetail && (tests.sampleLoggedRemotely ==='1'  || tests.sampleLoggedRemotely ===1 ) && (temp.dateSampleLoggedRemotely = tests.dateSampleLoggedRemotely ? "" : "This field is required")
         showPcrLabDetail && (temp.dateReceivedAtPcrLab = tests.dateReceivedAtPcrLab ? "" : "This field is required")
         //showPcrLabDetail && (temp.dateOrderBy = tests.dateOrderBy ? "" : "This field is required")
-        //showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
+        showPcrLabDetail && (temp.pcrLabSampleNumber = tests.pcrLabSampleNumber ? "" : "This field is required")
         showPcrLabDetail && (temp.pcrLabName =  tests.pcrLabName ? "" : "This field is required")
         showPcrLabDetail && (temp.dateApproved = tests.dateApproved ? "" : "This field is required")
         showPcrLabDetail && (temp.sampleLoggedRemotely = tests.sampleLoggedRemotely ? "" : "This field is required")
@@ -271,7 +271,7 @@ const Laboratory = (props) => {
         if(validate()){
             tests.labTestGroupId= labTestDetail.labTestGroupId
             tests.labTestId= labTestDetail.id   
-            tests.pcrLabSampleNumber=tests.pcrLabName              
+            //tests.pcrLabSampleNumber=tests.pcrLabName              
             setSaving(true);
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
             tests.dateResultReceived =tests.dateResultReceived!==null && tests.dateResultReceived!=="" ? moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS") : ""
@@ -553,7 +553,7 @@ const Laboratory = (props) => {
                                         name="dateAssayedBy"
                                         id="dateAssayedBy"
                                         value={tests.dateAssayedBy}
-                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
                                         max= {moment(new Date()).format("YYYY-MM-DD") }
@@ -573,7 +573,7 @@ const Laboratory = (props) => {
                                         name="dateResultReceived"
                                         id="dateResultReceived"
                                         value={tests.dateResultReceived}
-                                        min={tests.sampleCollectionDate!==''? tests.sampleCollectionDate :moment(new Date()).format("YYYY-MM-DD")}
+                                        min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
                                         max= {moment(new Date()).format("YYYY-MM-DD") }
@@ -685,7 +685,7 @@ const Laboratory = (props) => {
                                 name="pcrLabSampleNumber"
                                 id="pcrLabSampleNumber"
                                 //min={0}
-                                value={tests.pcrLabName}
+                                value={tests.pcrLabSampleNumber}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required

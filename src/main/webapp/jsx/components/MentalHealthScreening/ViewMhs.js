@@ -77,14 +77,15 @@ const useStyles = makeStyles(theme => ({
 const ViewMentalHealthScreening = (props) => {
     const patientObj = props.patientObj;
     //let history = useHistory();
+    const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles()
-    const [objValues, setObjValues] = useState({mhs1:"",mhs2:"" ,mhs3:"" ,mhs4:"",mhs5:""});
+    const [objValues, setObjValues] = useState({mhs1:"",mhs2:"" ,mhs3:"" ,mhs4:"",mhs5:"", dateOfObservation:""});
     const [saving, setSaving] = useState(false);
     const [referrer, setReferrer] = useState(false);
     const [errors, setErrors] = useState({});
     const [observation, setObservation]=useState({
                                                     data: {},
-                                                    dateOfObservation: "yyyy-MM-dd",
+                                                    dateOfObservation: "",
                                                     facilityId: null,
                                                     personId: 0,
                                                     type: "Mental health",
@@ -92,8 +93,24 @@ const ViewMentalHealthScreening = (props) => {
                                                 })
     useEffect(() => {
         GetMHSDetail();
+        GetPatientDTOObj();
     }, [props.activeContent.id]);
-                                                
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO.dateOfRegistration)
+               //setEacStatusObj(response.data);
+               //
+           })
+           .catch((error) => {
+           //console.log(error);
+           });
+          
+    }                                            
     //Get Mental Health Object
     const GetMHSDetail =()=>{
     axios
@@ -102,8 +119,10 @@ const ViewMentalHealthScreening = (props) => {
        )
        .then((response) => {            
             const mentalObj= response.data.find((x)=> x.type==='Mental health') 
-            //console.log(mentalObj)
+            console.log(mentalObj)
             setObjValues({...mentalObj.data})
+            setObservation(mentalObj)
+            //objValues.dateOfObservation=observation.dateOfObservation
               //setViralLoad(LabObject)
        })
        .catch((error) => {
@@ -145,6 +164,7 @@ const ViewMentalHealthScreening = (props) => {
           
     }
 
+    
   return (      
         <div>                   
             <Card className={classes.root}>
@@ -173,6 +193,28 @@ const ViewMentalHealthScreening = (props) => {
                         </>
                     )}
                     <div className="m-3 col-md-12"></div>
+                    <div className="row">
+                        <div className="form-group mb-3 col-md-4">        
+                            <FormGroup>
+                                <Label >Date of Observation</Label>
+                                <Input
+                                    type="date"
+                                    name="dateOfObservation"
+                                    id="dateOfObservation"
+                                    value={observation.dateOfObservation !=="" && observation.dateOfObservation!==null ? observation.dateOfObservation : objValues.dateOfObservation}
+                                    min={enrollDate}
+                                    onChange={handleInputChangeKP}
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    
+                                    > 
+                                </Input>
+                                {errors.dateOfObservation !=="" ? (
+                                    <span className={classes.error}>{errors.dateOfObservation}</span>
+                                ) : "" }
+                                </FormGroup> 
+                        </div>
+                        </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
                             <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself?</Label>
@@ -275,7 +317,7 @@ const ViewMentalHealthScreening = (props) => {
                             className={classes.button}
                             style={{backgroundColor:"#014d88"}}
                             startIcon={<SaveIcon />}
-                            disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" ? true : false}
+                            disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" || objValues.dateOfObservation==="" ? true : false}
                             onClick={handleSubmit}
                             
                             >

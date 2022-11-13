@@ -156,7 +156,7 @@ const RecentHistory = (props) => {
       }
   }
   const regimenName =(regimenObj)=> {
-    console.log(regimenObj)
+    //console.log(regimenObj)
     let regimenArr = []
     regimenObj && regimenObj.forEach(function (value, index, array) {
       //console.log(value)

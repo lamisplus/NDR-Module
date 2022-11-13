@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { Accordion, Alert } from "react-bootstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {Label as LabelSui} from 'semantic-ui-react'
+import Select from 'react-select'
 
 let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
@@ -115,6 +116,7 @@ const ClinicVisit = (props) => {
     setActiveAccordionHeaderShadow,
   ] = useState(0);
   let temp = { ...errors }
+  let testsOptions=[]
   const classes = useStyles()
   const [getPatientObj, setGetPatientObj] = useState({});
   const [saving, setSaving] = useState(false);
@@ -154,6 +156,8 @@ const ClinicVisit = (props) => {
   const [enrollDate, setEnrollDate] = useState("");
   const [loadClinicHistory, setLoadClinicHistory] = useState(true);
   const [loadVitalHistory, setLoadVitalHistory] = useState(true);
+  const [selectedOption, setSelectedOption] = useState([]);
+  const [labTestOptions, setLabTestOptions] = useState([]);
   //Vital signs clinical decision support 
   const [vitalClinicalSupport, setVitalClinicalSupport] = useState({
                                                                     bodyWeight: "",
@@ -438,64 +442,71 @@ const ClinicVisit = (props) => {
       )
       .then((response) => {
           setTestGroup(response.data);
+          response.data.map((x)=> {                    
+            x.labTests.map((x2)=>{
+                testsOptions.push({ value: x2.id, label: x2.labTestName,testGroupId:x.id, testGroupName:x.groupName, sampleType:x2.sampleType },)
+            })
+            //console.log(testsOptions)
+        })
+        setLabTestOptions(testsOptions)
       })
       .catch((error) => {
       //console.log(error);
       });
         
     }
-
-     //GET LIST Drug Refill
-     async function ClinicVisitList() {
-      setLoading(true)
-      axios
-          .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
-          { headers: {"Authorization" : `Bearer ${token}`} }
-          )
-          .then((response) => {
-              setLoading(false)
-              setLoadClinicHistory(false)
-              setClinicVisitList(response.data);                
-          })
-          .catch((error) => { 
-              setLoadClinicHistory(false) 
-              setLoading(false)  
-          });        
-    }
-    //Check for the last Vital Signs
-    const VitalSigns = () => {
+  console.log(labTestOptions)
+  //GET LIST Drug Refill
+  async function ClinicVisitList() {
+    setLoading(true)
     axios
-      .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
+        .get(`${baseUrl}hiv/art/clinic-visit/person?pageNo=0&pageSize=10&personId=${props.patientObj.id}`,
+        { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            setLoading(false)
+            setLoadClinicHistory(false)
+            setClinicVisitList(response.data);                
+        })
+        .catch((error) => { 
+            setLoadClinicHistory(false) 
+            setLoading(false)  
+        });        
+  }
+  //Check for the last Vital Signs
+  const VitalSigns = () => {
+  axios
+    .get(`${baseUrl}patient/vital-sign/person/${props.patientObj.id}`,
+      { headers: { "Authorization": `Bearer ${token}` } }
+    )
+    .then((response) => {
+      setLoadVitalHistory(false)
+        const lastVitalSigns = response.data[response.data.length - 1]
+        //console.log(lastVitalSigns)
+      if (lastVitalSigns.captureDate >= moment(new Date()).format("YYYY-MM-DD")) {
+        setcurrentVitalSigns(lastVitalSigns)
+        setShowCurrentVitalSigns(true)
+      }
+    })
+    .catch((error) => {
+      setLoadVitalHistory(false)
+      //console.log(error);
+    });
+  }
+  //Check for the Patient Object
+  const PatientDetailId = () => {
+    axios
+      .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
         { headers: { "Authorization": `Bearer ${token}` } }
       )
       .then((response) => {
-        setLoadVitalHistory(false)
-         const lastVitalSigns = response.data[response.data.length - 1]
-         //console.log(lastVitalSigns)
-        if (lastVitalSigns.captureDate >= moment(new Date()).format("YYYY-MM-DD")) {
-          setcurrentVitalSigns(lastVitalSigns)
-          setShowCurrentVitalSigns(true)
-        }
+        setGetPatientObj(response.data)
+          patientObj=response.data
       })
       .catch((error) => {
-        setLoadVitalHistory(false)
         //console.log(error);
       });
-    }
-    //Check for the Patient Object
-    const PatientDetailId = () => {
-      axios
-        .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
-          { headers: { "Authorization": `Bearer ${token}` } }
-        )
-        .then((response) => {
-          setGetPatientObj(response.data)
-            patientObj=response.data
-        })
-        .catch((error) => {
-          //console.log(error);
-        });
-      }
+  }
 
   //Get list of WhoStaging
   const WhoStaging = () => {
@@ -753,6 +764,11 @@ const handleInputValueCheckTemperature =(e)=>{
     setVitalClinicalSupport({...vitalClinicalSupport, temperature:""})
     }
 }
+const handleInputChangeObject = e => {
+  setSelectedOption(e)
+  tests.labTestGroupId=e.testGroupId
+  tests.labTestId = e.value               
+}
   //Validations of the forms
   const validate = () => {        
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
@@ -770,7 +786,6 @@ const handleInputValueCheckTemperature =(e)=>{
     })
     return Object.values(temp).every(x => x == "")
   }
-
   const handleSelectedTestGroup = e =>{
       setTests ({...tests,  labTestGroupId: e.target.value});
       const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
@@ -785,7 +800,6 @@ const handleInputValueCheckTemperature =(e)=>{
     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
     setTests ({...tests,  [e.target.name]: e.target.value});       
   }
-  
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -1756,6 +1770,7 @@ const handleInputValueCheckTemperature =(e)=>{
                             {value.display}
                           </option>
                         ))}
+                         <option value="None">None </option>
                       </Input>
                       {errors.regimenAdherance !=="" ? (
                                 <span className={classes.error}>{errors.regimenAdherance}</span>
@@ -1810,7 +1825,7 @@ const handleInputValueCheckTemperature =(e)=>{
             <br /><br />
             {/* Viral Load  Form */}
             <div className="row">
-            <div  className=" col-md-4">
+            {/* <div  className=" col-md-4">
                 <FormGroup>
                       <FormLabelName for="testGroup">Select Test Group</FormLabelName>
 
@@ -1830,37 +1845,28 @@ const handleInputValueCheckTemperature =(e)=>{
                                     </option>
                                 ))}
                         </Input>
+                        
                         {errors.labTestGroupId !=="" ? (
                                 <span className={classes.error}>{errors.labTestGroupId}</span>
                             ) : "" }      
                    </FormGroup>
-              </div>
-              <div  className=" col-md-4">
+            </div> */}
+              <div  className=" mb-3 col-md-5">
                 <FormGroup>
                       <FormLabelName for="testGroup">Select Test</FormLabelName>
-                      <Input
-                          type="select"
-                          name="labTestId"
-                          id="labTestId"
-                          value={tests.labTestId}
-                          onChange={handleInputChangeTest} 
-                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                  
-                          >
-                          <option value="">Select </option>
-                                          
-                              {test.map((value) => (
-                                  <option key={value.id} value={value.id}>
-                                      {value.labTestName}
-                                  </option>
-                              ))}
-                      </Input>
+                      <Select
+                            //value={selectedOption}
+                            onChange={handleInputChangeObject}
+                            options={labTestOptions}
+                            styles={classes.root}
+                        />
                       {errors.labTestId !=="" ? (
                                 <span className={classes.error}>{errors.labTestId}</span>
                             ) : "" }
                 </FormGroup>
               </div>
-              {tests.labTestId==='16' && (
-              <div  className=" col-md-4">
+              {(tests.labTestId==='16' || tests.labTestId===16 ) && (
+              <div  className="mb-3 col-md-5">
                   <FormGroup>
                     <FormLabelName for="vlIndication">VL Indication</FormLabelName>
                     <Input
@@ -1890,6 +1896,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     <Icon name='plus' /> Add
                 </LabelSui> 
             </div>
+           
             {testOrderList.length >0 ?   
                     <List>
                     <Table  striped responsive>
@@ -1922,6 +1929,7 @@ const handleInputValueCheckTemperature =(e)=>{
                     ""
                 } 
             </div>
+            <br/>
             {/* END Viral Load  Form */}
             <br />
             <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>

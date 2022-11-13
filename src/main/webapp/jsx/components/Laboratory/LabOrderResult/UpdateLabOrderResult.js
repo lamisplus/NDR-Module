@@ -16,7 +16,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { toast} from "react-toastify";
 import {Alert } from "react-bootstrap";
 import { Icon,Button, } from 'semantic-ui-react'
-
+import Select from 'react-select'
 
 const useStyles = makeStyles(theme => ({ 
     button: {
@@ -80,6 +80,10 @@ const Laboratory = (props) => {
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [eacStatusObj, setEacStatusObj] = useState()
     const [labNumbers, setLabNumbers] = useState([]);//
+    const [selectedOption, setSelectedOption] = useState([]);
+    const [defaultSelectedOption, setDefaultSelectedOption] = useState([]);
+    const [labTestOptions, setLabTestOptions] = useState([]);
+    let testsOptions=[]
     let temp = { ...errors }
     const [tests, setTests]=useState({
 
@@ -102,7 +106,7 @@ const Laboratory = (props) => {
                                         orderId: "",
                                         resultReportedBy: "",
                                         sampleNumber:""
-                                    })
+    })
 useEffect(() => {
         TestGroup();
         ViraLoadIndication();
@@ -139,7 +143,7 @@ useEffect(() => {
                const patientDTO= response.data.enrollment
                setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
                //setEacStatusObj(response.data);
-               console.log(enrollDate)
+               //console.log(enrollDate)
            })
            .catch((error) => {
            //console.log(error);
@@ -170,13 +174,26 @@ useEffect(() => {
                 setTestGroup(response.data);
                 const getTestList= response.data.filter((x)=> x.id===parseInt(props.activeContent.obj.labTestGroupId))
                 setTest(getTestList[0].labTests)
+                //Tests
+                response.data.map((x)=> {
+                    x.labTests.map((x2)=>{
+                        //console.log(x)
+                        testsOptions.push({ value: x2.id, label: x2.labTestName,testGroupId:x.id, testGroupName:x.groupName, sampleType:x2.sampleType },)
+                    })
+                    //console.log(testsOptions)
+                })
+                setLabTestOptions(testsOptions)
+                setSelectedOption(
+                    testsOptions.filter((y)=> y.value===props.activeContent.obj.labTestId) 
+                   
+                )
+                setDefaultSelectedOption(testsOptions.filter((y)=> y.value===props.activeContent.obj.labTestId))
             })
             .catch((error) => {
             //console.log(error);
-            });
-        
+            }); 
     }
-
+  console.log(selectedOption);
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -224,37 +241,42 @@ useEffect(() => {
         }
         //setTests ({...tests,  [e.target.name]: e.target.value}); 
     }
-    const handleInputChangeObject = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        setTests ({...tests,  [e.target.name]: e.target.value});               
-    }
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         setTests ({...tests,  [e.target.name]: e.target.value});               
     }
-    const handleInputChangeTest = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        if(e.target.value==="16"){
-            setShowVLIndication(true)
-            setTests ({...tests,  labTestId: e.target.value});
-        }else{
-            setShowVLIndication(false)
-            setTests ({...tests,  labTestId: e.target.value});
-        }
-        //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
-    }
-    const addOrder = e => {   
-        if(validate()){            
-            tests.visitId=visitId
-            setTestOrderList([...testOrderList, tests])
-        }
-      }
+    // const handleInputChangeTest = e => {
+    //     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
+    //     if(e.target.value==="16"){
+    //         setShowVLIndication(true)
+    //         setTests ({...tests,  labTestId: e.target.value});
+    //     }else{
+    //         setShowVLIndication(false)
+    //         setTests ({...tests,  labTestId: e.target.value});
+    //     }
+    //     //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
+    // }
+    // const addOrder = e => {   
+    //     if(validate()){            
+    //         tests.visitId=visitId
+    //         setTestOrderList([...testOrderList, tests])
+    //     }
+    // }
       /* Remove ADR  function **/
-      const removeOrder = index => {       
-        testOrderList.splice(index, 1);
-        setTestOrderList([...testOrderList]);
+    //   const removeOrder = index => {       
+    //     testOrderList.splice(index, 1);
+    //     setTestOrderList([...testOrderList]);
          
-      };
+    //   };
+    const handleInputChangeObject = e => {
+        setSelectedOption(e)
+        console.log(e);
+        tests.labTestGroupId=e.testGroupId
+        tests.labTestId = e.value 
+        tests.labTestName=e.label
+        test.testGroupName=e.testGroupName              
+    }
+
       //Validations of the forms
       const validate = () => {        
         temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
@@ -275,6 +297,7 @@ useEffect(() => {
         setSaving(true);
         tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
         tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
+        //console.log(tests);
         axios.put(`${baseUrl}laboratory/rde-orders/tests/${props.activeContent.obj.id}`,tests,
             { headers: {"Authorization" : `Bearer ${token}`}},)
             .then(response => {
@@ -337,7 +360,7 @@ useEffect(() => {
                     </Col>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Sample Numbe* </Label>
+                                <Label for="encounterDate">Sample Number* </Label>
                                 <Input
                                     type="text"
                                     name="labNumber"
@@ -352,7 +375,7 @@ useEffect(() => {
                                 ) : "" }
                             </FormGroup>
                         </Col>
-                        <Col md={4} className="form-group mb-3">
+                        {/* <Col md={4} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="testGroup">Select Test Group*</Label>
                                 <Input
@@ -375,11 +398,11 @@ useEffect(() => {
                                     <span className={classes.error}>{errors.labTestGroupId}</span>
                                 ) : "" }
                             </FormGroup>
-                        </Col>
+                        </Col> */}
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="testGroup">Select Test*</Label>
-                                <Input
+                                {/* <Input
                                     type="select"
                                     name="labTestId"
                                     id="labTestId"
@@ -394,7 +417,14 @@ useEffect(() => {
                                                 {value.labTestName}
                                             </option>
                                         ))}
-                                </Input>
+                                </Input> */}
+                                <Select
+                                    defaultValue={defaultSelectedOption}
+                                    value={selectedOption}
+                                    onChange={handleInputChangeObject}
+                                    options={labTestOptions}
+                                    
+                                />
                                 {errors.labTestId !=="" ? (
                                     <span className={classes.error}>{errors.labTestId}</span>
                                 ) : "" }

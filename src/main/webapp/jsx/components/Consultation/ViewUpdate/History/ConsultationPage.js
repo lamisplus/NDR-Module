@@ -4,11 +4,8 @@ import { Table  } from "react-bootstrap";
 // Page titie
 import { FormGroup, Label as FormLabelName, InputGroup,
           InputGroupText,
-          InputGroupButtonDropdown,
           Input,
-          DropdownToggle,
-          DropdownMenu,
-          DropdownItem
+
         } from "reactstrap";
 import ADR from './../ADR/Index'
 import OpportunisticInfection from './../OpportunisticInfection/Index'
@@ -28,7 +25,7 @@ import { Button as ButtonSMUI, Icon} from 'semantic-ui-react'
 import {Link} from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-
+import Select from 'react-select'
 
 let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
@@ -147,6 +144,8 @@ const ClinicVisit = (props) => {
   const [familyPlaining, setFamilyPlaining] = useState([])
   const [vLIndication, setVLIndication] = useState([]);
   const [testOrderList, setTestOrderList] = useState([]);//Test Order List
+  const [selectedOption, setSelectedOption] = useState([]);
+  const [labTestOptions, setLabTestOptions] = useState([]);
   const [loadClinicHistory, setLoadClinicHistory] = useState(true);
   const [arvDrugObj, setArvDrugObj] = useState({
     regimenLine: "",
@@ -659,16 +658,21 @@ const ClinicVisit = (props) => {
       })
       return Object.values(temp).every(x => x == "")
     }
+    const handleInputChangeObject = e => {
+      setSelectedOption(e)
+      tests.labTestGroupId=e.testGroupId
+      tests.labTestId = e.value               
+    }
       //Validations of the Lab Viral Load 
-  const validateLabOrder = () => {        
-    temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
-    temp.labTestId = tests.labTestId ? "" : "This field is required"
-    tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")   
-    setErrors({
-        ...temp
-    })
-    return Object.values(temp).every(x => x == "")
-  }
+    const validateLabOrder = () => {        
+      temp.labTestGroupId = tests.labTestGroupId ? "" : "This field is required"
+      temp.labTestId = tests.labTestId ? "" : "This field is required"
+      tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")   
+      setErrors({
+          ...temp
+      })
+      return Object.values(temp).every(x => x == "")
+    }
     //Validations of the ARV DRUG Load 
     const validateArvDrug = () => {       
     temp.regimenLine = arvDrugObj.regimenLine ? "" : "This field is required"
@@ -1635,6 +1639,7 @@ const ClinicVisit = (props) => {
                                         {value.display}
                                       </option>
                                     ))}
+                                    <option value="None">None </option>
                                   </Input>
                                   {errors.regimenAdherance !=="" ? (
                                             <span className={classes.error}>{errors.regimenAdherance}</span>
@@ -1689,7 +1694,7 @@ const ClinicVisit = (props) => {
                         <br /><br />
                         {/* Viral Load  Form */}
                         <div className="row">
-                        <div  className=" col-md-4">
+                        {/* <div  className=" col-md-4">
                             <FormGroup>
                                   <FormLabelName for="testGroup">Select Test Group</FormLabelName>
 
@@ -1713,11 +1718,11 @@ const ClinicVisit = (props) => {
                                             <span className={classes.error}>{errors.labTestGroupId}</span>
                                         ) : "" }      
                               </FormGroup>
-                          </div>
-                          <div  className=" col-md-4">
+                          </div> */}
+                          <div  className="form-group mb-3 col-md-5">
                             <FormGroup>
                                   <FormLabelName for="testGroup">Select Test</FormLabelName>
-                                  <Input
+                                  {/* <Input
                                       type="select"
                                       name="labTestId"
                                       id="labTestId"
@@ -1732,14 +1737,20 @@ const ClinicVisit = (props) => {
                                                   {value.labTestName}
                                               </option>
                                           ))}
-                                  </Input>
+                                  </Input> */}
+                                  <Select
+                                      //value={selectedOption}
+                                      onChange={handleInputChangeObject}
+                                      options={labTestOptions}
+                                      styles={classes.root}
+                                  />
                                   {errors.labTestId !=="" ? (
                                             <span className={classes.error}>{errors.labTestId}</span>
                                         ) : "" }
                             </FormGroup>
                           </div>
-                          {tests.labTestId==='16' && (
-                          <div  className=" col-md-4">
+                          {(tests.labTestId==='16' || tests.labTestId===16) && (
+                          <div  className="form-group mb-3 col-md-5">
                               <FormGroup>
                                 <FormLabelName for="vlIndication">VL Indication</FormLabelName>
                                 <Input
@@ -1770,37 +1781,38 @@ const ClinicVisit = (props) => {
                             </LabelSui> 
                         </div>
                         {testOrderList.length >0 ?   
-                                <List>
-                                <Table  striped responsive>
-                                    <thead >
-                                        <tr>
-                                            <th>Test Group</th>
-                                            <th>Test</th>                                   
-                                            <th>VL Indication</th>                                       
-                                            <th ></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {testOrderList.map((tests,index) => (
+                            <List>
+                            <Table  striped responsive>
+                                <thead >
+                                    <tr>
+                                        <th>Test Group</th>
+                                        <th>Test</th>                                   
+                                        <th>VL Indication</th>                                       
+                                        <th ></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {testOrderList.map((tests,index) => (
 
-                                    <TestOrdersList
-                                        key={index}
-                                        index={index}
-                                        order={tests}
-                                        testGroupObj={testGroup}
-                                        vLIndicationObj={vLIndication}
-                                        removeOrder={removeOrder}
-                                    />
-                                    ))}
-                                    </tbody>
-                                    </Table>
-                                    <br/>
-                                    <br/>
-                                </List>
-                                :
-                                ""
-                            } 
+                                <TestOrdersList
+                                    key={index}
+                                    index={index}
+                                    order={tests}
+                                    testGroupObj={testGroup}
+                                    vLIndicationObj={vLIndication}
+                                    removeOrder={removeOrder}
+                                />
+                                ))}
+                                </tbody>
+                                </Table>
+                                <br/>
+                                <br/>
+                            </List>
+                            :
+                            ""
+                        } 
                         </div>
+                        <br/>
                         {/* END Viral Load  Form */}
                         <br />
                         <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
