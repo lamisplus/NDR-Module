@@ -672,7 +672,8 @@ const Laboratory = (props) => {
                                         value={tests.dateResultReceived}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        min={moment(tests.dateAssayedBy).format("YYYY-MM-DD")}
+                                        min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD")}
+                                        max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
