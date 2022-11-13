@@ -85,7 +85,7 @@ const ViewMentalHealthScreening = (props) => {
     const [errors, setErrors] = useState({});
     const [observation, setObservation]=useState({
                                                     data: {},
-                                                    dateOfObservation: "yyyy-MM-dd",
+                                                    dateOfObservation: "",
                                                     facilityId: null,
                                                     personId: 0,
                                                     type: "Mental health",
@@ -119,8 +119,10 @@ const ViewMentalHealthScreening = (props) => {
        )
        .then((response) => {            
             const mentalObj= response.data.find((x)=> x.type==='Mental health') 
-            //console.log(mentalObj)
+            console.log(mentalObj)
             setObjValues({...mentalObj.data})
+            setObservation(mentalObj)
+            //objValues.dateOfObservation=observation.dateOfObservation
               //setViralLoad(LabObject)
        })
        .catch((error) => {
@@ -162,6 +164,7 @@ const ViewMentalHealthScreening = (props) => {
           
     }
 
+    
   return (      
         <div>                   
             <Card className={classes.root}>
@@ -198,7 +201,7 @@ const ViewMentalHealthScreening = (props) => {
                                     type="date"
                                     name="dateOfObservation"
                                     id="dateOfObservation"
-                                    value={objValues.dateOfObservation}
+                                    value={observation.dateOfObservation !=="" && observation.dateOfObservation!==null ? observation.dateOfObservation : objValues.dateOfObservation}
                                     min={enrollDate}
                                     onChange={handleInputChangeKP}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
