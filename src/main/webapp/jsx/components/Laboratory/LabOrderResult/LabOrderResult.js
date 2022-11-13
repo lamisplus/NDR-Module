@@ -461,9 +461,10 @@ const Laboratory = (props) => {
                                     ))}
                             </Input> */}
                             <Select
-                                value={selectedOption}
+                                //value={selectedOption}
                                 onChange={handleInputChangeObject}
                                 options={labTestOptions}
+                                styles={classes.root}
                             />
                             {errors.labTestId !=="" ? (
                                 <span className={classes.error}>{errors.labTestId}</span>
