@@ -14,8 +14,9 @@ import { List, Label as LabelSui} from 'semantic-ui-react'
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { toast} from "react-toastify";
-import {Alert } from "react-bootstrap";
-import { Icon,Button, } from 'semantic-ui-react'
+
+import { Icon,} from 'semantic-ui-react'
+import Select from 'react-select'
 
 
 const useStyles = makeStyles(theme => ({ 
@@ -82,7 +83,9 @@ const Laboratory = (props) => {
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
     const [showVLIndication, setShowVLIndication] = useState(false);
     const [labNumbers, setLabNumbers] = useState([]);//
-    
+    const [selectedOption, setSelectedOption] = useState([]);
+    const [labTestOptions, setLabTestOptions] = useState([]);
+    let testsOptions=[]
     let temp = { ...errors }
     const [tests, setTests]=useState({
 
@@ -116,7 +119,7 @@ const Laboratory = (props) => {
         GetPatientDTOObj(); 
         CheckEACStatus();  
         LabNumbers();
-    }, [props.patientObj.id]);
+    }, [props.patientObj.id, ]);
     const GetPatientDTOObj =()=>{
             axios
                .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -168,13 +171,21 @@ const Laboratory = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                setTestGroup(response.data);
+                setTestGroup(response.data);                
+                response.data.map((x)=> {                    
+                    x.labTests.map((x2)=>{
+                        testsOptions.push({ value: x2.id, label: x2.labTestName,testGroupId:x.id, testGroupName:x.groupName, sampleType:x2.sampleType },)
+                    })
+                    //console.log(testsOptions)
+                })
+                setLabTestOptions(testsOptions)
             })
             .catch((error) => {
             //console.log(error);
             });
         
     }
+    //Load the tests of all Laboratory
     //Get list of Test Group
     const PriorityOrder =()=>{
         axios
@@ -188,7 +199,7 @@ const Laboratory = (props) => {
             //console.log(error);
             });
         
-        }
+    }
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -224,19 +235,20 @@ const Laboratory = (props) => {
             //console.log(error);
             });        
     }
-    const handleSelectedTestGroup = e =>{
-        setTests ({...tests,  labTestGroupId: e.target.value});
-        const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
-        setTest(getTestList[0].labTests.filter((x)=> x.id!==16))
-        // if(e.target.value==='4'){            
-        //     setVlRequired(true)
-        // }else{
-        //     setVlRequired(false) 
-        // }
-    }
+    // const handleSelectedTestGroup = e =>{
+    //     setTests ({...tests,  labTestGroupId: e.target.value});
+    //     const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
+    //     setTest(getTestList[0].labTests.filter((x)=> x.id!==16))
+    //     // if(e.target.value==='4'){            
+    //     //     setVlRequired(true)
+    //     // }else{
+    //     //     setVlRequired(false) 
+    //     // }
+    // }
     const handleInputChangeObject = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-        setTests ({...tests,  [e.target.name]: e.target.value});               
+        setSelectedOption(e)
+        tests.labTestGroupId=e.testGroupId
+        tests.labTestId = e.value               
     }
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
@@ -249,27 +261,27 @@ const Laboratory = (props) => {
         }
                       
     }
-    const handleInputChangeLabNumber = e => {
-        labNumberOption=e.target.value
-        setLabNumberOption(labNumberOption)
+    // const handleInputChangeLabNumber = e => {
+    //     labNumberOption=e.target.value
+    //     setLabNumberOption(labNumberOption)
                       
-    }
-    const handleInputChangeTest = e => {
-        setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
+    // }
+    // const handleInputChangeTest = e => {
+    //     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         
-        if(e.target.value==="16"){
-            setShowVLIndication(true)
-            setVlRequired(true)
-            setErrors({...temp, viralLoadIndication:""})
+    //     if(e.target.value==="16"){
+    //         setShowVLIndication(true)
+    //         setVlRequired(true)
+    //         setErrors({...temp, viralLoadIndication:""})
             
-            setTests ({...tests,  labTestId: e.target.value});
-        }else{
-            setShowVLIndication(false)
-            setVlRequired(false) 
-            setTests ({...tests,  labTestId: e.target.value});
-        }
-        //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
-    }
+    //         setTests ({...tests,  labTestId: e.target.value});
+    //     }else{
+    //         setShowVLIndication(false)
+    //         setVlRequired(false) 
+    //         setTests ({...tests,  labTestId: e.target.value});
+    //     }
+    //     //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
+    // }
 
     const addOrder = e => {  
         if(validate()){
@@ -405,7 +417,7 @@ const Laboratory = (props) => {
                                 ) : "" }
                             </FormGroup>
                     </Col>
-                    <Col md={4} className="form-group mb-3">
+                    {/* <Col md={4} className="form-group mb-3">
                             <FormGroup>
                                 <Label for="testGroup">Select Test Group*</Label>
                                 <Input
@@ -428,11 +440,11 @@ const Laboratory = (props) => {
                                     <span className={classes.error}>{errors.labTestGroupId}</span>
                                 ) : "" }
                             </FormGroup>
-                    </Col>
+                    </Col> */}
                     <Col md={4} className="form-group mb-3">
                         <FormGroup>
                             <Label for="testGroup">Select Test*</Label>
-                            <Input
+                            {/* <Input
                                 type="select"
                                 name="labTestId"
                                 id="labTestId"
@@ -447,7 +459,12 @@ const Laboratory = (props) => {
                                             {value.labTestName}
                                         </option>
                                     ))}
-                            </Input>
+                            </Input> */}
+                            <Select
+                                value={selectedOption}
+                                onChange={handleInputChangeObject}
+                                options={labTestOptions}
+                            />
                             {errors.labTestId !=="" ? (
                                 <span className={classes.error}>{errors.labTestId}</span>
                             ) : "" }
