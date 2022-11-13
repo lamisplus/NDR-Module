@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="autoIncrement" value="true"/>
+
+    <changeSet failOnError="true"  id="20221113-001" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_art_clinical" columnName="cd4_count" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_art_clinical
+                ADD cd4_count VARCHAR(255)
+        </sql>
+    </changeSet>
+
+    <changeSet failOnError="true"  id="20221113-002" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_art_clinical" columnName="cd4_Semi_quantitative" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_art_clinical
+                ADD cd4_Semi_quantitative VARCHAR(255)
+        </sql>
+    </changeSet>
+
+    <changeSet failOnError="true"  id="20221113-003" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_art_clinical" columnName="cd4_flow_cyteometry" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_art_clinical
+                ADD  cd4_flow_cyteometry VARCHAR(255)
+        </sql>
+    </changeSet>
+
+    <changeSet failOnError="true"  id="20221113-004" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_art_clinical" columnName="extra" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_art_clinical
+                ADD  extra JSONB
+        </sql>
+    </changeSet>
+
+    <changeSet failOnError="true"  id="20221113-005" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_patient_tracker" columnName="date_of_observation" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_patient_tracker
+                ADD  date_of_observation date
+        </sql>
+    </changeSet>
+
+    <changeSet failOnError="true"  id="20221113-006" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_art_pharmacy" columnName="ipt_type" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_art_pharmacy
+                ADD  ipt_type VARCHAR(255)
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
