@@ -604,11 +604,12 @@ const ClinicVisit = (props) => {
   }
   const handleInputChangeVitalSignDto = e => {
     setErrors({...errors, [e.target.name]: ""})
-  if(e.target.name!=='encounterDate' && e.target.name!=='muac'){
-    setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
-  }else{
     setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
-  }
+  // if(e.target.name!=='encounterDate' && e.target.name!=='muac'){
+  //   setVitalSignDto({ ...vital, [e.target.name]: e.target.value.replace(/\D/g, '') });
+  // }else{
+  //   setVitalSignDto({ ...vital, [e.target.name]: e.target.value });
+  // }
 
   }
   //Validations of the Lab Viral Load 
@@ -748,27 +749,27 @@ const ClinicVisit = (props) => {
     setVitalClinicalSupport({...vitalClinicalSupport, pulse:""})
     }
   }
-const handleInputValueCheckRespiratoryRate =(e)=>{
-    if(e.target.name==="respiratoryRate" && (e.target.value < 10 || e.target.value>70)){      
-    const message ="Respiratory Rate must not be greater than 70 and less than 10"
-    setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:message})
-    }else{
-    setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:""})
-    }
-}
-const handleInputValueCheckTemperature =(e)=>{
-    if(e.target.name==="temperature" && (e.target.value < 35 || e.target.value>47)){      
-    const message ="Temperature must not be greater than 47 and less than 35"
-    setVitalClinicalSupport({...vitalClinicalSupport, temperature:message})
-    }else{
-    setVitalClinicalSupport({...vitalClinicalSupport, temperature:""})
-    }
-}
-const handleInputChangeObject = e => {
-  setSelectedOption(e)
-  tests.labTestGroupId=e.testGroupId
-  tests.labTestId = e.value               
-}
+  const handleInputValueCheckRespiratoryRate =(e)=>{
+      if(e.target.name==="respiratoryRate" && (e.target.value < 10 || e.target.value>70)){      
+      const message ="Respiratory Rate must not be greater than 70 and less than 10"
+      setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:message})
+      }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, respiratoryRate:""})
+      }
+  }
+  const handleInputValueCheckTemperature =(e)=>{
+      if(e.target.name==="temperature" && (e.target.value < 35 || e.target.value>47)){      
+      const message ="Temperature must not be greater than 47 and less than 35"
+      setVitalClinicalSupport({...vitalClinicalSupport, temperature:message})
+      }else{
+      setVitalClinicalSupport({...vitalClinicalSupport, temperature:""})
+      }
+  }
+  const handleInputChangeObject = e => {
+    setSelectedOption(e)
+    tests.labTestGroupId=e.testGroupId
+    tests.labTestId = e.value               
+  }
   //Validations of the forms
   const validate = () => {        
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
@@ -940,7 +941,7 @@ const handleInputChangeObject = e => {
                                   {visit.vitalSignDto && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Height <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.height} cm</b></span></List.Item>)}
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{
-                                  
+                                 
                                   (visit.vitalSignDto.bodyWeight/(((visit.vitalSignDto.height/100) * (visit.vitalSignDto.height/100)))).toFixed(2)
                                   } kg/m<sup>2</sup></b></span></List.Item>)}
                               </List>
@@ -1101,7 +1102,7 @@ const handleInputChangeObject = e => {
                         <FormLabelName >Pulse</FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="pulse"
                                 id="pulse"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1128,7 +1129,7 @@ const handleInputChangeObject = e => {
                         <FormLabelName >Respiratory Rate </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="respiratoryRate"
                                 id="respiratoryRate"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1155,7 +1156,7 @@ const handleInputChangeObject = e => {
                         <FormLabelName >Temperature </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="temperature"
                                 id="temperature"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1183,7 +1184,7 @@ const handleInputChangeObject = e => {
                         <FormLabelName >Body Weight *</FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="bodyWeight"
                                 id="bodyWeight"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1218,7 +1219,7 @@ const handleInputChangeObject = e => {
                                 cm
                         </InputGroupText>
                             <Input 
-                                type="text"
+                                type="number"
                                 name="height"
                                 id="height"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1275,7 +1276,7 @@ const handleInputChangeObject = e => {
                           systolic(mmHg)
                   </InputGroupText> 
                       <Input 
-                          type="text"
+                          type="number"
                           name="systolic"
                           id="systolic"
                           min="90"
@@ -1291,7 +1292,7 @@ const handleInputChangeObject = e => {
                       </InputGroupText>
                       
                           <Input 
-                          type="text"
+                          type="number"
                           name="diastolic"
                           id="diastolic"
                           min={0}
@@ -1328,7 +1329,7 @@ const handleInputChangeObject = e => {
                         <FormLabelName >Head Circumference </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="headCircumference"
                                 id="headCircumference"
                                 onChange={handleInputChangeVitalSignDto}
@@ -1350,7 +1351,7 @@ const handleInputChangeObject = e => {
                         <FormLabelName >Surface Area </FormLabelName>
                         <InputGroup> 
                             <Input 
-                                type="text"
+                                type="number"
                                 name="surfaceArea"
                                 id="surfaceArea"
                                 onChange={handleInputChangeVitalSignDto}

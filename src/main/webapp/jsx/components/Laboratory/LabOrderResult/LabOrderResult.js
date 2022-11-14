@@ -463,7 +463,16 @@ const Laboratory = (props) => {
                                 //value={selectedOption}
                                 onChange={handleInputChangeObject}
                                 options={labTestOptions}
-                                styles={classes.root}
+                                theme={(theme) => ({
+                                    ...theme,
+                                    borderRadius: '0.25rem',
+                                    border: "1px solid #014D88",
+                                    colors: {
+                                      ...theme.colors,
+                                      primary25: '#014D88',
+                                      primary: '#014D88',
+                                    },
+                                  })}
                             />
                             {errors.labTestId !=="" ? (
                                 <span className={classes.error}>{errors.labTestId}</span>
