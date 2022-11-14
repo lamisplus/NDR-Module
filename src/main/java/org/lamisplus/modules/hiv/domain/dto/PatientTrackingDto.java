@@ -40,5 +40,6 @@ public class PatientTrackingDto {
 	private Long facilityId;
 	private Long patientId;
 	private HIVStatusTrackerDto  statusTracker;
+	private LocalDate dateOfObservation;
 	
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.triage.domain.dto.VitalSignRequestDto;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -54,6 +55,10 @@ public class ARTClinicalCommenceDto implements Serializable {
     private  Boolean isViralLoadAtStartOfArt;
     private  Double  viralLoadAtStartOfArt;
     private LocalDate dateOfViralLoadAtStartOfArt;
+    
+    private String  cd4Count;
+    private String  cd4SemiQuantitative;
+    private Integer  cd4FlowCytometry;
 
 
 }

@@ -138,6 +138,17 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 	@Column(columnDefinition = "jsonb")
 	private JsonNode viralLoadOrder;
 	
+	@Type(type = "jsonb")
+	@Column(columnDefinition = "jsonb")
+	private JsonNode extra;
+	
+	@Column(name = "cd4_count")
+	private String  cd4Count;
+	@Column(name = "cd4_semi_quantitative")
+	private String  cd4SemiQuantitative;
+	@Column(name = "cd4_flow_cytometry")
+	private Integer  cd4FlowCytometry;
+	
 	@Override
 	public boolean isNew() {
 		return id == null;

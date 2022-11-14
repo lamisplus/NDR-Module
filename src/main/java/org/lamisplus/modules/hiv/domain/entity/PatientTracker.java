@@ -65,6 +65,8 @@ public class PatientTracker extends HivAuditEntity implements Serializable, Pers
 	@ManyToOne
 	@JoinColumn(name = "person_uuid", referencedColumnName = "uuid", nullable = false)
 	private Person person;
+	@Column(name = "date_of_observation")
+	private LocalDate dateOfObservation;
 	
 	public boolean isNew() {
 		return id == null;

@@ -82,5 +82,8 @@ public class ARTClinicalVisitDisplayDto implements Serializable {
 	@Type(type = "jsonb")
 	@Column(columnDefinition = "jsonb")
 	private JsonNode viralLoadOrder;
+	@Type(type = "jsonb")
+	@Column(columnDefinition = "jsonb")
+	private JsonNode extra;
 	
 }

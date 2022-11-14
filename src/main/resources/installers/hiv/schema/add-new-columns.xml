@@ -38,7 +38,7 @@
         </preConditions>
         <sql>
             ALTER TABLE hiv_art_clinical
-                ADD  cd4_flow_cyteometry VARCHAR(255)
+                ADD  cd4_flow_cytometry integer
         </sql>
     </changeSet>
 
