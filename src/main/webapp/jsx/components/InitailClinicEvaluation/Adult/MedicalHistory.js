@@ -265,7 +265,7 @@ const MedicalHistory = (props) => {
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     name="visitDate"
                                     id="visitDate"
-                                    value={visit.visitDate}
+                                    value={props.observation.dateOfObservation !=="" && props.observation.dateOfObservation!==null ? props.observation.dateOfObservation : visit.visitDate}
                                     onChange={handleInputChangeobjValues} 
                                 />
                             </InputGroup>                                        
