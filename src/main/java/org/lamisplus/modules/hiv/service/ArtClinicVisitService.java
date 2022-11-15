@@ -63,7 +63,7 @@ public class ArtClinicVisitService {
 			throw new EntityNotFoundException(Person.class, "personId", "" + personId);
 		Visit visit = hivVisitEncounter.processAndCreateVisit(personId, artClinicVisitDto.getVisitDate());
 		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
-		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 12:00");
+		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 00:00");
 		vitalSignDto.setCaptureDate(captureDate);
 		Log.info("vitalSign dto {}", vitalSignDto);
 		if (visit != null) {
@@ -92,7 +92,7 @@ public class ArtClinicVisitService {
 	public ARTClinicVisitDto updateClinicVisit(Long id, ARTClinicVisitDto artClinicVisitDto) {
 		ARTClinical existArtClinical = getExistClinicVisit(id);
 		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
-		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 12:00");
+		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 00:00");
 		vitalSignDto.setCaptureDate(captureDate);
 		vitalSignService.updateVitalSign(existArtClinical.getVitalSign().getId(), vitalSignDto);
 		ARTClinical artClinical = convertDtoToART(artClinicVisitDto, existArtClinical.getVitalSign().getId());
