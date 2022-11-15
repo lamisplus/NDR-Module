@@ -24,7 +24,7 @@ public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> 
 			"where person_uuid = ?1  " +
 			"and archived = 0  " +
 			"and visit_date BETWEEN ?2 and ?3 ", nativeQuery = true)
-	int sumRefillPeriodsByPersonAndDateRange(String personUuid, LocalDate startDate, LocalDate endDate);
+	Integer sumRefillPeriodsByPersonAndDateRange(String personUuid, LocalDate startDate, LocalDate endDate);
 	
 	
 	
