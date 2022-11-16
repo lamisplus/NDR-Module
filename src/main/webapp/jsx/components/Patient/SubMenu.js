@@ -128,14 +128,14 @@ function SubMenu(props) {
             
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
-            {/* {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )  */}
-            {patientObj.enrollment.dateOfRegistration >= moment(new Date()).format("YYYY-MM-DD")
+            {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) 
+            {/* {patientObj.enrollment.dateOfRegistration >= moment(new Date()).format("YYYY-MM-DD") */}
                 ?
                 (
                 <Menu size='tiny' color={"blue"} inverted pointing >
                     <Menu.Item onClick={() => onClickHome()} name='home' 
                     active={activeItem === 'home'} > Home</Menu.Item>
-                    {!patientObj.clinicalEvaluation && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
+                    {!patientObj.clinicalEvaluation && patientObj.createBy!=="Lamis data migration system" && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
                     active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
                     active={activeItem === 'art'}>Art Commencement</Menu.Item>)}
@@ -143,7 +143,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
                     <Menu.Item onClick={() => loadEAC(patientObj)} disabled> EAC</Menu.Item> */}
-                    { patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
+                    { patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false && patientObj.createBy!=="Lamis data migration system" && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
