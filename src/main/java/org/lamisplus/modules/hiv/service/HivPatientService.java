@@ -112,7 +112,7 @@ public class HivPatientService {
                 .pageNumber(persons.getNumber())
                 .pageSize(persons.getSize())
                 .totalPages(persons.getTotalPages())
-                .totalRecords(persons.getTotalPages())
+                .totalRecords(persons.getTotalElements())
                 .records(content)
                 .build();
     }
@@ -126,7 +126,7 @@ public class HivPatientService {
                     .pageNumber(persons.getNumber())
                     .pageSize(persons.getSize())
                     .totalPages(persons.getTotalPages())
-                    .totalRecords(persons.getTotalPages())
+                    .totalRecords(persons.getTotalElements())
                     .records(content)
                     .build();
         }
@@ -136,7 +136,7 @@ public class HivPatientService {
                 .pageNumber(persons.getNumber())
                 .pageSize(persons.getSize())
                 .totalPages(persons.getTotalPages())
-                .totalRecords(persons.getTotalPages())
+                .totalRecords(persons.getTotalElements())
                 .records(content)
                 .build();
         

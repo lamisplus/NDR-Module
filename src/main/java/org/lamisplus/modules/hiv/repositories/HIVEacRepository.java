@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 					") a where  a.patientId = ?1  and a.resultDate between ?2 and ?3  order by a.resultDate DESC limit 1"
 			,
 			nativeQuery = true)
-	Optional<ViralLoadRadetDto> getPatientCurrentViralLoadDetails(Long personId, LocalDate startDate, LocalDate endDate);
+	Optional<ViralLoadRadetDto> getPatientCurrentViralLoadDetails(Long personId, LocalDateTime startDate, LocalDateTime endDate);
 	
 	@Query(value = "SELECT \n" +
 			"template_type as  type,\n" +
