@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import MaterialTable from 'material-table';
+import MaterialTable, { MTableToolbar }  from 'material-table';
 import axios from "axios";
 
 import { token as token, url as baseUrl } from "./../../../api";
