@@ -3,7 +3,7 @@ import axios from "axios";
 import {Dropdown, Menu, Segment,Sticky } from "semantic-ui-react";
 import { makeStyles } from "@material-ui/core/styles";
 import { url as baseUrl, token } from "../../../api";
-
+import * as moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     navItemText: {
@@ -26,8 +26,9 @@ function SubMenu(props) {
         gender =props.patientObj && props.patientObj.sex ? props.patientObj.sex : null
         setGenderType(gender==="Female" ? true : false)
     }, [props.patientObj]);
+    console.log(patientObj)
      //Get list of RegimenLine
-     const Observation =()=>{
+    const Observation =()=>{
         axios
             .get(`${baseUrl}observation/person/${props.patientObj.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
@@ -48,7 +49,7 @@ function SubMenu(props) {
             //console.log(error);
             });
         
-        }
+    }
 
     const loadEAC =(row)=> {
         setActiveItem('eac')
@@ -127,7 +128,9 @@ function SubMenu(props) {
             
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
-            {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )?
+            {/* {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false )  */}
+            {patientObj.enrollment.dateOfRegistration >= moment(new Date()).format("YYYY-MM-DD")
+                ?
                 (
                 <Menu size='tiny' color={"blue"} inverted pointing >
                     <Menu.Item onClick={() => onClickHome()} name='home' 
@@ -146,7 +149,7 @@ function SubMenu(props) {
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
                     active={activeItem === 'history'}>History</Menu.Item>
                 </Menu>
-               )
+                )
                :
                (
                 <Menu size='tiny' color={"black"} inverted>                    
