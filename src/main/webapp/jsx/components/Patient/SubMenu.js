@@ -129,7 +129,7 @@ function SubMenu(props) {
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
             {patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) 
-            {/* {patientObj.enrollment.dateOfRegistration >= moment(new Date()).format("YYYY-MM-DD") */}
+           
                 ?
                 (
                 <Menu size='tiny' color={"blue"} inverted pointing >
