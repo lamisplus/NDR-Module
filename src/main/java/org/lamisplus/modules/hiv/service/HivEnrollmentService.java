@@ -136,6 +136,7 @@ public class HivEnrollmentService {
 		HivPatientDto hivPatientDto = new HivPatientDto();
 		BeanUtils.copyProperties(bioData, hivPatientDto);
 		hivPatientDto.setEnrolled(true);
+		hivPatientDto.setCreateBy(person.getCreatedBy());
 		Long statusAtRegistrationId = entity.getStatusAtRegistrationId();
 		Optional<ARTClinical> artCommencement =
 				artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);

@@ -17,4 +17,5 @@ public class HivPatientDto extends PersonResponseDto  implements Serializable {
     private ARTClinicalCommenceDto artCommence;
     private List<ARTClinicVisitDto> artClinicVisits;
     private List<ResponseArtPharmacyDto> artPharmacyRefills;
+    private  String createBy;
 }

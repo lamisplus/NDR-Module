@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -133,12 +134,13 @@ public class HIVStatusTrackerService {
 	
 	private StatusDto calculatePatientCurrentStatus(HIVStatusTracker statusTracker) {
 		AtomicReference<LocalDate> statusDate = new AtomicReference<>(statusTracker.getStatusDate());
-		Visit visit = statusTracker.getVisit();
+		Comparator<ArtPharmacy> refilledComparator = Comparator.comparing(ArtPharmacy::getNextAppointment);
 		Optional<ArtPharmacy> artPharmacy =
 				artPharmacyRepository
-						.getArtPharmaciesByVisitAndPerson(visit, statusTracker.getPerson())
+						.getArtPharmaciesByPersonAndArchived(statusTracker.getPerson(),0)
 						.stream()
-						.findAny();
+						.max(refilledComparator);
+				
 		artPharmacy.ifPresent(p -> statusDate.set(p.getNextAppointment()));
 		List<String> staticStatus = Arrays.asList("Stopped Treatment", "Died (Confirmed)", "ART Transfer Out", "HIV_NEGATIVE");
 		if (staticStatus.contains(statusTracker.getHivStatus())) {
@@ -147,17 +149,19 @@ public class HIVStatusTrackerService {
 			}
 			return new StatusDto(statusTracker.getHivStatus(), statusTracker.getStatusDate());
 		} else {
-			int months = Period.between(statusDate.get(), LocalDate.now()).getMonths();
-			if (months > 0) {
-				log.info("month {}", months);
-				LocalDate iitDate = statusDate.get().plusDays(29);
-				log.info("days {}", iitDate);
-				return new StatusDto("IIT", iitDate);
-				
+			log.info("next appointment {}", statusDate.get());
+			if (statusDate.get().isBefore(LocalDate.now())) {
+				long days = ChronoUnit.DAYS.between(statusDate.get(), LocalDate.now());
+				if (days >= 29) {
+					return new StatusDto("IIT", statusDate.get().plusDays(29));
+				}
+				return new StatusDto("Active on Treatment", statusDate.get());
 			}
-			return new StatusDto("Active on Treatment", statusDate.get());
+			}
+		return new StatusDto("Active on Treatment", statusDate.get());
 		}
-	}
+		
+	
 	
 	public List<HIVStatusTrackerDto> getPersonHIVStatusByPersonId(Long personId) {
 		Person person = getPerson(personId);

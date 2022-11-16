@@ -170,6 +170,7 @@ public class HivPatientService {
                     artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
             HivPatientDto hivPatientDto = new HivPatientDto ();
             BeanUtils.copyProperties (bioData, hivPatientDto);
+            hivPatientDto.setCreateBy(person.getCreatedBy());
             addEnrollmentInfo (enrollment, hivPatientDto);
             addArtCommencementInfo (person.getId (), artCommencement, hivPatientDto);
             processAndSetObservationStatus(person, hivPatientDto);
