@@ -834,6 +834,7 @@ const ClinicVisit = (props) => {
       )
       .then((response) => {
           const e = response.data
+          console.log(e)
           setObjValues(e)
           setVitalSignDto({ ...vital, ...e.vitalSignDto })
           objValues.clinicalNote = e.clinicalNote
@@ -844,11 +845,16 @@ const ClinicVisit = (props) => {
           vital.captureDate=e.visitDate
           objValues.visitDate=e.visitDate
           //setObjValues(e)
-          setTbObj({...e.tbScreen})
-          setAdrList([...e.adverseDrugReactions])
-          setInfectionList([...e.opportunisticInfections])
-          setTestOrderList(e.viralLoadOrder)
-          setarvDrugOrderList([...e.arvdrugsRegimen])
+          const objTB = e.tbScreen!==null ? e.tbScreen : tbObj
+          setTbObj({...objTB})
+          const adrListObj = e.adverseDrugReactions!==null ? e.adverseDrugReactions : adrList
+          setAdrList([...adrListObj])
+          const inffectionObj = e.opportunisticInfections!==null ? e.opportunisticInfections : infectionList
+          setInfectionList([...inffectionObj])
+          const viralObj = e.viralLoadOrder!==null ? e.viralLoadOrder : testOrderList
+          setTestOrderList(viralObj)
+          const arvObj = e.arvdrugsRegimen!==null ? e.arvdrugsRegimen : arvDrugOrderList
+          setarvDrugOrderList([...arvObj])
 
       })
       .catch((error) => {
