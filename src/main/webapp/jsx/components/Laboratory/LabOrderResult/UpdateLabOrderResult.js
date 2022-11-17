@@ -614,7 +614,7 @@ useEffect(() => {
                             startIcon={<SaveIcon />}
                             hidden={buttonHidden}
                             style={{backgroundColor:"#014d88"}}
-                            
+                            disabled={ !saving ? false : true}
                             onClick={handleSubmit}
                             >
                             {!saving ? (

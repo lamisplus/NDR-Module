@@ -13,14 +13,7 @@ import RecentHistory from './../History/RecentHistory';
 import ClinicVisit from '../Consultation/Index'
 import Pharmacy from './../Pharmacy/Index';
 import Laboratory from './../Laboratory/index';
-import AncPnc from './../PmtctServices/AncPnc';
-import AncEnrollement from './../PmtctServices/AncEnrollement';
-import LabourDelivery from './../PmtctServices/LabourDelivery';
-import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
-import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
-import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
-import PrEPVisit from './../PrepServices/PrEPVisit';
-import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
+
 import EnhancedAdherenceCounseling from '../EnhancedAdherenceCounseling/Index';
 import CervicalCancer from './../CervicalCancer/Index';
 import CervicalCancerUpdate from './../CervicalCancer/ViewPage';
@@ -123,14 +116,7 @@ function PatientCard(props) {
           {/* {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)} */}
           {activeContent.route==='pharmacy' &&( <Pharmacy patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='laboratory' &&( <Laboratory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='anc-pnc' &&( <AncPnc patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='anc-enrollment' &&( <AncEnrollement patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='labour-delivery' &&( <LabourDelivery patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='prep-commencement' &&( <PrEPCommencementForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='prep-screening' &&( <PrEPEligibiltyScreeningForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='prep-visit' &&( <PrEPVisit />)}
-          {activeContent.route==='prep-registration' &&( <PrEPRegistrationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)} 
+          
           {activeContent.route==='counseling' &&( <EnhancedAdherenceCounseling patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='cervical-cancer' &&( <CervicalCancer patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='cervical-cancer-update' &&( <CervicalCancerUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}

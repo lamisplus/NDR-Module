@@ -1428,7 +1428,7 @@ const Pharmacy = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    
+                    disabled={saving}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Update</span>

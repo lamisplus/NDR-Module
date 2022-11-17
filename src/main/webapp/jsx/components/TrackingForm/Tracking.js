@@ -969,7 +969,7 @@ console.log(errors)
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac1==="" ? true : false}
+                    disabled={saving}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

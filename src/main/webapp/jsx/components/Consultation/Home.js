@@ -942,7 +942,7 @@ const ClinicVisit = (props) => {
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{
                                  
-                                  (visit.vitalSignDto.bodyWeight/(((visit.vitalSignDto.height/100) * (visit.vitalSignDto.height/100)))).toFixed(2)
+                                  (visit.vitalSignDto.bodyWeight/(((visit.vitalSignDto.height/100) * (visit.vitalSignDto.height/100)))/10000).toFixed(2)
                                   } kg/m<sup>2</sup></b></span></List.Item>)}
                               </List>
                             

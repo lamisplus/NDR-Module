@@ -317,7 +317,7 @@ return (
                     </div> 
                     <br/>
                     <Button content='Back' icon='left arrow' labelPosition='left' style={{backgroundColor:"#992E62", color:'#fff'}} onClick={()=>handleItemClick('plan', 'plan')}/>
-                    <Button content='Save Record' type="submit" icon='right arrow' labelPosition='right' style={{backgroundColor:"#014d88", color:'#fff'}} onClick={handleSubmit}/>
+                    <Button content='Save Record' type="submit" disabled={!saving?false:true} icon='right arrow' labelPosition='right' style={{backgroundColor:"#014d88", color:'#fff'}} onClick={handleSubmit}/>
                     
                     </form>
                     
