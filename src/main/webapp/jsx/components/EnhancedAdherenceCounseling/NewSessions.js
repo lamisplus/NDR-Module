@@ -86,7 +86,7 @@ const NEWEACSESSION = (props) => {
     const [eacStatusObj, setEacStatusObj] = useState()
     const [selectedBarriers,setSelectedBarriers] = useState([]);
     const [selectedInterventions,setSelectedInterventions] = useState([]);
-    const [enrollDate, setEnrollDate] = useState("");
+    const [enrollDate, setEnrollDate] = useState(props.activeContent.obj.dateOfLastViralLoad);
     const [objValues, setObjValues]=useState({
                                                 barriers: null,
                                                 barriersOthers:"",
@@ -137,6 +137,7 @@ const NEWEACSESSION = (props) => {
         GetPatientDTOObj();
         CheckEACStatus();
     }, [props.activeContent]);
+    console.log(props.activeContent.obj)
     //Get EAC Status
     const CheckEACStatus =()=>{
         axios
@@ -146,7 +147,9 @@ const NEWEACSESSION = (props) => {
            .then((response) => {
                setEacStatusObj(response.data);
                const newEacDate= response.data && response.data.eacsession && response.data.eacsession!=='Default' ? moment(response.data.eacsessionDate, "YYYY-MM-DD").add(30, 'days').calendar() : null
+               //console.log(moment(response.data.eacsessionDate, "YYYY-MM-DD").add(30, 'days').toDate())
                setLastEACDate(newEacDate) 
+               setEnrollDate(props.activeContent.obj.dateOfLastViralLoad)
            })
            .catch((error) => {
            //console.log(error);
@@ -160,7 +163,7 @@ const NEWEACSESSION = (props) => {
            )
            .then((response) => {
                const patientDTO= response.data.enrollment
-               setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
+               //setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
                //setEacStatusObj(response.data);
                //console.log(enrollDate)
            })
@@ -226,7 +229,8 @@ const NEWEACSESSION = (props) => {
               });
           
     }
-   
+
+
   return (      
         <div>                    
             <Card className={classes.root}>
@@ -250,7 +254,12 @@ const NEWEACSESSION = (props) => {
                     <br/>
                     <br/>
                     <br/>
-
+                    <div className="row">
+                    <div className="form-group mb-3 col-md-4">Viral Load : <b>{props.activeContent.obj.lastViralLoad}</b></div>
+                    <div className="form-group mb-3 col-md-4">Date of Viral Load : <b>{props.activeContent.obj.dateOfLastViralLoad}</b></div>
+                    <div className="form-group mb-3 col-md-4">EAC Status: <b>{props.activeContent.obj.status}</b></div>
+                    <hr/>
+                    </div>
                     <div className="form-group mb-3 col-md-4">
                                 <FormGroup>
                                 <Label >Session Date</Label>
@@ -492,7 +501,7 @@ const NEWEACSESSION = (props) => {
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
-                    disabled={objValues.dateOfEac3==="" ? true : false}
+                    disabled={saving}
                     >
                     {!saving ? (
                     <span style={{ textTransform: "capitalize" }}>Save</span>

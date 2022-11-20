@@ -139,10 +139,6 @@ function SubMenu(props) {
                     active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
                     active={activeItem === 'art'}>Art Commencement</Menu.Item>)}
-                    {/* <Menu.Item onClick={() => onClickConsultation()} disabled> Clinic Visit</Menu.Item>
-                    <Menu.Item onClick={() => loadLaboratoryModal()} disabled> Laboratory</Menu.Item>
-                    <Menu.Item onClick={() => loadPharmacyModal()} disabled> Pharmacy</Menu.Item>
-                    <Menu.Item onClick={() => loadEAC(patientObj)} disabled> EAC</Menu.Item> */}
                     { patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}
@@ -155,7 +151,8 @@ function SubMenu(props) {
                 <Menu size='tiny' color={"black"} inverted>                    
                     <Menu.Item onClick={() => onClickHome()} disabled={patientCurrentStatus} name='home'
                     active={activeItem === 'home'}> Home</Menu.Item>
-                    {/* {patientObj.clinicalEvaluation===true && (<Menu.Item onClick={() => loadAdultEvaluation()} disabled={patientCurrentStatus} >Initial Evaluation</Menu.Item>)} */}
+                     {!patientObj.clinicalEvaluation && patientObj.createBy==="Lamis data migration system" && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
+                    active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
                     <Menu.Item onClick={() => onClickConsultation()} disabled={patientCurrentStatus} name='visit'
                     active={activeItem === 'visit'} >Care Card</Menu.Item>
                      <Menu.Menu position='' name='lab' active={activeItem === 'lab'}>
@@ -174,7 +171,7 @@ function SubMenu(props) {
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} name='status'
                     active={activeItem === 'status'}>Client Status Update</Menu.Item> */}
                     {/* {patientObj.currentStatus && patientObj.currentStatus==='IIT' && (<Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>)} */}
-                    {!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==473) && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
+                    {(!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==473)) && patientObj.createBy==="Lamis data migration system" && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                    
                     {(props.patientObj.sex==='Female' || props.patientObj.sex==='FEMALE' || props.patientObj.sex==='female') ? 

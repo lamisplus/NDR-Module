@@ -508,7 +508,7 @@ const Tracking = (props) => {
                         startIcon={<SaveIcon />}
                         onClick={handleSubmit}
                         style={{backgroundColor:"#014d88"}}
-                        disabled={attemptList.length <=0  ? true : false}
+                        disabled={attemptList.length <=0 && !saving  ? true : false}
                         >
                         {!saving ? (
                         <span style={{ textTransform: "capitalize" }}>Update</span>

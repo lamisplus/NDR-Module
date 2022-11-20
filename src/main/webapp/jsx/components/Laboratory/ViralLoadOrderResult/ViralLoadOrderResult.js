@@ -950,7 +950,7 @@ const Laboratory = (props) => {
                         startIcon={<SaveIcon />}
                         hidden={buttonHidden}
                         style={{backgroundColor:"#014d88"}}
-                        //disabled={testOrderList.length >0 ? false : true}
+                        disabled={saving}
                         onClick={handleSubmit}
                         >
                         {!saving ? (

@@ -513,7 +513,7 @@ const NEWEACSESSION = (props) => {
                         startIcon={<SaveIcon />}
                         onClick={handleSubmit}
                         style={{backgroundColor:"#014d88"}}
-                        disabled={objValues.dateOfEac3==="" ? true : false}
+                        disabled={saving}
                         >
                         {!saving ? (
                         <span style={{ textTransform: "capitalize" }}>Save</span>

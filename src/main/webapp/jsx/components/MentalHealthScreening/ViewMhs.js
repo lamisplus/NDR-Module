@@ -317,7 +317,7 @@ const ViewMentalHealthScreening = (props) => {
                             className={classes.button}
                             style={{backgroundColor:"#014d88"}}
                             startIcon={<SaveIcon />}
-                            disabled={objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" || objValues.dateOfObservation==="" ? true : false}
+                            disabled={(objValues.mhs1==="" || objValues.mhs2==="" || objValues.mhs4==="" || objValues.mhs4==="" || objValues.mhs5==="" || objValues.dateOfObservation==="") && !saving ? true : false}
                             onClick={handleSubmit}
                             
                             >

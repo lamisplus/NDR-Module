@@ -834,6 +834,7 @@ const ClinicVisit = (props) => {
       )
       .then((response) => {
           const e = response.data
+          console.log(e)
           setObjValues(e)
           setVitalSignDto({ ...vital, ...e.vitalSignDto })
           objValues.clinicalNote = e.clinicalNote
@@ -844,11 +845,16 @@ const ClinicVisit = (props) => {
           vital.captureDate=e.visitDate
           objValues.visitDate=e.visitDate
           //setObjValues(e)
-          setTbObj({...e.tbScreen})
-          setAdrList([...e.adverseDrugReactions])
-          setInfectionList([...e.opportunisticInfections])
-          setTestOrderList(e.viralLoadOrder)
-          setarvDrugOrderList([...e.arvdrugsRegimen])
+          const objTB = e.tbScreen!==null ? e.tbScreen : tbObj
+          setTbObj({...objTB})
+          const adrListObj = e.adverseDrugReactions!==null ? e.adverseDrugReactions : adrList
+          setAdrList([...adrListObj])
+          const inffectionObj = e.opportunisticInfections!==null ? e.opportunisticInfections : infectionList
+          setInfectionList([...inffectionObj])
+          const viralObj = e.viralLoadOrder!==null ? e.viralLoadOrder : testOrderList
+          setTestOrderList(viralObj)
+          const arvObj = e.arvdrugsRegimen!==null ? e.arvdrugsRegimen : arvDrugOrderList
+          setarvDrugOrderList([...arvObj])
 
       })
       .catch((error) => {
@@ -1248,216 +1254,145 @@ const ClinicVisit = (props) => {
                     </div>
               )}
               
-                        <Label as='a' color='grey' style={{width:'106%', height:'35px'}} ribbon>
-                        <h4 style={{color:'#fff'}}>CONSULTATION</h4>
-                        </Label>
-                        <br /><br />
+              <Label as='a' color='grey' style={{width:'106%', height:'35px'}} ribbon>
+              <h4 style={{color:'#fff'}}>CONSULTATION</h4>
+              </Label>
+              <br /><br />
 
-                        <div className=" mb-3">
-                        <FormLabelName >Clinical Notes</FormLabelName>
-                        <textarea
-                            name="clinicalNote"
-                            className="form-control"
-                            value={objValues.clinicalNote}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            disabled={!enableUpdate}
-                        ></textarea>
-                        {errors.clinicalNote !=="" ? (
-                                <span className={classes.error}>{errors.clinicalNote}</span>
-                            ) : "" }
-                        </div>
-                        <div className="row">
+              <div className=" mb-3">
+              <FormLabelName >Clinical Notes</FormLabelName>
+              <textarea
+                  name="clinicalNote"
+                  className="form-control"
+                  value={objValues.clinicalNote}
+                  onChange={handleInputChange}
+                  style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                  disabled={!enableUpdate}
+              ></textarea>
+              {errors.clinicalNote !=="" ? (
+                      <span className={classes.error}>{errors.clinicalNote}</span>
+                  ) : "" }
+              </div>
+              <div className="row">
 
-                        <div className=" mb-3 col-md-6">
-                            <FormGroup>
-                            <FormLabelName >WHO Staging *</FormLabelName>
-                            <Input
-                                type="select"
-                                name="whoStagingId"
-                                id="whoStagingId"
-                                value={objValues.whoStagingId}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={!enableUpdate}
-                                required
-                            >
-                                <option value="select">Select </option>
+              <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                  <FormLabelName >WHO Staging *</FormLabelName>
+                  <Input
+                      type="select"
+                      name="whoStagingId"
+                      id="whoStagingId"
+                      value={objValues.whoStagingId}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      disabled={!enableUpdate}
+                      required
+                  >
+                      <option value="select">Select </option>
 
-                                {clinicalStage.map((value) => (
-                                <option key={value.id} value={value.id}>
-                                    {value.display}
-                                </option>
-                                ))}
-                            </Input>
-                            {errors.whoStagingId !=="" ? (
-                                <span className={classes.error}>{errors.whoStagingId}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className=" mb-3 col-md-6">
-                            <FormGroup>
-                            <FormLabelName >Functional Status *</FormLabelName>
-                            <Input
-                                type="select"
-                                name="functionalStatusId"
-                                id="functionalStatusId"
-                                value={objValues.functionalStatusId}
-                                onChange={handleInputChange}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={!enableUpdate}
-                                required
-                            >
-                                <option value="select">Select </option>
+                      {clinicalStage.map((value) => (
+                      <option key={value.id} value={value.id}>
+                          {value.display}
+                      </option>
+                      ))}
+                  </Input>
+                  {errors.whoStagingId !=="" ? (
+                      <span className={classes.error}>{errors.whoStagingId}</span>
+                  ) : "" }
+                  </FormGroup>
+              </div>
+              <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                  <FormLabelName >Functional Status *</FormLabelName>
+                  <Input
+                      type="select"
+                      name="functionalStatusId"
+                      id="functionalStatusId"
+                      value={objValues.functionalStatusId}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      disabled={!enableUpdate}
+                      required
+                  >
+                      <option value="select">Select </option>
 
-                                {functionalStatus.map((value) => (
-                                <option key={value.id} value={value.id}>
-                                    {value.display}
-                                </option>
-                                ))}
-                            </Input>
-                            {errors.functionalStatusId !=="" ? (
-                                <span className={classes.error}>{errors.functionalStatusId}</span>
-                            ) : "" }
-                            </FormGroup>
-                        </div>
-                        
-                        <div className=" mb-3 col-md-6">
-                        <FormGroup>
-                          <FormLabelName >Level of Adherence *</FormLabelName>
-                          <Input
-                            type="select"
-                            name="levelOfAdherence"
-                            id="levelOfAdherence"
-                            value={objValues.levelOfAdherence}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                          >
-                            <option value="select">Select </option>
+                      {functionalStatus.map((value) => (
+                      <option key={value.id} value={value.id}>
+                          {value.display}
+                      </option>
+                      ))}
+                  </Input>
+                  {errors.functionalStatusId !=="" ? (
+                      <span className={classes.error}>{errors.functionalStatusId}</span>
+                  ) : "" }
+                  </FormGroup>
+              </div>
+              
+              <div className=" mb-3 col-md-6">
+              <FormGroup>
+                <FormLabelName >Level of Adherence *</FormLabelName>
+                <Input
+                  type="select"
+                  name="levelOfAdherence"
+                  id="levelOfAdherence"
+                  value={objValues.levelOfAdherence}
+                  onChange={handleInputChange}
+                  style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                  required
+                >
+                  <option value="select">Select </option>
 
-                            {adherenceLevel.map((value) => (
-                              <option key={value.id} value={value.id}>
-                                {value.display}
+                  {adherenceLevel.map((value) => (
+                    <option key={value.id} value={value.id}>
+                      {value.display}
+                    </option>
+                  ))}
+                </Input>
+                {errors.levelOfAdherence !=="" ? (
+                    <span className={classes.error}>{errors.levelOfAdherence}</span>
+                ) : "" }
+              </FormGroup>
+            </div>
+                <div className=" mb-3 col-md-6">
+                  <FormGroup>
+                    <FormLabelName >Cryptococcal Screening Status</FormLabelName>
+                    <Input
+                      type="select"
+                      name="cryptococcalScreeningStatus"
+                      id="cryptococcalScreeningStatus"
+                      value={objValues.cryptococcalScreeningStatus}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                      required
+                    >
+                      <option value="select">Select </option>
+
+                      {cryptococcal.map((value) => (
+                              <option key={value.code} value={value.code}>
+                                  {value.display}
                               </option>
-                            ))}
-                          </Input>
-                          {errors.levelOfAdherence !=="" ? (
-                              <span className={classes.error}>{errors.levelOfAdherence}</span>
-                          ) : "" }
-                        </FormGroup>
-                      </div>
-                    <div className=" mb-3 col-md-6">
-                      <FormGroup>
-                        <FormLabelName >Cryptococcal Screening Status</FormLabelName>
-                        <Input
-                          type="select"
-                          name="cryptococcalScreeningStatus"
-                          id="cryptococcalScreeningStatus"
-                          value={objValues.cryptococcalScreeningStatus}
-                          onChange={handleInputChange}
-                          style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                          required
-                        >
-                          <option value="select">Select </option>
-
-                          {cryptococcal.map((value) => (
-                                  <option key={value.code} value={value.code}>
-                                      {value.display}
-                                  </option>
-                              ))}
-                        </Input>
-                      
-                      </FormGroup>
-                    </div>
-                  {(patientObj.sex==='Female' || patientObj.sex==='FEMALE' || patientObj.sex==='female') && (
-                    <>
-                      <div className=" mb-3 col-md-6">
-                        <FormGroup>
-                          <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
-                          <Input
-                            type="select"
-                            name="cervicalCancerScreeningStatus"
-                            id="cervicalCancerScreeningStatus"
-                            value={objValues.cervicalCancerScreeningStatus}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                          >
-                            <option value="select">Select </option>
-
-                            {cervicalStatus.map((value) => (
-                                    <option key={value.code} value={value.code}>
-                                        {value.display}
-                                    </option>
-                                ))}
-                          </Input>
-                          
-                        </FormGroup>
-                      </div>
-                      <div className=" mb-3 col-md-6">
-                        <FormGroup>
-                          <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
-                          <Input
-                            type="select"
-                            name="cervicalCancerTreatmentProvided"
-                            id="cervicalCancerTreatmentProvided"
-                            value={objValues.cervicalCancerTreatmentProvided}
-                            onChange={handleInputChange}
-                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
-                          >
-                            <option value="select">Select </option>
-
-                            {cervicalTreatment.map((value) => (
-                                    <option key={value.code} value={value.code}>
-                                        {value.display}
-                                    </option>
-                                ))}
-                          </Input>
-                          
-                        </FormGroup>
-                      </div>
-                      <div className=" mb-3 col-md-6">
-                    <FormGroup>
-                      <FormLabelName >Pregnancy Status</FormLabelName>
-                      <Input
-                        type="select"
-                        name="pregnancyStatus"
-                        id="pregnancyStatus"
-                        value={objValues.pregnancyStatus}
-                        onChange={handleInputChange}
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
-                      >
-                        <option value="select">Select </option>
-
-                        {pregnancyStatus.map((value) => (
-                                <option key={value.code} value={value.code}>
-                                    {value.display}
-                                </option>
-                            ))}
-                      </Input>
-                    
-                    </FormGroup>
-                  </div>
-                    </>
-                  )}
+                          ))}
+                    </Input>
+                  
+                  </FormGroup>
+                </div>
+                {(patientObj.sex==='Female' || patientObj.sex==='FEMALE' || patientObj.sex==='female') && (
+                <>
                   <div className=" mb-3 col-md-6">
                     <FormGroup>
-                      <FormLabelName >Hepatitis Screening Result</FormLabelName>
+                      <FormLabelName >Cervical Cancer Screening Status</FormLabelName>
                       <Input
                         type="select"
-                        name="hepatitisScreeningResult"
-                        id="hepatitisScreeningResult"
-                        value={objValues.hepatitisScreeningResult}
+                        name="cervicalCancerScreeningStatus"
+                        id="cervicalCancerScreeningStatus"
+                        value={objValues.cervicalCancerScreeningStatus}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                         required
                       >
                         <option value="select">Select </option>
 
-                        {hepatitis.map((value) => (
+                        {cervicalStatus.map((value) => (
                                 <option key={value.code} value={value.code}>
                                     {value.display}
                                 </option>
@@ -1466,6 +1401,77 @@ const ClinicVisit = (props) => {
                       
                     </FormGroup>
                   </div>
+                  <div className=" mb-3 col-md-6">
+                    <FormGroup>
+                      <FormLabelName >Cervical Cancer Treatment Provided</FormLabelName>
+                      <Input
+                        type="select"
+                        name="cervicalCancerTreatmentProvided"
+                        id="cervicalCancerTreatmentProvided"
+                        value={objValues.cervicalCancerTreatmentProvided}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                        required
+                      >
+                        <option value="select">Select </option>
+
+                        {cervicalTreatment.map((value) => (
+                                <option key={value.code} value={value.code}>
+                                    {value.display}
+                                </option>
+                            ))}
+                      </Input>
+                      
+                    </FormGroup>
+                  </div>
+                  <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Pregnancy Status</FormLabelName>
+                  <Input
+                    type="select"
+                    name="pregnancyStatus"
+                    id="pregnancyStatus"
+                    value={objValues.pregnancyStatus}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {pregnancyStatus.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
+                  </Input>
+                
+                </FormGroup>
+              </div>
+                </>
+              )}
+              <div className=" mb-3 col-md-6">
+                <FormGroup>
+                  <FormLabelName >Hepatitis Screening Result</FormLabelName>
+                  <Input
+                    type="select"
+                    name="hepatitisScreeningResult"
+                    id="hepatitisScreeningResult"
+                    value={objValues.hepatitisScreeningResult}
+                    onChange={handleInputChange}
+                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    required
+                  >
+                    <option value="select">Select </option>
+
+                    {hepatitis.map((value) => (
+                            <option key={value.code} value={value.code}>
+                                {value.display}
+                            </option>
+                        ))}
+                  </Input>
+                  
+                </FormGroup>
+              </div>
               {/* This section is if the patient is Female */}
 
                 <div className=" mb-3 col-md-6">
