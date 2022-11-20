@@ -1,6 +1,7 @@
 package org.lamisplus.modules.hiv.repositories;
 
 import org.lamisplus.modules.hiv.domain.dto.BiometricRadetDto;
+import org.lamisplus.modules.hiv.domain.dto.BiometricReport;
 import org.lamisplus.modules.hiv.domain.dto.LabEacInfo;
 import org.lamisplus.modules.hiv.domain.dto.ViralLoadRadetDto;
 import org.lamisplus.modules.hiv.domain.entity.HIVEac;
@@ -62,4 +63,21 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"where person_uuid = ?1 and  enrollment_date BETWEEN\n" +
 			" ?2 and ?3 ", nativeQuery = true)
 	List<BiometricRadetDto> getPatientBiometricInfo(String  personUuid, LocalDate startDate, LocalDate endDate);
+	
+	@Query(value = "SELECT result.id, result.surname,\n" +
+			"result.hospital_number as hospitalNumber, result.date_of_birth as dob, result.age, result.name, result.sex,\n" +
+			"result.facility_id, result.address, count(b.person_uuid) as finger, b.enrollment_date as enrollment\n" +
+			"FROM (SELECT p.id, EXTRACT(YEAR from AGE(NOW(),  p.date_of_birth)) as age,\n" +
+			"      concat(p.surname ,' ', p.first_name) as name, p.hospital_number, p.date_of_birth, p.sex,\n" +
+			"      p.facility_id, p.surname, p.uuid, p.archived, " +
+			"     CONCAT(REPLACE(REPLACE(REPLACE(address_object->>'line', '\"', ''), ']', ''), '[', ''), ' ', address_object->>'city') as address" +
+			"      FROM patient_person p,\n" +
+			"jsonb_array_elements(p.address-> 'address') with ordinality l(address_object)) as result\n" +
+			"inner join biometric b on b.person_uuid = result.uuid  \n" +
+			"where result.facility_id = ?1 and result.archived = 0 and  \n" +
+			"b.enrollment_date between ?2 and ?3 GROUP by result.surname, b.enrollment_date,\n" +
+			"result.hospital_number, result.id, result.date_of_birth, result.age, result.name, result.sex,\n" +
+			"result.facility_id, result.address;", nativeQuery = true
+	 )
+	List<BiometricReport> getBiometricReports(Long  facilityId, LocalDate startDate, LocalDate endDate);
 }
