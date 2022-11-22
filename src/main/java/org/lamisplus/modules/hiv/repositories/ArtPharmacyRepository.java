@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> {
 	List<ArtPharmacy> getArtPharmaciesByVisitAndPerson(Visit visit, Person person);
@@ -27,20 +28,25 @@ public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> 
 			"and visit_date BETWEEN ?2 and ?3 ", nativeQuery = true)
 	Integer sumRefillPeriodsByPersonAndDateRange(String personUuid, LocalDate startDate, LocalDate endDate);
 	
-	@Query(value = "select \n" +
-			"p.person_uuid as uuid,\n" +
-			"p.visit_date as visitDate,\n" +
-			"p.next_appointment as nextAppointment,\n" +
-			"p.refill_period  as refillPeriod,\n" +
-			"p.dsd_model as dsdModels,\n" +
-			"p.mmd_type as mmdType,\n" +
-			"p.id,\n" +
-			"array_to_string(array_agg(DISTINCT r.regimens_id), ',', '*') AS regimenId\n" +
-			"from \n" +
-			"public.hiv_art_pharmacy p\n" +
-			"JOIN hiv_art_pharmacy_regimens r ON p.id = r.art_pharmacy_id\n" +
-			"where p.facility_id = ?1 and p.archived = 0\n" +
-			"GROUP BY p.id,  p.person_uuid",
+	@Query(value = "SELECT DISTINCT result2.facility_id as facilityId, oi.code as datimId, org.name as facilityName,\n" +
+			"p.id as patientId,p.hospital_number as hospitalNum, hrt.description as regimenLine,\n" +
+			"result2.mmd_type as mmdType, result2.next_appointment as nextAppointment , result2.dsd_model as dsdModel,\n" +
+			"result2.visit_date as dateVisit,  result.duration as refillPeriod, result.regimen_name as regimens\n" +
+			"FROM (SELECT h.id,\n" +
+			"      array_to_string(array_agg(pharmacy_object ->> 'duration'\\:\\:VARCHAR),',') AS duration,\n" +
+			"      array_to_string(array_agg(pharmacy_object ->> 'regimenName'\\:\\:VARCHAR),',') AS regimen_name\n" +
+			"      \n" +
+			"FROM hiv_art_pharmacy h,\n" +
+			"jsonb_array_elements(h.extra->'regimens') with ordinality p(pharmacy_object)\n" +
+			"     GROUP BY id) as result\n" +
+			"     INNER JOIN (SELECT * FROM hiv_art_pharmacy h) as result2 ON result2.id=result.id\n" +
+			"     INNER JOIN patient_person p ON p.uuid=result2.person_uuid\n" +
+			"     INNER JOIN base_organisation_unit org ON org.id=result2.facility_id\n" +
+			"     INNER JOIN base_organisation_unit_identifier oi ON oi.organisation_unit_id=result2.facility_id\n" +
+			"     INNER JOIN hiv_art_pharmacy_regimens hap ON hap.art_pharmacy_id=result2.id\n" +
+			"     INNER JOIN hiv_regimen hr ON hr.id=hap.regimens_id\n" +
+			"     INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id\n" +
+			"     WHERE hrt.id IN (1,2,3,4,14) ",
 			nativeQuery = true)
 	List<PharmacyReport> getArtPharmacyReport(Long facilityId);
 	
