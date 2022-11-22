@@ -26,7 +26,8 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class DomainConfiguration {
 
-    private final DataSource dataSource;
+    private final DataSource
+            dataSource;
 
     @PersistenceUnit
     private  final EntityManagerFactory entityManagerFactory;
