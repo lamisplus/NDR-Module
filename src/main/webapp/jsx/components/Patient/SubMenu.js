@@ -139,7 +139,7 @@ function SubMenu(props) {
                     active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
                     active={activeItem === 'art'}>Art Commencement</Menu.Item>)}
-                    { patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
+                    { (patientObj.enrollment.targetGroupId!==null && patientObj.enrollment.targetGroupId!=="" ) && patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
@@ -171,7 +171,7 @@ function SubMenu(props) {
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} name='status'
                     active={activeItem === 'status'}>Client Status Update</Menu.Item> */}
                     {/* {patientObj.currentStatus && patientObj.currentStatus==='IIT' && (<Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>)} */}
-                    {(!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==473)) && patientObj.createBy==="Lamis data migration system" && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
+                    {(!patientObj.mentalHealth  && (patientObj.enrollment.targetGroupId!==null && patientObj.enrollment.targetGroupId!==473)) && patientObj.createBy==="Lamis data migration system" && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                    
                     {(props.patientObj.sex==='Female' || props.patientObj.sex==='FEMALE' || props.patientObj.sex==='female') ? 
