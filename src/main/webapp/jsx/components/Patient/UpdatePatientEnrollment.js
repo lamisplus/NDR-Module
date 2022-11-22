@@ -837,7 +837,7 @@ const UserRegistration = (props) => {
                                 
                                 </div>
                                 <div className="form-group mb-3 col-md-6">
-                                {transferIn===true ? 
+                                {objValues.entryPointId==="21" ? 
                                     (
                                         <FormGroup>
                                         <Label >Facility Name</Label>
