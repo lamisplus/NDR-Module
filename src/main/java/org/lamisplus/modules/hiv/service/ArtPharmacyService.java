@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.controller.apierror.IllegalTypeException;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
+import org.lamisplus.modules.hiv.domain.dto.PharmacyReport;
 import org.lamisplus.modules.hiv.domain.dto.RegimenRequestDto;
 import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
@@ -227,6 +228,10 @@ public class ArtPharmacyService {
 		statusTracker.setVisitId(dto.getVisitId());
 		statusTracker.setPersonId(dto.getPersonId());
 		hIVStatusTrackerService.registerHIVStatusTracker(statusTracker);
+	}
+	
+	public List<PharmacyReport> getReport(Long facilityId){
+		return  artPharmacyRepository.getArtPharmacyReport(facilityId);
 	}
 	
 	
