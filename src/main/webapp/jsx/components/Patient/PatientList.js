@@ -179,134 +179,133 @@ const Patients = (props) => {
                 { title: "Actions", field: "actions", filtering: false }, 
               ]}
 
-                data={query =>
-                    new Promise((resolve, reject) =>
-                        axios.get(`${baseUrl}hiv/patients?pageSize=${query.pageSize}&pageNo=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
-                            .then(response => response)
-                            .then(result => {
-                                
-                                resolve({
-                                    data: result.data.records.map((row) => ({
-                                    name:row.currentStatus!== "Not Enrolled" ?
-                                        (
+            data={query =>
+                new Promise((resolve, reject) =>
+                    axios.get(`${baseUrl}hiv/patients?pageSize=${query.pageSize}&pageNo=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
+                        .then(response => response)
+                        .then(result => {
+                            
+                            resolve({
+                                data: result.data.records.map((row) => ({
+                                name:row.currentStatus!== "Not Enrolled" ?
+                                    (
+                                    <>
+                                        <Link
+                                        to ={{
+                                            pathname: "/patient-history",
+                                            state: { patientObj: row  }
+                                        }}
+
+                                        title={"Click to view patient dashboard"}
+                                        > {row.firstName + " " + row.surname}
+                                        </Link>
+                                        </>
+                                    ):
+                                    (
                                         <>
-                                            <Link
-                                            to ={{
-                                                pathname: "/patient-history",
-                                                state: { patientObj: row  }
+                                        <Link
+                                            to={{
+                                                pathname: "/enroll-patient",
+                                                state: { patientId : row.id, patientObj: row }
                                             }}
-
-                                            title={"Click to view patient dashboard"}
-                                            > {row.firstName + " " + row.surname}
-                                            </Link>
-                                            </>
-                                        ):
-                                        (
-                                            <>
-                                            <Link
-                                                to={{
-                                                    pathname: "/enroll-patient",
-                                                    state: { patientId : row.id, patientObj: row }
-                                                }}
-                
-                                            title={"Enroll Patient"}
-                                            > {row.firstName + " " + row.surname}
-                                            </Link>
-                                            </>
-                                        ),
-                                    hospital_number: getHospitalNumber(row.identifier),
-                                    gender:row && row.sex ? row.sex : "",
-                                    age: (row.dateOfBirth === 0 ||
-                                        row.dateOfBirth === undefined ||
-                                        row.dateOfBirth === null ||
-                                        row.dateOfBirth === "" )
-                                        ? 0
-                                        : calculate_age(moment(row.dateOfBirth).format("DD-MM-YYYY")),
-                                    
-                                    status: (<Label color="blue" size="mini">{row.currentStatus}</Label>),
+            
+                                        title={"Enroll Patient"}
+                                        > {row.firstName + " " + row.surname}
+                                        </Link>
+                                        </>
+                                    ),
+                                hospital_number: getHospitalNumber(row.identifier),
+                                gender:row && row.sex ? row.sex : "",
+                                age: (row.dateOfBirth === 0 ||
+                                    row.dateOfBirth === undefined ||
+                                    row.dateOfBirth === null ||
+                                    row.dateOfBirth === "" )
+                                    ? 0
+                                    : calculate_age(moment(row.dateOfBirth).format("DD-MM-YYYY")),
                                 
-                                    actions:
+                                status: (<Label color="blue" size="mini">{row.currentStatus}</Label>),
                             
-                                    <div>
+                                actions:
+                        
+                                <div>
 
-                                                {row.currentStatus!== "Not Enrolled" ?
-                                                    (
-                                                        <>
-                                                            <Link
-                                                                to={{
-                                                                    pathname: "/patient-history",
-                                                                    state: { patientObj: row  }
-                                                                }}
+                                            {row.currentStatus!== "Not Enrolled" ?
+                                                (
+                                                    <>
+                                                        <Link
+                                                            to={{
+                                                                pathname: "/patient-history",
+                                                                state: { patientObj: row  }
+                                                            }}
+                                                        >
+                                                            <ButtonGroup variant="contained" 
+                                                                aria-label="split button"
+                                                                style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
+                                                                size="large"
                                                             >
-                                                                <ButtonGroup variant="contained" 
-                                                                    aria-label="split button"
-                                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
-                                                                    size="large"
-                                                                >
-                                                                <Button
-                                                                color="primary"
-                                                                size="small"
-                                                                aria-label="select merge strategy"
-                                                                aria-haspopup="menu"
-                                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
-                                                                >
-                                                                    <MdDashboard />
-                                                                </Button>
-                                                                <Button 
-                                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
-                                                                >
-                                                                    <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Patient Dashboard</span>
-                                                                </Button>
-                                                                
-                                                                </ButtonGroup>
-                                                            </Link>
-                                                        </>
-                                                    )
-                                                    :
-                                                    (
-                                                        <>
-                                                            <Link
-                                                                to={{
-                                                                    pathname: "/enroll-patient",
-                                                                    state: { patientId : row.id, patientObj: row }
-                                                                }}
+                                                            <Button
+                                                            color="primary"
+                                                            size="small"
+                                                            aria-label="select merge strategy"
+                                                            aria-haspopup="menu"
+                                                            style={{backgroundColor:'rgb(153, 46, 98)'}}
                                                             >
-                                                                <ButtonGroup variant="contained" 
-                                                                    aria-label="split button"
-                                                                    style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
-                                                                    size="large"
-                                                                >
-                                                                <Button
-                                                                color="primary"
-                                                                size="small"
-                                                                aria-label="select merge strategy"
-                                                                aria-haspopup="menu"
-                                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
-                                                                >
-                                                                    <TiArrowForward />
-                                                                </Button>
-                                                                <Button 
-                                                                style={{backgroundColor:'rgb(153, 46, 98)'}}
-                                                                >
-                                                                    <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Enroll Patient</span>
-                                                                </Button>
-                                                                
-                                                                </ButtonGroup>
-                                                            </Link>
-                                                        </>
-                                                    )
+                                                                <MdDashboard />
+                                                            </Button>
+                                                            <Button 
+                                                            style={{backgroundColor:'rgb(153, 46, 98)'}}
+                                                            >
+                                                                <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Patient Dashboard</span>
+                                                            </Button>
+                                                            
+                                                            </ButtonGroup>
+                                                        </Link>
+                                                    </>
+                                                )
+                                                :
+                                                (
+                                                    <>
+                                                        <Link
+                                                            to={{
+                                                                pathname: "/enroll-patient",
+                                                                state: { patientId : row.id, patientObj: row }
+                                                            }}
+                                                        >
+                                                            <ButtonGroup variant="contained" 
+                                                                aria-label="split button"
+                                                                style={{backgroundColor:'rgb(153, 46, 98)', height:'30px',width:'215px'}}
+                                                                size="large"
+                                                            >
+                                                            <Button
+                                                            color="primary"
+                                                            size="small"
+                                                            aria-label="select merge strategy"
+                                                            aria-haspopup="menu"
+                                                            style={{backgroundColor:'rgb(153, 46, 98)'}}
+                                                            >
+                                                                <TiArrowForward />
+                                                            </Button>
+                                                            <Button 
+                                                            style={{backgroundColor:'rgb(153, 46, 98)'}}
+                                                            >
+                                                                <span style={{fontSize:'12px', color:'#fff', fontWeight:'bolder'}}>Enroll Patient</span>
+                                                            </Button>
+                                                            
+                                                            </ButtonGroup>
+                                                        </Link>
+                                                    </>
+                                                )
 
-                                                }
-                                </div>
-                                        })),
-                                    page: query.page,
-                                    totalCount: result.data.totalRecords,
-                                    
-                                })
+                                            }
+                            </div>
+                                    })),
+                                page: query.page,
+                                totalCount: result.data.totalRecords,
+                                
                             })
-                            
-                    )}
-    
+                        })
+                        
+                )}
                 options={{
                     search: true,
                     headerStyle: {

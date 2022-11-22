@@ -732,31 +732,6 @@ const UserRegistration = (props) => {
     }
     const handleSubmit = async (e) => {
         e.preventDefault(); 
-        const getSexId=  genders.find((x)=> x.display===basicInfo.sexId)//get patient sex ID by filtering the request
-        basicInfo.sexId=getSexId && getSexId.id ? getSexId.id : ""
-        let newConatctsInfo=[]
-            //Manipulate relatives contact  address:"",
-            const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
-                
-                const contactInfo = { 
-                address: {
-                    line: [
-                        x.address
-                    ],
-                },
-                contactPoint: {
-                    type: "phone",
-                    value: x.phone
-                },
-                firstName: x.firstName,
-                fullName: x.firstName + " " + x.middleName + " " + x.lastName,
-                relationshipId: x.relationshipId,
-                surname: x.lastName,
-                otherName: x.middleName
-            }
-            
-            newConatctsInfo.push(contactInfo)
-            })
          if(validate()){
             try {
 
