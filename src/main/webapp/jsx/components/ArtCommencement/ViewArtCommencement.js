@@ -126,8 +126,8 @@ const ArtCommencement = (props) => {
                                                 hivEnrollmentId: "",
                                                 vitalSignDto:"",
                                                 facilityId:1,
-                                                regimenTypeId: 0,
-                                                regimenId:0,
+                                                regimenTypeId: "",
+                                                regimenId:"",
                                                 viralLoadAtStartOfArt:"",
                                                 isViralLoadAtStartOfArt :null,
                                                 dateOfViralLoadAtStartOfArt: null,
@@ -227,7 +227,7 @@ const ArtCommencement = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => { 
-                console.log(response.data)           
+              console.log(response.data);     
                 setObjValues(response.data)
                 if(response.data.isViralLoadAtStartOfArt===true){
                     setViraLoadStart(true)
@@ -240,6 +240,7 @@ const ArtCommencement = (props) => {
            });
        
         }
+        console.log(objValues.regimenId);
       //Get list of WhoStaging
       const WhoStaging =()=>{
         axios
@@ -247,7 +248,7 @@ const ArtCommencement = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => {
-               //console.log(response.data);
+               console.log(response.data);
                setClinicalStage(response.data);
            })
            .catch((error) => {
@@ -528,7 +529,7 @@ const ArtCommencement = (props) => {
             }
             
         }
- console.log(patientAge)       
+ console.log(adultRegimenLine)       
 
   return (      
       <div >
@@ -654,7 +655,7 @@ const ArtCommencement = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen Line  </Label>
+                        <Label >Original Regimen Line  {objValues.regimenId}</Label>
                         <Input
                                 type="select"
                                 name="regimenId"
@@ -781,7 +782,7 @@ const ArtCommencement = (props) => {
                                 type="select"
                                 name="whoStagingId"
                                 id="whoStagingId"
-                                value={objValues.whoStagingId}
+                                value={objValues.clinicalStageId!==null ? objValues.clinicalStageId :  objValues.whoStagingId}
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}

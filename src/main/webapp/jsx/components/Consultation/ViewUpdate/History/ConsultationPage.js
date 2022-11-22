@@ -1282,7 +1282,7 @@ const ClinicVisit = (props) => {
                       type="select"
                       name="whoStagingId"
                       id="whoStagingId"
-                      value={objValues.whoStagingId}
+                      value={objValues.clinicalStageId!==null ? objValues.clinicalStageId :  objValues.whoStagingId}
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                       disabled={!enableUpdate}
