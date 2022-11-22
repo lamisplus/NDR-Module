@@ -1132,7 +1132,7 @@ const ClinicVisit = (props) => {
                     </div>
               </div>
               <div className="row">
-              <div className="form-group mb-3 col-md-8">
+              <div className="form-group mb-3 col-md-12">
                   <FormGroup>
                   <FormLabelName >Blood Pressure *</FormLabelName>
                   <InputGroup>

@@ -299,15 +299,7 @@ function PatientCard(props) {
                           )
                           :
                           <>
-                              {/* <div >
-                                  <Typography variant="caption">
-                                      <Label color={"red"} size={"mini"}>
-                                          Biometric Not Installed
-                                          
-                                      </Label>
-                                    
-                                  </Typography>
-                              </div> */}
+                              
                           </>
                       }
                     </Col>

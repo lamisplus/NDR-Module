@@ -592,7 +592,7 @@ const Laboratory = (props) => {
                                 onChange={handleInputChange}
                                 min={tests.dateOrderBy!==null && tests.dateOrderBy!==''? moment(tests.dateOrderBy).format("YYYY-MM-DD HH:MM:SS") :moment(enrollDate).format("YYYY-MM-DD HH:MM:SS")}
                                 //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
@@ -673,7 +673,7 @@ const Laboratory = (props) => {
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
                                         min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD")}
-                                        max= {moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />
@@ -843,10 +843,10 @@ const Laboratory = (props) => {
                                 name="dateReceivedAtPcrLab"
                                 id="dateReceivedAtPcrLab"
                                 value={tests.dateReceivedAtPcrLab}
-                                min={tests.dateReceivedAtPcrLab}
+                                min={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
                                 //min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD") }
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
