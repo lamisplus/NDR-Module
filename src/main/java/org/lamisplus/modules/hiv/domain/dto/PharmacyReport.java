@@ -9,17 +9,27 @@ import java.time.LocalDate;
 
 public interface PharmacyReport {
 	Long getFacilityId();
+	
 	String getDatimId();
+	
 	String getFacilityName();
-	Long getPatientId();
+	
+	String getPatientId();
 	
 	String getHospitalNum();
+	
 	String getRegimenLine();
+	
 	String getMmdType();
+	
 	LocalDate getDateVisit();
+	
 	LocalDate getNextAppointment();
+	
 	String getDsdModel();
+	
 	String getRefillPeriod();
+	
 	String getRegimens();
 	
 }

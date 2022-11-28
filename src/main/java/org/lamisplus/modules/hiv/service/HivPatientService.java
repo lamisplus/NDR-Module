@@ -84,14 +84,15 @@ public class HivPatientService {
 //    }
     
     public PageDTO getHivPatientsPage(String searchValue, Pageable pageable) {
-        if(searchValue != null && !searchValue.isEmpty()) {
-            Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
+        Long facilityId = null;
+        if (searchValue != null && !searchValue.isEmpty()) {
+            facilityId = currentUserOrganizationService.getCurrentUserOrganization();
             Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
-            Log.info("patient size {}",persons.getContent().size());
-           List<HivPatientDto> content = getNonIitPersons(persons);
-            return getPageDto(persons,content);
+            Log.info("patient size {}", persons.getContent().size());
+            List<HivPatientDto> content = getNonIitPersons(persons);
+            return getPageDto(persons, content);
         }
-        Page<Person> persons  =  personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
+        Page<Person> persons = personRepository.getAllByArchivedAndFacilityIdOrderByIdDesc(0, facilityId, pageable);
         List<HivPatientDto> content = getNonIitPersons(persons);
         return getPageDto(persons, content);
     }
@@ -118,8 +119,8 @@ public class HivPatientService {
     }
     
     public  PageDTO  getIITHivPatients(String searchValue, Pageable pageable) {
+        Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
         if(searchValue != null && !searchValue.isEmpty()) {
-            Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
             Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
             List<HivPatientDto> content = getPersonIit(persons);
             return PageDTO.builder()
@@ -130,7 +131,7 @@ public class HivPatientService {
                     .records(content)
                     .build();
         }
-        Page<Person> persons = personRepository.getAllByArchivedOrderByIdDesc(0, pageable);
+        Page<Person> persons = personRepository.getAllByArchivedAndFacilityIdOrderByIdDesc(0, facilityId, pageable);
         List<HivPatientDto> content = getPersonIit(persons);
         return PageDTO.builder()
                 .pageNumber(persons.getNumber())
