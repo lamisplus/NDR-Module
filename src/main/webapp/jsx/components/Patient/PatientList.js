@@ -333,6 +333,7 @@ const Patients = (props) => {
                             name="showPP!"
                             id="showPP"
                             value="showPP"
+                            checked={showPPI}
                             onChange={handleCheckBox}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             />
@@ -340,7 +341,7 @@ const Patients = (props) => {
                             className="form-check-label"
                             htmlFor="basic_checkbox_1"
                             >
-                            <b style={{color:'#014d88',fontWeight:'bold'}}>SHOW PII</b>
+                            <b style={{color:'#014d88',fontWeight:'bold'}}>HIDE PII</b>
                             </label>
                         </div>
                         <MTableToolbar {...props} />
