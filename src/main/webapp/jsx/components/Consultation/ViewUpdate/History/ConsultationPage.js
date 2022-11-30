@@ -656,7 +656,7 @@ const ClinicVisit = (props) => {
       objValues.visitDate === "" && (temp.encounterDate = vital.encounterDate ? "" : "This field is required" )//objValues.visitDate
       temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
       temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-      //temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
+      temp.tbStatus = objValues.tbStatus ? "" : "This field is required"
       temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
       temp.levelOfAdherence = objValues.levelOfAdherence ? "" : "This field is required"
       temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
@@ -1382,6 +1382,31 @@ const ClinicVisit = (props) => {
                     </Input>
                   
                   </FormGroup>
+                </div>
+                <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <FormLabelName >TB Status * </FormLabelName>
+                    <Input
+                        type="select"
+                        name="tbStatus"
+                        id="tbStatus"
+                        value={objValues.tbStatus}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                        required
+                        >
+                        <option value=""> Select</option>
+                            {tbStatus.map((value) => (
+                                <option key={value.id} value={value.id}>
+                                    {value.display}
+                                </option>
+                            ))}
+
+                    </Input>
+                    {errors.tbStatus !=="" ? (
+                        <span className={classes.error}>{errors.tbStatus}</span>
+                        ) : "" }
+                    </FormGroup>
                 </div>
                 {(patientObj.sex==='Female' || patientObj.sex==='FEMALE' || patientObj.sex==='female') && (
                 <>

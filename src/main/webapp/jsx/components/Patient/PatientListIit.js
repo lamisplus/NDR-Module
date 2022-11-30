@@ -107,7 +107,7 @@ const useStyles = makeStyles(theme => ({
 
 const Patients = (props) => {    
     const [patientList, setPatientList] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [showPPI, setShowPPI] = useState(false)
     useEffect(() => {
         patients()
@@ -331,6 +331,7 @@ const Patients = (props) => {
                         className="form-check-input"                       
                         name="showPP!"
                         id="showPP"
+                        checked={showPPI}
                         value="showPP"
                         onChange={handleCheckBox}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -339,7 +340,7 @@ const Patients = (props) => {
                         className="form-check-label"
                         htmlFor="basic_checkbox_1"
                         >
-                        <b style={{color:'#014d88',fontWeight:'bold'}}>SHOW PII</b>
+                        <b style={{color:'#014d88',fontWeight:'bold'}}>HIDE PII</b>
                         </label>
                     </div>
                     <MTableToolbar {...props} />

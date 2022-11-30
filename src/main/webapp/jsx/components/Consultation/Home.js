@@ -455,7 +455,6 @@ const ClinicVisit = (props) => {
       });
         
     }
-  console.log(labTestOptions)
   //GET LIST Drug Refill
   async function ClinicVisitList() {
     setLoading(true)
@@ -775,7 +774,7 @@ const ClinicVisit = (props) => {
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
     temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
     temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-    //temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
+    temp.tbStatus = objValues.tbStatus ? "" : "This field is required"
     temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
     //temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
     temp.diastolic = vital.diastolic ? "" : "This field is required"
@@ -1509,7 +1508,31 @@ const ClinicVisit = (props) => {
                  
                 </FormGroup>
               </div>
-              
+              <div className="form-group mb-3 col-md-6">
+                  <FormGroup>
+                  <FormLabelName >TB Status * </FormLabelName>
+                  <Input
+                      type="select"
+                      name="tbStatus"
+                      id="tbStatus"
+                      value={objValues.tbStatus}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                      required
+                      >
+                      <option value=""> Select</option>
+                          {tbStatus.map((value) => (
+                              <option key={value.id} value={value.id}>
+                                  {value.display}
+                              </option>
+                          ))}
+
+                  </Input>
+                  {errors.tbStatus !=="" ? (
+                      <span className={classes.error}>{errors.tbStatus}</span>
+                      ) : "" }
+                  </FormGroup>
+              </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Hepatitis Screening Result</FormLabelName>
@@ -1933,6 +1956,14 @@ const ClinicVisit = (props) => {
             <br/>
             {/* END Viral Load  Form */}
             <br />
+         
+            {/* <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
+              TB Screening
+            </Label>
+            <br /><br /> */}
+            {/* TB Screening Form */}
+            {/* <TBScreening tbObj={tbObj} setTbObj={setTbObj} />
+            <br /> */}
             <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE </h4>
             </Label>
