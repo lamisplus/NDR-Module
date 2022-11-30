@@ -216,6 +216,7 @@ const ClinicVisit = (props) => {
     arvdrugsRegimen: {},
     viralLoadOrder: {},
     tbPrevention:"",
+    pregnancyStatus:""
 
   });
   const [vital, setVitalSignDto] = useState({
@@ -264,11 +265,18 @@ const ClinicVisit = (props) => {
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
-    // if(Object.keys(objValues.viralLoadOrder).length){
-    //   setTestOrderList([objValues.viralLoadOrder])
-    // } 
+    if(objValues.adherenceLevel!==null && objValues.adherenceLevel==='Good'){
+      objValues.levelOfAdherence = 354
+      console.log("am here")
+    }else if(objValues.adherenceLevel!==null && objValues.adherenceLevel==='Fair'){
+      objValues.levelOfAdherence = 355
+    }else if(objValues.adherenceLevel!==null && objValues.adherenceLevel==='Poor'){
+      objValues.levelOfAdherence = 356
+    }else{
+      objValues.levelOfAdherence = objValues.levelOfAdherence
+    }
 
-  }, [patientObj.id, props.activeContent.id]);// objValues.viralLoadOrder
+  }, [patientObj.id, props.activeContent.id, objValues.adherenceLevel]);// objValues.viralLoadOrder
   const calculate_age = dob => {
     var today = new Date();
     var dateParts = dob.split("-");
@@ -509,6 +517,7 @@ const ClinicVisit = (props) => {
           { headers: { "Authorization": `Bearer ${token}` } }
         )
         .then((response) => {
+          console.log(response.data)
           setAdherenceLevel(response.data);
 
         })
@@ -834,14 +843,12 @@ const ClinicVisit = (props) => {
       )
       .then((response) => {
           const e = response.data
-          console.log(e)
           setObjValues(e)
           setVitalSignDto({ ...vital, ...e.vitalSignDto })
           objValues.clinicalNote = e.clinicalNote
           objValues.functionalStatusId= e.functionalStatusId
           objValues.whoStagingId= e.whoStagingId 
           objValues.nextAppointment= e.nextAppointment
-          objValues.adherenceLevel = e.adherenceLevel
           vital.captureDate=e.visitDate
           objValues.visitDate=e.visitDate
           //setObjValues(e)
@@ -855,13 +862,13 @@ const ClinicVisit = (props) => {
           setTestOrderList(viralObj)
           const arvObj = e.arvdrugsRegimen!==null ? e.arvdrugsRegimen : arvDrugOrderList
           setarvDrugOrderList([...arvObj])
+         
 
       })
       .catch((error) => {
       });
     }
   }
- 
   function BmiCal (bmi){
     if(bmi<18.5){
       return (
@@ -887,6 +894,7 @@ const ClinicVisit = (props) => {
     }
     
   }
+
 
   return (
     <div className={classes.root}>
@@ -1044,7 +1052,6 @@ const ClinicVisit = (props) => {
                         ) : "" }
                         </FormGroup>
                     </div>
-                   
                     <div className=" mb-3 col-md-5">
                         <FormGroup>
                         <FormLabelName >Body Weight *</FormLabelName>

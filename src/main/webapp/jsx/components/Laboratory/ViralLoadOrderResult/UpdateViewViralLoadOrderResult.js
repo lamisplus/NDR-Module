@@ -316,6 +316,8 @@ const Laboratory = (props) => {
             setShowObj({...showObj, isPcr:false})
         }
     }
+
+    console.log(tests.dateResultReceived)
   
   return (      
       <div >
@@ -573,10 +575,10 @@ const Laboratory = (props) => {
                                         name="dateResultReceived"
                                         id="dateResultReceived"
                                         value={tests.dateResultReceived}
-                                        min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD")}
+                                        min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")}
                                         onChange={handleInputChange}
                                         //min={tests.sampleCollectionDate}
-                                        max= {moment(new Date()).format("YYYY-MM-DD") }
+                                        max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                         required
                                     />

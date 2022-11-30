@@ -655,7 +655,7 @@ const ArtCommencement = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen Line  {objValues.regimenId}</Label>
+                        <Label >Original Regimen Line - {objValues.regimenId}</Label>
                         <Input
                                 type="select"
                                 name="regimenId"
@@ -694,7 +694,7 @@ const ArtCommencement = (props) => {
                         
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen</Label>
+                        <Label >Original Regimen - {objValues.regimenTypeId}</Label>
                         <Input
                                 type="select"
                                 name="regimenTypeId"
