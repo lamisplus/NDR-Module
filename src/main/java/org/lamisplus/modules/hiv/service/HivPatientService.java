@@ -84,9 +84,8 @@ public class HivPatientService {
 //    }
     
     public PageDTO getHivPatientsPage(String searchValue, Pageable pageable) {
-        Long facilityId = null;
+        Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
         if (searchValue != null && !searchValue.isEmpty()) {
-            facilityId = currentUserOrganizationService.getCurrentUserOrganization();
             Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
             Log.info("patient size {}", persons.getContent().size());
             List<HivPatientDto> content = getNonIitPersons(persons);
