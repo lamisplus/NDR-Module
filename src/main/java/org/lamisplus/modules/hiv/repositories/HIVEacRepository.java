@@ -253,6 +253,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"e.dateOfRegistration,\n" +
 			"p.dateOfNextRefill,\n" +
 			"p.lastRefillDuration,\n" +
+			"p.dateOfLastRefill,\n" +
 			"p.DSDType,\n" +
 			"p.currentRegimen,\n" +
 			"p.currentRegimenLine,\n" +
