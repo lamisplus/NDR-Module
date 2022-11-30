@@ -2,7 +2,6 @@ package org.lamisplus.modules.hiv.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.hiv.domain.dto.PharmacyReport;
 import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
@@ -12,10 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
+
 
 @Slf4j
 @RestController
@@ -61,11 +59,6 @@ public class ArtPharmacyController {
         return new ResponseEntity<> (list, new HttpHeaders (), HttpStatus.OK);
     }
     
-    @GetMapping(value = "/report", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PharmacyReport>> getReport() {
-        List<PharmacyReport> list = artPharmacyService.getReport(1399L);
-        System.out.println("size: "+ list.size());
-        return new ResponseEntity<> (list, new HttpHeaders (), HttpStatus.OK);
-    }
+
 
 }

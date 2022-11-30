@@ -28,8 +28,8 @@ public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> 
 			"and visit_date BETWEEN ?2 and ?3 ", nativeQuery = true)
 	Integer sumRefillPeriodsByPersonAndDateRange(String personUuid, LocalDate startDate, LocalDate endDate);
 	
-	@Query(value = "SELECT DISTINCT result.facility_id as facilityId, oi.code as datimId, org.name as facilityName,\n" +
-			"p.id as patientId,p.hospital_number as hospitalNum, hrt.description as regimenLine,\n" +
+	@Query(value = "SELECT DISTINCT result.id, result.facility_id as facilityId, oi.code as datimId, org.name as facilityName,\n" +
+			"p.uuid as patientId,p.hospital_number as hospitalNum, hrt.description as regimenLine,\n" +
 			"result.mmd_type as mmdType, result.next_appointment as nextAppointment , result.dsd_model as dsdModel,\n" +
 			"result.visit_date as dateVisit,  result.duration as refillPeriod, result.regimen_name as regimens\n" +
 			"FROM (SELECT h.*,pharmacy_object ->> 'duration' AS duration,\n" +
@@ -40,10 +40,10 @@ public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> 
 			"     INNER JOIN patient_person p ON p.uuid=result.person_uuid\n" +
 			"     INNER JOIN base_organisation_unit org ON org.id=result.facility_id\n" +
 			"     INNER JOIN base_organisation_unit_identifier oi ON oi.organisation_unit_id=result.facility_id\n" +
-			"     INNER JOIN hiv_art_pharmacy_regimens hap ON hap.art_pharmacy_id=result.id\n" +
-			"     INNER JOIN hiv_regimen hr ON hr.id=hap.regimens_id\n" +
+			"     \n" +
+			"     INNER JOIN hiv_regimen hr ON hr.description=result.regimen_name\n" +
 			"     INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id\n" +
-			"     WHERE hrt.id IN (1,2,3,4,14) and result.facility_id = ?1",
+			"     WHERE  result.facility_id = ?1 order by p.uuid, result.visit_date ASC;",
 			nativeQuery = true)
 	List<PharmacyReport> getArtPharmacyReport(Long facilityId);
 	
