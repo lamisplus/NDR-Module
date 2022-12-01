@@ -656,13 +656,21 @@ const ClinicVisit = (props) => {
       objValues.visitDate === "" && (temp.encounterDate = vital.encounterDate ? "" : "This field is required" )//objValues.visitDate
       temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
       temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-      temp.tbStatus = objValues.tbStatus ? "" : "This field is required"
+      //temp.tbStatus = objValues.tbStatus ? "" : "This field is required"
       temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
       temp.levelOfAdherence = objValues.levelOfAdherence ? "" : "This field is required"
       temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
       temp.systolic = vital.systolic ? "" : "This field is required"
       temp.height = vital.height ? "" : "This field is required"
       temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+      //TB VALIDATION 
+      temp.tbStatusId = tbObj.tbStatusId ? "" : "This field is required"
+      temp.antiTBDrug = tbObj.antiTBDrug ? "" : "This field is required"
+      tbObj.currentOnIpt==='NO' && (temp.fever = tbObj.fever ? "" : "This field is required")
+      tbObj.currentOnIpt==='NO' && (temp.nightSweat = tbObj.nightSweat ? "" : "This field is required")
+      tbObj.currentOnIpt==='NO' && (temp.lethergy = tbObj.lethergy ? "" : "This field is required")
+      tbObj.currentOnIpt==='NO' && (temp.coughing = tbObj.coughing ? "" : "This field is required")
+      tbObj.currentOnIpt==='NO' && (temp.contactWithTBCase = tbObj.contactWithTBCase ? "" : "This field is required")
       setErrors({
           ...temp
       })
@@ -758,23 +766,7 @@ const ClinicVisit = (props) => {
     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
     setTests ({...tests,  [e.target.name]: e.target.value});       
     }
-    const  heightFunction =(e)=>{
-      if(e==='cm'){
-          setHeightValue('cm')
-          if(vital.height!==""){
-              const newHeightValue= (vital.height * 100)
-              setVitalSignDto ({...vital,  height: newHeightValue});
-          }
-      }else if(e==='m'){
-          setHeightValue('m')
-          if(vital.height!==""){
-              const newHeightValue= (vital.height/100)
-              setVitalSignDto ({...vital,  height: newHeightValue});
-          }
-          
-      }
 
-    }
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -792,6 +784,7 @@ const ClinicVisit = (props) => {
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
+    objValues.tbStatus = tbObj.tbStatusId
     objValues.viralLoadOrder= testOrderList
     objValues.arvdrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
@@ -862,6 +855,7 @@ const ClinicVisit = (props) => {
           setTestOrderList(viralObj)
           const arvObj = e.arvdrugsRegimen!==null ? e.arvdrugsRegimen : arvDrugOrderList
           setarvDrugOrderList([...arvObj])
+          tbObj.tbStatusId=objValues.tbStatus
          
 
       })
@@ -1854,6 +1848,13 @@ const ClinicVisit = (props) => {
                         <br/>
                         {/* END Viral Load  Form */}
                         <br />
+                        <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
+                            TB Screening
+                          </Label>
+                          <br />
+                          {/* TB Screening Form */}
+                          <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
+                          <br/>
                         <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE</h4>
                         </Label>
