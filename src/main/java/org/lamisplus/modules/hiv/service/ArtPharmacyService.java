@@ -168,12 +168,10 @@ public class ArtPharmacyService {
 	private ArtPharmacy  convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {
 		ArtPharmacy artPharmacy = new ArtPharmacy();
 		BeanUtils.copyProperties(dto, artPharmacy);
-		log.info(" entity 1st:  {}", artPharmacy);
 		Long personId = dto.getPersonId();
 		Set<RegimenRequestDto> regimen = dto.getRegimen();
 		Person person = getPerson(personId);
 		List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitAndPerson(artPharmacy.getVisit(), person);
-		log.info("existDrugRefills:  {}", existDrugRefills + " " + dto.getId());
 		if (!existDrugRefills.isEmpty() && dto.getId() == null) {
 			throw new IllegalTypeException(ArtPharmacy.class, "visitId", "Regimen is already dispense for this visit " + dto.getVisitId());
 		}
@@ -183,7 +181,6 @@ public class ArtPharmacyService {
 		artPharmacy.setPerson(person);
 		artPharmacy.setRegimens(regimenList);
 		artPharmacy.setFacilityId(organizationUtil.getCurrentUserOrganization());
-		log.info(" entity 2nd:  {}", artPharmacy);
 		return artPharmacy;
 	}
 	

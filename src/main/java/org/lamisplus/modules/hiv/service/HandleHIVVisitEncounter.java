@@ -32,11 +32,11 @@ public class HandleHIVVisitEncounter {
 	
 	
 	public Visit processAndCreateVisit(Long personId, LocalDate visitDate) {
-		Log.info("person id in creating visit {}", personId);
+		
 		PersonResponseDto personDto = personService.getPersonById(personId);
-		Log.info("person surname in creating visit {}", personDto.getSurname());
+		
 		Optional<Person> personOptional = personRepository.findById(personId);
-		Log.info("person personOptional in creating visit {}", personOptional.isPresent());
+		
 		if (personDto.getVisitId() != null) {
 			Optional<Visit> visitOptional = visitRepository.findById(personDto.getVisitId());
 			if (visitOptional.isPresent()) {

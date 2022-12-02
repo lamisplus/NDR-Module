@@ -188,7 +188,6 @@ public class HivPatientService {
 
 
     private void addArtCommencementInfo(Long personId, Optional<ARTClinical> artCommencement, HivPatientDto hivPatientDto) {
-        Log.info("art commencement : {}", artCommencement.isPresent());
         if (artCommencement.isPresent ()) {
             hivPatientDto.setCommenced (true);
             ARTClinicalCommenceDto artClinicalCommenceDto =
@@ -222,9 +221,7 @@ public class HivPatientService {
 
     private void processAndSetObservationStatus(Person person, HivPatientDto hivPatientDto) {
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
-        Log.info ("orgId {}", orgId);
         List<Observation> observationList = observationRepository.getAllByPersonAndFacilityId (person, orgId);
-        Log.info ("observationList {}", observationList);
         if (!observationList.isEmpty ()) {
             observationList
                     .stream ()
