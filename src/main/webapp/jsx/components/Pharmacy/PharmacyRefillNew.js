@@ -974,7 +974,25 @@ const Pharmacy = (props) => {
                     />
                     </FormGroup>
                 </div>
+                {showmmdType &&(
+                    <div className="form-group mb-3 col-md-4">
+                    <FormGroup>
+                    <Label >MMD Type</Label>
+                    <Input
+                        type="text"
+                        name="mmdType"
+                        id="mmdType"
+                        disabled="true"
+                        value={mmdType}
+                        onChange={handleInputChange}
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                    />
+                     
+                    </FormGroup>
+                </div>
+            )}
             </div>
+            
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
                     <Label >DSD Model</Label>
