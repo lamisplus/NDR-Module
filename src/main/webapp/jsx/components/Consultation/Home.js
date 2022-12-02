@@ -774,7 +774,6 @@ const ClinicVisit = (props) => {
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
     temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
     temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-    //temp.tbStatusId = tbObj.tbStatusId ? "" : "This field is required"
     temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
     //temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
     temp.diastolic = vital.diastolic ? "" : "This field is required"
@@ -784,11 +783,12 @@ const ClinicVisit = (props) => {
     //TB VALIDATION 
     temp.tbStatusId = tbObj.tbStatusId ? "" : "This field is required"
     temp.antiTBDrug = tbObj.antiTBDrug ? "" : "This field is required"
-    tbObj.currentOnIpt==='NO' && (temp.fever = tbObj.fever ? "" : "This field is required")
-    tbObj.currentOnIpt==='NO' && (temp.nightSweat = tbObj.nightSweat ? "" : "This field is required")
-    tbObj.currentOnIpt==='NO' && (temp.lethergy = tbObj.lethergy ? "" : "This field is required")
-    tbObj.currentOnIpt==='NO' && (temp.coughing = tbObj.coughing ? "" : "This field is required")
-    tbObj.currentOnIpt==='NO' && (temp.contactWithTBCase = tbObj.contactWithTBCase ? "" : "This field is required")
+    tbObj.antiTBDrug && tbObj.antiTBDrug==='NO' && (temp.currentOnIpt = tbObj.currentOnIpt ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.fever = tbObj.fever ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.nightSweat = tbObj.nightSweat ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.lethergy = tbObj.lethergy ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.coughing = tbObj.coughing ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.contactWithTBCase = tbObj.contactWithTBCase ? "" : "This field is required")
     setErrors({
         ...temp
     })
@@ -856,7 +856,6 @@ const ClinicVisit = (props) => {
       toast.error("All field are required", {position: toast.POSITION.BOTTOM_CENTER})
     }
   }
-
   function BmiCal (bmi){
     if(bmi<18.5){
       return (
@@ -882,7 +881,7 @@ const ClinicVisit = (props) => {
     }
     
   }
-
+console.log(typeof tbObj.currentOnIpt)
   return (
     <div className={classes.root}>
     <div className="row">

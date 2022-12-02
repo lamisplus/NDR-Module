@@ -666,11 +666,12 @@ const ClinicVisit = (props) => {
       //TB VALIDATION 
       temp.tbStatusId = tbObj.tbStatusId ? "" : "This field is required"
       temp.antiTBDrug = tbObj.antiTBDrug ? "" : "This field is required"
-      tbObj.currentOnIpt==='NO' && (temp.fever = tbObj.fever ? "" : "This field is required")
-      tbObj.currentOnIpt==='NO' && (temp.nightSweat = tbObj.nightSweat ? "" : "This field is required")
-      tbObj.currentOnIpt==='NO' && (temp.lethergy = tbObj.lethergy ? "" : "This field is required")
-      tbObj.currentOnIpt==='NO' && (temp.coughing = tbObj.coughing ? "" : "This field is required")
-      tbObj.currentOnIpt==='NO' && (temp.contactWithTBCase = tbObj.contactWithTBCase ? "" : "This field is required")
+      tbObj.antiTBDrug && tbObj.antiTBDrug==='NO' && (temp.currentOnIpt = tbObj.currentOnIpt ? "" : "This field is required")
+      tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.fever = tbObj.fever ? "" : "This field is required")
+      tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.nightSweat = tbObj.nightSweat ? "" : "This field is required")
+      tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.lethergy = tbObj.lethergy ? "" : "This field is required")
+      tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.coughing = tbObj.coughing ? "" : "This field is required")
+      tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.contactWithTBCase = tbObj.contactWithTBCase ? "" : "This field is required")
       setErrors({
           ...temp
       })
@@ -691,8 +692,8 @@ const ClinicVisit = (props) => {
       })
       return Object.values(temp).every(x => x == "")
     }
-    //Validations of the ARV DRUG Load 
-    const validateArvDrug = () => {       
+  //Validations of the ARV DRUG Load 
+  const validateArvDrug = () => {       
     temp.regimenLine = arvDrugObj.regimenLine ? "" : "This field is required"
     temp.regimenDrug = arvDrugObj.regimenDrug ? "" : "This field is required"
     temp.dosage = arvDrugObj.dosage ? "" : "This field is required"
@@ -752,20 +753,20 @@ const ClinicVisit = (props) => {
     setarvDrugOrderList([...arvDrugOrderList]);
       
   };
-    const handleSelectedTestGroup = e =>{
-      setTests ({...tests,  labTestGroupId: e.target.value});
-      const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
-      setTest(getTestList[0].labTests)
-      // if(e.target.value==='4'){            
-      //     setVlRequired(true)
-      // }else{
-      //     setVlRequired(false) 
-      // }
-    }
-    const handleInputChangeTest = e => {
-    setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-    setTests ({...tests,  [e.target.name]: e.target.value});       
-    }
+  const handleSelectedTestGroup = e =>{
+    setTests ({...tests,  labTestGroupId: e.target.value});
+    const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
+    setTest(getTestList[0].labTests)
+    // if(e.target.value==='4'){            
+    //     setVlRequired(true)
+    // }else{
+    //     setVlRequired(false) 
+    // }
+  }
+  const handleInputChangeTest = e => {
+  setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
+  setTests ({...tests,  [e.target.name]: e.target.value});       
+  }
 
   /**** Submit Button Processing  */
   const handleSubmit = (e) => {
@@ -855,7 +856,7 @@ const ClinicVisit = (props) => {
           setTestOrderList(viralObj)
           const arvObj = e.arvdrugsRegimen!==null ? e.arvdrugsRegimen : arvDrugOrderList
           setarvDrugOrderList([...arvObj])
-          tbObj.tbStatusId=objValues.tbStatus
+          tbObj.tbStatusId=objValues.tbStatus!==null && objValues.tbStatus!=="" ? objValues.tbStatus : ""
          
 
       })

@@ -82,13 +82,12 @@ const TBScreeningForm = (props) => {
   const [tbStatus, setTbStatus] = useState([]); 
   useEffect(() => {
     TBStatus();
-    if(props.tbObj.currentOnIpt ==="NO"  && ((props.tbObj.coughing==="YES") || (props.tbObj.nightSweat==="YES") || (props.tbObj.fever==="YES") || (props.tbObj.contactWithTBCase==="YES") || (props.tbObj.lethergy==="YES"))){
-      props.tbObj.tbStatusId=68 //for any option with YES
-      
-    }else if(props.tbObj.currentOnIpt ==="NO"  &&  props.tbObj.coughing==="NO" && props.tbObj.nightSweat==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO"){
-      props.tbObj.tbStatusId=633
-    }else{
-      props.tbObj.tbStatusId=71
+    if(props.tbObj.currentOnIpt!=="" && (props.tbObj.coughing==="YES") || (props.tbObj.nightSweat==="YES") || (props.tbObj.fever==="YES") || (props.tbObj.contactWithTBCase==="YES") || (props.tbObj.lethergy==="YES")){
+      props.tbObj.tbStatusId=68 //for any option with YES     
+    }else if(props.tbObj.currentOnIpt!=="" &&  props.tbObj.coughing==="NO" && props.tbObj.nightSweat==="NO" && props.tbObj.fever==="NO" && props.tbObj.contactWithTBCase==="NO" && props.tbObj.lethergy==="NO"){
+      props.tbObj.tbStatusId=67
+    }else if(props.tbObj.tbStatusId==="" || props.tbObj.tbStatusId===null){
+      props.tbObj.tbStatusId=""
     }
     }, [props.tbObj]);
     ///GET LIST OF FUNCTIONAL%20_STATUS
@@ -114,17 +113,14 @@ const TBScreeningForm = (props) => {
         if(e.target.name ==="antiTBDrug" && e.target.value!==""){
           if(e.target.value==="NO"){
             props.tbObj.tbStatusId=""
-            //Second level of logic for TB Status
-          }else{
-            props.tbObj.tbStatusId=70 // if the first option is YES
-          } 
+          }else if(e.target.value==="YES"){
+            props.tbObj.tbStatusId=70
+          }
         }
-        if(e.target.name ==="currentOnIpt" && e.target.value==="YES"){
-          props.tbObj.tbStatusId=69 
-        }
+        
         props.setTbObj ({...props.tbObj,  [e.target.name]: e.target.value});
       }
-
+    console.log(props.errors)
 
   return (
     <div>
@@ -294,14 +290,30 @@ const TBScreeningForm = (props) => {
                         value={props.tbObj.tbStatusId}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        disabled
+                        disabled={props.tbObj.tbStatusId===67 ? false :true }
                         >
-                          <option value="">Select </option>
-                            {tbStatus.map((value) => (
+                          <option value=""></option>
+                          {props.tbObj.tbStatusId===67 ? (
+                            <>
+                            {tbStatus.filter((x)=> (x.id===67 || x.id===633)).map((value) => (
                                 <option key={value.id} value={value.id}>
                                     {value.display}
                                 </option>
                             ))}
+                            </>
+                            )
+                              : 
+                           (
+                            <>
+                              <option value=""></option>
+                              {tbStatus.map((value) => (
+                                <option key={value.id} value={value.id}>
+                                    {value.display}
+                                </option>
+                              ))}
+                            </> 
+                            )
+                        }
                     </Input>
                   </FormGroup>
                   {props.errors.tbStatusId !=="" ? (
