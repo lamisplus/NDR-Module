@@ -344,6 +344,26 @@ const Laboratory = (props) => {
                 setSaving(false);
                 props.LabOrders();
                 toast.success("Laboratory order & result created successful!",  {position: toast.POSITION.BOTTOM_CENTER});
+                setTests({
+                    comments: "",
+                    dateAssayed: "",
+                    labNumber: "",
+                    labTestGroupId: "",
+                    labTestId: "",
+                    dateResultReceived:"",
+                    patientId:props.patientObj?props.patientObj.id:"",
+                    result: "",
+                    sampleCollectionDate: "",
+                    viralLoadIndication: "",
+                    visitId:"" ,
+                    checkedBy: "",
+                    clinicianName: "",
+                    dateChecked: "",
+                    dateResultReported: "",
+                    id: "",
+                    orderId: "",
+                    resultReportedBy: "",
+                })
                 props.setActiveContent({...props.activeContent, route:'laboratoryOrderResult', activeTab:"history"})
             })
             .catch(error => {

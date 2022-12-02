@@ -455,7 +455,6 @@ const ClinicVisit = (props) => {
       });
         
     }
-  console.log(labTestOptions)
   //GET LIST Drug Refill
   async function ClinicVisitList() {
     setLoading(true)
@@ -775,13 +774,21 @@ const ClinicVisit = (props) => {
     temp.encounterDate = vital.encounterDate ? "" : "This field is required"
     temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
     temp.whoStagingId = objValues.whoStagingId ? "" : "This field is required"
-    //temp.clinicalNote = objValues.clinicalNote ? "" : "This field is required"
     temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
     //temp.adherenceLevel = objValues.adherenceLevel ? "" : "This field is required"
     temp.diastolic = vital.diastolic ? "" : "This field is required"
     temp.systolic = vital.systolic ? "" : "This field is required"
     temp.height = vital.height ? "" : "This field is required"
     temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
+    //TB VALIDATION 
+    temp.tbStatusId = tbObj.tbStatusId ? "" : "This field is required"
+    temp.antiTBDrug = tbObj.antiTBDrug ? "" : "This field is required"
+    tbObj.antiTBDrug && tbObj.antiTBDrug==='NO' && (temp.currentOnIpt = tbObj.currentOnIpt ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.fever = tbObj.fever ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.nightSweat = tbObj.nightSweat ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.lethergy = tbObj.lethergy ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.coughing = tbObj.coughing ? "" : "This field is required")
+    tbObj.currentOnIpt && tbObj.currentOnIpt==='NO' && (temp.contactWithTBCase = tbObj.contactWithTBCase ? "" : "This field is required")
     setErrors({
         ...temp
     })
@@ -813,6 +820,7 @@ const ClinicVisit = (props) => {
     objValues.hivEnrollmentId = getPatientObj.enrollment.id
     objValues.opportunisticInfections = infectionList
     objValues.tbScreen = tbObj
+    objValues.tbStatus = tbObj.tbStatusId
     objValues.viralLoadOrder= testOrderList
     objValues.arvdrugsRegimen= arvDrugOrderList
     objValues['vitalSignDto'] = vital
@@ -848,7 +856,6 @@ const ClinicVisit = (props) => {
       toast.error("All field are required", {position: toast.POSITION.BOTTOM_CENTER})
     }
   }
-
   function BmiCal (bmi){
     if(bmi<18.5){
       return (
@@ -874,7 +881,7 @@ const ClinicVisit = (props) => {
     }
     
   }
-
+console.log(typeof tbObj.currentOnIpt)
   return (
     <div className={classes.root}>
     <div className="row">
@@ -1509,7 +1516,31 @@ const ClinicVisit = (props) => {
                  
                 </FormGroup>
               </div>
-              
+              <div className="form-group mb-3 col-md-6">
+                  <FormGroup>
+                  <FormLabelName >TB Status * </FormLabelName>
+                  <Input
+                      type="select"
+                      name="tbStatus"
+                      id="tbStatus"
+                      value={objValues.tbStatus}
+                      onChange={handleInputChange}
+                      style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                      required
+                      >
+                      <option value=""> Select</option>
+                          {tbStatus.map((value) => (
+                              <option key={value.id} value={value.id}>
+                                  {value.display}
+                              </option>
+                          ))}
+
+                  </Input>
+                  {errors.tbStatus !=="" ? (
+                      <span className={classes.error}>{errors.tbStatus}</span>
+                      ) : "" }
+                  </FormGroup>
+              </div>
               <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Hepatitis Screening Result</FormLabelName>
@@ -1933,6 +1964,13 @@ const ClinicVisit = (props) => {
             <br/>
             {/* END Viral Load  Form */}
             <br />
+            <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
+              TB Screening
+            </Label>
+            <br />
+            {/* TB Screening Form */}
+            <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
+            <br/>
             <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE </h4>
             </Label>
@@ -1972,10 +2010,6 @@ const ClinicVisit = (props) => {
           </Segment>
         </Grid.Column>
       </Grid>
-      {/* <AddVitals toggle={AddVitalToggle} showModal={addVitalModal} /> */}
-      {/* <AddAllergy toggle={AddAllergyToggle} showModal={addAllergyModal} />
-      <AddCondition toggle={AddConditionToggle} showModal={addConditionModal} />
-      <PostPatient toggle={PostPatientToggle} showModal={postPatientModal} /> */}
     </div>
   );
 };
