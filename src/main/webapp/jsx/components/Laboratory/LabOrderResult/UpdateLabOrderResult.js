@@ -303,6 +303,26 @@ useEffect(() => {
             .then(response => {
                 setSaving(false);
                 toast.success("Laboratory order & result updated successful",  {position: toast.POSITION.BOTTOM_CENTER});
+                setTests({
+                    comments: "",
+                    dateAssayed: "",
+                    labNumber: "",
+                    labTestGroupId: "",
+                    labTestId: "",
+                    dateResultReceived:"",
+                    patientId:props.patientObj?props.patientObj.id:"",
+                    result: "",
+                    sampleCollectionDate: "",
+                    viralLoadIndication: "",
+                    visitId:"" ,
+                    checkedBy: "",
+                    clinicianName: "",
+                    dateChecked: "",
+                    dateResultReported: "",
+                    id: "",
+                    orderId: "",
+                    resultReportedBy: "",
+                })
                 props.setActiveContent({...props.activeContent, route:'laboratoryOrderResult', id:props.activeContent.obj.id, activeTab:"history", actionType:"update", obj:props.activeContent.obj})
             })
             .catch(error => {
