@@ -115,7 +115,7 @@ public interface PatientLineDto {
 	
 	LocalDateTime getDateOfSampleCollected();
 	
-	Double getLastViralLoad();
+	String getLastViralLoad();
 	
 	LocalDateTime getDateOfLastViralLoad();
 	

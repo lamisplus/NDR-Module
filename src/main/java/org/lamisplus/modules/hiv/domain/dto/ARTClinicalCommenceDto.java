@@ -59,6 +59,7 @@ public class ARTClinicalCommenceDto implements Serializable {
     private String  cd4Count;
     private String  cd4SemiQuantitative;
     private Integer  cd4FlowCytometry;
+    private String  pregnancyStatus;
 
 
 }

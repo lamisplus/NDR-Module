@@ -114,7 +114,7 @@ public class HivEnrollmentService {
 	private HivEnrollment convertToEntity(HivEnrollmentDto dto) {
 		HivEnrollment hivEnrollment = new HivEnrollment();
 		BeanUtils.copyProperties(dto, hivEnrollment);
-		log.info("entity converted {} ", hivEnrollment);
+		//log.info("entity converted {} ", hivEnrollment);
 		hivEnrollment.setFacilityId(currentUserOrganizationService.getCurrentUserOrganization());
 		return hivEnrollment;
 	}
@@ -123,7 +123,7 @@ public class HivEnrollmentService {
 		HivEnrollmentDto hivEnrollmentDto = new HivEnrollmentDto();
 		BeanUtils.copyProperties(entity, hivEnrollmentDto);
 		hivEnrollmentDto.setPersonId(entity.getPerson().getId());
-		log.info("dto converted {} ", hivEnrollmentDto);
+		//log.info("dto converted {} ", hivEnrollmentDto);
 		hivEnrollmentDto.setVisitId(entity.getVisit().getId());
 		return hivEnrollmentDto;
 	}
@@ -149,7 +149,7 @@ public class HivEnrollmentService {
 	
 	
 	private void addArtCommencementInfo(Long personId, Optional<ARTClinical> artCommencement, HivPatientDto hivPatientDto) {
-		Log.info("art commencement : {}", artCommencement.isPresent());
+		//Log.info("art commencement : {}", artCommencement.isPresent());
 		if (artCommencement.isPresent ()) {
 			hivPatientDto.setCommenced (true);
 			ARTClinicalCommenceDto artClinicalCommenceDto =

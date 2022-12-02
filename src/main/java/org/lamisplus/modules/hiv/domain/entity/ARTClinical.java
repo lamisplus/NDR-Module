@@ -149,6 +149,10 @@ public class ARTClinical extends HivAuditEntity implements Serializable, Persist
 	@Column(name = "cd4_flow_cytometry")
 	private Integer  cd4FlowCytometry;
 	
+	
+	@Column(name = "pregnancy_status")
+	private String  pregnancyStatus;
+	
 	@Override
 	public boolean isNew() {
 		return id == null;
