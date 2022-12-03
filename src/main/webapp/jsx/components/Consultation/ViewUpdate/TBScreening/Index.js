@@ -111,7 +111,7 @@ const TBScreeningForm = (props) => {
     const handleInputChange = e => {
       props.setErrors({...props.errors, [e.target.name]: ""})
         if(e.target.name ==="antiTBDrug" && e.target.value!==""){
-          if(e.target.value==="NO"){
+          if(e.target.value==="NO" && (props.tbObj.currentOnIpt ==="" || props.tbObj.currentOnIpt ===null)){
             props.tbObj.tbStatusId=""
           }else if(e.target.value==="YES"){
             props.tbObj.tbStatusId=70
