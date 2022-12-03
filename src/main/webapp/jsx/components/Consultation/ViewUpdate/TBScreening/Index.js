@@ -117,10 +117,9 @@ const TBScreeningForm = (props) => {
             props.tbObj.tbStatusId=70
           }
         }
-        
         props.setTbObj ({...props.tbObj,  [e.target.name]: e.target.value});
       }
-    console.log(props.errors)
+    //console.log(props.errors)
 
   return (
     <div>

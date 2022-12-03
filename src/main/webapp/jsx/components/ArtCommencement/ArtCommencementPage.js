@@ -360,7 +360,8 @@ const ArtCommencement = (props) => {
         }
         const handleSelecteRegimen = e => { 
             let regimenID=  e.target.value
-            setObjValues ({...objValues, regimenId:regimenID});
+            //regimenTypeId regimenId
+            setObjValues ({...objValues, regimenTypeId:regimenID});
             RegimenType(regimenID)           
             setErrors({...temp, [e.target.name]:""})
         }
