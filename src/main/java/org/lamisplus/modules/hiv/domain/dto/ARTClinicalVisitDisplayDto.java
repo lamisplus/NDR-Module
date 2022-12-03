@@ -85,5 +85,6 @@ public class ARTClinicalVisitDisplayDto implements Serializable {
 	@Type(type = "jsonb")
 	@Column(columnDefinition = "jsonb")
 	private JsonNode extra;
+	private String  pregnancyStatus;
 	
 }

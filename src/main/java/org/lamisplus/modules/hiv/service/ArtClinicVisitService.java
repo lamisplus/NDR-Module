@@ -65,7 +65,7 @@ public class ArtClinicVisitService {
 		VitalSignRequestDto vitalSignDto = artClinicVisitDto.getVitalSignDto();
 		String captureDate = artClinicVisitDto.getVisitDate().toString().concat(" 00:00");
 		vitalSignDto.setCaptureDate(captureDate);
-		Log.info("vitalSign dto {}", vitalSignDto);
+		//Log.info("vitalSign dto {}", vitalSignDto);
 		if (visit != null) {
 			vitalSignDto.setVisitId(visit.getId());
 		}
@@ -205,13 +205,13 @@ public class ArtClinicVisitService {
 	@NotNull
 	public ARTClinical convertDtoToART(ARTClinicVisitDto artClinicVisitDto, Long vitalSignId) {
 		ARTClinical artClinical = new ARTClinical();
-		log.info("converted Dto 1 {}", artClinicVisitDto);
+		//log.info("converted Dto 1 {}", artClinicVisitDto);
 		BeanUtils.copyProperties(artClinicVisitDto, artClinical);
 		VitalSign vitalSign = getVitalSign(vitalSignId);
 		artClinical.setVitalSign(vitalSign);
 		artClinical.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		artClinical.setArchived(0);
-		log.info("converted entity 1 {}", artClinical);
+		//log.info("converted entity 1 {}", artClinical);
 		return artClinical;
 	}
 	

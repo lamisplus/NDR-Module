@@ -2,7 +2,6 @@ package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.audit4j.core.util.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
@@ -116,7 +115,6 @@ public class ArtCommenceService {
 		vitalSignDto.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		String captureDate = artClinicalCommenceDto.getVisitDate().toString().concat(" 00:00");
 		vitalSignDto.setCaptureDate(captureDate);
-		Log.info("vitalSign dto {}", vitalSignDto);
 		VitalSignDto saveVitalSignDto = vitalSignService.registerVitalSign(vitalSignDto);
 		return saveVitalSignDto.getId();
 		
@@ -189,7 +187,6 @@ public class ArtCommenceService {
 				vitalSignService.getVitalSignById(artClinical.getVitalSign().getId());
 		VitalSignRequestDto requestDto = new VitalSignRequestDto();
 		BeanUtils.copyProperties(vitalSignDto, requestDto);
-		//convertVitalSignDtoToRequestDto(vitalSignDto, requestDto);
 		
 		
 		ARTClinicalCommenceDto artClinicalCommenceDto = new ARTClinicalCommenceDto();

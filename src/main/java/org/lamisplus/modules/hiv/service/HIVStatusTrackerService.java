@@ -54,7 +54,7 @@ public class HIVStatusTrackerService {
 	public HIVStatusTrackerDto registerHIVStatusTracker(HIVStatusTrackerDto hivStatusTrackerDto) {
 		Long personId = hivStatusTrackerDto.getPersonId();
 		Person existPerson = getPerson(personId);
-		log.info("person   from status status {}", existPerson.getSurname());
+		//log.info("person   from status status {}", existPerson.getSurname());
 		HIVStatusTracker hivStatusTracker = convertDtoToEntity(hivStatusTrackerDto);
 		Visit visit = hivVisitEncounter.processAndCreateVisit(personId, hivStatusTrackerDto.getStatusDate());
 		hivStatusTracker.setVisit(visit);

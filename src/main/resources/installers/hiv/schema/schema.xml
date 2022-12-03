@@ -179,6 +179,10 @@
             (
                 255
             ),
+                pregnancy_status VARCHAR
+            (
+                255
+            ),
                 sti_treated VARCHAR
             (
                 255

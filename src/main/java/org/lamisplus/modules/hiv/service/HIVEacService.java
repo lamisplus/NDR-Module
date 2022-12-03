@@ -47,9 +47,8 @@ public class HIVEacService {
 		Person person = personRepository.findById(patientId)
 				.orElseThrow(() -> new EntityNotFoundException(Person.class, "id", String.valueOf(patientId)));
 		if (moduleService.exist("Lab")) {
-			Log.info("Lab module is installed {}", true);
 			List<LabEacInfo> patientAllEacs = hivEacRepository.getPatientAllEacs(patientId);
-			List<HIVEac> hivEacList = patientAllEacs
+			patientAllEacs
 					.stream()
 					.map(labEacInfo -> HIVEacDto.builder()
 							.labNumber(labEacInfo.getLabNumber())
@@ -65,7 +64,6 @@ public class HIVEacService {
 					.map(this::mapDtoEntity)
 					.map(hivEacRepository::save)
 					.collect(Collectors.toList());
-			Log.info("new list {}", hivEacList);
 			
 		}
 		return hivEacRepository.getAllByPersonAndArchived(person, 0)
