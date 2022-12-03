@@ -24,7 +24,6 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import {Label as LabelSui} from 'semantic-ui-react'
 import Select from 'react-select'
 
-let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
   card: {
     margin: theme.spacing(20),
@@ -1883,18 +1882,20 @@ const ClinicVisit = (props) => {
                             ) : "" }      
                    </FormGroup>
             </div> */}
-              <div  className=" mb-3 col-md-5">
-                <FormGroup>
+              <div  className=" mb-3 col-md-5" >
+                <FormGroup >
                       <FormLabelName for="testGroup">Select Test</FormLabelName>
                       <Select
                             //value={selectedOption}
                             onChange={handleInputChangeObject}
                             options={labTestOptions}
                             styles={classes.root}
-                        />
-                      {errors.labTestId !=="" ? (
-                                <span className={classes.error}>{errors.labTestId}</span>
-                            ) : "" }
+                            menuPortalTarget={document.body} 
+                            menuPosition={'fixed'} 
+                      />
+                        {errors.labTestId !=="" ? (
+                            <span className={classes.error}>{errors.labTestId}</span>
+                        ) : "" }
                 </FormGroup>
               </div>
               {(tests.labTestId==='16' || tests.labTestId===16 ) && (

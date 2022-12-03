@@ -1776,7 +1776,8 @@ const ClinicVisit = (props) => {
                                       //value={selectedOption}
                                       onChange={handleInputChangeObject}
                                       options={labTestOptions}
-                                      styles={classes.root}
+                                      menuPortalTarget={document.body} 
+                                      menuPosition={'fixed'} 
                                   />
                                   {errors.labTestId !=="" ? (
                                             <span className={classes.error}>{errors.labTestId}</span>
