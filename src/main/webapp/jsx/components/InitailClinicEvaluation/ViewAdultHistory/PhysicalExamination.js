@@ -205,8 +205,8 @@ const BasicInfo = (props) => {
     const validate = () => {        
         temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
         temp.height = vital.height ? "" : "This field is required" 
-        temp.systolic = vital.systolic ? "" : "This field is required"
-        temp.diastolic = vital.diastolic ? "" : "This field is required"    
+        //temp.systolic = vital.systolic ? "" : "This field is required"
+        //temp.diastolic = vital.diastolic ? "" : "This field is required"    
        
         setErrors({
             ...temp
@@ -399,7 +399,7 @@ return (
                     <div className="row">
                     <div className="form-group mb-3 col-md-8">
                         <FormGroup>
-                        <Label >Blood Pressure *</Label>
+                        <Label >Blood Pressure </Label>
                         <InputGroup>
                         <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 systolic(mmHg)
