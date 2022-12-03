@@ -442,8 +442,8 @@ const ArtCommencement = (props) => {
             //temp.tbStatusId = objValues.tbStatusId ? "" : "This field is required"
             temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
             temp.height = vital.height ? "" : "This field is required"
-            temp.systolic = vital.systolic ? "" : "This field is required"
-            temp.diastolic = vital.diastolic ? "" : "This field is required"
+            //temp.systolic = vital.systolic ? "" : "This field is required"
+            //temp.diastolic = vital.diastolic ? "" : "This field is required"
             setErrors({
                 ...temp
                 })    
@@ -529,7 +529,7 @@ const ArtCommencement = (props) => {
             }
             
         }
- console.log(adultRegimenLine)       
+    
 
   return (      
       <div >

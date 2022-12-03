@@ -1437,34 +1437,34 @@ const Pharmacy = (props) => {
                 }
                  {regimenDrugList.length >0 
                     ?
-                        <List>
-                        <Table  striped responsive>
-                            <thead >
-                                <tr>
-                                    <th>Regimen Drug</th>
-                                    <th>Frequency</th>
-                                    <th>Duration</th>
-                                    <th>Quantity Prescribed</th>
-                                    <th>Quantity Dispensed </th>
-                                    
-                                    <th ></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {regimenDrugList.map((regimenDrugObj, index) => (
+                    <List>
+                    <Table  striped responsive>
+                        <thead >
+                            <tr>
+                                <th>Regimen Drug</th>
+                                <th>Frequency</th>
+                                <th>Duration</th>
+                                <th>Quantity Prescribed</th>
+                                <th>Quantity Dispensed </th>
+                                
+                                <th ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {regimenDrugList.map((regimenDrugObj, index) => (
 
-                            <DrugDispensedLists
-                                key={index}
-                                index={index}
-                                regimenDrugObj={regimenDrugObj}
-                                removeAttempt={removeAttempt}
-                            />
-                            ))}
-                            </tbody>
-                        </Table>
-                        </List>
-                        :
-                        ""
+                        <DrugDispensedLists
+                            key={index}
+                            index={index}
+                            regimenDrugObj={regimenDrugObj}
+                            removeAttempt={removeAttempt}
+                        />
+                        ))}
+                        </tbody>
+                    </Table>
+                    </List>
+                    :
+                    ""
                 }    
             </div>                              
             {saving ? <Spinner /> : ""}

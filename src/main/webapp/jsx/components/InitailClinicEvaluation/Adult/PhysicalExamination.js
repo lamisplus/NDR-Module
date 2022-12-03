@@ -205,8 +205,8 @@ const BasicInfo = (props) => {
     const validate = () => {        
         temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
         temp.height = vital.height ? "" : "This field is required" 
-        temp.systolic = vital.systolic ? "" : "This field is required"
-        temp.diastolic = vital.diastolic ? "" : "This field is required"   
+        //temp.systolic = vital.systolic ? "" : "This field is required"
+        //temp.diastolic = vital.diastolic ? "" : "This field is required"   
        
         setErrors({
             ...temp
