@@ -668,7 +668,6 @@ const ArtCommencement = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 >
                                     <option value=""> Select</option>
-            
                                     {patientAge && patientAge >5 &&  (
                                     <>
                                         {adultRegimenLine.map((value) => (
@@ -700,7 +699,7 @@ const ArtCommencement = (props) => {
                                 type="select"
                                 name="regimenId"
                                 id="regimenId"
-                                value={objValues.regimenTypeId}
+                                value={objValues.regimenId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required

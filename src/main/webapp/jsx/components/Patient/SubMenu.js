@@ -128,7 +128,7 @@ function SubMenu(props) {
             
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
-            { (patientObj.commenced===true && patientObj.createBy!=="Lamis data migration system" ) && (patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) )
+            { (patientObj.commenced==false || patientObj.createBy!=="Lamis data migration system" ) && (patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) )
            
                 ?
                 (

@@ -199,7 +199,7 @@ const ArtCommencement = (props) => {
                     { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
-                    const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14))
+                    const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14)) 
                     setAdultRegimenLine(artRegimen);
                 })
                 .catch((error) => {
@@ -686,13 +686,12 @@ const ArtCommencement = (props) => {
                             type="select"
                             name="regimenId"
                             id="regimenId"
-                            value={objValues.regimenTypeId}
+                            value={objValues.regimenId}
                             onChange={handleInputChange}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             required
                             >
-                                <option value=""> Select</option>
-        
+                                <option value=""> Select</option>    
                                 {regimenType.map((value) => (
                                     <option key={value.id} value={value.id}>
                                         {value.description}
