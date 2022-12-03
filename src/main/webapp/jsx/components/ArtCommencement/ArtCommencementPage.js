@@ -645,9 +645,9 @@ const ArtCommencement = (props) => {
                     <Label >Original Regimen Line  </Label>
                     <Input
                             type="select"
-                            name="regimenId"
-                            id="regimenId"
-                            value={objValues.regimenId}
+                            name="regimenTypeId"
+                            id="regimenTypeId"
+                            value={objValues.regimenTypeId}
                             onChange={handleSelecteRegimen}
                             required
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -673,19 +673,18 @@ const ArtCommencement = (props) => {
                                 </>
                                 )}
                         </Input>
-                        {errors.regimenId !=="" ? (
-                            <span className={classes.error}>{errors.regimenId}</span>
+                        {errors.regimenTypeId !=="" ? (
+                            <span className={classes.error}>{errors.regimenTypeId}</span>
                             ) : "" }
                     </FormGroup>
-                    </div>
-                    
+                    </div>                    
                     <div className="form-group mb-3 col-md-4">
                     <FormGroup>
                     <Label >Original Regimen</Label>
                     <Input
                             type="select"
-                            name="regimenTypeId"
-                            id="regimenTypeId"
+                            name="regimenId"
+                            id="regimenId"
                             value={objValues.regimenTypeId}
                             onChange={handleInputChange}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
@@ -699,8 +698,8 @@ const ArtCommencement = (props) => {
                                     </option>
                                 ))}
                         </Input>
-                        {errors.regimenTypeId !=="" ? (
-                            <span className={classes.error}>{errors.regimenTypeId}</span>
+                        {errors.regimenId !=="" ? (
+                            <span className={classes.error}>{errors.regimenId}</span>
                             ) : "" }
                     </FormGroup>
                     </div>

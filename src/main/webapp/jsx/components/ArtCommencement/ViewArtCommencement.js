@@ -653,16 +653,17 @@ const ArtCommencement = (props) => {
                         </div>
                         )}
                         </div>
+
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen Line - {objValues.regimenId}</Label>
+                        <Label >Original Regimen Line  </Label>
                         <Input
                                 type="select"
-                                name="regimenId"
-                                id="regimenId"
-                                value={objValues.regimenId}
+                                name="regimenTypeId"
+                                id="regimenTypeId"
+                                value={objValues.regimenTypeId}
                                 onChange={handleSelecteRegimen}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                required
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 >
                                     <option value=""> Select</option>
@@ -684,25 +685,24 @@ const ArtCommencement = (props) => {
                                         </option>
                                         ))}
                                     </>
-                                     )}
+                                    )}
                             </Input>
-                            {errors.regimenId !=="" ? (
-                                <span className={classes.error}>{errors.regimenId}</span>
+                            {errors.regimenTypeId !=="" ? (
+                                <span className={classes.error}>{errors.regimenTypeId}</span>
                                 ) : "" }
                         </FormGroup>
-                        </div>
-                        
+                        </div>                    
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen - {objValues.regimenTypeId}</Label>
+                        <Label >Original Regimen</Label>
                         <Input
                                 type="select"
-                                name="regimenTypeId"
-                                id="regimenTypeId"
+                                name="regimenId"
+                                id="regimenId"
                                 value={objValues.regimenTypeId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                required
                                 >
                                     <option value=""> Select</option>
             
@@ -712,32 +712,32 @@ const ArtCommencement = (props) => {
                                         </option>
                                     ))}
                             </Input>
-                            {errors.regimenTypeId !=="" ? (
-                                <span className={classes.error}>{errors.regimenTypeId}</span>
+                            {errors.regimenId !=="" ? (
+                                <span className={classes.error}>{errors.regimenId}</span>
                                 ) : "" }
                         </FormGroup>
                         </div>
                     
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label >Viral Load at Start of ART </Label>
-                            <Input
-                                type="select"
-                                name="isViralLoadAtStartOfArt"
-                                id="isViralLoadAtStartOfArt"
-                                onChange={handleInputChange}                                            
-                                value={objValues.isViralLoadAtStartOfArt}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                
-                            >
-                                <option value=""> Select</option>
-                                <option value="true"> YES</option>
-                                <option value="false"> NO</option>
-                            </Input>
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Viral Load at Start of ART </Label>
+                        <Input
+                            type="select"
+                            name="isViralLoadAtStartOfArt"
+                            id="isViralLoadAtStartOfArt"
+                            onChange={handleInputChange}                                            
+                            value={objValues.isViralLoadAtStartOfArt}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            disabled={props.activeContent.actionType==='update' ? false :true}
                             
-                            </FormGroup>
-                        </div>
+                        >
+                            <option value=""> Select</option>
+                            <option value="true"> YES</option>
+                            <option value="false"> NO</option>
+                        </Input>
+                        
+                        </FormGroup>
+                    </div>
                         {viraLoadStart && (
                         <>
                         <div className="form-group mb-3 col-md-4">
