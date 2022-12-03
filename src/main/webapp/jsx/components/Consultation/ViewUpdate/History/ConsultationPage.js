@@ -659,8 +659,8 @@ const ClinicVisit = (props) => {
       //temp.tbStatus = objValues.tbStatus ? "" : "This field is required"
       temp.functionalStatusId = objValues.functionalStatusId ? "" : "This field is required"
       temp.levelOfAdherence = objValues.levelOfAdherence ? "" : "This field is required"
-      temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
-      temp.systolic = vital.systolic ? "" : "This field is required"
+      //temp.labTestGroupId = vital.diastolic ? "" : "This field is required"
+      //temp.systolic = vital.systolic ? "" : "This field is required"
       temp.height = vital.height ? "" : "This field is required"
       temp.bodyWeight = vital.bodyWeight ? "" : "This field is required"
       //TB VALIDATION 
@@ -1136,7 +1136,7 @@ const ClinicVisit = (props) => {
               <div className="row">
               <div className="form-group mb-3 col-md-12">
                   <FormGroup>
-                  <FormLabelName >Blood Pressure *</FormLabelName>
+                  <FormLabelName >Blood Pressure </FormLabelName>
                   <InputGroup>
                   <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                           systolic(mmHg)
