@@ -227,12 +227,12 @@ const ArtCommencement = (props) => {
                { headers: {"Authorization" : `Bearer ${token}`} }
            )
            .then((response) => { 
-              console.log(response.data);     
+              //console.log(response.data);     
                 setObjValues(response.data)
                 if(response.data.isViralLoadAtStartOfArt===true){
                     setViraLoadStart(true)
                 }
-                RegimenType(response.data.regimenId)
+                RegimenType(response.data.regimenTypeId)
                 setVitalSignDto(response.data.vitalSignDto)
            })
            .catch((error) => {
@@ -240,7 +240,6 @@ const ArtCommencement = (props) => {
            });
        
         }
-        console.log(objValues.regimenId);
       //Get list of WhoStaging
       const WhoStaging =()=>{
         axios
@@ -360,8 +359,10 @@ const ArtCommencement = (props) => {
             // }
         }
         const handleSelecteRegimen = e => { 
+
             let regimenID=  e.target.value
-            setObjValues ({...objValues, regimenId:regimenID});
+             //regimenTypeId regimenId
+            setObjValues ({...objValues, regimenTypeId:regimenID});
             RegimenType(regimenID)           
             setErrors({...temp, [e.target.name]:""})
         }
@@ -656,7 +657,7 @@ const ArtCommencement = (props) => {
 
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen Line  </Label>
+                        <Label >Original Regimen Line * </Label>
                         <Input
                                 type="select"
                                 name="regimenTypeId"
@@ -667,7 +668,6 @@ const ArtCommencement = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 >
                                     <option value=""> Select</option>
-            
                                     {patientAge && patientAge >5 &&  (
                                     <>
                                         {adultRegimenLine.map((value) => (
@@ -694,12 +694,12 @@ const ArtCommencement = (props) => {
                         </div>                    
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen</Label>
+                        <Label >Original Regimen *</Label>
                         <Input
                                 type="select"
                                 name="regimenId"
                                 id="regimenId"
-                                value={objValues.regimenTypeId}
+                                value={objValues.regimenId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
@@ -777,7 +777,7 @@ const ArtCommencement = (props) => {
                         )}
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >WHO Staging</Label>
+                            <Label >WHO Staging *</Label>
                             <Input
                                 type="select"
                                 name="whoStagingId"
@@ -805,7 +805,7 @@ const ArtCommencement = (props) => {
                         
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Functional Status</Label>
+                            <Label >Functional Status *</Label>
                             <Input
                                 type="select"
                                 name="functionalStatusId"
@@ -985,7 +985,7 @@ const ArtCommencement = (props) => {
                    
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Body Weight</Label>
+                        <Label >Body Weight *</Label>
                         <InputGroup> 
                             <Input 
                                 type="number"
@@ -1012,7 +1012,7 @@ const ArtCommencement = (props) => {
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <Label >Height</Label>
+                        <Label >Height *</Label>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
