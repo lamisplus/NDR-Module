@@ -434,7 +434,7 @@ const Laboratory = (props) => {
                     <Row>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">laboratory Number</Label>                                
+                            <Label for="encounterDate">Laboratory Number</Label>                                
                             <Input
                                 type="select"
                                 name="labNumber"

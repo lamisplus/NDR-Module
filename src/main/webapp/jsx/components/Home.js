@@ -51,7 +51,7 @@ const Home = () => {
                   <Tab eventKey="home" title="Find Patients">                   
                     <Dashboard />
                   </Tab>
-                  <Tab eventKey="follow-up" title="Lost To Follow Up">                   
+                  <Tab eventKey="follow-up" title="IIT">                   
                     <LostToFollowUp />
                   </Tab>
                   <Tab eventKey="visualization" title="Data Visualisation">                   

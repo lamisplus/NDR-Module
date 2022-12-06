@@ -171,7 +171,8 @@ const LabHistory = (props) => {
 
   return (
     <div>
-            {props.activeContent.obj.status!=='COMPLETED' && props.activeContent.obj.status!=='STOPPED' && (
+            {props.activeContent.obj.status!=='COMPLETED' && props.activeContent.obj.status!=='STOPPED' && sessionList.length >0 && (
+        
             <ButtonMui
                 variant="contained"
                 color="primary"

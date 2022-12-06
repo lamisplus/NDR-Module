@@ -121,19 +121,20 @@ const Laboratory = (props) => {
         tests.sampleCollectionDate=moment(props.activeContent.obj.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
         tests.dateResultReceived=props.activeContent.obj.dateResultReceived!==null && props.activeContent.obj.dateResultReceived!=="" ? moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")  : ""
         showObj.isPcr=props.activeContent.obj.pcrLabName!==null && props.activeContent.obj.pcrLabName!=="" ? true :false
-        showObj.hasResult=props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null ? true :false
+        showObj.hasResult=props.activeContent.obj.result!=="" && props.activeContent.obj.dateResultReceived!==null ? true :false
+        tests.dateResultReceived=moment(props.activeContent.obj.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         if(props.activeContent.obj.pcrLabName!==null && props.activeContent.obj.pcrLabName!==""){
             setShowPcrLabDetail(true)
         }else{
             setShowPcrLabDetail(false) 
         } 
-        if(props.activeContent.obj.dateResultReceived!=="" && props.activeContent.obj.dateResultReceived!==null){
+        if(props.activeContent.obj.result!=="" && props.activeContent.obj.dateResultReceived!==null){
             setShowResult(true)
         }else{
             setShowResult(false)  
         }  
     }, [props.patientObj.id, props.activeContent.obj]);
-    console.log(props.activeContent.obj)
+    //console.log(props.activeContent.obj)
      //Get list of LabNumbers
     const LabNumbers =()=>{
         axios
