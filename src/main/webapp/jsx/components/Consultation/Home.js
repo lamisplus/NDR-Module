@@ -1515,7 +1515,7 @@ const ClinicVisit = (props) => {
                  
                 </FormGroup>
               </div>
-              <div className="form-group mb-3 col-md-6">
+              {/* <div className="form-group mb-3 col-md-6">
                   <FormGroup>
                   <FormLabelName >TB Status * </FormLabelName>
                   <Input
@@ -1539,7 +1539,7 @@ const ClinicVisit = (props) => {
                       <span className={classes.error}>{errors.tbStatus}</span>
                       ) : "" }
                   </FormGroup>
-              </div>
+              </div> */}
               <div className=" mb-3 col-md-6">
                 <FormGroup>
                   <FormLabelName >Hepatitis Screening Result</FormLabelName>
