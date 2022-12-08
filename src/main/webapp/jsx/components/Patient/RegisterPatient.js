@@ -805,8 +805,10 @@ const UserRegistration = (props) => {
                                                         min="1983-12-31"
                                                         max= {moment(new Date()).format("YYYY-MM-DD") }
                                                         value={basicInfo.dateOfRegistration}
+                                                        //value={basicInfo.dateOfRegistration===""? moment(new Date()).format("YYYY-MM-DD") : basicInfo.dateOfRegistration}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                                        
                                                     />
                                                    {errors.dateOfRegistration !=="" ? (
                                                     <span className={classes.error}>{errors.dateOfRegistration}</span>
