@@ -309,20 +309,30 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"\t\t\t\t  AND hac.is_commencement=true AND hac.visit_date >= ?2 \n" +
 			"\t\t\t\t  AND hac.visit_date <= ?3),\n" +
 			"\t\t\t\t\n" +
-			"current_clinical AS (SELECT tvs.person_uuid as person_uuid10, body_weight as currentWeight, bac.display as currentClinicalStage,\n" +
-			"\t\t\t\t\t preg.display as pregnancyStatus\n" +
+			"current_clinical AS (SELECT tvs.person_uuid as person_uuid10, body_weight as currentWeight, tbs.display as tbStatus,\n" +
+			"       bac.display as currentClinicalStage,\n" +
+			"\t\t\t\t\t preg.display as pregnancyStatus,\n" +
+			"\t\t\t\t\t CASE\n" +
+			"                     WHEN hac.tb_screen is not null THEN hac.visit_date\n" +
+			"                     ELSE null\n" +
+			"\t\t\t\t\t END\n" +
+			"                     AS dateOfTbScreened\n" +
 			"\t\t\t\t\t\t\tFROM triage_vital_sign tvs\n" +
 			"\t\t\t\t   INNER JOIN ( SELECT person_uuid, MAX(capture_date) AS MAXDATE FROM triage_vital_sign \n" +
 			"\t\t\t\t\t\t\t   GROUP BY person_uuid ORDER BY MAXDATE ASC ) AS current_triage\n" +
-			"\t\t\t\t   ON current_triage.MAXDATE=tvs.capture_date AND current_triage.person_uuid=tvs.person_uuid\n" +
-			"\t\t\t\t\t \n" +
+			"\t\t\t\t   ON current_triage.MAXDATE=tvs.capture_date \n" +
+			"\t\t\t\t   AND current_triage.person_uuid=tvs.person_uuid\n" +
 			"\t\t\t\t    INNER JOIN hiv_art_clinical hac ON tvs.uuid=hac.vital_sign_uuid\n" +
-			"\t\t\t\t\tINNER JOIN ( SELECT person_uuid, MAX(hac.visit_date) AS MAXDATE FROM hiv_art_clinical hac \n" +
-			"\t\t\t\t\t\t\t   GROUP BY person_uuid ORDER BY MAXDATE ASC ) AS current_clinical_date\n" +
-			"\t\t\t\t\t ON current_clinical_date.MAXDATE=hac.visit_date AND current_clinical_date.person_uuid=hac.person_uuid\n" +
+			"\t\t\t\t\tINNER JOIN ( SELECT person_uuid, MAX(hac.visit_date) \n" +
+			"\t\t\t\t\t\t\t\tAS MAXDATE FROM hiv_art_clinical hac \n" +
+			"\t\t\t\t\t\t\t   GROUP BY person_uuid ORDER BY MAXDATE ASC )\n" +
+			"\t\t\t\t\t\t\t   AS current_clinical_date\n" +
+			"\t\t\t\t\tON current_clinical_date.MAXDATE=hac.visit_date \n" +
+			"\t\t\t\t\tAND current_clinical_date.person_uuid=hac.person_uuid\n" +
 			"\t\t\t\t\tINNER JOIN hiv_enrollment he ON he.person_uuid = hac.person_uuid\n" +
 			"\t\t\t\t\tLEFT JOIN base_application_codeset bac ON bac.id=hac.clinical_stage_id\n" +
-			"\t\t\t\t\t LEFT JOIN base_application_codeset preg ON preg.code=hac.pregnancy_status\n" +
+			"\t\t\t\t\tLEFT JOIN base_application_codeset preg ON preg.code=hac.pregnancy_status\n" +
+			"\t\t\t\t\tLEFT JOIN base_application_codeset tbs ON tbs.id=hac.tb_status\\:\\:Integer\n" +
 			"\t\t\t\t\tWHERE hac.archived=0 AND he.archived=0 AND he.facility_id=?1),\n" +
 			"\t\t\t\t\n" +
 			"\t\t\t\t\t\t\t\t\n" +

@@ -79,6 +79,7 @@ public class ArtClinicVisitService {
 			vitalSignId = vitalSignService.registerVitalSign(vitalSignDto).getId();
 		}
 		ARTClinical artClinical = convertDtoToART(artClinicVisitDto, vitalSignId);
+		artClinical.setClinicalStageId(artClinicVisitDto.getWhoStagingId());
 		artClinical.setUuid(UUID.randomUUID().toString());
 		artClinical.setArchived(0);
 		artClinical.setHivEnrollment(hivEnrollment);

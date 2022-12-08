@@ -50,19 +50,19 @@ public class HandleHIVVisitEncounter {
 				return visitOptional.get();
 			}
 		} else {
-			Log.info(" final creating visit {}", personOptional.isPresent());
+			//Log.info(" final creating visit {}", personOptional.isPresent());
 			Visit visit = new Visit();
 			personOptional.ifPresent(visit::setPerson);
 			personOptional.ifPresent(person -> visit.setFacilityId(person.getFacilityId()));
 			visit.setVisitStartDate(visitDate.atStartOfDay());
 			visit.setArchived(0);
 			visit.setUuid(UUID.randomUUID().toString());
-			Log.info("about saving visit {}", personOptional.isPresent());
+			//Log.info("about saving visit {}", personOptional.isPresent());
 			try {
 				Visit currentVisit = visitRepository.save(visit);
-				Log.info("finished saving visit => id {}", currentVisit.getId() ) ;
+				//Log.info("finished saving visit => id {}", currentVisit.getId() ) ;
 				createHivVisitEncounter(personOptional, visit);
-				Log.info("finished saving encounter", personOptional.isPresent());
+				//Log.info("finished saving encounter", personOptional.isPresent());
 				return currentVisit;
 			}catch (Exception e) {
 			    e.printStackTrace();
@@ -72,7 +72,7 @@ public class HandleHIVVisitEncounter {
 	}
 	
 	private void createHivVisitEncounter(Optional<Person> personOptional, Visit visit) {
-		Log.info("creating Encounter visit Id {}", visit.getId());
+		//Log.info("creating Encounter visit Id {}", visit.getId());
 		Encounter encounter = new Encounter();
 		encounter.setVisit(visit);
 		encounter.setArchived(0);

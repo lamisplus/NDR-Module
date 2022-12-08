@@ -87,5 +87,7 @@ public interface RadetReportDto {
 	LocalDateTime getDateOfRepeatViralLoadResult();
 	LocalDateTime getDateOfRepeatViralLoadEACSampleCollection();
 	String getRepeatViralLoadResult();
+	String getTbStatus();
+	LocalDate getDateOfTbScreened();
 }
 	

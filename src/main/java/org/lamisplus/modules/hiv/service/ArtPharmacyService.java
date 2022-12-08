@@ -82,7 +82,7 @@ public class ArtPharmacyService {
 						.filter(e -> e.getStatus().equalsIgnoreCase("PENDING")
 								&& !(e.getServiceCode().equalsIgnoreCase("hiv-code")))
 						.collect(Collectors.toList());
-		log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: " + visit.getId());
+		//log.info("nonHIVEncounters {}", nonHIVEncounters + " visit: " + visit.getId());
 		if (nonHIVEncounters.isEmpty()) {
 			visitService.checkOutVisitById(visit.getId());
 			LocalDateTime visitStartDate = visit.getVisitStartDate();
@@ -191,7 +191,7 @@ public class ArtPharmacyService {
 	private RegisterArtPharmacyDto convertEntityToRegisterDto(ArtPharmacy entity) throws IOException {
 		RegisterArtPharmacyDto dto = new RegisterArtPharmacyDto();
 		BeanUtils.copyProperties(entity, dto);
-		log.info(" dto 1st:  {}", dto);
+		//log.info(" dto 1st:  {}", dto);
 		dto.setPersonId(entity.getPerson().getId());
 		return dto;
 	}
