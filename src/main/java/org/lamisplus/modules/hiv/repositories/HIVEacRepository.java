@@ -396,12 +396,9 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"\t\t\t\t\t\t\t\t INNER JOIN hiv_regimen_type hrt ON hrt.id=hr.regimen_type_id\n" +
 			"\t\t\t\t\t\t\t\t WHERE hrt.id IN (1,2,3,4,14))r\n" +
 			"\n" +
-			"\t\t\t\t\t\t\t\t INNER JOIN (SELECT  MAX(visit_date) AS MAXDATE , person_uuid,pharmacy_object ->> 'regimenName'\\:\\:VARCHAR AS regimen_name\n" +
-			"\t\t\t\t\t\t\t\t\t\t FROM hiv_art_pharmacy h,\n" +
-			"\t\t\t\t\t\t\t\t\t\tjsonb_array_elements(h.extra->'regimens') with ordinality p(pharmacy_object)\n" +
-			"\t\t\t\t\t\t\t\tINNER JOIN hiv_regimen hr ON hr.description=pharmacy_object ->> 'regimenName'\\:\\:VARCHAR\n" +
-			"\t\t\t\t\t\t\t\t INNER JOIN hiv_regimen_type hrt ON hrt.id=hr.regimen_type_id\n" +
-			"\t\t\t\t\t\t\t\t WHERE hrt.id IN (1,2,3,4,14) group by pharmacy_object,person_uuid) max ON\n" +
+			"\t\t\t\t\t\t\t\t INNER JOIN (SELECT hap.person_uuid, MAX(visit_date) AS MAXDATE FROM hiv_art_pharmacy hap\n" +
+			"\t\t\t\t\t\t\t\tINNER JOIN hiv_enrollment h ON h.person_uuid=hap.person_uuid  WHERE h.archived=0\n" +
+			"\t\t\t\t\t\t\t\t\t\t\tGROUP BY hap.person_uuid ORDER BY MAXDATE ASC ) max ON\n" +
 			"\t\t\t\t\t\t\t\tmax.MAXDATE=r.visit_date AND r.person_uuid=max.person_uuid) r\n" +
 			"\t\t\t\t\t\t\t\tON r.visit_date=hartp.visit_date AND r.person_uuid=hartp.person_uuid\n" +
 			"\t\t\t\t\t\tINNER JOIN hiv_enrollment he ON he.person_uuid=r.person_uuid\n" +
