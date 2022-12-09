@@ -41,9 +41,9 @@ public interface PatientLineDto {
 	
 	String getOccupation();
 	
-	String getStateOfResidence();
+	String getResidentialState();
 	
-	String getLgaOfResidence();
+	String getResidentialLga();
 	
 	String getAddress();
 	
@@ -61,7 +61,7 @@ public interface PatientLineDto {
 	
 	String getCurrentStatus();
 	
-	LocalDate getDateCurrentStatus();
+	LocalDate getDateOfCurrentStatus();
 	
 	LocalDate getArtStartDate();
 	
@@ -120,5 +120,8 @@ public interface PatientLineDto {
 	LocalDateTime getDateOfLastViralLoad();
 	
 	String getViralLoadType();
+	String getUniqueId();
+	String getAdherenceLevel();
+	
 }
 			

@@ -100,8 +100,8 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 	@Query(value = "WITH bio_data AS (SELECT p.id, p.uuid as personUuid, p.archived\\:\\:BOOLEAN as archived, p.uuid,p.hospital_number as hospitalNumber, \n" +
 			"\t\t\t\t  p.surname, p.first_name as firstName,\n" +
 			"\t\t\t\t  EXTRACT(YEAR from AGE(NOW(),  date_of_birth)) as age,\n" +
-			"\t\t\t\t  p.other_name as otherName, p.sex as gender, p.date_of_birth as dateOfBirth,\n" +
-			"\t\t\t\t  p.marital_status->>'display' as maritalStatus, \n" +
+			"\t\t\t\t  p.other_name as otherName, p.sex as gender, p.date_of_birth as dateOfBirth, \n" +
+			"\t\t\t\t  p.date_of_registration as dateOfRegistration, p.marital_status->>'display' as maritalStatus, \n" +
 			"\t\t\t\t  education->>'display' as education, p.employment_status->>'display' as occupation, \n" +
 			"\t\t\t\t  facility.name as facilityName, facility_lga.name as lga, facility_state.name as state, \n" +
 			"\t\t\t\t  boui.code as datimId, res_state.name as residentialState, res_lga.name as residentialLga,\n" +
@@ -121,21 +121,21 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"\t\t\t\t  LEFT JOIN base_organisation_unit res_lga ON res_lga.id=r.lgaid\\:\\:BIGINT\n" +
 			"\t\t\t\t INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id=facility_id\n" +
 			"\t\t\t\t INNER JOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
-			"\t\t\t\t WHERE h.archived=0 AND h.facility_id=?1),\n" +
-			"\t\t\t\t\n" +
-			"enrollment_details AS (\n" +
-			"\t\t\t\t\tSELECT h.person_uuid, sar.display as statusAtRegistration, date_confirmed_hiv as dateOfConfirmedHiv,\n" +
-			"\t\t\t\tep.display as entryPoint, date_of_registration as dateOfRegistration\n" +
-			"\t\t\t\tFROM hiv_enrollment h\n" +
-			"\t\t\t\tLEFT JOIN base_application_codeset sar ON sar.id=h.status_at_registration_id\n" +
-			"\t\t\t\tLEFT JOIN base_application_codeset ep ON ep.id=h.entry_point_id\n" +
 			"\t\t\t\tWHERE h.archived=0 AND h.facility_id=?1),\n" +
-			"\t\t\t\t\t\t\t\t\n" +
-			"laboratory_details AS (SELECT DISTINCT ON(lo.patient_uuid) lo.patient_uuid as person_uuid, ll.lab_test_name as test,\n" +
-			"\t\t\t\t\t\tbac_viral_load.display viralLoadType, ls.date_sample_collected as dateSampleCollected,\n" +
-			"\t\t\t\t\t\tlr.result_reported as lastViralLoad, lr.date_result_reported as dateOfLastViralLoad\n" +
-			"\t\t\t\t\t\tFROM laboratory_order lo\n" +
-			"\t\t\t\t\tLEFT JOIN ( SELECT patient_uuid, MAX(order_date) AS MAXDATE FROM laboratory_order lo \n" +
+			"\t\t\t\n" +
+			"\t\t\tenrollment_details AS (\n" +
+			"\t\t\tSELECT h.person_uuid,h.unique_id as uniqueId,  sar.display as statusAtRegistration, date_confirmed_hiv as dateOfConfirmedHiv,\n" +
+			"\t\t\tep.display as entryPoint, date_of_registration as dateOfRegistration\n" +
+			"\t\t\tFROM hiv_enrollment h\n" +
+			"\t\t\tLEFT JOIN base_application_codeset sar ON sar.id=h.status_at_registration_id\n" +
+			"\t\t\tLEFT JOIN base_application_codeset ep ON ep.id=h.entry_point_id\n" +
+			"\t\t\tWHERE h.archived=0 AND h.facility_id=?1),\n" +
+			"\t\t\n" +
+			"\t\t\tlaboratory_details AS (SELECT DISTINCT ON(lo.patient_uuid) lo.patient_uuid as person_uuid, ll.lab_test_name as test,\n" +
+			"\t\t\tbac_viral_load.display viralLoadType, ls.date_sample_collected as dateSampleCollected,\n" +
+			"\t\t\tlr.result_reported as lastViralLoad, lr.date_result_reported as dateOfLastViralLoad\n" +
+			"\t\t\tFROM laboratory_order lo\n" +
+			"\t\t\tLEFT JOIN ( SELECT patient_uuid, MAX(order_date) AS MAXDATE FROM laboratory_order lo \n" +
 			"\t\t\tGROUP BY patient_uuid ORDER BY MAXDATE ASC ) AS current_lo\n" +
 			"\t\t\tON current_lo.patient_uuid=lo.patient_uuid AND current_lo.MAXDATE=lo.order_date\n" +
 			"\t\t\tLEFT JOIN laboratory_test lt ON lt.lab_order_id=lo.id AND lt.patient_uuid = lo.patient_uuid\n" +
@@ -145,143 +145,151 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"\t\t\tLEFT JOIN laboratory_sample ls ON ls.test_id=lt.id AND ls.patient_uuid = lo.patient_uuid\n" +
 			"\t\t\tLEFT JOIN laboratory_result lr ON lr.test_id=lt.id AND lr.patient_uuid = lo.patient_uuid\n" +
 			"\t\t\tWHERE ll.lab_test_name = 'Viral Load' AND h.archived=0 AND lo.archived=0 AND lo.facility_id=?1),\n" +
+			"\t\t\tpharmacy_details AS (\n" +
+			"\t\t\tSELECT DISTINCT ON (hartp.person_uuid)hartp.person_uuid as person_uuid, r.visit_date as dateOfLastRefill,\n" +
+			"\t\t\thartp.next_appointment as dateOfNextRefill, hartp.refill_period as lastRefillDuration,\n" +
+			"\t\t\thartp.dsd_model_type as DSDType, r.description as currentRegimenLine, r.regimen_name as currentRegimen,\n" +
+			"\t\t\t(CASE \n" +
+			"\t\t\tWHEN stat.hiv_status ILIKE '%STOP%' OR stat.hiv_status ILIKE '%DEATH%'\n" +
+			"\t\t\tOR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status\n" +
+			"\t\t\tWHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE \n" +
+			"\t\t\tTHEN 'IIT' ELSE 'ACTIVE' \n" +
+			"\t\t\tEND)AS currentStatus,\n" +
 			"\t\t\t\n" +
-			"pharmacy_details AS (\n" +
-			"\tSELECT DISTINCT ON (hartp.person_uuid)hartp.person_uuid as person_uuid, r.visit_date as dateOfLastRefill,\n" +
-			"hartp.next_appointment as dateOfNextRefill, hartp.refill_period as lastRefillDuration,\n" +
-			"hartp.dsd_model_type as DSDType, r.description as currentRegimenLine, r.regimen_name as currentRegimen,\n" +
-			"\t(CASE \n" +
-			"WHEN stat.hiv_status ILIKE '%STOP%' OR stat.hiv_status ILIKE '%DEATH%'\n" +
-			"OR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status\n" +
-			"WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE \n" +
-			"THEN 'IIT' ELSE 'ACTIVE ON TREATMENT' \n" +
-			"END)AS status\n" +
-			"FROM hiv_art_pharmacy hartp\n" +
-			"INNER JOIN (SELECT distinct r.* FROM (SELECT h.person_uuid, h.visit_date, pharmacy_object ->> 'regimenName'\\:\\:VARCHAR AS regimen_name,\n" +
-			"\t\t\t \t\thrt.description FROM hiv_art_pharmacy h,\n" +
-			"\t\t\t\t\tjsonb_array_elements(h.extra->'regimens') with ordinality p(pharmacy_object)\n" +
+			"\t\t\t (CASE \n" +
+			"\t\t\tWHEN stat.hiv_status ILIKE '%STOP%' OR stat.hiv_status ILIKE '%DEATH%'\n" +
+			"\t\t\tOR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date\n" +
+			"\t\t\tWHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE \n" +
+			"\t\t\tTHEN (hartp.visit_date + hartp.refill_period + INTERVAL '28 day')\\:\\:date ELSE hartp.visit_date \n" +
+			"\t\t\tEND)AS dateOfCurrentStatus\n" +
+			"\t\t\tFROM hiv_art_pharmacy hartp\n" +
+			"\t\t\tINNER JOIN (SELECT distinct r.* FROM (SELECT h.person_uuid, h.visit_date, pharmacy_object ->> 'regimenName'\\:\\:VARCHAR AS regimen_name,\n" +
+			"\t\t\thrt.description FROM hiv_art_pharmacy h,\n" +
+			"\t\t\tjsonb_array_elements(h.extra->'regimens') with ordinality p(pharmacy_object)\n" +
 			"\t\t\tINNER JOIN hiv_regimen hr ON hr.description=pharmacy_object ->> 'regimenName'\\:\\:VARCHAR\n" +
 			"\t\t\t INNER JOIN hiv_regimen_type hrt ON hrt.id=hr.regimen_type_id\n" +
 			"\t\t\t WHERE hrt.id IN (1,2,3,4,14))r\n" +
-			"\t\t\t \n" +
+			"\t\t\t\n" +
 			"\t\t\t INNER JOIN (SELECT hap.person_uuid, MAX(visit_date) AS MAXDATE FROM hiv_art_pharmacy hap\n" +
 			"\t\t\tINNER JOIN hiv_enrollment h ON h.person_uuid=hap.person_uuid  WHERE h.archived=0\n" +
-			"\t\t\t\t\t\tGROUP BY hap.person_uuid ORDER BY MAXDATE ASC ) max ON\n" +
-			"\t\t\tmax.MAXDATE=r.visit_date AND r.person_uuid=max.person_uuid) r\n" +
+			"\t\t\tGROUP BY hap.person_uuid ORDER BY MAXDATE ASC ) max ON\n" +
+			"\t\t\t max.MAXDATE=r.visit_date AND r.person_uuid=max.person_uuid) r\n" +
 			"\t\t\tON r.visit_date=hartp.visit_date AND r.person_uuid=hartp.person_uuid\n" +
-			"\tINNER JOIN hiv_enrollment he ON he.person_uuid=r.person_uuid\n" +
-			"\tLEFT JOIN (SELECT sh1.person_id, sh1.hiv_status, sh1.status_date\n" +
-			"\t\t\t\tFROM hiv_status_tracker sh1\n" +
-			"\t\t\t\tINNER JOIN \n" +
-			"\t\t\t\t(\n" +
-			"\t\t\t\t   SELECT person_id as p_id, MAX(hst.id) AS MAXID\n" +
-			"\t\t\t\t   FROM hiv_status_tracker hst INNER JOIN hiv_enrollment h ON h.person_uuid=person_id\n" +
-			"\t\t\t\t   GROUP BY person_id\n" +
-			"\t\t\t\tORDER BY person_id ASC\n" +
-			"\t\t\t\t) sh2 ON sh1.person_id = sh2.p_id AND sh1.id = sh2.MAXID\n" +
-			"\t\t\t\tORDER BY sh1.person_id ASC) stat ON stat.person_id=hartp.person_uuid\n" +
-			"\tWHERE he.archived=0 AND hartp.archived=0 AND hartp.facility_id=?1 ORDER BY hartp.person_uuid ASC), \n" +
-			"\t\n" +
-			"art_commencement_vitals AS (SELECT DISTINCT ON (tvs.person_uuid) tvs.person_uuid , body_weight as baseLineWeight, height as baseLineHeight, \n" +
-			"\t\t\t\t\t\t\tCONCAT(diastolic, '/', systolic) as baseLineBp, diastolic as diastolicBp, \n" +
-			"\t\t\t\t\t\t\tsystolic as systolicBp, clinical_stage.display as baseLineClinicalStage,\n" +
-			"\t\t\t\t\t\t\tfunc_status.display as baseLineFunctionalStatus,\n" +
-			"\t\t\t\t\t\t\thv.description as firstRegimen, hrt.description as firstRegimenLine,\n" +
-			"\t\t\t\t\t\t\tCASE WHEN cd_4=0 THEN null ELSE cd_4 END  AS baseLineCd4,\n" +
-			"\t\t\t\t\t\t\tCASE WHEN cd_4_percentage=0 THEN null ELSE cd_4_percentage END AS cd4Percentage,\n" +
-			"\t\t\t\t\t\t\thac.visit_date as artStartDate\n" +
-			"\t\t\t\t\t\t\tFROM triage_vital_sign tvs\n" +
-			"\t\t\t\t\t\t\t\n" +
-			"\t\t\t\t\t\t   INNER JOIN hiv_art_clinical hac ON tvs.uuid=hac.vital_sign_uuid \n" +
-			"\t\t\t\t\t\t\tAND hac.is_commencement=true AND hac.person_uuid = tvs.person_uuid\n" +
-			"\t\t\t\t\t\t\t\n" +
-			"\t\t\t\t\t\t\tINNER JOIN hiv_enrollment h ON hac.hiv_enrollment_uuid = h.uuid AND hac.person_uuid=tvs.person_uuid\n" +
-			"\t\t\t\t\t\t\tINNER JOIN patient_person p ON p.uuid=h.person_uuid\n" +
-			"\t\t\t\t\t\t\tRIGHT JOIN hiv_regimen hv ON hv.id=hac.regimen_id\n" +
-			"\t\t\t\t\t\t\tRIGHT JOIN hiv_regimen_type hrt ON hrt.id=hac.regimen_type_id\n" +
-			"\t\t\t\t\t\t\tRIGHT JOIN base_application_codeset clinical_stage ON clinical_stage.id=hac.clinical_stage_id\n" +
-			"\t\t\t\t\t\t\tRIGHT JOIN base_application_codeset func_status ON func_status.id=hac.functional_status_id \n" +
-			"\t\t\t\t\t\t   WHERE hac.archived=0  AND h.archived=0 AND h.facility_id=?1), \n" +
-			"\t\t\t\t\t\t   \n" +
-			"current_clinical AS (SELECT tvs.person_uuid, hac.next_appointment as dateOfNextClinic, body_weight as currentWeight, height as currentHeight, \n" +
-			"\t\t\t\t\t diastolic as currentDiastolic, systolic as currentSystolic, bac.display as currentClinicalStage,\n" +
-			"\t\t\t\t\t CONCAT(diastolic, '/', systolic) as currentBp, current_clinical_date.MAXDATE as dateOfLastClinic\n" +
-			"\t\t\t\t\t\t\tFROM triage_vital_sign tvs\n" +
-			"\t\t\t\t   INNER JOIN ( SELECT person_uuid, MAX(capture_date) AS MAXDATE FROM triage_vital_sign \n" +
-			"\t\t\t\t\t\t\t   GROUP BY person_uuid ORDER BY MAXDATE ASC ) AS current_triage\n" +
-			"\t\t\t\t   ON current_triage.MAXDATE=tvs.capture_date AND current_triage.person_uuid=tvs.person_uuid\n" +
-			"\t\t\t\t\t \n" +
-			"\t\t\t\t    INNER JOIN hiv_art_clinical hac ON tvs.uuid=hac.vital_sign_uuid\n" +
-			"\t\t\t\t\tINNER JOIN ( SELECT person_uuid, MAX(hac.visit_date) AS MAXDATE FROM hiv_art_clinical hac \n" +
-			"\t\t\t\t\t\t\t   GROUP BY person_uuid ORDER BY MAXDATE ASC ) AS current_clinical_date\n" +
-			"\t\t\t\t\t ON current_clinical_date.MAXDATE=hac.visit_date AND current_clinical_date.person_uuid=hac.person_uuid\n" +
-			"\t\t\t\t\tINNER JOIN hiv_enrollment he ON he.person_uuid = hac.person_uuid\n" +
-			"\t\t\t\t\tINNER JOIN base_application_codeset bac ON bac.id=hac.clinical_stage_id\n" +
-			"\t\t\t\t\tWHERE hac.archived=0 AND he.archived=0 AND he.facility_id=?1)\n" +
-			"SELECT\t\t\t  \n" +
-			"b.archived,\n" +
-			"b.hospitalNumber,\n" +
-			"b.surname,\n" +
-			"b.firstName,\n" +
-			"b.age,\n" +
-			"b.otherName,\n" +
-			"b.gender,\n" +
-			"b.dateOfBirth,\n" +
-			"b.maritalStatus,\n" +
-			"b.education,\n" +
-			"b.personUuid,\n" +
-			"b.occupation,\n" +
-			"b.facilityName,\n" +
-			"b.lga,\n" +
-			"b.state,\n" +
-			"b.datimId,\n" +
-			"b.residentialState as stateOfResidence,\n" +
-			"b.residentialLga as lgaOfResidence,\n" +
-			"b.address,\n" +
-			"b.phone,\n" +
-			"c.currentWeight,\n" +
-			"c.currentHeight,\n" +
-			"c.currentDiastolic as currentDiastolicBp,\n" +
-			"c.currentSystolic as currentSystolicBP,                 \n" +
-			"c.currentBp,\n" +
-			"c.dateOfLastClinic,\n" +
-			"c.dateOfNextClinic,\n" +
-			"c.currentClinicalStage as lastClinicStage,\n" +
-			"e.statusAtRegistration,\n" +
-			"e.dateOfConfirmedHiv as dateOfConfirmedHIVTest,\n" +
-			"e.entryPoint as careEntryPoint,\n" +
-			"e.dateOfRegistration,\n" +
-			"p.dateOfNextRefill,\n" +
-			"p.lastRefillDuration,\n" +
-			"p.dateOfLastRefill,\n" +
-			"p.DSDType,\n" +
-			"p.currentRegimen,\n" +
-			"p.currentRegimenLine,\n" +
-			"p.status as currentStatus,\n" +
-			"l.test,                   \n" +
-			"l.viralLoadType,\n" +
-			"l.dateSampleCollected as dateOfSampleCollected ,\n" +
-			"l.lastViralLoad,\n" +
-			"l.dateOfLastViralLoad,\n" +
-			"a.baseLineWeight,\n" +
-			"a.baseLineHeight,\n" +
-			"a.baseLineBp,\n" +
-			"a.diastolicBp,                        \n" +
-			"a.systolicBp,\n" +
-			"a.baseLineClinicalStage as baselineClinicStage,\n" +
-			"a.baseLineFunctionalStatus,                       \n" +
-			"a.firstRegimen, \n" +
-			"a.firstRegimenLine,\n" +
-			"a.baseLineCd4,                       \n" +
-			"a.cd4Percentage,                           \n" +
-			"a.artStartDate\n" +
-			"\n" +
-			"FROM enrollment_details e\n" +
-			"\tINNER JOIN bio_data b ON e.person_uuid=b.personUuid\n" +
-			"LEFT JOIN art_commencement_vitals a ON a.person_uuid=e.person_uuid\n" +
-			"LEFT JOIN pharmacy_details p ON p.person_uuid=e.person_uuid\n" +
-			"LEFT JOIN laboratory_details l ON l.person_uuid=e.person_uuid\n" +
-			"LEFT JOIN current_clinical c ON c.person_uuid=e.person_uuid",
+			"\t\t\tINNER JOIN hiv_enrollment he ON he.person_uuid=r.person_uuid\n" +
+			"\t\t\tLEFT JOIN (SELECT sh1.person_id, sh1.hiv_status, sh1.status_date\n" +
+			"\t\t\tFROM hiv_status_tracker sh1\n" +
+			"\t\t\tINNER JOIN \n" +
+			"\t\t\t(\n" +
+			"\t\t\t   SELECT person_id as p_id, MAX(hst.id) AS MAXID\n" +
+			"\t\t\t   FROM hiv_status_tracker hst INNER JOIN hiv_enrollment h ON h.person_uuid=person_id\n" +
+			"\t\t\t   GROUP BY person_id\n" +
+			"\t\t\tORDER BY person_id ASC\n" +
+			"\t\t\t) sh2 ON sh1.person_id = sh2.p_id AND sh1.id = sh2.MAXID\n" +
+			"\t\t\tORDER BY sh1.person_id ASC) stat ON stat.person_id=hartp.person_uuid\n" +
+			"\t\t\tWHERE he.archived=0 AND hartp.archived=0 AND hartp.facility_id=?1 ORDER BY hartp.person_uuid ASC), \n" +
+			"\t\t\n" +
+			"\t\t\tart_commencement_vitals AS (SELECT DISTINCT ON (tvs.person_uuid) tvs.person_uuid , body_weight as baseLineWeight, height as baseLineHeight, \n" +
+			"\t\t\tCONCAT(diastolic, '/', systolic) as baseLineBp, diastolic as diastolicBp, \n" +
+			"\t\t\tsystolic as systolicBp, clinical_stage.display as baseLineClinicalStage,\n" +
+			"\t\t\tfunc_status.display as baseLineFunctionalStatus,\n" +
+			"\t\t\thv.description as firstRegimen, hrt.description as firstRegimenLine,\n" +
+			"\t\t\tCASE WHEN cd_4=0 THEN null ELSE cd_4 END  AS baseLineCd4,\n" +
+			"\t\t\tCASE WHEN cd_4_percentage=0 THEN null ELSE cd_4_percentage END AS cd4Percentage,\n" +
+			"\t\t\thac.visit_date as artStartDate\n" +
+			"\t\t\tFROM triage_vital_sign tvs\n" +
+			"\t\t\t\n" +
+			"\t\t\t  INNER JOIN hiv_art_clinical hac ON tvs.uuid=hac.vital_sign_uuid \n" +
+			"\t\t\tAND hac.is_commencement=true AND hac.person_uuid = tvs.person_uuid\n" +
+			"\t\t\t\n" +
+			"\t\t\tINNER JOIN hiv_enrollment h ON hac.hiv_enrollment_uuid = h.uuid AND hac.person_uuid=tvs.person_uuid\n" +
+			"\t\t\tINNER JOIN patient_person p ON p.uuid=h.person_uuid\n" +
+			"\t\t\tRIGHT JOIN hiv_regimen hv ON hv.id=hac.regimen_id\n" +
+			"\t\t\tRIGHT JOIN hiv_regimen_type hrt ON hrt.id=hac.regimen_type_id\n" +
+			"\t\t\tRIGHT JOIN base_application_codeset clinical_stage ON clinical_stage.id=hac.clinical_stage_id\n" +
+			"\t\t\tRIGHT JOIN base_application_codeset func_status ON func_status.id=hac.functional_status_id \n" +
+			"\t\t\t  WHERE hac.archived=0  AND h.archived=0 AND h.facility_id=?1), \n" +
+			"\t\t\t\n" +
+			"\t\t\tcurrent_clinical AS (SELECT tvs.person_uuid, hac.adherence_level as adherenceLevel, hac.next_appointment as dateOfNextClinic, body_weight as currentWeight, height as currentHeight, \n" +
+			"\t\t\t diastolic as currentDiastolic, systolic as currentSystolic, bac.display as currentClinicalStage,\n" +
+			"\t\t\t CONCAT(diastolic, '/', systolic) as currentBp, current_clinical_date.MAXDATE as dateOfLastClinic\n" +
+			"\t\t\tFROM triage_vital_sign tvs\n" +
+			"\t\t\t  INNER JOIN ( SELECT person_uuid, MAX(capture_date) AS MAXDATE FROM triage_vital_sign \n" +
+			"\t\t\t  GROUP BY person_uuid ORDER BY MAXDATE ASC ) AS current_triage\n" +
+			"\t\t\t  ON current_triage.MAXDATE=tvs.capture_date AND current_triage.person_uuid=tvs.person_uuid\n" +
+			"\t\t\n" +
+			"\t\t    INNER JOIN hiv_art_clinical hac ON tvs.uuid=hac.vital_sign_uuid\n" +
+			"\t\t\tINNER JOIN ( SELECT person_uuid, MAX(hac.visit_date) AS MAXDATE FROM hiv_art_clinical hac \n" +
+			"\t\t\t  GROUP BY person_uuid ORDER BY MAXDATE ASC ) AS current_clinical_date\n" +
+			"\t\t\t ON current_clinical_date.MAXDATE=hac.visit_date AND current_clinical_date.person_uuid=hac.person_uuid\n" +
+			"\t\t\tINNER JOIN hiv_enrollment he ON he.person_uuid = hac.person_uuid\n" +
+			"\t\t\tINNER JOIN base_application_codeset bac ON bac.id=hac.clinical_stage_id\n" +
+			"\t\t\tWHERE hac.archived=0 AND he.archived=0 AND he.facility_id=?1)\n" +
+			"\t\t\tSELECT\n" +
+			"\t\t\tb.archived,\n" +
+			"\t\t\tb.hospitalNumber,\n" +
+			"\t\t\tb.surname,\n" +
+			"\t\t\tb.firstName,\n" +
+			"\t\t\tb.age,\n" +
+			"\t\t\tb.otherName,\n" +
+			"\t\t\tb.gender,\n" +
+			"\t\t\tb.dateOfBirth,\n" +
+			"\t\t\tb.maritalStatus,\n" +
+			"\t\t\tb.education,\n" +
+			"\t\t\tb.personUuid,\n" +
+			"\t\t\tb.occupation,\n" +
+			"\t\t\tb.facilityName,\n" +
+			"\t\t\tb.lga,\n" +
+			"\t\t\tb.state,\n" +
+			"\t\t\tb.datimId,\n" +
+			"\t\t\tb.residentialState,\n" +
+			"\t\t\tb.residentialLga,\n" +
+			"\t\t\tb.address,\n" +
+			"\t\t\tb.phone,\n" +
+			"\t\t\tc.currentWeight,\n" +
+			"\t\t\tc.currentHeight,\n" +
+			"\t\t\tc.currentDiastolic as currentDiastolicBp,\n" +
+			"\t\t\tc.currentSystolic as currentSystolicBP,                 \n" +
+			"\t\t\tc.currentBp,\n" +
+			"\t\t\tc.dateOfLastClinic,\n" +
+			"\t\t\tc.dateOfNextClinic,\n" +
+			"\t\t\tc.adherenceLevel,\n" +
+			"\t\t\tc.currentClinicalStage as lastClinicStage,\n" +
+			"\t\t\te.statusAtRegistration,\n" +
+			"\t\t\te.dateOfConfirmedHiv as dateOfConfirmedHIVTest,\n" +
+			"\t\t\te.entryPoint as careEntryPoint,\n" +
+			"\t\t\te.uniqueId,\n" +
+			"\t\t\te.dateOfRegistration,\n" +
+			"\t\t\tp.dateOfNextRefill,\n" +
+			"\t\t\tp.lastRefillDuration,\n" +
+			"\t\t\tp.dateOfLastRefill,\n" +
+			"\t\t\tp.DSDType,\n" +
+			"\t\t\tp.currentRegimen,\n" +
+			"\t\t\tp.currentRegimenLine,\n" +
+			"\t\t\tp.currentStatus,\n" +
+			"\t\t\tp.dateOfCurrentStatus as dateOfCurrentStatus,\n" +
+			"\t\t\tl.test,                   \n" +
+			"\t\t\tl.viralLoadType,\n" +
+			"\t\t\tl.dateSampleCollected as dateOfSampleCollected ,\n" +
+			"\t\t\tl.lastViralLoad,\n" +
+			"\t\t\tl.dateOfLastViralLoad,\n" +
+			"\t\t\ta.baseLineWeight,\n" +
+			"\t\t\ta.baseLineHeight,\n" +
+			"\t\t\ta.baseLineBp,\n" +
+			"\t\t\ta.diastolicBp,                        \n" +
+			"\t\t\ta.systolicBp,\n" +
+			"\t\t\ta.baseLineClinicalStage as baselineClinicStage,\n" +
+			"\t\t\ta.baseLineFunctionalStatus,                       \n" +
+			"\t\t\ta.firstRegimen, \n" +
+			"\t\t\ta.firstRegimenLine,\n" +
+			"\t\t\ta.baseLineCd4,                       \n" +
+			"\t\t\ta.cd4Percentage,                           \n" +
+			"\t\t\ta.artStartDate\n" +
+			"\t\t\tFROM enrollment_details e\n" +
+			"\t\t\tINNER JOIN bio_data b ON e.person_uuid=b.personUuid\n" +
+			"\t\t\tLEFT JOIN art_commencement_vitals a ON a.person_uuid=e.person_uuid\n" +
+			"\t\t\tLEFT JOIN pharmacy_details p ON p.person_uuid=e.person_uuid\n" +
+			"\t\t\tLEFT JOIN laboratory_details l ON l.person_uuid=e.person_uuid\n" +
+			"\t\t\tLEFT JOIN current_clinical c ON c.person_uuid=e.person_uuid",
 			nativeQuery = true)
 	List<PatientLineDto> getPatientLineByFacilityId(Long facilityId);
 	
@@ -388,9 +396,12 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"\t\t\t\t\t\t\t\t INNER JOIN hiv_regimen_type hrt ON hrt.id=hr.regimen_type_id\n" +
 			"\t\t\t\t\t\t\t\t WHERE hrt.id IN (1,2,3,4,14))r\n" +
 			"\n" +
-			"\t\t\t\t\t\t\t\t INNER JOIN (SELECT hap.person_uuid, MAX(visit_date) AS MAXDATE FROM hiv_art_pharmacy hap\n" +
-			"\t\t\t\t\t\t\t\tINNER JOIN hiv_enrollment h ON h.person_uuid=hap.person_uuid  WHERE h.archived=0\n" +
-			"\t\t\t\t\t\t\t\t\t\t\tGROUP BY hap.person_uuid ORDER BY MAXDATE ASC ) max ON\n" +
+			"\t\t\t\t\t\t\t\t INNER JOIN (SELECT  MAX(visit_date) AS MAXDATE , person_uuid,pharmacy_object ->> 'regimenName'\\:\\:VARCHAR AS regimen_name\n" +
+			"\t\t\t\t\t\t\t\t\t\t FROM hiv_art_pharmacy h,\n" +
+			"\t\t\t\t\t\t\t\t\t\tjsonb_array_elements(h.extra->'regimens') with ordinality p(pharmacy_object)\n" +
+			"\t\t\t\t\t\t\t\tINNER JOIN hiv_regimen hr ON hr.description=pharmacy_object ->> 'regimenName'\\:\\:VARCHAR\n" +
+			"\t\t\t\t\t\t\t\t INNER JOIN hiv_regimen_type hrt ON hrt.id=hr.regimen_type_id\n" +
+			"\t\t\t\t\t\t\t\t WHERE hrt.id IN (1,2,3,4,14) group by pharmacy_object,person_uuid) max ON\n" +
 			"\t\t\t\t\t\t\t\tmax.MAXDATE=r.visit_date AND r.person_uuid=max.person_uuid) r\n" +
 			"\t\t\t\t\t\t\t\tON r.visit_date=hartp.visit_date AND r.person_uuid=hartp.person_uuid\n" +
 			"\t\t\t\t\t\tINNER JOIN hiv_enrollment he ON he.person_uuid=r.person_uuid\n" +
