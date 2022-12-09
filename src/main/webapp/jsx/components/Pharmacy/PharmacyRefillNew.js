@@ -526,10 +526,10 @@ const Pharmacy = (props) => {
         const regimenId= e.target.value
         if(regimenId!==""){
             RegimenDrugOI(regimenId)
-            //setShowRegimen(true)
+            setShowRegimen(true)
         }else{
             setRegimenTypeOI([])
-            //setShowRegimen(false)
+            setShowRegimen(false)
         }
         setObjValues ({...objValues,  [e.target.name]: e.target.value});
     }
