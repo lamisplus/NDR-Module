@@ -72,11 +72,11 @@ const Laboratory = (props) => {
     const [buttonHidden, setButtonHidden]= useState(false);
     const [moduleStatus, setModuleStatus]= useState("0")
     const [testGroup, setTestGroup] = useState([]);
-    const [test, setTest] = useState([]);
-    const [vlRequired, setVlRequired]=useState(false)
+    //const [test, setTest] = useState([]);
+    //const [vlRequired, setVlRequired]=useState(false)
     const [priority, setPriority]=useState([])
     const [eacStatusObj, setEacStatusObj] = useState()
-    const [labNumberOption, setLabNumberOption] = useState("")
+    //const [labNumberOption, setLabNumberOption] = useState("")
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -118,7 +118,7 @@ const Laboratory = (props) => {
         GetPatientDTOObj(); 
         CheckEACStatus();  
         LabNumbers();
-    }, [props.patientObj.id, ]);
+    }, [props.patientObj.id, tests.labTestId]);
     const GetPatientDTOObj =()=>{
             axios
                .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -128,7 +128,7 @@ const Laboratory = (props) => {
                    const patientDTO= response.data.enrollment
                    setEnrollDate (patientDTO && patientDTO.dateOfRegistration ? patientDTO.dateOfRegistration :"")
                    //setEacStatusObj(response.data);
-                   console.log(enrollDate)
+                   //console.log(enrollDate)
                })
                .catch((error) => {
                //console.log(error);
@@ -246,6 +246,8 @@ const Laboratory = (props) => {
     // }
     const handleInputChangeObject = e => {
         setSelectedOption(e)
+        
+        console.log(e.value )
         tests.labTestGroupId=e.testGroupId
         tests.labTestId = e.value               
     }
@@ -377,7 +379,7 @@ const Laboratory = (props) => {
             }); 
     }
 
-
+console.log(typeof tests.labTestId)
   return (      
       <div >
 
@@ -565,29 +567,54 @@ const Laboratory = (props) => {
                             ) : "" }
                         </FormGroup>
                     </Col>
-                    <Col md={4} className="form-group mb-3">
-                        <FormGroup>
-                            <Label for="priority">Result *</Label>
-                            <InputGroup>
-                            <Input
-                                type="text"
-                                name="result"
-                                id="result"
-                                value={tests.result}
-                                onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
-                            />
+                    { tests.labTestId===50 ? 
+                        (<>
+                            <div className="form-group  col-md-3">
+                                <FormGroup>
+                                    <Label>Result *</Label>
+                                    <select
+                                        className="form-control"
+                                        name="result"
+                                        id="result"
+                                        value={tests.result}
+                                        onChange={handleInputChange}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    >
+                                        <option value={""}>Select</option>
+                                        <option value="<200">{"<200"}</option>
+                                        <option value=">=200">{">=200"}</option>
+                                        
+                                    </select>
+                                    
+                                </FormGroup>
+                            </div>
+                        </>)
+                        :
+                        (<>
+                            <Col md={4} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="priority">Result *</Label>
+                                    <InputGroup>
+                                    <Input
+                                        type="text"
+                                        name="result"
+                                        id="result"
+                                        value={tests.result}
+                                        onChange={handleInputChange}  
+                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
+                                    />
 
-                            {/* <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
-                                
-                            </InputGroupText> */}
-                            </InputGroup>
-                            {errors.result !=="" ? (
-                                <span className={classes.error}>{errors.result}</span>
-                            ) : "" }
-                        </FormGroup>
-                    </Col>
-
+                                    {/* <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
+                                        
+                                    </InputGroupText> */}
+                                    </InputGroup>
+                                    {errors.result !=="" ? (
+                                        <span className={classes.error}>{errors.result}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
+                        </>)
+                    }
                     <Col md={4} className="form-group mb-3">
                         <FormGroup>
                             <Label for="encounterDate">Reported by</Label>

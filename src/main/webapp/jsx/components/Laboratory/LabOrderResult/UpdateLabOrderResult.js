@@ -489,24 +489,51 @@ useEffect(() => {
                                 ) : "" }
                             </FormGroup>
                         </Col>                       
-                        <Col md={4} className="form-group mb-3">
-                            <FormGroup>
-                                <Label for="priority">Result*</Label>
-                                <Input
-                                    type="text"
-                                    name="result"
-                                    id="result"
-                                    value={tests.result}
-                                    onChange={handleInputChange}  
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        { tests.labTestId===50 ? 
+                        (<>
+                            <div className="form-group  col-md-3">
+                                <FormGroup>
+                                    <Label>Result *</Label>
+                                    <select
+                                        className="form-control"
+                                        name="result"
+                                        id="result"
+                                        value={tests.result}
+                                        onChange={handleInputChange}
+                                        style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                     >
-                                   
-                                </Input>
-                                {errors.result !=="" ? (
-                                    <span className={classes.error}>{errors.result}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </Col>
+                                        <option value={""}>Select</option>
+                                        <option value="<200">{"<200"}</option>
+                                        <option value=">=200">{">=200"}</option>
+                                        
+                                    </select>
+                                    {errors.result !=="" ? (
+                                        <span className={classes.error}>{errors.result}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </div>
+                        </>)
+                        :
+                        (<>
+                            <Col md={4} className="form-group mb-3">
+                                <FormGroup>
+                                    <Label for="priority">Result *</Label>
+                                    
+                                    <Input
+                                        type="text"
+                                        name="result"
+                                        id="result"
+                                        value={tests.result}
+                                        onChange={handleInputChange}  
+                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
+                                    />
+                                    {errors.result !=="" ? (
+                                        <span className={classes.error}>{errors.result}</span>
+                                    ) : "" }
+                                </FormGroup>
+                            </Col>
+                        </>)
+                    }
                        {tests.labTestId==='16' || tests.labTestId===16 && (
                         <Col md={4} className="form-group mb-3">
                                 <FormGroup>
