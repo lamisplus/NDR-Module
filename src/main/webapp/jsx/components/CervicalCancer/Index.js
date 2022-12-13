@@ -164,7 +164,7 @@ const CervicalCancer = (props) => {
     }
     const CERVICAL_CANCER_SCREENING_TYPE =()=>{
         axios
-            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_METHOD`,
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_TYPE`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
