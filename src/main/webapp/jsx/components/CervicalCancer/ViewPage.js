@@ -96,13 +96,19 @@ const CervicalCancer = (props) => {
     const [visible, setVisible] = useState([]);
     const [referrals, setReferrals] = useState([]);
     const [type, setType] = useState([]);
+    const [screeningType, setScreeningType] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
     const [objValues, setObjValues] = useState({
                                                     personId:patientObj.id,
                                                     screeningResult:"",
                                                     screenMethod:"",
                                                     screenType:"",
-                                                    dateOfScreening:"",                                                  
+                                                    dateOfScreening:"", 
+                                                    screeningArea:"",
+                                                    screeningGross:"",
+                                                    screeningRefferal:"",
+                                                    screeningVisible:"",
+                                                    screenType:"",                                                
 
                                                 });
     const [observation, setObservation]=useState({
@@ -125,6 +131,7 @@ const CervicalCancer = (props) => {
         Visible();
         GetDetail();
         GetPatientDTOObj();
+        CERVICAL_CANCER_SCREENING_TYPE();
     }, [props.activeContent.id]);
     const GetPatientDTOObj =()=>{
         axios
@@ -141,6 +148,20 @@ const CervicalCancer = (props) => {
            //console.log(error);
            });
        
+    }
+    const CERVICAL_CANCER_SCREENING_TYPE =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_METHOD`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setScreeningType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
     }
      //Get Cervical Cancer  Object
      const GetDetail =()=>{
@@ -341,6 +362,30 @@ const CervicalCancer = (props) => {
                                 </Input> 
                             {errors.screenMethod !=="" ? (
                                     <span className={classes.error}>{errors.screenMethod}</span>
+                                ) : "" }
+                            </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Screening Type *</Label>
+                            <Input
+                                    type="select"
+                                    name="screenType"
+                                    id="screenType"
+                                    value={objValues.screenType}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> Select</option>
+                
+                                        {screeningType.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input> 
+                            {errors.screenType !=="" ? (
+                                    <span className={classes.error}>{errors.screenType}</span>
                                 ) : "" }
                             </FormGroup>
                             </div>
