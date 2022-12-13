@@ -70,7 +70,7 @@ const RecentHistory = (props) => {
            { headers: {"Authorization" : `Bearer ${token}`} }
        )
        .then((response) => {
-        console.log(response.data)
+        //console.log(response.data)
         setLoadingLab(false)
           //  let LabObject= []
           //       response.data.forEach(function(value, index, array) {
@@ -579,7 +579,12 @@ const redirectLink=()=>{
                           Status{" "}<br/>
                           <strong className="text-primary">{test.labTestOrderStatusName}</strong>.
                         </h6>
-                        
+                        {test.labTestOrderStatusName==='Result Reported'  && (
+                        <h6 className="mb-0">
+                          Result{" "}<br/>
+                          <strong className="text-primary">{test.result}</strong>.
+                        </h6>
+                        )}
                       </span>
                       </li>
                     </>
