@@ -450,46 +450,46 @@ const ArtCommencement = (props) => {
             return Object.values(temp).every(x => x == "")
         }
 
-        /**** Submit Button Processing  */
-        const handleSubmit = (e) => {                  
-            e.preventDefault(); 
-            if(validate()){ 
-                   
-            objValues.personId = props.patientObj.id
-            vital.encounterDate = objValues.visitDate
-            vital.personId=props.patientObj.id
-            objValues.vitalSignDto= vital
-            objValues.hivEnrollmentId= props.patientObj.enrollment.id
-            objValues.clinicalStageId = objValues.whoStagingId 
-           
-            setSaving(true);
-            axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
-            { headers: {"Authorization" : `Bearer ${token}`}},
-            
-            )
-              .then(response => {
-                  setSaving(false);
-                  //props.setArt(true)
-                  props.patientObj.commenced=true
-                  toast.success("Record save successful");
-                  props.setActiveContent({...props.activeContent, route:'recent-history'})
-                  //props.toggle()
-                  //props.PatientCurrentStatus()
+    /**** Submit Button Processing  */
+    const handleSubmit = (e) => {                  
+        e.preventDefault(); 
+        if(validate()){ 
+                
+        objValues.personId = props.patientObj.id
+        vital.encounterDate = objValues.visitDate
+        vital.personId=props.patientObj.id
+        objValues.vitalSignDto= vital
+        objValues.hivEnrollmentId= props.patientObj.enrollment.id
+        objValues.clinicalStageId = objValues.whoStagingId 
+        
+        setSaving(true);
+        axios.post(`${baseUrl}hiv/art/commencement/`,objValues,
+        { headers: {"Authorization" : `Bearer ${token}`}},
+        
+        )
+            .then(response => {
+                setSaving(false);
+                //props.setArt(true)
+                props.patientObj.commenced=true
+                toast.success("Record save successful");
+                props.setActiveContent({...props.activeContent, route:'recent-history'})
+                //props.toggle()
+                //props.PatientCurrentStatus()
 
-              })
-              .catch(error => {
-                  setSaving(false);
-                  if(error.response && error.response.data){
-                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                    toast.error(errorMessage);
-                  }
-                  else{
-                    toast.error("Something went wrong. Please try again...");
-                  }
-              });
-            }
-          
+            })
+            .catch(error => {
+                setSaving(false);
+                if(error.response && error.response.data){
+                let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                toast.error(errorMessage);
+                }
+                else{
+                toast.error("Something went wrong. Please try again...");
+                }
+            });
         }
+        
+    }
     function BmiCal (bmi){
         if(bmi<18.5){
             return (

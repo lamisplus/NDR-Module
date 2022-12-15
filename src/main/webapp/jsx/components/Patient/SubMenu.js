@@ -189,8 +189,8 @@ function SubMenu(props) {
                      {/* patientObj.currentStatus && patientObj.currentStatus==='IIT' &&  (<Menu.Item onClick={() => loadChronicCare(patientObj)} >Chronic Care</Menu.Item> */}
                      <Menu.Item onClick={() => loadIntensiveForm(patientObj)} name='intensive'
                     active={activeItem === 'intensive'}>Intensive Follow Up</Menu.Item>
-                    {/* <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
-                    active={activeItem === 'transfer'}>Transfer</Menu.Item> */}
+                    <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
+                    active={activeItem === 'transfer'}>Transfer</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
                     active={activeItem === 'history'}>History</Menu.Item>
                     

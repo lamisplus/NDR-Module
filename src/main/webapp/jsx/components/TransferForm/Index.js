@@ -232,18 +232,15 @@ const Tracking = (props) => {
                         <div className="row">
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Duration on ART</Label>
+                            <Label for="">Facility Name From</Label>
 
                                 <Input 
-                                    type="select"
+                                    type="text"
                                     name="durationOnART"
                                     id="durationOnART"
                                     onChange={handleInputChange}
                                     value={objValues.durationOnART} 
                                 >
-                                    <option value=""></option>
-                                    <option value="<3months">{"<"} 3 months</option>
-                                    <option value=">=3months">{">="} 3 months</option>
                                 </Input>
                                 {errors.durationOnART !=="" ? (
                                     <span className={classes.error}>{errors.durationOnART}</span>
@@ -252,7 +249,7 @@ const Tracking = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">DSD Status</Label>
+                            <Label for=""> State Transfer From</Label>
                                 <Input 
                                     type="select"
                                     name="dsdStatus"
@@ -272,7 +269,7 @@ const Tracking = (props) => {
                         {objValues.dsdStatus==='Devolved' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">DSD Model</Label>
+                            <Label for="">LGA Transfer From</Label>
 
                                 <Input 
                                     type="select"
@@ -292,33 +289,106 @@ const Tracking = (props) => {
                         </div>
                         )}
                         </div>
+                        <div className="row">
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Reason for Tracking</Label>
+                            <Label for="">Facility Name To</Label>
+
+                                <Input 
+                                    type="text"
+                                    name="durationOnART"
+                                    id="durationOnART"
+                                    onChange={handleInputChange}
+                                    value={objValues.durationOnART} 
+                                >
+                                </Input>
+                                {errors.durationOnART !=="" ? (
+                                    <span className={classes.error}>{errors.durationOnART}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for=""> State Transfer To</Label>
+                                <Input 
+                                    type="select"
+                                    name="dsdStatus"
+                                    id="dsdStatus"
+                                    onChange={handleInputChange}
+                                    value={objValues.dsdStatus} 
+                                >
+                                   <option value="Not devolved">Not devolved</option>
+                                    <option value="Devolved">Devolved</option>
+                                    
+                                </Input>
+                                {errors.dsdStatus !=="" ? (
+                                    <span className={classes.error}>{errors.dsdStatus}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        {objValues.dsdStatus==='Devolved' && (
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">LGA Transfer To</Label>
 
                                 <Input 
                                     type="select"
+                                    name="dsdModel"
+                                    id="dsdModel"
+                                    onChange={handleInputChange}
+                                    value={objValues.dsdModel} 
+                                >
+                                    <option value=""></option>
+                                    <option value="FBM">FBM</option>
+                                    <option value="CBM">CBM</option>
+                                </Input>
+                                {errors.dsdModel !=="" ? (
+                                    <span className={classes.error}>{errors.dsdModel}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        )}
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-12">
+                            <FormGroup>
+                            <Label for="">Clinical Note</Label>
+
+                                <Input 
+                                    type="textarea"
                                     name="reasonForTracking"
                                     id="reasonForTracking"
                                     onChange={handleInputChange}
                                     value={objValues.reasonForTracking} 
                                 >
-                                    <option value=""></option>
-                                    <option value="Intensive follow-up">Intensive follow-up</option>
-                                    <option value="Missed Appointment">Missed Appointment</option>
-                                    <option value="Missed Pharmacy Refill">Missed Pharmacy Refill</option>
-                                    <option value="Missed Appointment">Lost to follow-up</option>
-                                    <option value="Others">Others</option>
+                                  
                                 </Input>
                                 {errors.reasonForTracking !=="" ? (
                                     <span className={classes.error}>{errors.reasonForTracking}</span>
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        {objValues.reasonForTracking==='Others' && (
+                        </div>
+                        <div className="row">
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Reason for Tracking</Label>
+                            <Label for="">Date Confirmed HIV Positive</Label>
+
+                            <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Mode of HIV Test</Label>
 
                                 <Input 
                                     type="text"
@@ -333,10 +403,326 @@ const Tracking = (props) => {
                             
                             </FormGroup>
                         </div>
-                        )}
+                        </div>
+                        <div className="row">
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Date of Last Actual Contact/ Appointment</Label>
+                            <Label for="">Preganacy Status</Label>
+
+                            <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Gestational Age in weeks</Label>
+
+                                <Input 
+                                    type="number"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Date Enroll in Care</Label>
+
+                            <Input 
+                                    type="date"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Date Enroll in Treatment</Label>
+
+                                <Input 
+                                    type="number"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label for="">Current WHO Clinical Stage</Label>
+
+                            <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label for=""> Baseline CD4 Counts(mm3 )</Label>
+
+                                <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label for="">Current CD4</Label>
+
+                                <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-3">
+                            <FormGroup>
+                            <Label for=""> Current viral load (copies/ml)</Label>
+
+                                <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div> 
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Height/length </Label>
+
+                            <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for=""> Weight</Label>
+
+                                <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">BMI/MUAC </Label>
+
+                                <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div> 
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Original first line ART regimen</Label>
+
+                            <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                {errors.reasonForTracking !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTracking}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Current Regimen Line</Label>
+
+                                <Input 
+                                    type="text"
+                                    name="reasonForTrackingOthers"
+                                    id="reasonForTrackingOthers"
+                                    onChange={handleInputChange}
+                                    value={objValues.reasonForTrackingOthers} 
+                                />
+                                 {errors.reasonForTrackingOthers !=="" ? (
+                                    <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
+                                    ) : "" }
+                            
+                            </FormGroup>
+                        </div> 
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for=""> Adherence Measure </Label>
+                            <Input 
+                                type="text"
+                                name="reasonForTrackingOthers"
+                                id="reasonForTrackingOthers"
+                                onChange={handleInputChange}
+                                value={objValues.reasonForTrackingOthers} 
+                            />
+                            </FormGroup>
+                        </div> 
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label for="">Current Medications/ Dose </Label>
+                            <br/>
+                            <p>Medications list will be here </p>
+                            </FormGroup>
+                        </div> 
+                        </div>
+                        <div className="row">
+                            <div className="form-group mb-3 col-md-6">
+                                <FormGroup>
+                                <Label for="">Latest lab results </Label>
+                                <br/>
+                                <p>Lab list will be here </p>
+                                </FormGroup>
+                            </div> 
+                        </div>
+                        <div className="row">
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Reason for Transfer</Label>
+                        <Input
+                            type="date"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Name of Treatment supporter</Label>
+                            <Input
+                                type="date"
+                                name="dateLastAppointment"
+                                id="dateLastAppointment"
+                                onChange={handleInputChange}
+                                value={objValues.dateLastAppointment} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-12">
+                            <FormGroup>
+                            <Label for="">Additional Notes and/or Recommendations</Label>
+                            <Input
+                                type="date"
+                                name="dateMissedAppointment"
+                                id="dateMissedAppointment"
+                                onChange={handleInputChange}
+                                value={objValues.dateMissedAppointment} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                            {errors.dateMissedAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateMissedAppointment}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div> 
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Clinicians's Name</Label>
                             <Input
                                 type="date"
                                 name="dateLastAppointment"
@@ -355,407 +741,236 @@ const Tracking = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Date of Missed Scheduled Appointment</Label>
-                            <Input
-                                type="date"
-                                name="dateMissedAppointment"
-                                id="dateMissedAppointment"
-                                onChange={handleInputChange}
-                                value={objValues.dateMissedAppointment} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            />
-                            {errors.dateMissedAppointment !=="" ? (
-                                <span className={classes.error}>{errors.dateMissedAppointment}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="row">
-                        <hr/>
-                        <h3>Attempted to Contact</h3>
-                        <div className="form-group mb-3 col-md-3">        
-                            <FormGroup>
-                                <Label >Attempt Date</Label>
-                                <Input
-                                    type="date"
-                                    name="attemptDate"
-                                    id="attemptDate"
-                                    value={attempt.attemptDate}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    max= {moment(new Date()).format("YYYY-MM-DD") }
-                                    
-                                    > 
-                                </Input>
-                                {errors.attemptDate !=="" ? (
-                                    <span className={classes.error}>{errors.attemptDate}</span>
-                                ) : "" }
-                                </FormGroup> 
-                            </div> 
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Who Attempted Contact?</Label>
-                                <Input
-                                    type="text"
-                                    name="whoAttemptedContact"
-                                    id="whoAttemptedContact"
-                                    value={attempt.whoAttemptedContact}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                />
-                                {errors.whoAttemptedContact !=="" ? (
-                                    <span className={classes.error}>{errors.whoAttemptedContact}</span>
-                                ) : "" }   
-                                </FormGroup>
-                            </div>
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Mode Of Contact</Label>
-                                <Input
-                                    type="select"
-                                    name="modeOfConatct"
-                                    id="modeOfConatct"
-                                    value={attempt.modeOfConatct}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Telephone">Telephone</option> 
-                                 <option value="Home Visit">Home Visit</option> 
-                                </Input> 
-                                {errors.modeOfConatct !=="" ? (
-                                    <span className={classes.error}>{errors.modeOfConatct}</span>
-                                ) : "" }   
-                                </FormGroup>
-                            </div>
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Person Contacted</Label>
-                                <Input
-                                    type="select"
-                                    name="personContacted"
-                                    id="personContacted"
-                                    value={attempt.personContacted}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Guardian">Guardian</option> 
-                                 <option value="Client">Client</option> 
-                                 <option value="Tx Partner">Tx Partner</option> 
-                                 <option value="No Contact">No Contact</option>
-                                </Input>
-                                {errors.personContacted !=="" ? (
-                                    <span className={classes.error}>{errors.personContacted}</span>
-                                ) : "" }  
-                                </FormGroup>
-                            </div>
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Reason for Defaulting</Label>
-                                <Input
-                                    type="select"
-                                    name="reasonForDefaulting"
-                                    id="reasonForDefaulting"
-                                    value={attempt.reasonForDefaulting}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                >
-                                 <option value="">Select</option> 
-                                 <option value="Was sick">Was sick</option> 
-                                 <option value="No transport fare">No transport fare</option> 
-                                 <option value="Transferred to new site">Transferred to new site</option> 
-                                 <option value="Forgot">Forgot</option>
-                                 <option value="Felt Better">Felt Better</option> 
-                                 <option value="Not permitted to leave work">Not permitted to leave work</option> 
-                                 <option value="Lost appointment card">Lost appointment card</option> 
-                                 <option value="Still had drugs">Still had drugs</option> 
-                                 <option value="Taking Herbal Treatment">Taking Herbal Treatment</option>
-                                 <option value="Others">Others</option>
-                                </Input>
-                                {errors.reasonForDefaulting !=="" ? (
-                                    <span className={classes.error}>{errors.reasonForDefaulting}</span>
-                                ) : "" }  
-                                </FormGroup>
-                            </div>
-                            {attempt.reasonForDefaulting==='Others' && (
-                            <div className="form-group mb-3 col-md-3">
-                                <FormGroup>
-                                <Label >Reason for Defaulting</Label>
-                                <Input
-                                    type="text"
-                                    name="reasonForDefaultingOthers"
-                                    id="reasonForDefaultingOthers"
-                                    value={attempt.reasonForDefaultingOthers}
-                                    onChange={handleInputChangeAttempt}
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
-                                />
-                                {errors.reasonForDefaultingOthers !=="" ? (
-                                <span className={classes.error}>{errors.reasonForDefaultingOthers}</span>
-                                ) : "" }
-                                </FormGroup>
-                            </div>
-                            )}
-                            <div className="form-group mb-3 col-md-2">
-                            <LabelSui as='a' color='black'  onClick={addAttempt}  size='tiny' style={{ marginTop:35}}>
-                                <Icon name='plus' /> Add
-                            </LabelSui>
-                            </div>
-
-                            {attemptList.length >0 
-                            ?
-                                <List>
-                                <Table  striped responsive>
-                                    <thead >
-                                        <tr>
-                                            <th>Attempted Date</th>
-                                            <th>Who Attempted Contact</th>
-                                            <th>Mode Of Conatct</th>
-                                            <th>Person Contacted</th>
-                                            <th>Reason For Defaulting</th>
-                                            <th ></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {attemptList.map((attemptObj, index) => (
-
-                                    <AttemptedLists
-                                        key={index}
-                                        index={index}
-                                        attemptObj={attemptObj}
-                                        removeAttempt={removeAttempt}
-                                    />
-                                    ))}
-                                    </tbody>
-                                </Table>
-                                </List>
-                                :
-                                ""
-                            }       
-                        <hr/>
-                        </div>
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for="">Patient Care in Facility Discontinued? </Label>
-
-                                <Input 
-                                    type="select"
-                                    name="careInFacilityDiscountinued"
-                                    id="careInFacilityDiscountinued"
-                                    onChange={handleInputChange}
-                                    value={objValues.careInFacilityDiscountinued}  
-                                >
-                                    <option value=""></option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </Input>
-                                {errors.careInFacilityDiscountinued !=="" ? (
-                                <span className={classes.error}>{errors.careInFacilityDiscountinued}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        {objValues.careInFacilityDiscountinued==='Yes' && (<>
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for=""> Date of Discontinuation</Label>
-                            <Input
-                                type="date"
-                                name="dateOfDiscontinuation"
-                                id="dateOfDiscontinuation"
-                                onChange={handleInputChange}
-                                value={objValues.dateOfDiscontinuation} 
-                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
-                                max= {moment(new Date()).format("YYYY-MM-DD") }
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            />
-                            {errors.dateOfDiscontinuation !=="" ? (
-                                <span className={classes.error}>{errors.dateOfDiscontinuation}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Reason for Discontinuation</Label>
-                            <Input
-                                type="select"
-                                name="reasonForDiscountinuation"
-                                id="reasonForDiscountinuation"
-                                onChange={handleInputChange}
-                                value={objValues.reasonForDiscountinuation} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Treatment stop">Treatment stop</option>
-                                <option value="Death">Death  </option>
-                                <option value="Loss to follow-up">Loss to follow-up</option>
-                                <option value="Self-transfer to another facility">Self-transfer to another facility</option>
-                            </Input>
-                            {errors.reasonForDiscountinuation !=="" ? (
-                                <span className={classes.error}>{errors.reasonForDiscountinuation}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        </>)}
-                        {objValues.reasonForDiscountinuation==='Death' && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Cause of Death</Label>
-                            <Input
-                                type="select"
-                                name="causeOfDeath"
-                                id="causeOfDeath"
-                                onChange={handleInputChange}
-                                value={objValues.causeOfDeath} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Natural cause">Natural cause</option>
-                                <option value="Suspected ARV Side effect">Suspected ARV Side effect</option>
-                                <option value="Tuberculosis">Tuberculosis</option>
-                                <option value="HIV-related (Cancer, parasitic disease)">HIV-related (Cancer, parasitic disease)</option>
-                                <option value="Suspected Opportunistic Infection">Suspected Opportunistic Infection</option>
-                                <option value="Non-natural cause">Non-natural cause</option>
-                                <option value="Other cause of death">Other cause of death</option>
-                                <option value="Unknown">Unknown</option>
-                            </Input>
-                            {errors.causeOfDeath !=="" ? (
-                                <span className={classes.error}>{errors.causeOfDeath}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        )}
-                        {(objValues.causeOfDeath==='Unknown' || objValues.causeOfDeath==='Other cause of death' || objValues.causeOfDeath==='Suspected Opportunistic Infection') && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Cause of Death - {objValues.causeOfDeath} (specify)</Label>
+                            <Label for="">Clinicians's Name</Label>
                             <Input
                                 type="text"
-                                name="causeOfDeathOthers"
-                                id="causeOfDeathOthers"
+                                name="dateLastAppointment"
+                                id="dateLastAppointment"
                                 onChange={handleInputChange}
-                                value={objValues.causeOfDeathOthers} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            />
-                            {errors.causeOfDeathOthers !=="" ? (
-                                <span className={classes.error}>{errors.causeOfDeathOthers}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        )}
-                        {objValues.reasonForDiscountinuation==='Loss to follow-up' && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Reason for Loss to follow-up</Label>
-                            <Input
-                                type="select"
-                                name="reasonForLossToFollowUp"
-                                id="reasonForLossToFollowUp"
-                                onChange={handleInputChange}
-                                value={objValues.reasonForLossToFollowUp} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Travel/Relocation">Travel/Relocation</option>
-                                <option value="Spiritual/Cultural beliefs">Spiritual/Cultural beliefs</option>
-                                <option value="Pill burden/ARV side effects">Pill burden/ARV side effects</option>
-                                <option value="Stigma/Conduct of staff">Stigma/Conduct of staff</option>
-                                <option value="Distance/Economic reasons">Distance/Economic reasons</option>
-                                <option value="Others">Others</option>
-                            </Input>
-                            {errors.reasonForLossToFollowUp !=="" ? (
-                                <span className={classes.error}>{errors.reasonForLossToFollowUp}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        )}
-                        {objValues.reasonForLossToFollowUp==='Others' && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Reason for Loss to follow-up - Others specify</Label>
-                            <Input
-                                type="textarea"
-                                name="reasonForLossToFollowUpOthers"
-                                id="reasonForLossToFollowUpOthers"
-                                onChange={handleInputChange}
-                                value={objValues.reasonForLossToFollowUp} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            />
-                              
-                            </FormGroup>
-                        </div>
-                        )}
-                        <div className="form-group mb-3 col-md-4">
-                            <FormGroup>
-                            <Label for=""> Date Returned to Care</Label>
-                            <Input
-                                type="date"
-                                name="dateReturnToCare"
-                                id="dateReturnToCare"
-                                onChange={handleInputChange}
-                                value={objValues.dateReturnToCare} 
+                                value={objValues.dateLastAppointment} 
                                 //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                            {errors.dateReturnToCare !=="" ? (
-                                <span className={classes.error}>{errors.dateReturnToCare}</span>
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-6">
+                        <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Referred for</Label>
+                            <Label for=""> Date of last clinical visit at transferring site</Label>
                             <Input
-                                type="select"
-                                name="referredFor"
-                                id="referredFor"
+                                type="date"
+                                name="dateLastAppointment"
+                                id="dateLastAppointment"
                                 onChange={handleInputChange}
-                                value={objValues.referredFor} 
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                            >
-                                <option value=""></option>
-                                <option value="Adherence Counselling">Adherence Counselling</option>
-                                <option value="Others">Others</option>
-                            </Input>
-                            {errors.referredFor !=="" ? (
-                                <span className={classes.error}>{errors.referredFor}</span>
-                                ) : "" }
-                            </FormGroup>
-                        </div>
-                        {objValues.referredFor==='Others' && (
-                        <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label for="">Referred for - (Others specify ) </Label>
-                            <Input
-                                type="textarea"
-                                name="referredForOthers"
-                                id="referredForOthers"
-                                onChange={handleInputChange}
-                                value={objValues.referredForOthers} 
+                                value={objValues.dateLastAppointment} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 
                             />
-                             {errors.referredForOthers !=="" ? (
-                                <span className={classes.error}>{errors.referredForOthers}</span>
-                                ) : "" } 
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
+                                ) : "" }
                             </FormGroup>
                         </div>
-                      )}
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for=""> Date of first confirmed scheduled appointment at the receiving site</Label>
+                            <Input
+                                type="date"
+                                name="dateLastAppointment"
+                                id="dateLastAppointment"
+                                onChange={handleInputChange}
+                                value={objValues.dateLastAppointment} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for="">Name of the person effecting the transfer</Label>
+                            <Input
+                                type="text"
+                                name="dateLastAppointment"
+                                id="dateLastAppointment"
+                                onChange={handleInputChange}
+                                value={objValues.dateLastAppointment} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label for=""> Telephone Number</Label>
+                            <Input
+                                type="number"
+                                name="dateLastAppointment"
+                                id="dateLastAppointment"
+                                onChange={handleInputChange}
+                                value={objValues.dateLastAppointment} 
+                                //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                                max= {moment(new Date()).format("YYYY-MM-DD") }
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                
+                            />
+                            {errors.dateLastAppointment !=="" ? (
+                                <span className={classes.error}>{errors.dateLastAppointment}</span>
+                                ) : "" }
+                            </FormGroup>
+                        </div>
+                        </div>
+                    <h3>ACKNOWLEDGEMENT OF TRANSFER (to be completed by receiving ART service point)</h3>
+                    <div className="row">
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for=""> Patient came with Transfer form</Label>
+                        <Input
+                            type="date"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Patient has attended his/her first visit at our ART site</Label>
+                        <Input
+                            type="text"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Received date</Label>
+                        <Input
+                            type="text"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Date of visit</Label>
+                        <Input
+                            type="date"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Date of visit</Label>
+                        <Input
+                            type="date"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Name of the Clinician receiving the transfer</Label>
+                        <Input
+                            type="date"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                        <div className="form-group mb-3 col-md-6">
+                        <FormGroup>
+                        <Label for="">Telephone Number</Label>
+                        <Input
+                            type="date"
+                            name="dateLastAppointment"
+                            id="dateLastAppointment"
+                            onChange={handleInputChange}
+                            value={objValues.dateLastAppointment} 
+                            //min= {moment(objValues.dateOfLastViralLoad).format("YYYY-MM-DD") }
+                            max= {moment(new Date()).format("YYYY-MM-DD") }
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            
+                        />
+                        {errors.dateLastAppointment !=="" ? (
+                            <span className={classes.error}>{errors.dateLastAppointment}</span>
+                            ) : "" }
+                        </FormGroup>
+                        </div>
+                    </div>
                     </div>
                     
                     {saving ? <Spinner /> : ""}
