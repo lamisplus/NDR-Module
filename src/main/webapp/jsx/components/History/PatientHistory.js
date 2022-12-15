@@ -103,7 +103,7 @@ const PatientnHistory = (props) => {
     const [loading, setLoading] = useState(true)
     let history = useHistory();
     const [notToBeUpdated, setNotToBeUpdated] = useState(['eac', 'eac-session', 'client-tracker']);
-    let patientHistoryObject = []
+    //let patientHistoryObject = []
     useEffect(() => {
         PatientHistory()
       }, [props.patientObj.id]);

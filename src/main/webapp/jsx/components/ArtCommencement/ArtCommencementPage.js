@@ -969,7 +969,7 @@ const ArtCommencement = (props) => {
                    
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Body Weight</Label>
+                        <Label >Body Weight *</Label>
                         <InputGroup> 
                             <Input 
                                 type="number"
@@ -996,7 +996,7 @@ const ArtCommencement = (props) => {
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <Label >Height</Label>
+                        <Label >Height *</Label>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
