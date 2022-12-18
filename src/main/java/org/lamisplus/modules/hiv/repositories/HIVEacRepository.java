@@ -378,14 +378,14 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"\t\t\t\t\t\t\t (CASE \n" +
 			"\t\t\t\t\t\t\tWHEN stat.hiv_status ILIKE '%STOP%' OR stat.hiv_status ILIKE '%DEATH%'\n" +
 			"\t\t\t\t\t\t\tOR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status\n" +
-			"\t\t\t\t\t\t\tWHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE \n" +
+			"\t\t\t\t\t\t\tWHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < ?3 \n" +
 			"\t\t\t\t\t\t\tTHEN 'IIT' ELSE 'ACTIVE' \n" +
 			"\t\t\t\t\t\t\tEND)AS currentStatus,\n" +
 			"\t\t\t\t\t\t\t \n" +
 			"\t\t\t\t\t\t\t (CASE \n" +
 			"\t\t\t\t\t\t\tWHEN stat.hiv_status ILIKE '%STOP%' OR stat.hiv_status ILIKE '%DEATH%'\n" +
 			"\t\t\t\t\t\t\tOR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date\n" +
-			"\t\t\t\t\t\t\tWHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE \n" +
+			"\t\t\t\t\t\t\tWHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < ?3 \n" +
 			"\t\t\t\t\t\t\tTHEN (hartp.visit_date + hartp.refill_period + INTERVAL '28 day')\\:\\:date ELSE hartp.visit_date \n" +
 			"\t\t\t\t\t\t\tEND)AS dateOfCurrentStatus\n" +
 			"\t\t\t\t\tFROM hiv_art_pharmacy hartp\n" +
