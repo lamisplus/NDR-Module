@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 
 const CervicalCancer = (props) => {
     const patientObj = props.patientObj;
-    let history = useHistory();
+    //let history = useHistory();
     const classes = useStyles();
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -96,6 +96,7 @@ const CervicalCancer = (props) => {
     const [visible, setVisible] = useState([]);
     const [referrals, setReferrals] = useState([]);
     const [type, setType] = useState([]);
+    const [screeningType, setScreeningType] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
     const [objValues, setObjValues] = useState({
                                                     personId:patientObj.id,
@@ -106,7 +107,8 @@ const CervicalCancer = (props) => {
                                                     screeningArea:"",
                                                     screeningGross:"",
                                                     screeningRefferal:"",
-                                                    screeningVisible:""                                                 
+                                                    screeningVisible:"",
+                                                    screenType:"",                                                 
 
                                                 });
     const [observation, setObservation]=useState({
@@ -128,6 +130,7 @@ const CervicalCancer = (props) => {
         Areas();
         Visible();
         GetPatientDTOObj();
+        CERVICAL_CANCER_SCREENING_TYPE();
     }, []);
     const GetPatientDTOObj =()=>{
         axios
@@ -158,6 +161,20 @@ const CervicalCancer = (props) => {
         //console.log(error);
         });
     
+    }
+    const CERVICAL_CANCER_SCREENING_TYPE =()=>{
+        axios
+            .get(`${baseUrl}application-codesets/v2/CERVICAL_CANCER_SCREENING_TYPE`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setScreeningType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
     }
     const Gross =()=>{
         axios
@@ -329,6 +346,30 @@ const CervicalCancer = (props) => {
                                 </Input> 
                             {errors.screenMethod !=="" ? (
                                     <span className={classes.error}>{errors.screenMethod}</span>
+                                ) : "" }
+                            </FormGroup>
+                            </div>
+                            <div className="form-group mb-3 col-md-6">
+                            <FormGroup>
+                            <Label >Screening Type *</Label>
+                            <Input
+                                    type="select"
+                                    name="screenType"
+                                    id="screenType"
+                                    value={objValues.screenType}
+                                    onChange={handleInputChange}
+                                    required
+                                    >
+                                        <option value="Select"> Select</option>
+                
+                                        {screeningType.map((value) => (
+                                            <option key={value.id} value={value.code}>
+                                                {value.display}
+                                            </option>
+                                        ))}
+                                </Input> 
+                            {errors.screenType !=="" ? (
+                                    <span className={classes.error}>{errors.screenType}</span>
                                 ) : "" }
                             </FormGroup>
                             </div>

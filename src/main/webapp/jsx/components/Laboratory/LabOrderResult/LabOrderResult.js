@@ -537,8 +537,8 @@ console.log(typeof tests.labTestId)
                                 value={tests.sampleCollectionDate}
                                 onChange={handleInputChange}
                                 //min={eacStatusObj && eacStatusObj.eacsession && eacStatusObj.eacsession!=='Default' ? eacStatusObj.eacsessionDate :enrollDate}
-                                min={moment(enrollDate).format("YYYY-MM-DD HH:MM:SS")}
-                                max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
+                                min={moment(enrollDate).format("YYYY-MM-DDTHH:mm")}
+                                max= {moment(new Date()).format("YYYY-MM-DDTHH:mm")}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />
@@ -556,9 +556,9 @@ console.log(typeof tests.labTestId)
                                 id="dateResultReceived"
                                 value={tests.dateResultReceived}
                                 //min={tests.sampleCollectionDate}
-                                min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")}
+                                min={moment(tests.sampleCollectionDate).format("YYYY-MM-DDTHH:mm")}
                                 onChange={handleInputChange}
-                                max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
+                                max= {moment(new Date()).format("YYYY-MM-DDTHH:mm")}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
                             />

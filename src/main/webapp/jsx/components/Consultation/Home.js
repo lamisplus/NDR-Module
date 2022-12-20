@@ -129,14 +129,7 @@ const ClinicVisit = (props) => {
   const [childRegimenLine, setChildRegimenLine] = useState([]);
   const [regimenTypeObj, setRegimenTypeObj] = useState([]);
   const [TBForms, setTBForms] = useState(false)
-  // const [addVitalModal, setAddVitalModal] = useState(false);
-  // const AddVitalToggle = () => setAddVitalModal(!addVitalModal)
-  const [addConditionModal, setAddConditionModal] = useState(false);
-  const AddConditionToggle = () => setAddConditionModal(!addConditionModal)
-  const [addAllergyModal, setAddAllergyModal] = useState(false);
-  const AddAllergyToggle = () => setAddAllergyModal(!addAllergyModal)
-  const [postPatientModal, setPostPatientModal] = useState(false);
-  const PostPatientToggle = () => setPostPatientModal(!postPatientModal)
+
   const [currentVitalSigns, setcurrentVitalSigns] = useState({})
   const [showCurrentVitalSigns, setShowCurrentVitalSigns] = useState(false)
   //opportunistic infection Object
@@ -1700,6 +1693,14 @@ const ClinicVisit = (props) => {
             <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>
             </Label>
+            <br />
+            <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
+              TB Screening
+            </Label>
+            <br />
+            {/* TB Screening Form */}
+            <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
+            <br/>
             <br /><br />
             {/* ARV DRUGS Regimen */}
             <div className="row">
@@ -1964,14 +1965,7 @@ const ClinicVisit = (props) => {
             </div>
             <br/>
             {/* END Viral Load  Form */}
-            <br />
-            <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
-              TB Screening
-            </Label>
-            <br />
-            {/* TB Screening Form */}
-            <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
-            <br/>
+            
             <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE </h4>
             </Label>

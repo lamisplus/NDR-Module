@@ -15,6 +15,7 @@ import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
 import {Icon, List, Label as LabelSui} from 'semantic-ui-react'
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -94,7 +95,7 @@ const Tracking = (props) => {
     const [modeCommunication, setmodeCommunication] = useState([]);
     const [dsdStatus, setdsdStatus] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
-    
+    let history = useHistory();
     const [observation, setObservation]=useState({
         data: {},
         dateOfObservation: "",
@@ -368,6 +369,9 @@ const Tracking = (props) => {
                         props.setActiveContent({...props.activeContent, route:'tracking-form', activeTab:"history", })
                         //props.setActiveContent({...props.activeContent, route:'recent-history'})
                         //props.setActiveContent('recent-history')
+                        if(objValues.reasonForDiscountinuation==='Death'){
+                            history.push('/')
+                        }
 
                     })
                     .catch(error => {
@@ -893,7 +897,7 @@ console.log(errors)
                         {(objValues.causeOfDeath==='CAUSE_DEATH_OTHER_NATURAL_CAUSES' || objValues.causeOfDeath==='CAUSE_DEATH_UNKNOWN_CAUSE' ) && (
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label for="">Cause of Death - {objValues.causeOfDeath} (specify)</Label>
+                            <Label for="">Cause of Death  (specify)</Label>
                             <Input
                                 type="text"
                                 name="causeOfDeathOthers"
