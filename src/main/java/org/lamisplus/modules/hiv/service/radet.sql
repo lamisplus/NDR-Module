@@ -33,10 +33,10 @@ FROM
     INNER JOIN hiv_regimen_type hrt ON hrt.id = hac.regimen_type_id
 WHERE
     h.archived = 0
-  AND h.facility_id = 1712
+  AND h.facility_id = ?1
   AND hac.is_commencement = true
-  AND hac.visit_date >= '01-01-1992'
-  AND hac.visit_date <= '01-12-2022'
+  AND hac.visit_date >= ?2
+  AND hac.visit_date <= ?3
     ),
     current_clinical AS (
 SELECT
@@ -80,7 +80,7 @@ FROM
 WHERE
     hac.archived = 0
   AND he.archived = 0
-  AND he.facility_id = 1712
+  AND he.facility_id = ?1
     ),
     laboratory_details_viral_load AS (
 SELECT
@@ -116,7 +116,7 @@ WHERE
     ll.lab_test_name = 'Viral Load'
   AND h.archived = 0
   AND lo.archived = 0
-  AND lo.facility_id = 1712
+  AND lo.facility_id = ?1
     ),
 --7242\n" +
     laboratory_details_cd4 AS (
@@ -167,7 +167,7 @@ SELECT
     OR stat.hiv_status ILIKE '%DEATH%'
     OR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN (
     hartp.visit_date + hartp.refill_period + INTERVAL '28 day'
-    ):: date ELSE hartp.visit_date END
+    )\\:\\: date ELSE hartp.visit_date END
     ) AS dateOfCurrentStatus
 FROM
     hiv_art_pharmacy hartp
@@ -179,12 +179,12 @@ FROM
     SELECT
     h.person_uuid,
     h.visit_date,
-    pharmacy_object ->> 'regimenName' :: VARCHAR AS regimen_name,
+    pharmacy_object ->> 'regimenName' \\:\\: VARCHAR AS regimen_name,
     hrt.description
     FROM
     hiv_art_pharmacy h,
     jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)
-    INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' :: VARCHAR
+    INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\: VARCHAR
     INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id
     WHERE
     hrt.id IN (1, 2, 3, 4, 14)
@@ -233,7 +233,7 @@ FROM
 WHERE
     he.archived = 0
   AND hartp.archived = 0
-  AND hartp.facility_id = 1712
+  AND hartp.facility_id = ?1
 ORDER BY
     hartp.person_uuid ASC
     ),
