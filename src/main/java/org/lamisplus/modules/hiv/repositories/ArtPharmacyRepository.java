@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> {
@@ -47,6 +48,12 @@ public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> 
 			nativeQuery = true)
 	List<PharmacyReport> getArtPharmacyReport(Long facilityId);
 	
+	@Query(value = "SELECT * FROM hiv_art_pharmacy p inner join hiv_art_pharmacy_regimens pr On p.id = pr.art_pharmacy_id " +
+			"INNER JOIN hiv_regimen r ON r.id = pr.regimens_id WHERE visit_date <=  ?2  " +
+			"AND r.regimen_type_id IN (1,2,3,4,14) AND person_uuid = ?1 " +
+			"AND archived = 0 ORDER BY visit_date DESC LIMIT 1" ,
+			nativeQuery = true)
+	Optional<ArtPharmacy> getCurrentPharmacyRefillWithDateRange(String personUuid, LocalDate endDate);
 	
 	
 }

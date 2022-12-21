@@ -33,10 +33,10 @@ FROM
     INNER JOIN hiv_regimen_type hrt ON hrt.id = hac.regimen_type_id
 WHERE
     h.archived = 0
-  AND h.facility_id = 1712
+  AND h.facility_id = ?1
   AND hac.is_commencement = true
-  AND hac.visit_date >= '01-01-1992'
-  AND hac.visit_date <= '01-12-2022'
+  AND hac.visit_date >= ?2
+  AND hac.visit_date <= ?3
     ),
     current_clinical AS (
 SELECT
@@ -76,11 +76,11 @@ FROM
     INNER JOIN hiv_enrollment he ON he.person_uuid = hac.person_uuid
     LEFT JOIN base_application_codeset bac ON bac.id = hac.clinical_stage_id
     LEFT JOIN base_application_codeset preg ON preg.code = hac.pregnancy_status
-    LEFT JOIN base_application_codeset tbs ON tbs.id = hac.tb_status :: Integer
+    LEFT JOIN base_application_codeset tbs ON tbs.id = hac.tb_status \\:\\: Integer
 WHERE
     hac.archived = 0
   AND he.archived = 0
-  AND he.facility_id = 1712
+  AND he.facility_id = ?1
     ),
     laboratory_details_viral_load AS (
 SELECT
@@ -116,7 +116,7 @@ WHERE
     ll.lab_test_name = 'Viral Load'
   AND h.archived = 0
   AND lo.archived = 0
-  AND lo.facility_id = 1712
+  AND lo.facility_id = ?1
     ),
 --7242\n" +
     laboratory_details_cd4 AS (
@@ -154,20 +154,20 @@ SELECT
     DISTINCT ON (hartp.person_uuid) hartp.person_uuid as person_uuid40,
     r.visit_date as lastPickupDate,
     hartp.next_appointment as nextPickupDate,
-    hartp.refill_period / 30 :: INTEGER as monthsOfARVRefill,
+    hartp.refill_period / 30 \\:\\: INTEGER as monthsOfARVRefill,
     r.description as currentARTRegimen,
     r.regimen_name as currentRegimenLine,
     (
     CASE WHEN stat.hiv_status ILIKE '%STOP%'
     OR stat.hiv_status ILIKE '%DEATH%'
-    OR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE THEN 'IIT' ELSE 'ACTIVE' END
+    OR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN 'IIT' ELSE 'ACTIVE' END
     ) AS currentStatus,
     (
     CASE WHEN stat.hiv_status ILIKE '%STOP%'
     OR stat.hiv_status ILIKE '%DEATH%'
-    OR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < CURRENT_DATE THEN (
+    OR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN (
     hartp.visit_date + hartp.refill_period + INTERVAL '28 day'
-    ):: date ELSE hartp.visit_date END
+    )\\:\\: date ELSE hartp.visit_date END
     ) AS dateOfCurrentStatus
 FROM
     hiv_art_pharmacy hartp
@@ -179,12 +179,12 @@ FROM
     SELECT
     h.person_uuid,
     h.visit_date,
-    pharmacy_object ->> 'regimenName' :: VARCHAR AS regimen_name,
+    pharmacy_object ->> 'regimenName' \\:\\: VARCHAR AS regimen_name,
     hrt.description
     FROM
     hiv_art_pharmacy h,
     jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)
-    INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' :: VARCHAR
+    INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\: VARCHAR
     INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id
     WHERE
     hrt.id IN (1, 2, 3, 4, 14)
@@ -233,11 +233,12 @@ FROM
 WHERE
     he.archived = 0
   AND hartp.archived = 0
-  AND hartp.facility_id = 1712
+  AND hartp.facility_id = ?1
 ORDER BY
     hartp.person_uuid ASC
     ),
 --7917\n" +
+
     eac AS (
 SELECT
     he.person_uuid as person_uuid50,
@@ -363,7 +364,76 @@ FROM
     ) biometric_count ON biometric_count.person_uuid = he.person_uuid
 WHERE
     he.archived = 0
-    )
+    ),
+
+--  current ART start date qr start here
+    current_ART_start as (select
+    start_or_regimen as dateOfCurrentRegimen,
+    regiment_table.max_visit_date,
+    regiment_table.regimen,
+    regiment_table.person_uuid as person_uuid70
+from
+    (
+    select
+    min(visit_date) start_or_regimen,
+    max(visit_date) max_visit_date,
+    regimen,
+    person_uuid from (
+    select
+    hap.id,
+    hap.person_uuid,
+    hap.visit_date,
+    hivreg.description as regimen,
+    row_number() over(
+    order by
+    person_uuid,
+    visit_date
+    ) rn1,
+    row_number() over(
+    partition by hivreg.description
+    order by
+    person_uuid,
+    visit_date
+    ) rn2 FROM public.hiv_art_pharmacy as hap inner
+    join (
+    SELECT
+    max(hapr.id) as id,
+    art_pharmacy_id,
+    regimens_id,
+    hr.description
+    FROM
+    public.hiv_art_pharmacy_regimens as hapr
+    inner join hiv_regimen as hr on hapr.regimens_id = hr.id
+    where
+    hr.regimen_type_id in (1, 2, 3, 4, 14)
+    GROUP BY art_pharmacy_id,
+    regimens_id,
+    hr.description
+    ) as hapr on hap.id = hapr.art_pharmacy_id inner
+    join hiv_regimen as hivreg on hapr.regimens_id = hivreg.id inner
+    join hiv_regimen_type as hivregtype on hivreg.regimen_type_id = hivregtype.id
+    and hivreg.regimen_type_id in (1, 2, 3, 4, 14) order by person_uuid,
+    visit_date
+    ) t  group by person_uuid,
+    regimen,
+    rn1 - rn2 order by min(visit_date)
+    ) as regiment_table
+    inner join (
+    select
+    max(visit_date) as max_visit_date,
+    person_uuid
+    from
+    public.hiv_art_pharmacy
+    group by
+    person_uuid
+    ) as hap on regiment_table.person_uuid = hap.person_uuid
+where
+    regiment_table.max_visit_date = hap.max_visit_date
+group by
+    regiment_table.person_uuid,
+    regiment_table.regimen,
+    regiment_table.max_visit_date,
+    start_or_regimen)
 SELECT
     bd.*,
     ldvl.*,
@@ -371,7 +441,9 @@ SELECT
     pdr.*,
     b.*,
     c.*,
-    e.*
+    e.* ,
+    ca.dateOfCurrentRegimen,
+    ca.person_uuid70
 FROM
     bio_data bd
         LEFT JOIN current_clinical c ON c.person_uuid10 = bd.personUuid
@@ -380,3 +452,4 @@ FROM
         LEFT JOIN pharmacy_details_regimen pdr ON pdr.person_uuid40 = bd.personUuid
         LEFT JOIN eac e ON e.person_uuid50 = bd.personUuid
         LEFT JOIN biometric b ON b.person_uuid60 = bd.personUuid
+        LEFT JOIN current_ART_start ca ON ca.person_uuid70 = bd.personUuid
