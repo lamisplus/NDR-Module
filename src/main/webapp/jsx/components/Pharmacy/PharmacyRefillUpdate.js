@@ -385,7 +385,7 @@ const Pharmacy = (props) => {
             </div>
             <div className="form-group mb-3 col-md-6">
             <FormGroup>
-                <Label >Service Delivery Point *</Label>
+                <Label >Service Delivery Type *</Label>
                 <Input
                     type="select"
                     name="deliveryPoint"
