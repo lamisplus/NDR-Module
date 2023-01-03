@@ -115,7 +115,8 @@ const Pharmacy = (props) => {
             dsdModelType,
             switch:"",
             substitute:"",
-            iptType:""
+            iptType:"",
+            visitType:''
     });
     const [vital, setVitalSignDto]= useState({
         bodyWeight: "",
@@ -814,6 +815,25 @@ const Pharmacy = (props) => {
                 </div>
             </>)}
             <div className="row">
+            <div className="form-group mb-3 col-md-3">
+                <FormGroup>
+                    <Label >Visit Type</Label>
+                    <Input
+                        type="select"
+                        name="visitType"
+                        id="visitType"
+                        value={objValues.visitType}
+                        onChange={handleInputChange}   
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        >
+                        <option value="">Select </option>
+                        <option value="Initial Visit">Initial Visit</option>
+                        <option value="Follow Up Visit">Follow Up Visit </option>
+                    
+                    </Input>
+                    
+                    </FormGroup>
+                </div>
                 <div className="form-group mb-3 col-md-3">
                 <FormGroup>
                     <Label >Refill</Label>
