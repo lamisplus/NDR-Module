@@ -118,21 +118,6 @@ const ChronicCare = (props) => {
                             </Menu.Item>
                             <Menu.Item
                                 name='spam'
-                                active={activeItem === 'physical-examination'}
-                                onClick={()=>handleItemClick('physical-examination')}
-                                style={{backgroundColor:activeItem === 'physical-examination' ? '#000': ""}}
-                                //disabled={activeItem !== 'physical-examination' ? true : false}
-                            >
-                            {/* <Label>4</Label> */}
-                            <span style={{color:'#fff'}}>TB Screening
-                            {completed.includes('physical-examination') && (
-                                <Icon name='check' color='green' />
-                            )}</span>
-                            
-                            </Menu.Item>
-                            
-                            <Menu.Item
-                                name='spam'
                                 active={activeItem === 'nutrition'}
                                 onClick={()=>handleItemClick('nutrition')}
                                 style={{backgroundColor:activeItem === 'nutrition' ? '#000': ""}}
