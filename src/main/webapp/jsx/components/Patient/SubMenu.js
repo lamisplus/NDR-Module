@@ -88,10 +88,7 @@ function SubMenu(props) {
         setActiveItem('home')    
         props.setActiveContent({...props.activeContent, route:'recent-history'})
     }
-    const loadChronicCare =(row)=> {
-        props.setActiveContent({...props.activeContent, route:'chronic-care'})
-    }
-   
+
     const loadTrackingForm =(row)=> {
         setActiveItem('tracking')
         props.setActiveContent({...props.activeContent, route:'tracking-form'})
@@ -122,7 +119,11 @@ function SubMenu(props) {
         setActiveItem('art')
         props.setActiveContent({...props.activeContent, route:'art-commencementPage'})
     }
-
+    const loadChronicCare = ()=>{
+        setActiveItem('chronic-care')
+        props.setActiveContent({...props.activeContent, route:'chronic-care'})
+    }
+    //
 
     return (
          <div>
@@ -192,6 +193,8 @@ function SubMenu(props) {
                     active={activeItem === 'intensive'}>Intensive Follow Up</Menu.Item>
                     <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
                     active={activeItem === 'transfer'}>Transfer</Menu.Item>
+                    <Menu.Item onClick={() => loadChronicCare(patientObj)} name='transfer'
+                    active={activeItem === 'chronic-care'}>Chronic Care</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
                     active={activeItem === 'history'}>History</Menu.Item>
                     
