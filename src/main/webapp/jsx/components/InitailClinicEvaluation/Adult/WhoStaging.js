@@ -5,7 +5,7 @@ import {FormGroup, Label , CardBody, Spinner,Input,Form, InputGroup,
     InputGroupText,
 
 } from "reactstrap";
-import * as moment from 'moment';
+
 import {makeStyles} from "@material-ui/core/styles";
 import {Card, CardContent} from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
@@ -24,7 +24,6 @@ import "react-widgets/dist/css/react-widgets.css";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { Button} from 'semantic-ui-react'
-import {  Modal } from "react-bootstrap";
 import DualListBox from "react-dual-listbox";
 import 'react-dual-listbox/lib/react-dual-listbox.css';
 
