@@ -1178,8 +1178,7 @@ const Pharmacy = (props) => {
 
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Drugs</Label>
-                
+                <Label >Drugs</Label>                
                 <Input
                     type="select"
                     name="regimenId"
@@ -1203,7 +1202,7 @@ const Pharmacy = (props) => {
             {showIptType || objValues.iptType!=='' && ( 
             <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
-                <Label >IPT Type</Label>
+                <Label >TPT Type</Label>
                 
                 <Input
                     type="select"
@@ -1220,8 +1219,7 @@ const Pharmacy = (props) => {
                             {value.display}
                         </option>
                     ))}
-                </Input>
-                
+                </Input>                
                 </FormGroup>
             </div>
             )}

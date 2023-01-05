@@ -269,8 +269,7 @@ const Eligibility = (props) => {
                                 <span className={classes.error}>{errors.visitDate}</span>
                             ) : "" }
                     </div>
-                    <div className="form-group mb-3 col-md-8"></div>   
-                    </div>
+                    <div className="form-group mb-3 col-md-8"></div>
                     <div className="form-group mb-3 col-md-6">
                         <FormGroup>
                         <Label >Type Of Client</Label>
@@ -291,25 +290,25 @@ const Eligibility = (props) => {
                         </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6">
-                                <FormGroup>
-                                <Label >Pregnancy/Breastfeeding Status</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="select"
-                                        name="current_pregnant"
-                                        id="current_pregnant"
-                                        onChange={handleMedicalHistory} 
-                                        value={objValues.current_pregnant} 
-                                    >
-                                    <option value="">Select</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                    <option value="Uncertain">Uncertain</option>
-                                    </Input>
-                                </InputGroup>
-                                </FormGroup>
-                        </div>
-
+                        <FormGroup>
+                        <Label >Pregnancy/Breastfeeding Status</Label>
+                        <InputGroup> 
+                            <Input 
+                                type="select"
+                                name="current_pregnant"
+                                id="current_pregnant"
+                                onChange={handleMedicalHistory} 
+                                value={objValues.current_pregnant} 
+                            >
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                            <option value="Uncertain">Uncertain</option>
+                            </Input>
+                        </InputGroup>
+                        </FormGroup>
+                    </div>   
+                    </div>
                     <div className="row">
                     <h3>ART Status : Pre-ART </h3>
                      <div className="form-group mb-3 col-md-6">
