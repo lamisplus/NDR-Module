@@ -89,6 +89,8 @@ public class ArtPharmacy extends HivAuditEntity implements Persistable<Long> ,Se
     private  String refillType ;
     @Column(name = "ipt_type ")
     private  String iptType;
+    @Column(name = "visit_type ")
+    private String visitType;
     @Type(type = "jsonb-node")
     @Column(columnDefinition = "jsonb")
     private JsonNode ipt;
