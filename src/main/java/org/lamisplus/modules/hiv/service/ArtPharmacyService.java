@@ -1,10 +1,8 @@
 package org.lamisplus.modules.hiv.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.controller.apierror.IllegalTypeException;
-import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
-import org.lamisplus.modules.hiv.domain.dto.PharmacyReport;
-import org.lamisplus.modules.hiv.domain.dto.RegimenRequestDto;
-import org.lamisplus.modules.hiv.domain.dto.RegisterArtPharmacyDto;
+import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
@@ -37,6 +32,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,7 +82,7 @@ public class ArtPharmacyService {
 		if (nonHIVEncounters.isEmpty()) {
 			visitService.checkOutVisitById(visit.getId());
 			LocalDateTime visitStartDate = visit.getVisitStartDate();
-			visit.setVisitEndDate(visitStartDate.plusHours(24));
+			visit.setVisitEndDate(visitStartDate);
 			visitRepository.save(visit);
 		}
 	}
@@ -169,21 +165,61 @@ public class ArtPharmacyService {
 		ArtPharmacy artPharmacy = new ArtPharmacy();
 		BeanUtils.copyProperties(dto, artPharmacy);
 		Long personId = dto.getPersonId();
-		Set<RegimenRequestDto> regimen = dto.getRegimen();
+		Set<RegimenRequestDto> regimens = dto.getRegimen();
 		Person person = getPerson(personId);
 		List<ArtPharmacy> existDrugRefills = artPharmacyRepository.getArtPharmaciesByVisitAndPerson(artPharmacy.getVisit(), person);
 		if (!existDrugRefills.isEmpty() && dto.getId() == null) {
 			throw new IllegalTypeException(ArtPharmacy.class, "visitId", "Regimen is already dispense for this visit " + dto.getVisitId());
 		}
-		Set<Regimen> regimenList = regimen.stream()
+		Set<Regimen> regimenList = regimens.stream()
 				.map(regimenId -> regimenRepository.findById(regimenId.getRegimenId()).orElse(null))
 				.collect(Collectors.toSet());
+		Optional<RegimenRequestDto> isoniazid = regimens.stream()
+				.filter(regimen -> regimen.getRegimenName().contains("Ison"))
+				.findFirst();
 		artPharmacy.setPerson(person);
+		processAndSetIpt(dto.getIptType(), isoniazid, dto.getVisitDate(), artPharmacy);
 		artPharmacy.setRegimens(regimenList);
 		artPharmacy.setFacilityId(organizationUtil.getCurrentUserOrganization());
 		return artPharmacy;
 	}
-	
+	private void processAndSetIpt(
+			String iptType,
+			Optional<RegimenRequestDto> isoniazid,
+			LocalDate visitDate,
+	      ArtPharmacy artPharmacy){
+		if(iptType != null && isoniazid.isPresent()) {
+			ObjectMapper mapper = new ObjectMapper();
+			RegimenRequestDto regimenRequestDto = isoniazid.get();
+			IptDto iptDto = IptDto.builder()
+					.drugName(regimenRequestDto.getRegimenName())
+					.type(iptType)
+					.build();
+			Integer duration = regimenRequestDto.getDispense();
+			if(iptType.contains("INITIATION") &&  duration >= 168) {
+				LocalDate  dateCompleted = visitDate.plusDays(168);
+				iptDto.setDateCompleted(dateCompleted.toString());
+			}
+			if(iptType.contains("REFILL")){
+				LocalDate  dateCompleted = visitDate.plusDays(duration);
+				iptDto.setDateCompleted(dateCompleted.toString());
+				Optional<ArtPharmacy> initialIptPharmacy =
+						artPharmacyRepository.getInitialIPTWithoutCompletionDate(artPharmacy.getPerson().getUuid());
+				if(initialIptPharmacy.isPresent()) {
+					ArtPharmacy artPharmacy1 = initialIptPharmacy.get();
+					JsonNode ipt = artPharmacy1.getIpt();
+					((ObjectNode) ipt).put("dateCompleted", dateCompleted.toString());
+					artPharmacy1.setIpt(ipt);
+					artPharmacyRepository.save(artPharmacy1);
+					
+					
+				}
+				
+			}
+			JsonNode iptNode = mapper.valueToTree(iptDto);
+			artPharmacy.setIpt(iptNode);
+		}
+	}
 	private Person getPerson(Long personId) {
 		return personRepository.findById(personId).orElseThrow(() -> getPersonEntityNotFoundException(personId));
 	}

@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 
-import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
@@ -42,6 +41,7 @@ public class RegisterArtPharmacyDto implements Serializable {
     private  String dsdModelType;
     private  String refill ;
     private  String refillType ;
+    private  String iptType;
     @Future
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -49,4 +49,5 @@ public class RegisterArtPharmacyDto implements Serializable {
     private JsonNode extra;
     private JsonNode adverseDrugReactions;
     private Set<RegimenRequestDto> regimen;
+    
 }
