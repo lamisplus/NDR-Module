@@ -111,7 +111,23 @@ return (
                 <h2 style={{color:'#000'}}>Reproductive Intentions</h2>
                 <br/>
                     <form >
-                    {/* Medical History form inputs */}
+                    <div className="row">
+                    <div className="form-group mb-3 col-md-4">
+                        <FormGroup>
+                        <Label >Visit Date *</Label>
+                        <InputGroup> 
+                            <Input 
+                                type="date"
+                                
+                                name="visitDate"
+                                id="visitDate"
+                                
+                            />
+                        </InputGroup>                                        
+                        </FormGroup>   
+                    </div>
+                    <div className="form-group mb-3 col-md-8"></div>   
+                    </div>
                     <div className="row">
                         <div className="form-group mb-3 col-md-6">                                    
                             <FormGroup>

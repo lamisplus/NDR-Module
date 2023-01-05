@@ -271,100 +271,28 @@ const Eligibility = (props) => {
                     </div>
                     <div className="form-group mb-3 col-md-8"></div>   
                     </div>
-
-                    <div className="row">
-                    {/* Past medical history */}
                     <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Past Medical History *</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="textarea"
-                                    name="past_medical_history"
-                                    id="past_medical_history"
-                                    onChange={handleMedicalHistory} 
-                                    value={objValues.past_medical_history}   
-                                />
-                                
-                            </InputGroup>
-                            </FormGroup>
-                            {errors.past_medical_history !=="" ? (
-                                <span className={classes.error}>{errors.past_medical_history}</span>
-                            ) : "" }
-                    </div>
-                    {/* end of Past medical history  */}
-                    {/* Past Family medical history */}
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Relevant Family History *</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="textarea"
-                                    name="relevant_family_history"
-                                    id="relevant_family_history"
-                                    onChange={handleMedicalHistory}
-                                    value={objValues.relevant_family_history}    
-                                />
-                                
-                            </InputGroup>
-                            </FormGroup>
-                            {errors.relevant_family_history !=="" ? (
-                                <span className={classes.error}>{errors.relevant_family_history}</span>
-                            ) : "" }
-                    </div>
-                    {/* end of FamilyPast medical history  */}
-                    {/* hospitalization */}
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Hospitalization</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="textarea"
-                                    name="hospitalization"
-                                    id="hospitalization"
-                                    onChange={handleMedicalHistory} 
-                                    value={objValues.hospitalization}   
-                                />
-
-                            </InputGroup>
-                        
-                            </FormGroup>
-                    </div>
-                    {/* end of hosiptalization */}
-                    {/* Drug Allergies */}
-                    <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >Drug Allergies *</Label>
-                            
-                            <Input
+                        <FormGroup>
+                        <Label >Type Of Client</Label>
+                        <InputGroup> 
+                            <Input 
                                 type="select"
-                                name="drug_allergies"
-                                id="drug_allergies"
-                                value={objValues.drug_allergies}
-                                onChange={handleMedicalHistory}
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
-                                >
-                                <option value=""> Select</option>
-                                    {allergies.map((value) => (
-                                        <option key={value.id} value={value.display}>
-                                            {value.display}
-                                        </option>
-                                    ))}
-                            </Input>    
-                            </FormGroup>
-                            {errors.drug_allergies !=="" ? (
-                                <span className={classes.error}>{errors.drug_allergies}</span>
-                            ) : "" }
+                                name="current_pregnant"
+                                id="current_pregnant"
+                                onChange={handleMedicalHistory} 
+                                value={objValues.current_pregnant} 
+                            >
+                            <option value="">Select</option>
+                            <option value="PLHIV New enrolled into HIV Care & Treatment">PLHIV New enrolled into HIV Care & Treatment</option>
+                            <option value="Registered PLHIV on follow up/subsequent visit this FY">Registered PLHIV on follow up/subsequent visit this FY</option>
+                            <option value="Registered PLHIV on first time visit this FY">Registered PLHIV on first time visit this FY</option>
+                            </Input>
+                        </InputGroup>                    
+                        </FormGroup>
                     </div>
-                    </div>
-                    {/* end of Drug Allergies  */}
-                    <div className="row">
-                    {(props.patientObj.sex==='Female' || props.patientObj.sex==='FEMALE' || props.patientObj.sex==='female') && (<>
-                    {props.patientAge>14 && (
-                        <div className="form-group mb-3 col-md-6">
+                    <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Currently Pregnant</Label>
+                                <Label >Pregnancy/Breastfeeding Status</Label>
                                 <InputGroup> 
                                     <Input 
                                         type="select"
@@ -378,76 +306,15 @@ const Eligibility = (props) => {
                                     <option value="No">No</option>
                                     <option value="Uncertain">Uncertain</option>
                                     </Input>
-
                                 </InputGroup>
-                            
                                 </FormGroup>
                         </div>
-                        )}
-                        {objValues.current_pregnant==='Yes' && (<>
-                        <div className="form-group mb-3 col-md-6">
-                                <FormGroup>
-                                <Label >Last menstrual period</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="date"
-                                        name="last_menstrual_period"
-                                        id="last_menstrual_period"
-                                        onChange={handleMedicalHistory}
-                                        value={objValues.last_menstrual_period}   
-                                    />
 
-                                </InputGroup>
-                            
-                                </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-6">
-                                <FormGroup>
-                                <Label >Gestational Age (weeks)</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="text"
-                                        name="gestational_age"
-                                        id="gestational_age"
-                                        onChange={handleMedicalHistory} 
-                                        value={objValues.gestational_age}  
-                                    />
-
-                                </InputGroup>
-                            
-                                </FormGroup>
-                        </div>
-                        </>
-                        )}
-                        {objValues.current_pregnant!=='Yes' && objValues.current_pregnant!=='' && (
-                        <div className="form-group mb-3 col-md-6">
-                                <FormGroup>
-                                <Label >Current BreastFeeding</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="select"
-                                        name="current_breastfeeding"
-                                        id="current_breastfeeding"
-                                        onChange={handleMedicalHistory} 
-                                        value={objValues.current_breastfeeding}  
-                                    >
-                                    <option value="">Select</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                    <option value="Uncertain">Uncertain</option>
-                                    </Input>
-
-                                </InputGroup>
-                            
-                                </FormGroup>
-                        </div>
-                        )}
-                    </>)}
-                    </div>
                     <div className="row">
+                    <h3>ART Status : Pre-ART </h3>
                      <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Previous ARV exposure</Label>
+                            <Label >Current Clinical Status(WHO Statging)</Label>
                             <InputGroup> 
                                 <Input 
                                     type="select"
@@ -467,128 +334,53 @@ const Eligibility = (props) => {
                             </FormGroup>
                      </div>
                      <div className="form-group mb-3 col-md-6"></div>
+                     <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label >Last CD4 Result</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="text"
+                                    name="previous_arv_exposure"
+                                    id="previous_arv_exposure"
+                                     
+                                />
+                            </InputGroup>
+                        
+                            </FormGroup>
                      </div>
-                     <div className="row">
-                     <div className="form-group mb-3 col-md-6">
-                                    
-                        <div className="form-check custom-checkbox ml-1 ">
+                     <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label >Last Viral Load Result</Label>
+                            <InputGroup> 
+                                <Input 
+                                    type="text"
+                                    name="previous_arv_exposure"
+                                    id="previous_arv_exposure"
+                                     
+                                />
+                            </InputGroup>
+                            </FormGroup>
+                     </div>
+                     <div className="form-group mb-3 col-md-4">
+                            <FormGroup>
+                            <Label >Eligible for Viral Load</Label>
+                            <InputGroup> 
+                                <Input 
+                                type="select"
+                                name="current_pregnant"
+                                id="current_pregnant"
+                                onChange={handleMedicalHistory} 
+                                value={objValues.current_pregnant} 
+                                >
+                                <option value="">Select</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                                </Input>
+                            </InputGroup>
                         
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                            
-                            name="early_arv_but_not_transfer_in"
-                            id="early_arv_but_not_transfer_in"
-                            onChange={handleMedicalHistory} 
-                            value={objValues.early_arv_but_not_transfer_in}  
-                            />
-                            <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Early ARV but not transfer in
-                        </label>
-                        </div>
-                    </div>
-                    {props.patientObj.sex==='Female' && (
-                    <div className="form-group mb-3 col-md-4">
-                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                        
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                            
-                            name="pmtct_only"
-                            id="pmtct_only"
-                            onChange={handleMedicalHistory} 
-                            value={objValues.pmtct_only} 
-                            />
-                           <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            PMTCT only
-                        </label> 
-                        </div>
-                    </div>
-                    )}
-                     <div className="row">
-                    <div className="form-group mb-3 col-md-4">
-                                    
-                        <div className="form-check custom-checkbox ml-1 ">
-                       
-                            <input
-                            type="checkbox"
-                            className="form-check-input"                            
-                            name="as_never_receive_arvs"
-                            id="as_never_receive_arvs"
-                            onChange={handleMedicalHistory} 
-                            value={objValues.as_never_receive_arvs} 
-                            />
-                             <label
-                            className="form-check-label"
-                            htmlFor="basic_checkbox_1"
-                            >
-                            Has never received ARVs
-                            </label>
-                        </div>
-                    </div>
-                    </div>
-                    {objValues.previous_arv_exposure==='Yes' &&  objValues.previous_arv_exposure!=='' && (
-                    <>
-                         <div className="row">
-                        <div className="form-group mb-3 col-md-4">
-                                <FormGroup>
-                                <Label >Name of the Facility</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="text"
-                                        name="name_of_the_facility"
-                                        id="name_of_the_facility"
-                                        onChange={handleMedicalHistory} 
-                                        value={objValues.name_of_the_facility}
-                                    />
-
-                                </InputGroup>
-                            
-                                </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-4">
-                                <FormGroup>
-                                <Label >Duration of care from</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="Date"
-                                        name="duration_of_care_from"
-                                        id="duration_of_care_from"
-                                        onChange={handleMedicalHistory} 
-                                        value={objValues.duration_of_care_from}
-                                    />
-
-                                </InputGroup>
-                            
-                                </FormGroup>
-                        </div>
-                        <div className="form-group mb-3 col-md-4">
-                                <FormGroup>
-                                <Label >To</Label>
-                                <InputGroup> 
-                                    <Input 
-                                        type="date"
-                                        name="duration_of_care_to"
-                                        id="duration_of_care_to"
-                                        onChange={handleMedicalHistory}
-                                        value={objValues.duration_of_care_to} 
-                                    />
-
-                                </InputGroup>
-                            
-                                </FormGroup>
-                        </div>
-                        </div>
-                    </>
-                    )}
-                    </div>
-                    
+                            </FormGroup>
+                     </div>
+                     </div>
                     <br/>
                     <Button content='Next' type="submit" icon='right arrow' labelPosition='right' style={{backgroundColor:"#014d88", color:'#fff'}} onClick={handleSubmit}/>
                     </form>
