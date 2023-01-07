@@ -337,7 +337,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"  AND hac.visit_date >= ?2\n" +
 			"  AND hac.visit_date <= ?3\n" +
 			"    ),\n" +
-			"    current_clinical AS (\n" +
+			"current_clinical AS (\n" +
 			"SELECT\n" +
 			"    tvs.person_uuid as person_uuid10,\n" +
 			"    body_weight as currentWeight,\n" +
@@ -375,7 +375,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    INNER JOIN hiv_enrollment he ON he.person_uuid = hac.person_uuid\n" +
 			"    LEFT JOIN base_application_codeset bac ON bac.id = hac.clinical_stage_id\n" +
 			"    LEFT JOIN base_application_codeset preg ON preg.code = hac.pregnancy_status\n" +
-			"    LEFT JOIN base_application_codeset tbs ON tbs.id = hac.tb_status \\:\\: Integer\n" +
+			"    LEFT JOIN base_application_codeset tbs ON tbs.id = hac.tb_status \\:\\:Integer\n" +
 			"WHERE\n" +
 			"    hac.archived = 0\n" +
 			"  AND he.archived = 0\n" +
@@ -453,17 +453,17 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    DISTINCT ON (hartp.person_uuid) hartp.person_uuid as person_uuid40,\n" +
 			"    r.visit_date as lastPickupDate,\n" +
 			"    hartp.next_appointment as nextPickupDate,\n" +
-			"    hartp.refill_period / 30 \\:\\:INTEGER as monthsOfARVRefill, \n" +
-			"    r.description as currentARTRegimen, \n" +
-			"    r.regimen_name as currentRegimenLine, \n" +
+			"    hartp.refill_period / 30 \\:\\:INTEGER as monthsOfARVRefill,\n" +
+			"    r.description as currentARTRegimen,\n" +
+			"    r.regimen_name as currentRegimenLine,\n" +
 			"    (\n" +
-			"      CASE WHEN stat.hiv_status ILIKE '%STOP%' \n" +
-			"      OR stat.hiv_status ILIKE '%DEATH%' \n" +
+			"      CASE WHEN stat.hiv_status ILIKE '%STOP%'\n" +
+			"      OR stat.hiv_status ILIKE '%DEATH%'\n" +
 			"      OR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN 'IIT' ELSE 'ACTIVE' END\n" +
-			"    ) AS currentStatus, \n" +
+			"    ) AS currentStatus,\n" +
 			"    (\n" +
-			"      CASE WHEN stat.hiv_status ILIKE '%STOP%' \n" +
-			"      OR stat.hiv_status ILIKE '%DEATH%' \n" +
+			"      CASE WHEN stat.hiv_status ILIKE '%STOP%'\n" +
+			"      OR stat.hiv_status ILIKE '%DEATH%'\n" +
 			"      OR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN (\n" +
 			"        hartp.visit_date + hartp.refill_period + INTERVAL '28 day'\n" +
 			"      ) \\:\\:date ELSE hartp.visit_date END\n" +
@@ -478,30 +478,30 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    SELECT\n" +
 			"    h.person_uuid,\n" +
 			"    h.visit_date,\n" +
-			"    pharmacy_object ->> 'regimenName' \\:\\:VARCHAR AS regimen_name, \n" +
-			"            hrt.description \n" +
-			"          FROM \n" +
-			"            hiv_art_pharmacy h, \n" +
-			"            jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object) \n" +
-			"            INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\:VARCHAR \n" +
-			"            INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id \n" +
-			"          WHERE \n" +
+			"    pharmacy_object ->> 'regimenName'\\:\\:VARCHAR AS regimen_name,\n" +
+			"            hrt.description\n" +
+			"          FROM\n" +
+			"            hiv_art_pharmacy h,\n" +
+			"            jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)\n" +
+			"            INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\:VARCHAR\n" +
+			"            INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id\n" +
+			"          WHERE\n" +
 			"            hrt.id IN (1, 2, 3, 4, 14)\n" +
-			"        ) r \n" +
+			"        ) r\n" +
 			"        INNER JOIN (\n" +
-			"          SELECT \n" +
-			"            hap.person_uuid, \n" +
-			"            MAX(visit_date) AS MAXDATE \n" +
-			"          FROM \n" +
-			"            hiv_art_pharmacy hap \n" +
-			"            INNER JOIN hiv_enrollment h ON h.person_uuid = hap.person_uuid \n" +
-			"          WHERE \n" +
-			"            h.archived = 0 \n" +
-			"          GROUP BY \n" +
-			"            hap.person_uuid \n" +
-			"          ORDER BY \n" +
+			"          SELECT\n" +
+			"            hap.person_uuid,\n" +
+			"            MAX(visit_date) AS MAXDATE\n" +
+			"          FROM\n" +
+			"            hiv_art_pharmacy hap\n" +
+			"            INNER JOIN hiv_enrollment h ON h.person_uuid = hap.person_uuid\n" +
+			"          WHERE\n" +
+			"            h.archived = 0\n" +
+			"          GROUP BY\n" +
+			"            hap.person_uuid\n" +
+			"          ORDER BY\n" +
 			"            MAXDATE ASC\n" +
-			"        ) max ON max.MAXDATE = r.visit_date \n" +
+			"        ) max ON max.MAXDATE = r.visit_date\n" +
 			"        AND r.person_uuid = max.person_uuid\n" +
 			"    ) r ON r.visit_date = hartp.visit_date\n" +
 			"    AND r.person_uuid = hartp.person_uuid\n" +
@@ -750,16 +750,16 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    ipt_type.regimen_name as iptType,\n" +
 			"    ipt_type.duration as duration,\n" +
 			"    hap.visit_date as dateOfIptStart,\n" +
-			"    ipt ->> 'type' \\:\\:VARCHAR as type, \n" +
-			"    hap.ipt ->> 'dateCompleted' \\:\\:VARCHAR as IptCompletionDate1, \n" +
+			"    ipt ->> 'type' \\:\\:VARCHAR as type,\n" +
+			"    hap.ipt ->> 'dateCompleted' \\:\\:VARCHAR as IptCompletionDate1,\n" +
 			"    (\n" +
-			"      CASE WHEN followup.follow_date_completed\\:\\:DATE IS NOT NULL \n" +
+			"      CASE WHEN followup.follow_date_completed\\:\\:DATE IS NOT NULL\n" +
 			"      AND followup.follow_date_completed\\:\\:DATE > TO_DATE(\n" +
 			"        hap.ipt ->> 'dateCompleted', 'YYYY-MM-DD'\n" +
 			"      ) THEN followup.follow_date_completed\\:\\:DATE ELSE TO_DATE(\n" +
 			"        hap.ipt ->> 'dateCompleted', 'YYYY-MM-DD'\n" +
 			"      ) END\n" +
-			"    ) IptCompletionDate, \n" +
+			"    ) IptCompletionDate,\n" +
 			"    followup.follow_date_completed\\:\\:DATE as followup_completion_date\n" +
 			"FROM\n" +
 			"    hiv_art_pharmacy hap\n" +
@@ -781,43 +781,64 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    SELECT\n" +
 			"    h.person_uuid,\n" +
 			"    h.visit_date,\n" +
-			"    pharmacy_object ->> 'regimenName' \\:\\:VARCHAR AS regimen_name, \n" +
-			"        pharmacy_object ->> 'duration' \\:\\:VARCHAR AS duration, \n" +
-			"        hrt.description \n" +
-			"      FROM \n" +
-			"        hiv_art_pharmacy h, \n" +
-			"        jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object) \n" +
-			"        INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\: VARCHAR \n" +
-			"        INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id \n" +
-			"      WHERE \n" +
+			"    pharmacy_object ->> 'regimenName' \\:\\:VARCHAR AS regimen_name,\n" +
+			"        pharmacy_object ->> 'duration' \\:\\:VARCHAR AS duration,\n" +
+			"        hrt.description\n" +
+			"      FROM\n" +
+			"        hiv_art_pharmacy h,\n" +
+			"        jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)\n" +
+			"        INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\:VARCHAR\n" +
+			"        INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id\n" +
+			"      WHERE\n" +
 			"        hrt.id IN (15)\n" +
-			"    ) AS ipt_type ON ipt_type.person_uuid = max_ipt.person_uuid \n" +
-			"    AND ipt_type.visit_date = max_ipt.MAXDATE \n" +
+			"    ) AS ipt_type ON ipt_type.person_uuid = max_ipt.person_uuid\n" +
+			"    AND ipt_type.visit_date = max_ipt.MAXDATE\n" +
 			"    LEFT JOIN (\n" +
-			"      SELECT \n" +
-			"        hap.person_uuid, \n" +
-			"        hap.ipt ->> 'dateCompleted' \\:\\:VARCHAR as follow_date_completed \n" +
-			"      FROM \n" +
-			"        hiv_art_pharmacy hap \n" +
+			"      SELECT\n" +
+			"        hap.person_uuid,\n" +
+			"        hap.ipt ->> 'dateCompleted' \\:\\:VARCHAR as follow_date_completed\n" +
+			"      FROM\n" +
+			"        hiv_art_pharmacy hap\n" +
 			"        INNER JOIN (\n" +
-			"          SELECT \n" +
-			"            person_uuid, \n" +
-			"            MAX(visit_date) AS MAXDATE \n" +
-			"          FROM \n" +
-			"            hiv_art_pharmacy \n" +
-			"          WHERE \n" +
-			"            ipt ->> 'type' ilike '%FOLLOW%' \n" +
-			"            AND ipt ->> 'dateCompleted' IS NOT NULL \n" +
-			"          GROUP BY \n" +
-			"            person_uuid \n" +
-			"          ORDER BY \n" +
+			"          SELECT\n" +
+			"            person_uuid,\n" +
+			"            MAX(visit_date) AS MAXDATE\n" +
+			"          FROM\n" +
+			"            hiv_art_pharmacy\n" +
+			"          WHERE\n" +
+			"            ipt ->> 'type' ilike '%FOLLOW%'\n" +
+			"            AND ipt ->> 'dateCompleted' IS NOT NULL\n" +
+			"          GROUP BY\n" +
+			"            person_uuid\n" +
+			"          ORDER BY\n" +
 			"            MAXDATE ASC\n" +
-			"        ) AS max_ipt_followup ON max_ipt_followup.MAXDATE\\:\\:DATE = hap.visit_date \n" +
+			"        ) AS max_ipt_followup ON max_ipt_followup.MAXDATE\\:\\:DATE = hap.visit_date\n" +
 			"        AND max_ipt_followup.person_uuid = hap.person_uuid\n" +
 			"    ) followup ON followup.person_uuid = hap.person_uuid\n" +
 			"WHERE\n" +
 			"    hap.archived = 0\n" +
-			"    )\n" +
+			"    ),\n" +
+			"cervical_cancer as\n" +
+			"(SELECT ho.person_uuid as person_uuid90, ho.date_of_observation as dateOfCervicalCancerScreening,\n" +
+			"       cc_type.display as cervicalCancerScreeningType, cc_method.display as cervicalCancerScreeningMethod,\n" +
+			"       cc_result.display as resultOfCervicalCancerScreening\n" +
+			"FROM hiv_observation ho\n" +
+			"         INNER JOIN (\n" +
+			"    SELECT\n" +
+			"        person_uuid,\n" +
+			"        MAX(date_of_observation) AS MAXDATE\n" +
+			"    FROM\n" +
+			"        hiv_observation\n" +
+			"    WHERE archived=0\n" +
+			"    GROUP BY\n" +
+			"        person_uuid\n" +
+			"    ORDER BY\n" +
+			"        MAXDATE ASC\n" +
+			") AS max_cc ON max_cc.MAXDATE = ho.date_of_observation AND max_cc.person_uuid=ho.person_uuid\n" +
+			"         INNER JOIN base_application_codeset cc_type ON cc_type.code = ho.data->>'screenType'\\:\\:VARCHAR\n" +
+			"    INNER JOIN base_application_codeset cc_method ON cc_method.code = ho.data->>'screenMethod'\\:\\:VARCHAR\n" +
+			"    INNER JOIN base_application_codeset cc_result ON cc_result.code = ho.data->>'screeningResult'\\:\\:VARCHAR\n" +
+			")\n" +
 			"SELECT\n" +
 			"    bd.*,\n" +
 			"    ldvl.*,\n" +
@@ -830,7 +851,8 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    ca.person_uuid70,\n" +
 			"    ipt.dateOfIptStart,\n" +
 			"    ipt.iptCompletionDate,\n" +
-			"    ipt.iptType\n" +
+			"    ipt.iptType,\n" +
+			"    cc.*\n" +
 			"FROM\n" +
 			"    bio_data bd\n" +
 			"        LEFT JOIN current_clinical c ON c.person_uuid10 = bd.personUuid\n" +
@@ -840,7 +862,8 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"        LEFT JOIN eac e ON e.person_uuid50 = bd.personUuid\n" +
 			"        LEFT JOIN biometric b ON b.person_uuid60 = bd.personUuid\n" +
 			"        LEFT JOIN current_ART_start ca ON ca.person_uuid70 = bd.personUuid\n" +
-			"        LEFT JOIN ipt ipt ON ipt.personUuid80 = bd.personUuid",
+			"        LEFT JOIN ipt ipt ON ipt.personUuid80 = bd.personUuid\n" +
+			"        LEFT JOIN cervical_cancer cc on cc.person_uuid90 = bd.personUuid",
 	nativeQuery = true)
 	List<RadetReportDto> getRadetReportsByFacilityIdAndDateRange(Long facilityId, LocalDate startDate, LocalDate endDate);
 	

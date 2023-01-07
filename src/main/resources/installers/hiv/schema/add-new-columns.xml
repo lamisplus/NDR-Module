@@ -91,7 +91,7 @@
         </sql>
     </changeSet>
 
-    <changeSet failOnError="true"  id="20230105-007" author="amos-data-fi">
+    <changeSet failOnError="true"  id="20230105-008" author="amos-data-fi">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="hiv_art_pharmacy" columnName="visit_type" />

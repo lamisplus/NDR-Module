@@ -518,7 +518,28 @@ FROM
     ) followup ON followup.person_uuid = hap.person_uuid
 WHERE
     hap.archived = 0
-    )
+    ),
+cervical_cancer as
+(SELECT ho.person_uuid as person_uuid90, ho.date_of_observation as dateOfcervicalCancerScreening,
+       cc_type.display as cervicalCancerScreeningType, cc_method.display as cervicalCancerScreeningMethod,
+       cc_result.display as resultOfCervicalCancerScreening
+FROM hiv_observation ho
+         INNER JOIN (
+    SELECT
+        person_uuid,
+        MAX(date_of_observation) AS MAXDATE
+    FROM
+        hiv_observation
+    WHERE archived=0
+    GROUP BY
+        person_uuid
+    ORDER BY
+        MAXDATE ASC
+) AS max_cc ON max_cc.MAXDATE = ho.date_of_observation AND max_cc.person_uuid=ho.person_uuid
+         INNER JOIN base_application_codeset cc_type ON cc_type.code = ho.data->>'screenType'\\:\\:VARCHAR
+    INNER JOIN base_application_codeset cc_method ON cc_method.code = ho.data->>'screenMethod'\\:\\:VARCHAR
+    INNER JOIN base_application_codeset cc_result ON cc_result.code = ho.data->>'screeningResult'\\:\\:VARCHAR
+)
 SELECT
     bd.*,
     ldvl.*,
@@ -531,7 +552,8 @@ SELECT
     ca.person_uuid70,
     ipt.dateOfIptStart,
     ipt.iptCompletionDate,
-    ipt.iptType
+    ipt.iptType,
+    cc.*
 FROM
     bio_data bd
         LEFT JOIN current_clinical c ON c.person_uuid10 = bd.personUuid
@@ -542,3 +564,4 @@ FROM
         LEFT JOIN biometric b ON b.person_uuid60 = bd.personUuid
         LEFT JOIN current_ART_start ca ON ca.person_uuid70 = bd.personUuid
         LEFT JOIN ipt ipt ON ipt.personUuid80 = bd.personUuid
+        LEFT JOIN cervical_cancer cc on cc.person_uuid90 = bd.personUuid

@@ -93,6 +93,13 @@ public interface RadetReportDto {
   LocalDate getDateOfIptStart();
   LocalDate getIptCompletionDate();
   String getIptType();
+  String getResultOfCervicalCancerScreening();
+  String getCervicalCancerScreeningType();
+ 
+  String getCervicalCancerScreeningMethod();
+  LocalDate getDateOfCervicalCancerScreening();
+  
+  
 		
 	
 }
