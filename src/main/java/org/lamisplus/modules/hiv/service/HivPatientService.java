@@ -49,6 +49,8 @@ public class HivPatientService {
     private final ObservationRepository observationRepository;
 
     private final  PatientActivityService patientActivityService;
+    
+    private final  StatusManagementService statusManagementService;
 
     public HivEnrollmentDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
@@ -193,7 +195,7 @@ public class HivPatientService {
             ARTClinicalCommenceDto artClinicalCommenceDto =
                     commenceService.convertArtToResponseDto(artCommencement.get());
             hivPatientDto.setArtCommence(artClinicalCommenceDto);
-            hivPatientDto.setCurrentStatus (statusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus());
+            hivPatientDto.setCurrentStatus (statusManagementService.getCurrentStatus(personId));
         }
     }
 
