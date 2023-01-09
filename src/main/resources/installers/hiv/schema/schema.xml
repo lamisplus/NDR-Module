@@ -539,15 +539,13 @@
                 INCREMENT BY 1
                 NO MINVALUE
                 NO MAXVALUE CACHE 1;
-            CREATE TABLE IF NOT EXISTS hiv_art_pharmacy_regimens
-            (
-                id bigint DEFAULT nextval
-            (
-                'hiv_art_pharmacy_regimens_id_seq'::regclass
-            ) NOT NULL,
+            CREATE TABLE IF NOT EXISTS public.hiv_art_pharmacy_regimens
+                (
+                id bigint NOT NULL DEFAULT nextval('hiv_art_pharmacy_regimens_id_seq'::regclass),
                 art_pharmacy_id bigint NOT NULL,
-                regimens_id bigint NOT NULL
-                );
+                regimens_id bigint NOT NULL,
+                CONSTRAINT hiv_art_pharmacy_regimens_pkey PRIMARY KEY (art_pharmacy_id, regimens_id)
+                )
         </sql>
     </changeSet>
     <changeSet id="20220720-014" author="amos-data-fi" runAlways="true">

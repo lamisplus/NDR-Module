@@ -1,7 +1,6 @@
 package org.lamisplus.modules.hiv.service;
 
 import lombok.RequiredArgsConstructor;
-import org.audit4j.core.util.Log;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Encounter;
 import org.lamisplus.modules.patient.domain.entity.Person;
@@ -54,7 +53,7 @@ public class HandleHIVVisitEncounter {
 			Visit visit = new Visit();
 			personOptional.ifPresent(visit::setPerson);
 			personOptional.ifPresent(person -> visit.setFacilityId(person.getFacilityId()));
-			visit.setVisitStartDate(visitDate.atStartOfDay());
+			visit.setVisitStartDate(visitDate.atTime(8,0));
 			visit.setArchived(0);
 			visit.setUuid(UUID.randomUUID().toString());
 			//Log.info("about saving visit {}", personOptional.isPresent());
@@ -78,7 +77,7 @@ public class HandleHIVVisitEncounter {
 		encounter.setArchived(0);
 		encounter.setPerson(visit.getPerson());
 		encounter.setUuid(UUID.randomUUID().toString());
-		encounter.setEncounterDate(visit.getVisitStartDate());
+		encounter.setEncounterDate(visit.getVisitStartDate().plusMinutes(2));
 		encounter.setServiceCode("hiv-code");
 		personOptional.ifPresent(encounter::setPerson);
 		encounter.setStatus("PENDING");

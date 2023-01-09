@@ -54,7 +54,9 @@ public interface ArtPharmacyRepository extends JpaRepository<ArtPharmacy, Long> 
 			"AND archived = 0 ORDER BY visit_date DESC LIMIT 1" ,
 			nativeQuery = true)
 	Optional<ArtPharmacy> getCurrentPharmacyRefillWithDateRange(String personUuid, LocalDate endDate);
-	
-	
+	@Query(value = "SELECT * FROM hiv_art_pharmacy WHERE person_uuid = ?1 " +
+			" AND ipt ->>'type' ILIKE'%initia%'AND ipt ->>'dateCompleted' IS NULL " +
+			" ORDER BY visit_date DESC LIMIT 1 ", nativeQuery = true)
+    Optional<ArtPharmacy> getInitialIPTWithoutCompletionDate(String personUuid);
 }
 

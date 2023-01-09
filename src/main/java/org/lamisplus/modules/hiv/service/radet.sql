@@ -76,7 +76,7 @@ FROM
     INNER JOIN hiv_enrollment he ON he.person_uuid = hac.person_uuid
     LEFT JOIN base_application_codeset bac ON bac.id = hac.clinical_stage_id
     LEFT JOIN base_application_codeset preg ON preg.code = hac.pregnancy_status
-    LEFT JOIN base_application_codeset tbs ON tbs.id = hac.tb_status \\:\\: Integer
+    LEFT JOIN base_application_codeset tbs ON tbs.id = hac.tb_status \\ : \\ : Integer
 WHERE
     hac.archived = 0
   AND he.archived = 0
@@ -154,20 +154,20 @@ SELECT
     DISTINCT ON (hartp.person_uuid) hartp.person_uuid as person_uuid40,
     r.visit_date as lastPickupDate,
     hartp.next_appointment as nextPickupDate,
-    hartp.refill_period / 30 \\:\\: INTEGER as monthsOfARVRefill,
+    hartp.refill_period / 30 \\ : \\ : INTEGER as monthsOfARVRefill,
     r.description as currentARTRegimen,
     r.regimen_name as currentRegimenLine,
     (
-    CASE WHEN stat.hiv_status ILIKE '%STOP%'
-    OR stat.hiv_status ILIKE '%DEATH%'
-    OR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN 'IIT' ELSE 'ACTIVE' END
+      CASE WHEN stat.hiv_status ILIKE '%STOP%'
+      OR stat.hiv_status ILIKE '%DEATH%'
+      OR stat.hiv_status ILIKE '%OUT%' THEN stat.hiv_status WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN 'IIT' ELSE 'ACTIVE' END
     ) AS currentStatus,
     (
-    CASE WHEN stat.hiv_status ILIKE '%STOP%'
-    OR stat.hiv_status ILIKE '%DEATH%'
-    OR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN (
-    hartp.visit_date + hartp.refill_period + INTERVAL '28 day'
-    )\\:\\: date ELSE hartp.visit_date END
+      CASE WHEN stat.hiv_status ILIKE '%STOP%'
+      OR stat.hiv_status ILIKE '%DEATH%'
+      OR stat.hiv_status ILIKE '%OUT%' THEN stat.status_date WHEN hartp.visit_date + hartp.refill_period + INTERVAL '28 day' < '01-12-2022' THEN (
+        hartp.visit_date + hartp.refill_period + INTERVAL '28 day'
+      ) \\ : \\ : date ELSE hartp.visit_date END
     ) AS dateOfCurrentStatus
 FROM
     hiv_art_pharmacy hartp
@@ -179,31 +179,31 @@ FROM
     SELECT
     h.person_uuid,
     h.visit_date,
-    pharmacy_object ->> 'regimenName' \\:\\: VARCHAR AS regimen_name,
-    hrt.description
-    FROM
-    hiv_art_pharmacy h,
-    jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)
-    INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\: VARCHAR
-    INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id
-    WHERE
-    hrt.id IN (1, 2, 3, 4, 14)
-    ) r
-    INNER JOIN (
-    SELECT
-    hap.person_uuid,
-    MAX(visit_date) AS MAXDATE
-    FROM
-    hiv_art_pharmacy hap
-    INNER JOIN hiv_enrollment h ON h.person_uuid = hap.person_uuid
-    WHERE
-    h.archived = 0
-    GROUP BY
-    hap.person_uuid
-    ORDER BY
-    MAXDATE ASC
-    ) max ON max.MAXDATE = r.visit_date
-    AND r.person_uuid = max.person_uuid
+    pharmacy_object ->> 'regimenName' \\ : \\ : VARCHAR AS regimen_name,
+            hrt.description
+          FROM
+            hiv_art_pharmacy h,
+            jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)
+            INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\ : \\ : VARCHAR
+            INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id
+          WHERE
+            hrt.id IN (1, 2, 3, 4, 14)
+        ) r
+        INNER JOIN (
+          SELECT
+            hap.person_uuid,
+            MAX(visit_date) AS MAXDATE
+          FROM
+            hiv_art_pharmacy hap
+            INNER JOIN hiv_enrollment h ON h.person_uuid = hap.person_uuid
+          WHERE
+            h.archived = 0
+          GROUP BY
+            hap.person_uuid
+          ORDER BY
+            MAXDATE ASC
+        ) max ON max.MAXDATE = r.visit_date
+        AND r.person_uuid = max.person_uuid
     ) r ON r.visit_date = hartp.visit_date
     AND r.person_uuid = hartp.person_uuid
     INNER JOIN hiv_enrollment he ON he.person_uuid = r.person_uuid
@@ -238,7 +238,6 @@ ORDER BY
     hartp.person_uuid ASC
     ),
 --7917\n" +
-
     eac AS (
 SELECT
     he.person_uuid as person_uuid50,
@@ -365,9 +364,9 @@ FROM
 WHERE
     he.archived = 0
     ),
-
 --  current ART start date qr start here
-    current_ART_start as (select
+    current_ART_start as (
+select
     start_or_regimen as dateOfCurrentRegimen,
     regiment_table.max_visit_date,
     regiment_table.regimen,
@@ -378,7 +377,9 @@ from
     min(visit_date) start_or_regimen,
     max(visit_date) max_visit_date,
     regimen,
-    person_uuid from (
+    person_uuid
+    from
+    (
     select
     hap.id,
     hap.person_uuid,
@@ -394,8 +395,10 @@ from
     order by
     person_uuid,
     visit_date
-    ) rn2 FROM public.hiv_art_pharmacy as hap inner
-    join (
+    ) rn2
+    FROM
+    public.hiv_art_pharmacy as hap
+    inner join (
     SELECT
     max(hapr.id) as id,
     art_pharmacy_id,
@@ -406,17 +409,24 @@ from
     inner join hiv_regimen as hr on hapr.regimens_id = hr.id
     where
     hr.regimen_type_id in (1, 2, 3, 4, 14)
-    GROUP BY art_pharmacy_id,
+    GROUP BY
+    art_pharmacy_id,
     regimens_id,
     hr.description
-    ) as hapr on hap.id = hapr.art_pharmacy_id inner
-    join hiv_regimen as hivreg on hapr.regimens_id = hivreg.id inner
-    join hiv_regimen_type as hivregtype on hivreg.regimen_type_id = hivregtype.id
-    and hivreg.regimen_type_id in (1, 2, 3, 4, 14) order by person_uuid,
+    ) as hapr on hap.id = hapr.art_pharmacy_id
+    inner join hiv_regimen as hivreg on hapr.regimens_id = hivreg.id
+    inner join hiv_regimen_type as hivregtype on hivreg.regimen_type_id = hivregtype.id
+    and hivreg.regimen_type_id in (1, 2, 3, 4, 14)
+    order by
+    person_uuid,
     visit_date
-    ) t  group by person_uuid,
+    ) t
+    group by
+    person_uuid,
     regimen,
-    rn1 - rn2 order by min(visit_date)
+    rn1 - rn2
+    order by
+    min(visit_date)
     ) as regiment_table
     inner join (
     select
@@ -433,7 +443,103 @@ group by
     regiment_table.person_uuid,
     regiment_table.regimen,
     regiment_table.max_visit_date,
-    start_or_regimen)
+    start_or_regimen
+    ),
+    ipt as (
+SELECT
+    DISTINCT hap.person_uuid as personUuid80,
+    ipt_type.regimen_name as iptType,
+    ipt_type.duration as duration,
+    hap.visit_date as dateOfIptStart,
+    ipt ->> 'type' \\ : \\ : VARCHAR as type,
+    hap.ipt ->> 'dateCompleted' \\ : \\ : VARCHAR as IptCompletionDate1,
+    (
+      CASE WHEN followup.follow_date_completed\\ : \\ : DATE IS NOT NULL
+      AND followup.follow_date_completed\\ : \\ : DATE > TO_DATE(
+        hap.ipt ->> 'dateCompleted', 'YYYY-MM-DD'
+      ) THEN followup.follow_date_completed\\ : \\ : DATE ELSE TO_DATE(
+        hap.ipt ->> 'dateCompleted', 'YYYY-MM-DD'
+      ) END
+    ) IptCompletionDate,
+    followup.follow_date_completed\\ : \\ : DATE as followup_completion_date
+FROM
+    hiv_art_pharmacy hap
+    INNER JOIN (
+    SELECT
+    person_uuid,
+    MAX(visit_date) AS MAXDATE
+    FROM
+    hiv_art_pharmacy
+    WHERE
+    ipt ->> 'type' ilike '%INITIATION%'
+    GROUP BY
+    person_uuid
+    ORDER BY
+    MAXDATE ASC
+    ) AS max_ipt ON max_ipt.MAXDATE = hap.visit_date
+    AND max_ipt.person_uuid = hap.person_uuid
+    INNER JOIN (
+    SELECT
+    h.person_uuid,
+    h.visit_date,
+    pharmacy_object ->> 'regimenName' \\ : \\ : VARCHAR AS regimen_name,
+        pharmacy_object ->> 'duration' \\ : \\ : VARCHAR AS duration,
+        hrt.description
+      FROM
+        hiv_art_pharmacy h,
+        jsonb_array_elements(h.extra -> 'regimens') with ordinality p(pharmacy_object)
+        INNER JOIN hiv_regimen hr ON hr.description = pharmacy_object ->> 'regimenName' \\:\\: VARCHAR
+        INNER JOIN hiv_regimen_type hrt ON hrt.id = hr.regimen_type_id
+      WHERE
+        hrt.id IN (15)
+    ) AS ipt_type ON ipt_type.person_uuid = max_ipt.person_uuid
+    AND ipt_type.visit_date = max_ipt.MAXDATE
+    LEFT JOIN (
+      SELECT
+        hap.person_uuid,
+        hap.ipt ->> 'dateCompleted' \\ : \\ : VARCHAR as follow_date_completed
+      FROM
+        hiv_art_pharmacy hap
+        INNER JOIN (
+          SELECT
+            person_uuid,
+            MAX(visit_date) AS MAXDATE
+          FROM
+            hiv_art_pharmacy
+          WHERE
+            ipt ->> 'type' ilike '%FOLLOW%'
+            AND ipt ->> 'dateCompleted' IS NOT NULL
+          GROUP BY
+            person_uuid
+          ORDER BY
+            MAXDATE ASC
+        ) AS max_ipt_followup ON max_ipt_followup.MAXDATE\\ : \\ : DATE = hap.visit_date
+        AND max_ipt_followup.person_uuid = hap.person_uuid
+    ) followup ON followup.person_uuid = hap.person_uuid
+WHERE
+    hap.archived = 0
+    ),
+cervical_cancer as
+(SELECT ho.person_uuid as person_uuid90, ho.date_of_observation as dateOfcervicalCancerScreening,
+       cc_type.display as cervicalCancerScreeningType, cc_method.display as cervicalCancerScreeningMethod,
+       cc_result.display as resultOfCervicalCancerScreening
+FROM hiv_observation ho
+         INNER JOIN (
+    SELECT
+        person_uuid,
+        MAX(date_of_observation) AS MAXDATE
+    FROM
+        hiv_observation
+    WHERE archived=0
+    GROUP BY
+        person_uuid
+    ORDER BY
+        MAXDATE ASC
+) AS max_cc ON max_cc.MAXDATE = ho.date_of_observation AND max_cc.person_uuid=ho.person_uuid
+         INNER JOIN base_application_codeset cc_type ON cc_type.code = ho.data->>'screenType'\\:\\:VARCHAR
+    INNER JOIN base_application_codeset cc_method ON cc_method.code = ho.data->>'screenMethod'\\:\\:VARCHAR
+    INNER JOIN base_application_codeset cc_result ON cc_result.code = ho.data->>'screeningResult'\\:\\:VARCHAR
+)
 SELECT
     bd.*,
     ldvl.*,
@@ -441,9 +547,13 @@ SELECT
     pdr.*,
     b.*,
     c.*,
-    e.* ,
+    e.*,
     ca.dateOfCurrentRegimen,
-    ca.person_uuid70
+    ca.person_uuid70,
+    ipt.dateOfIptStart,
+    ipt.iptCompletionDate,
+    ipt.iptType,
+    cc.*
 FROM
     bio_data bd
         LEFT JOIN current_clinical c ON c.person_uuid10 = bd.personUuid
@@ -453,3 +563,5 @@ FROM
         LEFT JOIN eac e ON e.person_uuid50 = bd.personUuid
         LEFT JOIN biometric b ON b.person_uuid60 = bd.personUuid
         LEFT JOIN current_ART_start ca ON ca.person_uuid70 = bd.personUuid
+        LEFT JOIN ipt ipt ON ipt.personUuid80 = bd.personUuid
+        LEFT JOIN cervical_cancer cc on cc.person_uuid90 = bd.personUuid

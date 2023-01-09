@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
 import org.lamisplus.modules.hiv.service.HIVStatusTrackerService;
+import org.lamisplus.modules.hiv.service.StatusManagementService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import java.util.List;
 public class HIVStatusController {
 	
 	private final HIVStatusTrackerService hivStatusTrackerService;
+	
+	private final StatusManagementService statusManagementService;
 	
 	
 	@PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +41,7 @@ public class HIVStatusController {
 	
 	@GetMapping(value = "patient-current/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getPersonCurrentHIVStatus(@PathVariable("id") Long personId) {
-		return ResponseEntity.ok(hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId(personId).getStatus());
+		return ResponseEntity.ok(statusManagementService.getCurrentStatus(personId));
 	}
 	
 	@GetMapping(value = "patient/{personId}", produces = MediaType.APPLICATION_JSON_VALUE)

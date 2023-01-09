@@ -89,6 +89,18 @@ public interface RadetReportDto {
 	String getRepeatViralLoadResult();
 	String getTbStatus();
 	LocalDate getDateOfTbScreened();
-	LocalDate getDateOfCurrentRegimen();
+  LocalDate getDateOfCurrentRegimen();
+  LocalDate getDateOfIptStart();
+  LocalDate getIptCompletionDate();
+  String getIptType();
+  String getResultOfCervicalCancerScreening();
+  String getCervicalCancerScreeningType();
+ 
+  String getCervicalCancerScreeningMethod();
+  LocalDate getDateOfCervicalCancerScreening();
+  
+  
+		
+	
 }
 	
