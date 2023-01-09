@@ -274,7 +274,7 @@ function PatientCard(props) {
                               <div >
                                   <Typography variant="caption">
                                       <Label color={"teal"} size={"mini"}>
-                                        HIV STATUS : {props.patientObj.currentStatus}
+                                        ART STATUS : {props.patientObj.currentStatus}
                                           
                                       </Label>
                                     

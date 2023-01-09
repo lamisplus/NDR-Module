@@ -115,7 +115,8 @@ const Pharmacy = (props) => {
             dsdModelType,
             switch:"",
             substitute:"",
-            iptType:""
+            iptType:"",
+            visitType:''
     });
     const [vital, setVitalSignDto]= useState({
         bodyWeight: "",
@@ -814,6 +815,25 @@ const Pharmacy = (props) => {
                 </div>
             </>)}
             <div className="row">
+            <div className="form-group mb-3 col-md-3">
+                <FormGroup>
+                    <Label >Visit Type</Label>
+                    <Input
+                        type="select"
+                        name="visitType"
+                        id="visitType"
+                        value={objValues.visitType}
+                        onChange={handleInputChange}   
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        >
+                        <option value="">Select </option>
+                        <option value="Initial Visit">Initial Visit</option>
+                        <option value="Follow Up Visit">Follow Up Visit </option>
+                    
+                    </Input>
+                    
+                    </FormGroup>
+                </div>
                 <div className="form-group mb-3 col-md-3">
                 <FormGroup>
                     <Label >Refill</Label>
@@ -1158,8 +1178,7 @@ const Pharmacy = (props) => {
 
             <div className="form-group mb-3 col-md-6">
                 <FormGroup>
-                <Label >Drugs</Label>
-                
+                <Label >Drugs</Label>                
                 <Input
                     type="select"
                     name="regimenId"
@@ -1183,7 +1202,7 @@ const Pharmacy = (props) => {
             {showIptType || objValues.iptType!=='' && ( 
             <div className="form-group mb-3 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <FormGroup>
-                <Label >IPT Type</Label>
+                <Label >TPT Type</Label>
                 
                 <Input
                     type="select"
@@ -1200,8 +1219,7 @@ const Pharmacy = (props) => {
                             {value.display}
                         </option>
                     ))}
-                </Input>
-                
+                </Input>                
                 </FormGroup>
             </div>
             )}

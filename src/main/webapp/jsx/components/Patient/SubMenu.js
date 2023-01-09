@@ -88,10 +88,7 @@ function SubMenu(props) {
         setActiveItem('home')    
         props.setActiveContent({...props.activeContent, route:'recent-history'})
     }
-    const loadChronicCare =(row)=> {
-        props.setActiveContent({...props.activeContent, route:'chronic-care'})
-    }
-   
+
     const loadTrackingForm =(row)=> {
         setActiveItem('tracking')
         props.setActiveContent({...props.activeContent, route:'tracking-form'})
@@ -122,6 +119,11 @@ function SubMenu(props) {
         setActiveItem('art')
         props.setActiveContent({...props.activeContent, route:'art-commencementPage'})
     }
+    const loadChronicCare = ()=>{
+        setActiveItem('chronic-care')
+        props.setActiveContent({...props.activeContent, route:'chronic-care'})
+    }
+    //
 
     return (
          <div>
@@ -138,7 +140,7 @@ function SubMenu(props) {
                     {!patientObj.clinicalEvaluation  && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
                     active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
-                    active={activeItem === 'art'}>Art Commencement</Menu.Item>)}
+                    active={activeItem === 'art'}  disabled={props.patientObj.biometricStatus===true? 'true' : 'false'}>Art Commencement</Menu.Item>)}
                     { (patientObj.enrollment.targetGroupId!==null && patientObj.enrollment.targetGroupId!=="" ) && patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}
@@ -191,6 +193,8 @@ function SubMenu(props) {
                     active={activeItem === 'intensive'}>Intensive Follow Up</Menu.Item>
                     <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
                     active={activeItem === 'transfer'}>Transfer</Menu.Item>
+                    <Menu.Item onClick={() => loadChronicCare(patientObj)} name='transfer'
+                    active={activeItem === 'chronic-care'}>Chronic Care</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
                     active={activeItem === 'history'}>History</Menu.Item>
                     

@@ -433,7 +433,7 @@ const UserRegistration = (props) => {
     const validateRelatives = () => {
         let temp = { ...errors }
             temp.firstName = relatives.firstName ? "" : "First Name is required"
-            temp.lastName = relatives.lastName ? "" : "Last Name  is required."
+            //temp.lastName = relatives.lastName ? "" : "Last Name  is required."
             temp.phone = relatives.phone ? "" : "Phone Number  is required."
             temp.relationshipId = relatives.relationshipId ? "" : "Relationship Type is required."  
                 setErrors({ ...temp })

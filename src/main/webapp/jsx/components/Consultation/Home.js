@@ -941,7 +941,7 @@ const ClinicVisit = (props) => {
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>Weight <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{visit.vitalSignDto.bodyWeight} kg</b></span></List.Item>)}
                                   {visit.vitalSignDto && visit.vitalSignDto.bodyWeight!==null && visit.vitalSignDto.height!==null && (<List.Item style={{paddingBottom:'10px', paddingTop:'10px'}}>BMI <span  className="float-end"><b style={{color:'rgb(153, 46, 98)'}}>{
                                  
-                                  (visit.vitalSignDto.bodyWeight/(((visit.vitalSignDto.height/100) * (visit.vitalSignDto.height/100)))/10000).toFixed(2)
+                                  (visit.vitalSignDto.bodyWeight/(((visit.vitalSignDto.height/100) * (visit.vitalSignDto.height/100)))).toFixed(2)
                                   } kg/m<sup>2</sup></b></span></List.Item>)}
                               </List>
                             
@@ -1676,31 +1676,26 @@ const ClinicVisit = (props) => {
                 )}
               </div>
              {/* End of section if the patient is Female */}
-
-            <br />
             <Label as='a' color='red' style={{width:'106%', height:'35px'}} ribbon>
               <h4 style={{color:'#fff'}}>OPPORTUNISTIC INFECTION</h4>
             </Label>
-            <br /><br />
             <OpportunisticInfection setInfection={setInfection} infection={infection} setInfectionList={setInfectionList} infectionList={infectionList} artStartDate={enrollDate} encounterDate={vital.encounterDate}/>
-            <br />
+
             <Label as='a' color='pink' style={{width:'106%', height:'35px'}}  ribbon>
             <h4 style={{color:'#fff'}}>ADR </h4>
             </Label>
-            <br /><br />
+            
             <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList} artStartDate={enrollDate} encounterDate={vital.encounterDate}/>
-            <br />
-            <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
-            <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>
-            </Label>
             <br />
             <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
               TB Screening
             </Label>
-            <br />
             {/* TB Screening Form */}
             <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
-            <br/>
+            <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
+            <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>
+            </Label>
+            
             <br /><br />
             {/* ARV DRUGS Regimen */}
             <div className="row">
@@ -1850,7 +1845,6 @@ const ClinicVisit = (props) => {
                 } 
             </div>
             {/* END ARV DRUGS Regimen */}
-            <br />
             <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
             <h4 style={{color:'#fff'}}>Lab & Viral Load Order</h4>
             </Label>
@@ -1957,13 +1951,11 @@ const ClinicVisit = (props) => {
                         </tbody>
                         </Table>
                         <br/>
-                        <br/>
                     </List>
                     :
                     ""
                 } 
-            </div>
-            <br/>
+            </div>       
             {/* END Viral Load  Form */}
             
             <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>

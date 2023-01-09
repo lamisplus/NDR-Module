@@ -1560,13 +1560,14 @@ const ClinicVisit = (props) => {
                         <br /><br />
                         <ADR setAdrObj={setAdrObj} adrObj={adrObj} setAdrList={setAdrList} adrList={adrList}  enableUpdate={enableUpdate} encounterDate={vital.encounterDate}/>
                         <br />
-                        {/* <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
-                        <h4 style={{color:'#fff'}}>TB SCREENING</h4>
-                        </Label>
 
-                        <br /><br /> */}
-                        {/* TB Screening Form */}
-                        {/* <TBScreening tbObj={tbObj} setTbObj={setTbObj} enableUpdate={enableUpdate}/> */}
+                        <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
+                            TB Screening
+                          </Label>
+                          <br />
+                          {/* TB Screening Form */}
+                          <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
+
                         <br />
                         <Label as='a' color='teal' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>ARV DRUGS Regimen</h4>
@@ -1849,14 +1850,7 @@ const ClinicVisit = (props) => {
                         </div>
                         <br/>
                         {/* END Viral Load  Form */}
-                        <br />
-                        <Label as='a'  color='blue' style={{width:'106%', height:'35px'}} ribbon>
-                            TB Screening
-                          </Label>
-                          <br />
-                          {/* TB Screening Form */}
-                          <TBScreening tbObj={tbObj} setTbObj={setTbObj} errors={errors} setErrors={setErrors}/>
-                          <br/>
+                        
                         <Label as='a' color='blue' style={{width:'106%', height:'35px'}} ribbon>
                         <h4 style={{color:'#fff'}}>NEXT CLINICAL APPOINTMENT DATE</h4>
                         </Label>
