@@ -3,7 +3,7 @@ import { Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
+//import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "../../../api";
@@ -11,8 +11,8 @@ import { token as token } from "../../../api";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import { Spinner } from "reactstrap";
-import { Icon,Button, } from 'semantic-ui-react'
-import Select from "react-select";
+// import { Icon,Button, } from 'semantic-ui-react'
+// import Select from "react-select";
 import ButtonMui from "@material-ui/core/Button";
 import DualListBox from "react-dual-listbox";
 import 'react-dual-listbox/lib/react-dual-listbox.css';
@@ -81,8 +81,8 @@ const NEWEACSESSION = (props) => {
     const classes = useStyles()
     const [saving, setSaving] = useState(false);
     const [lastEACDate, setLastEACDate] = useState(null);
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(true)
+    // const [errors, setErrors] = useState({});
+    // const [loading, setLoading] = useState(true)
     const [eacStatusObj, setEacStatusObj] = useState()
     const [selectedBarriers,setSelectedBarriers] = useState([]);
     const [selectedInterventions,setSelectedInterventions] = useState([]);
@@ -269,7 +269,7 @@ const NEWEACSESSION = (props) => {
                                     id="sessionDate"
                                     min={lastEACDate !==null ? moment(lastEACDate).format("YYYY-MM-DD") : enrollDate}
                                     value={objValues.sessionDate}
-                                    max= {lastEACDate !==null ?  moment(lastEACDate).format("YYYY-MM-DD") : "" }
+                                    //max= {lastEACDate !==null ?  moment(lastEACDate).format("YYYY-MM-DD") : "" }
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     

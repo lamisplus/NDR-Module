@@ -88,6 +88,7 @@ const UserRegistration = (props) => {
             setPatientObj(locationState.patientObj)           
         }
     }, []);
+    
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");

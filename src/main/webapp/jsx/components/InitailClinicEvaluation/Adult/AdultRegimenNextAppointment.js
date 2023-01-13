@@ -1,17 +1,10 @@
 
 import React, { useEffect, useState} from "react";
 import axios from "axios";
-import {FormGroup, Label , CardBody, Spinner,Input,Form, InputGroup,
-    InputGroupText,
-
-} from "reactstrap";
-import * as moment from 'moment';
+import {FormGroup, Label , CardBody, Spinner,Input,Form, InputGroup,} from "reactstrap";
 import {makeStyles} from "@material-ui/core/styles";
 import {Card, CardContent} from "@material-ui/core";
-import SaveIcon from "@material-ui/icons/Save";
-// import AddIcon from "@material-ui/icons/Add";
-// import CancelIcon from "@material-ui/icons/Cancel";
-import {ToastContainer, toast} from "react-toastify";
+import { toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import { useHistory, } from "react-router-dom";
@@ -21,11 +14,8 @@ import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { Button} from 'semantic-ui-react'
-import {  Modal } from "react-bootstrap";
-import { ClassNames } from "@emotion/react";
 
 
 const useStyles = makeStyles((theme) => ({

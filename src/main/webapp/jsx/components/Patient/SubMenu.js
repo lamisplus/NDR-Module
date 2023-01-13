@@ -3,7 +3,6 @@ import axios from "axios";
 import {Dropdown, Menu, Segment,Sticky } from "semantic-ui-react";
 import { makeStyles } from "@material-ui/core/styles";
 import { url as baseUrl, token } from "../../../api";
-import * as moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     navItemText: {
@@ -26,7 +25,7 @@ function SubMenu(props) {
         gender =props.patientObj && props.patientObj.sex ? props.patientObj.sex : null
         setGenderType(gender==="Female" ? true : false)
     }, [props.patientObj]);
-    console.log(patientObj)
+
      //Get list of RegimenLine
     const Observation =()=>{
         axios
@@ -130,7 +129,7 @@ function SubMenu(props) {
             
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
-            { (patientObj.commenced==false || patientObj.createBy!=="Lamis data migration system" ) && (patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) )
+            { (patientObj.commenced===false || patientObj.createBy!=="Lamis data migration system" ) && (patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) )
            
                 ?
                 (
@@ -140,7 +139,7 @@ function SubMenu(props) {
                     {!patientObj.clinicalEvaluation  && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
                     active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
-                    active={activeItem === 'art'}  disabled={props.patientObj.biometricStatus===true? 'true' : 'false'}>Art Commencement</Menu.Item>)}
+                    active={activeItem === 'art'}  disabled={!props.patientObj.biometricStatus}>Art Commencement</Menu.Item>)}
                     { (patientObj.enrollment.targetGroupId!==null && patientObj.enrollment.targetGroupId!=="" ) && patientObj.enrollment.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}

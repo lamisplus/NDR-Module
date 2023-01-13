@@ -21,7 +21,7 @@ import ClientStatusUpdate from './../ClientStatusUpdate/ClientStatusUpdate'
 //import AdultClinicEvaluationFrom from '../InitailClinicEvaluation/index__'
 import AdultClinicEvaluationForm from '../InitailClinicEvaluation/Adult/Index'
 import ViewAdultClinicEvaluationForm from '../InitailClinicEvaluation/ViewAdultHistory/Index'
-import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
+//import ChildClinicEvaluationForm from '../InitailClinicEvaluation/ChildClinicEvaluationForm'
 import MentalHealthScreening from '../MentalHealthScreening/index'
 import LabHistory from './../Laboratory/LabHistory'
 import PatientHistory from './../History/PatientHistory'
@@ -29,7 +29,7 @@ import ArtCommencement from './../ArtCommencement/ArtCommencement'
 import ArtCommencementPage from './../ArtCommencement/ArtCommencementPage'
 //History of patient
 import ViewMentalHealthScreening from './../MentalHealthScreening/ViewMhs'
-import ViewAdultClinicEvaluationFrom from './../InitailClinicEvaluation/ViewAdultClinicEvaluationFrom'
+//import ViewAdultClinicEvaluationFrom from './../InitailClinicEvaluation/ViewAdultClinicEvaluationFrom'
 import ViewArtCommencement from './../ArtCommencement/ViewArtCommencement'
 import FirstEac from './../EnhancedAdherenceCounseling/ViewEAC/FirstEac'
 import SecondEac from './../EnhancedAdherenceCounseling/ViewEAC/SecondEac'
@@ -122,7 +122,7 @@ function PatientCard(props) {
           {activeContent.route==='cervical-cancer-update' &&( <CervicalCancerUpdate patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
           {activeContent.route==='status-update' &&( <ClientStatusUpdate patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='adult-evaluation' &&( <AdultClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
-          {activeContent.route==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}
+          {/* {activeContent.route==='child-evaluation' &&( <ChildClinicEvaluationForm patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)} */}
           {activeContent.route==='mhs' &&( <MentalHealthScreening patientObj={patientObj} setActiveContent={setActiveContent}/>)}
           {activeContent.route==='lab-history' &&( <LabHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent} />)}
           {activeContent.route==='patient-history' &&( <PatientHistory patientObj={patientObj} setActiveContent={setActiveContent} activeContent={activeContent}/>)}

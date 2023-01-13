@@ -99,8 +99,10 @@ const BasicInfo = (props) => {
     const [selectedOptions2,setSelectedOptions2] = useState([]);
     const [selectedOptions3,setSelectedOptions3] = useState([]);
     const [selectedOptions4,setSelectedOptions4] = useState([]);
+    const [clinicalStage, setClinicalStage] = useState([])
     let temp = { ...errors } 
     useEffect(() => { 
+        WhoStaging();
         if(props.observation.data ){
             setAssesment(props.observation.data.assesment) 
             setWho(props.observation.data.who) 
@@ -109,45 +111,29 @@ const BasicInfo = (props) => {
             setSelectedOptions3(props.observation.data.who.stage3ValueOption) 
             setSelectedOptions4(props.observation.data.who.stage4ValueOption)             
         }
-    }, [props.observation.data]);  
+    }, [props.observation.data]); 
+    const WhoStaging =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setClinicalStage(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    } 
     const [who, setWho] = useState({stage:"", stage1Value:"",stage2Value:"", stage3Value:"",stage4Value:"", stage1ValueOption:"",stage2ValueOption:"", stage3ValueOption:"",stage4ValueOption:""});
-    const [hideStage1, setHideStage1] = useState(false);
-    const [hideStage2, setHideStage2] = useState(false);
-    const [hideStage3, setHideStage3] = useState(false);
-    const [hideStage4, setHideStage4] = useState(false);
     const [assesment, setAssesment] = useState({assessment:""});
     const handleAssessment =e =>{
         setAssesment({...assesment, [e.target.name]: e.target.value})
         
     }
     const handleWho =e =>{
-        //console.log(e.target.value)
-        if(e.target.value==="stage 1"){
-            setHideStage1(true)
-            setHideStage2(false)
-            setHideStage3(false)
-            setHideStage4(false)
-        }else if(e.target.value==="stage 2"){
-            setHideStage1(false)
-            setHideStage2(true)
-            setHideStage3(false)
-            setHideStage4(false)
 
-        }else if(e.target.value==="stage 3"){
-            setHideStage1(false)
-            setHideStage2(false)
-            setHideStage3(true)
-            setHideStage4(false)
-
-        }else if(e.target.value==="stage 4"){
-            setHideStage1(false)
-            setHideStage2(false)
-            setHideStage3(false)
-            setHideStage4(true)
-
-        }else{
-
-        }
         setWho({...who, [e.target.name]: e.target.value})
     }
     
@@ -158,13 +144,25 @@ const BasicInfo = (props) => {
         }else{
             props.setCompleted([...props.completed, completedMenu])
         }
-    }  
+    }
+    const validate = () => {        
+        temp.stage = who.stage ? "" : "This field is required"
+        temp.assessment = assesment.assessment ? "" : "This field is required" 
+        
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+    } 
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
-        e.preventDefault();  
-        props.observation.data.assesment = assesment
-        props.observation.data.who=who 
-        handleItemClick('plan', 'who' )                
+        e.preventDefault();
+        if(validate()){  
+            props.observation.data.assesment = assesment
+            props.observation.data.who=who 
+            //console.log(props.observation)
+            handleItemClick('plan', 'who' )  
+        }              
     }
     const onSelectedOption1 = (selectedValues) => {
         setWho({...who, stage1ValueOption: selectedValues})
@@ -242,7 +240,7 @@ return (
                     <form >
                     {/* Medical History form inputs */}
                     <div className="row">
-                    <h3>Assessment </h3>
+                    <h3>Assessment *</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                         <InputGroup> 
@@ -260,6 +258,9 @@ return (
                                 </Input>
 
                             </InputGroup>
+                            {errors.assessment !=="" ? (
+                                    <span className={classes.error}>{errors.assessment}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"> </div>
@@ -267,7 +268,7 @@ return (
                     <h3>WHO staging criteria (History of any of the following) </h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                        <Label >WHO STAGE</Label>
+                        <Label >WHO STAGE *</Label>
                         <InputGroup> 
                                 <Input 
                                     type="select"
@@ -276,18 +277,22 @@ return (
                                     value={who.stage} 
                                     onChange={handleWho}  
                                 >
-                                <option value="">Select</option>
-                                <option value="stage 1">Stage 1</option>
-                                <option value="stage 2">Stage 2</option>
-                                <option value="stage 3">Stage 3</option>
-                                <option value="stage 4">Stage 4</option>
+                                <option value=""> Select</option>
+                                {clinicalStage.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
                                 
                                 </Input>
 
                             </InputGroup>
+                            {errors.stage !=="" ? (
+                                    <span className={classes.error}>{errors.stage}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
-                    {who.stage==='stage 1' && (
+                    {who.stage==='119' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 1 options</Label>
@@ -300,7 +305,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {who.stage==='stage 2' && (
+                    {who.stage==='120' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 2 options</Label>
@@ -313,7 +318,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {who.stage==='stage 3' && (
+                    {who.stage==='121' && (
                     <>
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
@@ -328,7 +333,7 @@ return (
                     </div>
                     </>
                     )}
-                    {who.stage==='stage 4' && (
+                    {who.stage==='122' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 4 options</Label>

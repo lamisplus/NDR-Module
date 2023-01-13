@@ -93,21 +93,15 @@ const ArtCommencement = (props) => {
     const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     //let history = useHistory();
     let gender=""
-    const [dropdownOpen, setDropdownOpen] = React.useState(false);
-    const [splitButtonOpen, setSplitButtonOpen] = React.useState(false);
-    const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
-    const toggleSplit = () => setSplitButtonOpen(!splitButtonOpen);
-    const [heightValue, setHeightValue]= useState("cm")
-
     const classes = useStyles()
     const [clinicalStage, setClinicalStage] = useState([])
-    const [values, setValues] = useState([]);
+    //const [values, setValues] = useState([]);
     const [saving, setSaving] = useState(false);
     const [viraLoadStart, setViraLoadStart] = useState(false);
     const [errors, setErrors] = useState({});
     let temp = { ...errors }
-    const [tbStatus, setTbStatus] = useState([]);
-    const [regimenLine, setRegimenLine] = useState([]);
+    //const [tbStatus, setTbStatus] = useState([]);
+    //const [regimenLine, setRegimenLine] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
     const [pregancyStatus, setPregancyStatus] = useState([]);
     const [functionalStatus, setFunctionalStatus] = useState([]);
@@ -183,7 +177,7 @@ const ArtCommencement = (props) => {
     useEffect(() => {
         FunctionalStatus();
         WhoStaging();
-        TBStatus();
+        //TBStatus();
         PreganacyStatus();
         RegimenLine();
         InitialClinicEvaluation();
@@ -191,7 +185,7 @@ const ArtCommencement = (props) => {
         ChildRegimenLine();
          gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.patientObj]);
-      
+
         //GET AdultRegimenLine 
         const AdultRegimenLine =()=>{
             axios
@@ -244,10 +238,11 @@ const ArtCommencement = (props) => {
 
                     const obj1 =response.data.find(x=> x.type==='Clinical evaluation')
                     console.log(obj1)
-                    const cd4CountObj=obj1.data.plan
+                    //const cd4CountObj=obj1.data.plan
                     objValues.cd4Count=obj1.data.plan.cd4Count
                     objValues.cd4SemiQuantitative=obj1.data.plan.cd4SemiQuantitative
                     objValues.cd4FlowCyteometry=obj1.data.plan.cd4SemiQuantitative
+                    objValues.whoStagingId = obj1.data.who.stage
                     setVitalSignDto({...obj1.data.physicalExamination})
             })
             .catch((error) => {
@@ -262,7 +257,7 @@ const ArtCommencement = (props) => {
            )
            .then((response) => {
                //console.log(response.data);
-               setRegimenLine(response.data);
+               //setRegimenLine(response.data);
            })
            .catch((error) => {
            //console.log(error);
@@ -314,20 +309,20 @@ const ArtCommencement = (props) => {
                 });        
         }
         // TB STATUS
-        const TBStatus =()=>{
-            axios
-               .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setTbStatus(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
+        // const TBStatus =()=>{
+        //     axios
+        //        .get(`${baseUrl}application-codesets/v2/TB_STATUS`,
+        //            { headers: {"Authorization" : `Bearer ${token}`} }
+        //        )
+        //        .then((response) => {
+        //            //console.log(response.data);
+        //            setTbStatus(response.data);
+        //        })
+        //        .catch((error) => {
+        //        //console.log(error);
+        //        });
            
-         }
+        //  }
 
         const handleInputChange = e => {
             setErrors({...temp, [e.target.name]:""})
@@ -548,7 +543,7 @@ const ArtCommencement = (props) => {
                             ) : "" }
                         </FormGroup>
                     </div>
-                    <div className="form-group mb-3 col-md-4">
+                    {/* <div className="form-group mb-3 col-md-4">
                         <FormGroup>
                         <Label for="cd4">CD4 at start of ART </Label>
                         <Input
@@ -564,7 +559,7 @@ const ArtCommencement = (props) => {
                         
                         </FormGroup>
                     </div>
-                
+                 */}
                     <div className="form-group mb-3 col-md-4">
                     <FormGroup>
                     <Label for="cd4Percentage">CD4%</Label>
@@ -643,7 +638,7 @@ const ArtCommencement = (props) => {
                         </div>
                     <div className="form-group mb-3 col-md-4">
                     <FormGroup>
-                    <Label >Original Regimen Line  </Label>
+                    <Label >Original Regimen Line * </Label>
                     <Input
                             type="select"
                             name="regimenTypeId"
@@ -681,7 +676,7 @@ const ArtCommencement = (props) => {
                     </div>                    
                     <div className="form-group mb-3 col-md-4">
                     <FormGroup>
-                    <Label >Original Regimen</Label>
+                    <Label >Original Regimen *</Label>
                     <Input
                             type="select"
                             name="regimenId"
@@ -761,7 +756,7 @@ const ArtCommencement = (props) => {
 
                     <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >WHO Staging</Label>
+                        <Label >WHO Staging *</Label>
                         <Input
                             type="select"
                             name="whoStagingId"
@@ -773,7 +768,6 @@ const ArtCommencement = (props) => {
                             required
                             >
                                 <option value=""> Select</option>
-        
                                 {clinicalStage.map((value) => (
                                     <option key={value.id} value={value.id}>
                                         {value.display}
@@ -788,7 +782,7 @@ const ArtCommencement = (props) => {
                     
                     <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Functional Status</Label>
+                        <Label >Functional Status *</Label>
                         <Input
                             type="select"
                             name="functionalStatusId"

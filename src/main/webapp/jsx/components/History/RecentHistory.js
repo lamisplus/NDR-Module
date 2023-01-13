@@ -644,6 +644,10 @@ const redirectLink=()=>{
                           <strong className="text-teal">
                             Refill Duration<br/>
                               {regimen.refillPeriod}
+                          </strong><br/>
+                          <strong className="text-black">
+                              Visit Date<br/>
+                              {regimen.visitDate}
                           </strong><br/> 
                           <strong className="text-warning">
                               Next Appointment<br/>

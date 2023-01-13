@@ -563,7 +563,7 @@ const ArtCommencement = (props) => {
                                 ) : "" }
                             </FormGroup>
                         </div>
-                        <div className="form-group mb-3 col-md-4">
+                        {/* <div className="form-group mb-3 col-md-4">
                             <FormGroup>
                             <Label for="cd4">CD4 at start of ART </Label>
                             <Input
@@ -578,7 +578,7 @@ const ArtCommencement = (props) => {
                             
                             </FormGroup>
                         </div>
-                    
+                     */}
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
                         <Label for="cd4Percentage">CD4%</Label>

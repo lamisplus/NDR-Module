@@ -2,15 +2,11 @@
 import React, { useEffect, useState} from "react";
 import axios from "axios";
 import {FormGroup, Label , CardBody, Spinner,Input,Form, InputGroup,
-    InputGroupText,
-
 } from "reactstrap";
-import * as moment from 'moment';
+//import * as moment from 'moment';
 import {makeStyles} from "@material-ui/core/styles";
 import {Card, CardContent} from "@material-ui/core";
-import SaveIcon from "@material-ui/icons/Save";
-// import AddIcon from "@material-ui/icons/Add";
-// import CancelIcon from "@material-ui/icons/Cancel";
+
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
@@ -21,10 +17,10 @@ import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import PhoneInput from 'react-phone-input-2'
+//import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { Button} from 'semantic-ui-react'
-import {  Modal } from "react-bootstrap";
+//import {  Modal } from "react-bootstrap";
 import DualListBox from "react-dual-listbox";
 import 'react-dual-listbox/lib/react-dual-listbox.css';
 
@@ -100,8 +96,10 @@ const BasicInfo = (props) => {
     const [selectedOptions2,setSelectedOptions2] = useState([]);
     const [selectedOptions3,setSelectedOptions3] = useState([]);
     const [selectedOptions4,setSelectedOptions4] = useState([]);
+    const [clinicalStage, setClinicalStage] = useState([])
     let temp = { ...errors } 
-    useEffect(() => { 
+    useEffect(() => {
+        WhoStaging(); 
         if(props.observation.data ){
             setAssesment(props.observation.data.assesment) 
             setWho(props.observation.data.who)   
@@ -110,7 +108,21 @@ const BasicInfo = (props) => {
             setSelectedOptions3(props.observation.data.who.stage3ValueOption) 
             setSelectedOptions4(props.observation.data.who.stage4ValueOption) 
         }
-    }, [props.observation.data]);  
+    }, [props.observation.data]); 
+    const WhoStaging =()=>{
+        axios
+        .get(`${baseUrl}application-codesets/v2/CLINICAL_STAGE`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+        )
+        .then((response) => {
+            //console.log(response.data);
+            setClinicalStage(response.data);
+        })
+        .catch((error) => {
+        //console.log(error);
+        });
+    
+    } 
     const [who, setWho] = useState({stage:"", stage1Value:"",stage2Value:"", stage3Value:"",stage4Value:"", stage1ValueOption:"",stage2ValueOption:"", stage3ValueOption:"",stage4ValueOption:""});
 
     const [assesment, setAssesment] = useState({assessment:""});
@@ -129,13 +141,24 @@ const BasicInfo = (props) => {
         }else{
             props.setCompleted([...props.completed, completedMenu])
         }
-    }  
+    }
+    const validate = () => {        
+        temp.stage = who.stage ? "" : "This field is required"
+        temp.assessment = assesment.assessment ? "" : "This field is required" 
+        
+        setErrors({
+            ...temp
+        })
+        return Object.values(temp).every(x => x == "")
+    }   
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
-        e.preventDefault();  
-        props.observation.data.assesment = assesment
-        props.observation.data.who=who 
-        handleItemClick('plan', 'who' )                  
+        e.preventDefault();
+        if(validate()){   
+            props.observation.data.assesment = assesment
+            props.observation.data.who=who 
+            handleItemClick('plan', 'who' ) 
+        }                 
     }
     const onSelectedOption1 = (selectedValues) => {
         setWho({...who, stage1ValueOption: selectedValues})
@@ -214,7 +237,7 @@ return (
                     <form >
                     {/* Medical History form inputs */}
                     <div className="row">
-                    <h3>Assessment</h3>
+                    <h3>Assessment *</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                         <InputGroup> 
@@ -232,6 +255,9 @@ return (
                                 </Input>
 
                             </InputGroup>
+                            {errors.assessment !=="" ? (
+                                <span className={classes.error}>{errors.assessment}</span>
+                            ) : "" }
                         </FormGroup>
                     </div>
                     <div className="form-group mb-3 col-md-6"> </div>
@@ -239,7 +265,7 @@ return (
                     <h3>WHO staging criteria (History of any of the following)</h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                        <Label >WHO STAGE</Label>
+                        <Label >WHO STAGE *</Label>
                         <InputGroup> 
                                 <Input 
                                     type="select"
@@ -248,18 +274,21 @@ return (
                                     value={who.stage} 
                                     onChange={handleWho}  
                                 >
-                                <option value="">Select</option>
-                                <option value="stage 1">Stage 1</option>
-                                <option value="stage 2">Stage 2</option>
-                                <option value="stage 3">Stage 3</option>
-                                <option value="stage 4">Stage 4</option>
-                                
+                                 <option value=""> Select</option>
+                                {clinicalStage.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.display}
+                                    </option>
+                                ))}
                                 </Input>
 
                             </InputGroup>
+                            {errors.stage !=="" ? (
+                                    <span className={classes.error}>{errors.stage}</span>
+                                ) : "" }
                         </FormGroup>
                     </div>
-                    {who.stage==='stage 1' && (
+                    {who.stage==='119' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 1 options</Label>
@@ -272,7 +301,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {who.stage==='stage 2' && (
+                    {who.stage==='120' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 2 options</Label>
@@ -285,7 +314,7 @@ return (
                         </FormGroup>
                     </div>
                     )}
-                    {who.stage==='stage 3' && (
+                    {who.stage==='121' && (
                     <>
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
@@ -300,7 +329,7 @@ return (
                     </div>
                     </>
                     )}
-                    {who.stage==='stage 4' && (
+                    {who.stage==='122' && (
                     <div className="form-group mb-3 col-md-12">                                    
                         <FormGroup>
                         <Label >Stage 4 options</Label>

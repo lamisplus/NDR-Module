@@ -9,8 +9,8 @@ import 'semantic-ui-css/semantic.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
 import { makeStyles } from '@material-ui/core/styles'
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { MdEditNote } from "react-icons/md";
+// import ButtonGroup from '@material-ui/core/ButtonGroup';
+// import { MdEditNote } from "react-icons/md";
 import "@reach/menu-button/styles.css";
 import 'semantic-ui-css/semantic.min.css';
 import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'

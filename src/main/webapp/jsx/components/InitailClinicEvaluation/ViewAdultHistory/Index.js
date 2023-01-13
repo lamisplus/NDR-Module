@@ -1,13 +1,13 @@
-import React, {useCallback, useEffect, useState} from "react";
-import { Button} from 'semantic-ui-react'
+import React, {useEffect, useState} from "react";
+//import { Button} from 'semantic-ui-react'
 import {Card, CardBody} from "reactstrap";
 import {makeStyles} from "@material-ui/core/styles";
 import axios from "axios";
-import { toast} from "react-toastify";
+//import { toast} from "react-toastify";
 import { url as baseUrl, token } from "../../../../api";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import {Link, useHistory, useLocation} from "react-router-dom";
+import { useLocation} from "react-router-dom";
 //import {TiArrowBack} from 'react-icons/ti'
 //import {token, url as baseUrl } from "../../../api";
 import 'react-phone-input-2/lib/style.css'
@@ -102,7 +102,7 @@ const UserRegistration = (props) => {
            //console.log(response.data.data);
            });
        
-        }
+    }
     const calculate_age = dob => {
         var today = new Date();
         var dateParts = dob.split("-");
