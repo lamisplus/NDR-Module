@@ -3,8 +3,8 @@ import axios from "axios";
 import { Input, Label, FormGroup,Row, Col , CardBody, Card, Table, InputGroupText, InputGroup } from "reactstrap";
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
-import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
+import SaveIcon from '@material-ui/icons/Save';
+import Edit from '@material-ui/icons/Edit'
 import "react-widgets/dist/css/react-widgets.css";
 //import moment from "moment";
 import { Spinner } from "reactstrap";
@@ -80,7 +80,7 @@ const Laboratory = (props) => {
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [testOrderList, setTestOrderList] = useState([]);//Test Order List
-    const [showVLIndication, setShowVLIndication] = useState(false);
+    //const [showVLIndication, setShowVLIndication] = useState(false);
     const [labNumbers, setLabNumbers] = useState([]);//
     const [selectedOption, setSelectedOption] = useState([]);
     const [labTestOptions, setLabTestOptions] = useState([]);
@@ -246,8 +246,6 @@ const Laboratory = (props) => {
     // }
     const handleInputChangeObject = e => {
         setSelectedOption(e)
-        
-        console.log(e.value )
         tests.labTestGroupId=e.testGroupId
         tests.labTestId = e.value               
     }
@@ -319,6 +317,14 @@ const Laboratory = (props) => {
     setTestOrderList([...testOrderList]);
         
     };
+    /* Remove ADR  function **/
+    const editTestOrder = (order, index) => { 
+        //console.log(order)
+        setTests({...order})      
+        testOrderList.splice(index, 1);
+        setTestOrderList([...testOrderList]);
+            
+    };
     //Validations of the forms
     const validate = () => {        
         //temp.dateAssayed = tests.dateAssayed ? "" : "This field is required"
@@ -350,6 +356,7 @@ const Laboratory = (props) => {
                     comments: "",
                     dateAssayed: "",
                     labNumber: "",
+                    sampleNumber:"",
                     labTestGroupId: "",
                     labTestId: "",
                     dateResultReceived:"",
@@ -379,7 +386,7 @@ const Laboratory = (props) => {
             }); 
     }
 
-console.log(typeof tests.labTestId)
+
   return (      
       <div >
 
@@ -738,6 +745,7 @@ console.log(typeof tests.labTestId)
                                 order={tests}
                                 testGroupObj={testGroup}
                                 removeOrder={removeOrder}
+                                editTestOrder={editTestOrder}
                             />
                             ))}
                             </tbody>
@@ -797,7 +805,7 @@ function TestOrdersList({
     index,
     removeOrder,
     testGroupObj,
-
+    editTestOrder
   }) {
     
     const testGroupName= testGroupObj.find((x)=> x.id===parseInt(order.labTestGroupId))
@@ -818,7 +826,9 @@ function TestOrdersList({
                     <IconButton aria-label="delete" size="small" color="error" onClick={() =>removeOrder(index)}>
                         <DeleteIcon fontSize="inherit" />
                     </IconButton>
-                    
+                    <IconButton aria-label="delete" size="small" color="info" onClick={() =>editTestOrder(order, index)}>
+                        <Edit fontSize="inherit" />
+                    </IconButton>
                 </th>
             </tr> 
     );
