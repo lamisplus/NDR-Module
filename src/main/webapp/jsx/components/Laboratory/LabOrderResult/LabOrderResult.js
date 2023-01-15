@@ -293,6 +293,7 @@ const Laboratory = (props) => {
                 comments: "",
                 dateAssayed: "",
                 labNumber: "",
+                sampleNumber:"",
                 labTestGroupId: "",
                 labTestId: "",
                 dateResultReceived:"",

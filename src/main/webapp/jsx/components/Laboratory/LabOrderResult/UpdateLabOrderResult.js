@@ -4,18 +4,13 @@ import { Input, Label, FormGroup,Row, Col , CardBody, Card, Table } from "reacts
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
+//import CancelIcon from '@material-ui/icons/Cancel'
 import "react-widgets/dist/css/react-widgets.css";
 //import moment from "moment";
 import { Spinner } from "reactstrap";
 import { url as baseUrl, token } from "../../../../api";
 import moment from "moment";
-import { List, Label as LabelSui} from 'semantic-ui-react'
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { toast} from "react-toastify";
-import {Alert } from "react-bootstrap";
-import { Icon,Button, } from 'semantic-ui-react'
 import Select from 'react-select'
 
 const useStyles = makeStyles(theme => ({ 
@@ -66,7 +61,7 @@ const Laboratory = (props) => {
     //const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
     const [enrollDate, setEnrollDate] = useState("");
     const classes = useStyles();
-    const [labNumberOption, setLabNumberOption] = useState("")
+    //const [labNumberOption, setLabNumberOption] = useState("")
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [buttonHidden, setButtonHidden]= useState(false);
@@ -76,8 +71,8 @@ const Laboratory = (props) => {
     const [vlRequired, setVlRequired]=useState(false)
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
-    const [testOrderList, setTestOrderList] = useState([]);//Test Order List
-    const [showVLIndication, setShowVLIndication] = useState(false);
+    // const [testOrderList, setTestOrderList] = useState([]);//Test Order List
+    // const [showVLIndication, setShowVLIndication] = useState(false);
     const [eacStatusObj, setEacStatusObj] = useState()
     const [labNumbers, setLabNumbers] = useState([]);//
     const [selectedOption, setSelectedOption] = useState([]);
@@ -193,7 +188,7 @@ useEffect(() => {
             //console.log(error);
             }); 
     }
-  console.log(selectedOption);
+    //console.log(selectedOption);
     //Check if Module Exist
     const CheckLabModule =()=>{
         axios
@@ -229,18 +224,18 @@ useEffect(() => {
             //console.log(error);
             });        
     }
-    const handleSelectedTestGroup = e =>{
+    // const handleSelectedTestGroup = e =>{
 
-        setTests ({...tests,  labTestGroupId: e.target.value});
-        const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
-        setTest(getTestList[0].labTests)
-        if(e.target.value==='4'){            
-            setVlRequired(true)
-        }else{
-            setVlRequired(false) 
-        }
-        //setTests ({...tests,  [e.target.name]: e.target.value}); 
-    }
+    //     setTests ({...tests,  labTestGroupId: e.target.value});
+    //     const getTestList= testGroup.filter((x)=> x.id===parseInt(e.target.value))
+    //     setTest(getTestList[0].labTests)
+    //     if(e.target.value==='4'){            
+    //         setVlRequired(true)
+    //     }else{
+    //         setVlRequired(false) 
+    //     }
+    //     //setTests ({...tests,  [e.target.name]: e.target.value}); 
+    // }
     const handleInputChange = e => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         setTests ({...tests,  [e.target.name]: e.target.value});               
@@ -270,7 +265,7 @@ useEffect(() => {
     //   };
     const handleInputChangeObject = e => {
         setSelectedOption(e)
-        console.log(e);
+        //console.log(e);
         tests.labTestGroupId=e.testGroupId
         tests.labTestId = e.value 
         tests.labTestName=e.label
@@ -284,7 +279,7 @@ useEffect(() => {
         temp.labTestId = tests.labTestId ? "" : "This field is required"
         temp.sampleNumber = tests.sampleNumber ? "" : "This field is required"
         temp.dateResultReceived =  tests.dateResultReceived ? "" : "This field is required"
-        tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
+        //tests.labTestId==='16' && (temp.viralLoadIndication = tests.viralLoadIndication ? "" : "This field is required")
         temp.result = tests.result ? "" : "This field is required"
         setErrors({
             ...temp
