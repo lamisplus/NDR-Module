@@ -98,8 +98,10 @@ public interface RadetReportDto {
  
   String getCervicalCancerScreeningMethod();
   LocalDate getDateOfCervicalCancerScreening();
-  
-  
+ String getOvcNumber();
+ String  getHouseholdNumber();
+ 
+ Boolean getIsOvcServiceProvided();
 		
 	
 }
