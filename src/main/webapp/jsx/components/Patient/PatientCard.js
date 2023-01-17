@@ -283,8 +283,8 @@ function PatientCard(props) {
                   
                     </Col>     
                     <Col md={12}>
-                      {biometricStatus===true ? (
-                          <>
+                      {/* {biometricStatus===true ? (
+                          <> */}
                               <div >
                                   <Typography variant="caption">
                                       <Label color={props.patientObj.biometricStatus===true? "green" : "red"} size={"mini"}>
@@ -295,13 +295,13 @@ function PatientCard(props) {
                                       
                                   </Typography>
                               </div>
-                          </>
+                          {/* </>
                           )
                           :
                           <>
                               
                           </>
-                      }
+                      } */}
                     </Col>
                     </Row>
                     </Col>

@@ -150,7 +150,7 @@ const UserRegistration = (props) => {
     const [disabledAgeBaseOnAge, setDisabledAgeBaseOnAge] = useState(false);
     const [ageDisabled, setAgeDisabled] = useState(true);
     const [showRelative, setShowRelative] = useState(false);
-    const [editRelative, setEditRelative] = useState(null);
+    //const [editRelative, setEditRelative] = useState(null);
     const [genders, setGenders]= useState([]);
     const [maritalStatusOptions, setMaritalStatusOptions]= useState([]);
     const [educationOptions, setEducationOptions]= useState([]);
@@ -175,7 +175,8 @@ const UserRegistration = (props) => {
         tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:"",
         householdNumber:"", referredToOVCPartner:"", dateReferredToOVCPartner:"",
         referredFromOVCPartner:"", dateReferredFromOVCPartner:"",
-        careEntryPointOther:""
+        careEntryPointOther:"",
+        ovcUniqueId:""
         });
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
@@ -1852,7 +1853,22 @@ const UserRegistration = (props) => {
                                         />
                                         </FormGroup>
                                     </div>
-                                    <div className="form-group mb-3 col-md-6"></div>
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >OVC Unique ID</Label>
+                                        <Input
+                                            type="text"
+                                            name="ovcUniqueId"
+                                            id="ovcUniqueId"
+                                            required={ovcEnrolled}
+                                            onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            value={objValues.ovcUniqueId}
+                                            
+                                        />
+                                        </FormGroup>
+                                    </div>
+                                  
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
                                         <Label >Referred To OVC Partner</Label>

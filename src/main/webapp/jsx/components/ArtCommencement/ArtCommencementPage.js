@@ -635,7 +635,7 @@ const ArtCommencement = (props) => {
                             </FormGroup>
                         </div>
                         )}
-                        </div>
+                    </div>
                     <div className="form-group mb-3 col-md-4">
                     <FormGroup>
                     <Label >Original Regimen Line * </Label>

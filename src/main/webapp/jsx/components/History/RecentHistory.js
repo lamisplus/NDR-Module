@@ -359,7 +359,7 @@ const LoadDeletePage =(row)=>{
         //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
         //props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
         axios
-        .delete(`${baseUrl}art/pharmacy/${row.id}`,
+        .delete(`${baseUrl}hiv/art/pharmacy/${row.id}`,
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {

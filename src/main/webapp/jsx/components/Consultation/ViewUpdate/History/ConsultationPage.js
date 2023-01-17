@@ -17,15 +17,16 @@ import SaveIcon from '@material-ui/icons/Save'
 import axios from "axios";
 import moment from "moment";
 import { toast } from "react-toastify";
-import { Row, Col,   } from "react-bootstrap";
+//import { Row, Col,   } from "react-bootstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+//import Button from '@material-ui/core/Button';
+//import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { Button as ButtonSMUI, Icon} from 'semantic-ui-react'
-import {Link} from 'react-router-dom';
+//import {Link} from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Select from 'react-select'
+import {Dropdown} from 'react-bootstrap';
 
 let adherenceLevelObj = []
 const useStyles = makeStyles(theme => ({
@@ -916,6 +917,7 @@ const ClinicVisit = (props) => {
                                 onClick={()=>getVisitDetail(visit)}
                                 label={{ basic: true, color: 'grey', pointing: 'left', content: `${visit.visitDate}` }}
                             />
+                            
                       </div>
                     </div>
 						))}

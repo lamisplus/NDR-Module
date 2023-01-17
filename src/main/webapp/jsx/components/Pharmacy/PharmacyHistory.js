@@ -100,7 +100,7 @@ const useStyles = makeStyles(theme => ({
 
 const PharmacyHistory = (props) => {    
     
-    const [loading, setLoading] = useState(true)
+    //const [loading, setLoading] = useState(true)
     
     useEffect(() => {
 
@@ -111,7 +111,7 @@ const PharmacyHistory = (props) => {
         props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:actionType, obj:row})
     }
     const LoadDeletePage = (row) =>{  
-        axios.delete(`${baseUrl}art/pharmacy/${row.id}`,
+        axios.delete(`${baseUrl}hiv/art/pharmacy/${row.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {

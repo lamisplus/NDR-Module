@@ -4,27 +4,27 @@ import {format} from 'date-fns';
 import MatButton from "@material-ui/core/Button";
 import Button from "@material-ui/core/Button";
 import {FormGroup, Label, Spinner,Input,Form} from "reactstrap";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+//import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faCheckSquare, faCoffee, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
-import {yupResolver} from '@hookform/resolvers/yup';
+//import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import * as moment from 'moment';
 import {makeStyles} from "@material-ui/core/styles";
 import {Card, CardContent} from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
-import AddIcon from "@material-ui/icons/Add";
+//import AddIcon from "@material-ui/icons/Add";
 import CancelIcon from "@material-ui/icons/Cancel";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
 import {Link, useHistory, useLocation} from "react-router-dom";
 import {TiArrowBack} from 'react-icons/ti'
-import {useForm} from "react-hook-form";
+//import {useForm} from "react-hook-form";
 import {token, url as baseUrl } from "../../../api";
-import PhoneInput from 'react-phone-input-2'
+//import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { getValue } from "@syncfusion/ej2-base";
+//import { getValue } from "@syncfusion/ej2-base";
 import  './patient.css'
 // import Form from 'react-bootstrap/Form';
 import {  Modal } from "react-bootstrap";
@@ -175,7 +175,7 @@ const UserRegistration = (props) => {
             householdNumber:"", referredToOVCPartner:"", dateReferredToOVCPartner:"",
             referredFromOVCPartner:"", dateReferredFromOVCPartner:"",
             careEntryPointOther:"",
-            personId:""
+            personId:"",ovcUniqueId:""
         });
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
@@ -1219,7 +1219,22 @@ const UserRegistration = (props) => {
                                         />
                                         </FormGroup>
                                     </div>
-                                    <div className="form-group mb-3 col-md-6"></div>
+                                    <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >OVC Unique ID</Label>
+                                        <Input
+                                            type="text"
+                                            name="ovcUniqueId"
+                                            id="ovcUniqueId"
+                                            required={ovcEnrolled}
+                                            onChange={handleInputChange}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            value={objValues.ovcUniqueId}
+                                            
+                                        />
+                                        </FormGroup>
+                                    </div>
+                                  
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
                                         <Label >Referred To OVC Partner</Label>
