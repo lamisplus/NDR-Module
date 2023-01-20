@@ -35,7 +35,6 @@ public class ObservationService {
         Person person = getPerson (personId);
         Long orgId = currentUserOrganizationService.getCurrentUserOrganization ();
         if (getAnExistingObservationType (observationDto, person, orgId).isPresent ()) {
-           
             throw new RecordExistException (Observation.class, "type", observationDto.getType ());
         }
         observationDto.setFacilityId (orgId);

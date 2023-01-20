@@ -1,5 +1,6 @@
 package org.lamisplus.modules.hiv.controller;
 
+import com.google.common.base.Stopwatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.base.domain.dto.PageDTO;
@@ -42,7 +43,10 @@ public class HivEnrollmentController {
             @RequestParam (required = false ) String searchValue,
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize) {
-        return ResponseEntity.ok (patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize)));
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        PageDTO hivPatientsPage = patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize));
+        log.info("total time taken to load 10 records :{}", stopwatch.elapsed().toMillis());
+        return ResponseEntity.ok (hivPatientsPage);
     }
     
   

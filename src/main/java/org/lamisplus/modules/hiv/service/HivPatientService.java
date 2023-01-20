@@ -11,6 +11,7 @@ import org.lamisplus.modules.hiv.domain.dto.*;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.Observation;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
+import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.hiv.repositories.ObservationRepository;
 import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
@@ -51,6 +52,8 @@ public class HivPatientService {
     private final  PatientActivityService patientActivityService;
     
     private final  StatusManagementService statusManagementService;
+    
+    private  final HivEnrollmentRepository enrollmentRepository;
 
     public HivEnrollmentDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
         HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
@@ -98,6 +101,56 @@ public class HivPatientService {
         return getPageDto(persons, content);
     }
     
+    public PageDTO getHivPatients(String searchValue, Pageable pageable) {
+        Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
+        if (searchValue != null && !searchValue.isEmpty()) {
+            Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
+            Log.info("patient size {}", persons.getContent().size());
+            List<HivPatientDto> content = getNonIitPersons(persons);
+            return getPageDto(persons, content);
+        }
+        Page<PatientProjection> persons = enrollmentRepository.getPatientByFacilityId(facilityId, pageable);
+        //
+        List<PatientDTO> patientDTOList = persons.getContent()
+                .stream()
+                .map(this::getPatientDTOBuild)
+                .collect(Collectors.toList());
+        return getPageDto(persons, patientDTOList);
+    }
+    
+    private  PatientDTO getPatientDTOBuild(PatientProjection p) {
+        //	private boolean isClinicalEvaluation;
+        //	private boolean isMentalHealth;
+        PatientDTO patientDTO = PatientDTO.builder()
+                .age(p.getAge())
+                .dateOfBirth(p.getDateOfBirth())
+                .gender(p.getGender())
+                .enrollmentId(p.getEnrollmentId())
+                .hospitalNumber(p.getHospitalNumber())
+                .firstName(p.getFirstName())
+                .facilityId(p.getFacility())
+                .personUuid(p.getPersonUuid())
+                .targetGroupId(p.getTargetGroupId())
+                .otherName(p.getOtherName())
+                .surname(p.getSurname())
+                .id(p.getId())
+                .isDobEstimated(p.getIsDobEstimated())
+                .isCommenced(p.getIsCommenced())
+                .isEnrolled(p.getIsEnrolled())
+                .uniqueId(p.getUniqueId())
+                .build();
+        if(p.getIsCommenced()){
+            String currentStatus = statusManagementService.getCurrentStatus(p.getId());
+            patientDTO.setCurrentStatus(currentStatus);
+        }else if(p.getIsEnrolled()){
+         patientDTO.setCurrentStatus(p.getEnrollmentStatus());
+        }else{
+            patientDTO.setCurrentStatus("Not Enrolled");
+        }
+        return patientDTO;
+    }
+    
+    
     @NotNull
     private List<HivPatientDto> getNonIitPersons(Page<Person> persons) {
         return persons.getContent()
@@ -109,7 +162,7 @@ public class HivPatientService {
                 .collect(Collectors.toList());
     }
     
-    private  PageDTO getPageDto(Page<Person> persons, List<?> content) {
+    private  PageDTO getPageDto(Page<?> persons, List<?> content) {
        return PageDTO.builder()
                 .pageNumber(persons.getNumber())
                 .pageSize(persons.getSize())
