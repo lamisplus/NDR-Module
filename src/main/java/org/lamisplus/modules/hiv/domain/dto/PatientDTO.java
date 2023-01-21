@@ -19,6 +19,7 @@ public class PatientDTO {
 	private String currentStatus;
 	private boolean isClinicalEvaluation;
 	private boolean isMentalHealth;
+	private  Boolean biometric;
 	private Boolean isEnrolled;
 	private Boolean isCommenced;
 	private Boolean isDobEstimated;

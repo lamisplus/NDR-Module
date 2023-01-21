@@ -104,13 +104,15 @@ public class HivPatientService {
     public PageDTO getHivPatients(String searchValue, Pageable pageable) {
         Long facilityId = currentUserOrganizationService.getCurrentUserOrganization();
         if (searchValue != null && !searchValue.isEmpty()) {
-            Page<Person> persons = personRepository.findAllPersonBySearchParameters(searchValue, 0, facilityId, pageable);
+            Page<PatientProjection> persons = enrollmentRepository.getPatientsByFacilityBySearchParam(facilityId, searchValue, pageable);
             Log.info("patient size {}", persons.getContent().size());
-            List<HivPatientDto> content = getNonIitPersons(persons);
-            return getPageDto(persons, content);
+            return getPageDTO(persons);
         }
-        Page<PatientProjection> persons = enrollmentRepository.getPatientByFacilityId(facilityId, pageable);
-        //
+        Page<PatientProjection> persons = enrollmentRepository.getPatientsByFacilityId(facilityId, pageable);
+        return getPageDTO(persons);
+    }
+    
+    private PageDTO getPageDTO(Page<PatientProjection> persons) {
         List<PatientDTO> patientDTOList = persons.getContent()
                 .stream()
                 .map(this::getPatientDTOBuild)
@@ -119,8 +121,6 @@ public class HivPatientService {
     }
     
     private  PatientDTO getPatientDTOBuild(PatientProjection p) {
-        //	private boolean isClinicalEvaluation;
-        //	private boolean isMentalHealth;
         PatientDTO patientDTO = PatientDTO.builder()
                 .age(p.getAge())
                 .dateOfBirth(p.getDateOfBirth())
@@ -139,6 +139,7 @@ public class HivPatientService {
                 .isEnrolled(p.getIsEnrolled())
                 .uniqueId(p.getUniqueId())
                 .build();
+        
         if(p.getIsCommenced()){
             String currentStatus = statusManagementService.getCurrentStatus(p.getId());
             patientDTO.setCurrentStatus(currentStatus);
@@ -146,6 +147,24 @@ public class HivPatientService {
          patientDTO.setCurrentStatus(p.getEnrollmentStatus());
         }else{
             patientDTO.setCurrentStatus("Not Enrolled");
+        }
+        
+        if(p.getBiometric() != null){
+            patientDTO.setBiometric(true);
+        }
+        List<Observation> clinicalEvaluationAndMentalHealth =
+                observationRepository.getClinicalEvaluationAndMentalHealth(p.getPersonUuid());
+        if(clinicalEvaluationAndMentalHealth.size() >= 2){
+            patientDTO.setMentalHealth(true);
+            patientDTO.setClinicalEvaluation(true);
+        }
+        if(clinicalEvaluationAndMentalHealth.size() == 1){
+            String observationType = clinicalEvaluationAndMentalHealth.get(0).getType();
+            if(observationType.contains("Mental")){
+                patientDTO.setMentalHealth(true);
+            }else if(observationType.contains("Clinical")){
+                patientDTO.setClinicalEvaluation(true);
+            }
         }
         return patientDTO;
     }

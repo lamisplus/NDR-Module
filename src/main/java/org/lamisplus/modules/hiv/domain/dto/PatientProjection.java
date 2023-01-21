@@ -10,6 +10,8 @@ public interface PatientProjection {
 	String getOtherName();
 	String getGender();
 	String getUniqueId();
+	
+	String getBiometric();
 	String getEnrollmentStatus();
 	String getPersonUuid();
 	Boolean getIsEnrolled();
