@@ -140,7 +140,7 @@ public class HivPatientService {
                 .uniqueId(p.getUniqueId())
                 .build();
         
-        if(p.getIsCommenced()){
+        if(p.getIsCommenced() != null && p.getIsCommenced()){
             String currentStatus = statusManagementService.getCurrentStatus(p.getId());
             patientDTO.setCurrentStatus(currentStatus);
         }else if(p.getIsEnrolled()){
