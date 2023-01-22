@@ -44,9 +44,9 @@ public class HivEnrollmentController {
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        PageDTO hivPatientsPage = patientService.getHivPatientsPage(searchValue, PageRequest.of(pageNo, pageSize));
+        PageDTO hivPatients = patientService.getHivPatients(searchValue, PageRequest.of(pageNo, pageSize));
         log.info("total time taken to load 10 records :{}", stopwatch.elapsed().toMillis());
-        return ResponseEntity.ok (hivPatientsPage);
+        return ResponseEntity.ok (hivPatients);
     }
     
   
