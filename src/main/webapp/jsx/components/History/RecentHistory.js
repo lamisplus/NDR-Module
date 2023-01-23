@@ -4,7 +4,7 @@ import { Dropdown,} from "react-bootstrap";
 /// Scroll
 import { makeStyles } from '@material-ui/core/styles';
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import axios from "axios";
 import { url as baseUrl, token } from "../../../api";
 import { Alert } from "react-bootstrap";
@@ -41,11 +41,13 @@ const RecentHistory = (props) => {
   ] = useState(0);
 
   useEffect(() => {
-    LaboratoryHistory();
-    PharmacyList();
-    ClinicVisitList();
-    RecentActivities();
-  }, [props.patientObj.id]);
+    if(props.patientObj && props.patientObj!==null){
+      LaboratoryHistory();
+      PharmacyList();
+      ClinicVisitList();
+      RecentActivities();
+    }
+  }, [props.patientObj]);
 
   //Get list of LaboratoryHistory
   const RecentActivities =()=>{
