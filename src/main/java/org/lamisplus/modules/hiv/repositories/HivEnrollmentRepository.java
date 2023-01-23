@@ -50,7 +50,7 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "p.hospital_number AS hospitalNumber, CAST (EXTRACT(YEAR from AGE(NOW(),  date_of_birth)) AS INTEGER) AS age, \n" +
             "INITCAP(p.sex) AS gender, p.date_of_birth AS dateOfBirth, p.is_date_of_birth_estimated AS isDobEstimated,\n" +
             "p.facility_id as facilityId , p.uuid as personUuid, \n" +
-            "CAST(CASE when e.id = null then FALSE ELSE TRUE END AS Boolean) AS isEnrolled,\n" +
+            "CAST(CASE when pc.display is null then FALSE ELSE TRUE END AS Boolean) AS isEnrolled,\n" +
             "e.target_group_id AS targetGroupId,\n" +
             "e.id as enrollmentId,\n" +
             "e.unique_id as uniqueId,\n" +

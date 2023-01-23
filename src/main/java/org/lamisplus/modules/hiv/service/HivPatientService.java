@@ -154,16 +154,20 @@ public class HivPatientService {
         }
         List<Observation> clinicalEvaluationAndMentalHealth =
                 observationRepository.getClinicalEvaluationAndMentalHealth(p.getPersonUuid());
+        System.out.println("clinic : Mental : "+ clinicalEvaluationAndMentalHealth);
         if(clinicalEvaluationAndMentalHealth.size() >= 2){
             patientDTO.setMentalHealth(true);
             patientDTO.setClinicalEvaluation(true);
         }
         if(clinicalEvaluationAndMentalHealth.size() == 1){
             String observationType = clinicalEvaluationAndMentalHealth.get(0).getType();
-            if(observationType.contains("Mental")){
+            if(observationType.equals("Mental health")){
                 patientDTO.setMentalHealth(true);
-            }else if(observationType.contains("Clinical")){
+            }else if(observationType.equals("Clinical evaluation")){
                 patientDTO.setClinicalEvaluation(true);
+            }else {
+                patientDTO.setMentalHealth(false);
+                patientDTO.setClinicalEvaluation(false);
             }
         }
         return patientDTO;
