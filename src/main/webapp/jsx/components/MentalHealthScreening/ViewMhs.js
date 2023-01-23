@@ -1,16 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import { Form,Row, Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
+import {  Card,CardBody, FormGroup, Label, Input} from 'reactstrap';
 import MatButton from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
-import CancelIcon from '@material-ui/icons/Cancel'
 import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "./../../../api";
 import { token as token } from "./../../../api";
-import { Spinner } from "reactstrap";
 import { Alert } from "react-bootstrap";
-import { Icon,Button, } from 'semantic-ui-react'
 import moment from "moment";
 
 
@@ -196,7 +193,7 @@ const ViewMentalHealthScreening = (props) => {
                     <div className="row">
                         <div className="form-group mb-3 col-md-4">        
                             <FormGroup>
-                                <Label >Date of Observation</Label>
+                                <Label >Date of Observation <sup style={{ color:"red"}}> *</sup></Label>
                                 <Input
                                     type="date"
                                     name="dateOfObservation"
@@ -217,7 +214,7 @@ const ViewMentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself?</Label>
+                            <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself ? <sup style={{ color:"red"}}> *</sup></Label>
                             <Input
                                 type="select"
                                 name="mhs1"
@@ -235,7 +232,7 @@ const ViewMentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Have you ever had spells or attacks when you suddenly felt anxious, frightened, uneasy to the extent that you began sweating, your heart began to beat rapidly, you were shaking or trembling, your stomach was upset, you felt dizzy or unsteady, as if you would faint? </Label>
+                            <Label >Have you ever had spells or attacks when you suddenly felt anxious, frightened, uneasy to the extent that you began sweating, your heart began to beat rapidly, you were shaking or trembling, your stomach was upset, you felt dizzy or unsteady, as if you would faint ? <sup style={{ color:"red"}}> *</sup></Label>
                             <Input
                                 type="select"
                                 name="mhs2"
@@ -253,7 +250,7 @@ const ViewMentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                         <FormGroup>
-                        <Label >Have you ever had nightmares or flashbacks because of being involved in some traumatic/terrible event? For example, domestic violence, rape, police raid or arrest, blackmail.</Label>
+                        <Label >Have you ever had nightmares or flashbacks because of being involved in some traumatic/terrible event? For example, domestic violence, rape, police raid or arrest, blackmail.<sup style={{ color:"red"}}> *</sup></Label>
                         <Input
                             type="select"
                             name="mhs3"
@@ -271,7 +268,7 @@ const ViewMentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Have you used drugs other than those required for medical reasons? For example, cannabis, cocaine, stimulants, or narcotics (e.g., heroin). May equally ask about the abuse of alcohol and other local drugs or psychoactive substances. </Label>
+                            <Label >Have you used drugs other than those required for medical reasons? For example, cannabis, cocaine, stimulants, or narcotics (e.g., heroin). May equally ask about the abuse of alcohol and other local drugs or psychoactive substances. <sup style={{ color:"red"}}> *</sup></Label>
                             <Input
                                 type="select"
                                 name="mhs4"
@@ -289,7 +286,7 @@ const ViewMentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >In recent time, has any one punched, slapped, kicked, bit, or caused you any type of physical or sexual harm?</Label>
+                            <Label >In recent time, has any one punched, slapped, kicked, bit, or caused you any type of physical or sexual harm ? <sup style={{ color:"red"}}> *</sup></Label>
                             <Input
                                 type="select"
                                 name="mhs5"

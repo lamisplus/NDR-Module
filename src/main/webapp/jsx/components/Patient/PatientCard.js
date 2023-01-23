@@ -1,30 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
+//import classNames from 'classnames';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 //import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-// import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import { Link } from 'react-router-dom'
 import ButtonMui from "@material-ui/core/Button";
 import { TiArrowBack } from 'react-icons/ti'
-//import Chip from '@material-ui/core/Chip';
-// import Divider from '@material-ui/core/Divider';
-// import { Button } from 'semantic-ui-react';
+
 import {Label,Sticky} from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
 import { Col, Row } from "reactstrap";
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-// import ClinicEvaluationFrom from '../InitailClinicEvaluation/AdultClinicEvaluationFrom';
-// import ArtCommencement from './../ArtCommencement/ArtCommencement';
 import axios from "axios";
 import { url as baseUrl, token } from "./../../../api";
 import Typography from '@material-ui/core/Typography';
-//import CaptureBiometric from './CaptureBiometric';
 
 //Dtate Picker package
 Moment.locale("en");
@@ -67,81 +61,30 @@ const styles = theme => ({
 
 function PatientCard(props) {
   const { classes } = props;
-  const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
-  const patientObjs = props.patientObj ? props.patientObj : {}
-  const permissions= props.permissions ? props.permissions : [];
-  const [patientObj, setpatientObj] = useState(patientObjs)
-  const [patientBiometricStatus, setPatientBiometricStatus]= useState(props.patientObj.biometricStatus);
-  const [biometricStatus, setBiometricStatus] = useState(false);
-  const [devices, setDevices] = useState([]);
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
-  const [biometricModal, setBiometricModal] = useState(false);
-  const BiometricModalToggle = () => setBiometricModal(!biometricModal);
-  const [hivStatus, setHivStatus] = useState();
-  const [artModal, setArtModal] = useState(false);
-  const Arttoggle = () => setArtModal(!artModal);
-  useEffect(() => {
-    PatientCurrentStatus();
-    CheckBiometric();
-  }, [props.patientObj]);
+  //const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
+  const patientObject = props.patientObj
+  console.log(props.patientObj)
 
-  //Get list of KP
-  const CheckBiometric =()=>{
-      axios
-        .get(`${baseUrl}modules/check?moduleName=biometric`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-        )
-        .then((response) => {
-            setBiometricStatus(response.data);
-            if(response.data===true){
-              axios
-                  .get(`${baseUrl}biometrics/devices`,
-                      { headers: {"Authorization" : `Bearer ${token}`} }
-                  )
-                  .then((response) => {
-                      setDevices(response.data);
-                      
-                  })
-                  .catch((error) => {
-                      console.log(error)
-                  });
-            
-              }
-        })
-        .catch((error) => {
-        //console.log(error);
-        });
-    
-  }
+  // const [patientObject, setPatientObject] = useState(patientObjs);
+  
+  // useEffect(() => {
+  //   //PatientCurrentObject();
+  //   //CheckBiometric();
+  // }, [props.patientObj]);
+
     ///GET LIST OF Patients
-    async function PatientCurrentStatus() {
-        axios
-            .get(`${baseUrl}hiv/status/patient-current/${patientObj.id}`,
-            { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
+    // async function PatientCurrentObject() {
+    //     axios
+    //         .get(`${baseUrl}hiv/patient/${patientObjs.id}`,
+    //         { headers: {"Authorization" : `Bearer ${token}`} }
+    //         )
+    //         .then((response) => {
+    //           setPatientObject(response.data);
+    //         })
+    //         .catch((error) => {  
+    //         });        
+    // }
 
-              setHivStatus(response.data);
-            })
-            .catch((error) => {    
-            });        
-    }
-    const get_age = dob => {
-      var today = new Date();
-      var dateParts = dob.split("-");
-      var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
-      var birthDate = new Date(dateObject); // create a date object directlyfrom`dob1`argument
-      var age_now = today.getFullYear() - birthDate.getFullYear();
-      var m = today.getMonth() - birthDate.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                  age_now--;
-              }
-          if (age_now === 0) {
-                  return m + " month(s)";
-              }
-              return age_now ;
-    }
     const calculate_age = dob => {
       var today = new Date();
       var dateParts = dob.split("-");
@@ -158,26 +101,8 @@ function PatientCard(props) {
               return age_now + " year(s)";
     };
 
-    const loadChildEvaluation =(row)=> {
-      props.setActiveContent('child-evaluation')
-    }
-    const capturePatientBiometric =(row)=> {
-      //props.setActiveContent('biometrics')
-      props.setActiveContent({...props.activeContent, route:'biometrics', obj:row})
-    }
-    const loadArtCommencement =(row)=> {
-      props.setActiveContent('art-commencement')
-    }
     
-    const loadArt =(row)=> {
-        setpatientObj({...patientObj, ...row});
-            setArtModal(!artModal)
-    }
-    
-    const CurrentStatus = ()=>{
 
-          return (  <Label color="blue" size="mini">{hivStatus}</Label>);
-  }
     const getHospitalNumber = (identifier) => {     
       const identifiers = identifier;
       const hospitalNumber = identifiers.identifier.find(obj => obj.type == 'HospitalNumber');       
@@ -193,11 +118,6 @@ function PatientCard(props) {
       const address = identifiers.address.find(obj => obj.city);      
       return address ? address.line[0] + " " + address.city: '';
     };
-    const handleBiometricCapture = (id) => { 
-      let patientObjID= id
-      setBiometricModal(!biometricModal);
-    }
-
   
   return (
     <Sticky >
@@ -210,13 +130,11 @@ function PatientCard(props) {
                 
                     <Col md={12}>
                     <Row className={"mt-1"}>
+                    {patientObject && patientObject!==null ? (
+                    <>
                     <Col md={12} className={classes.root2}>
                       <b style={{fontSize: "25px", color:'rgb(153, 46, 98)'}}>
-                        {patientObj.firstName!=='' ? patientObj.firstName :""} {" "} { patientObj.surname!=='' ? patientObj.surname:"" }
-                        {/* < span style={{color:'green'}}>
-                            {": "+"Active"}
-                          </span> */}
-                          
+                        {patientObject.firstName!=='' ? patientObject.firstName :""} {" "} { patientObject.surname!=='' ?patientObject.surname:"" }
                         </b>
                         <Link to={"/"} >
                         <ButtonMui
@@ -235,38 +153,38 @@ function PatientCard(props) {
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Patient ID : <b style={{color:'#0B72AA'}}>{getHospitalNumber(patientObj.identifier) }</b>
+                        Patient ID : <b style={{color:'#0B72AA'}}>{getHospitalNumber(patientObject.identifier) }</b>
                     </span>
                     </Col>
 
                     <Col md={4} className={classes.root2}>
                     <span>
-                        Date Of Birth : <b style={{color:'#0B72AA'}}>{patientObj.dateOfBirth }</b>
+                        Date Of Birth : <b style={{color:'#0B72AA'}}>{patientObject.dateOfBirth }</b>
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Age : <b style={{color:'#0B72AA'}}>{calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"))}</b>
+                        Age : <b style={{color:'#0B72AA'}}>{calculate_age(moment(patientObject.dateOfBirth).format("DD-MM-YYYY"))}</b>
                     </span>
                     </Col>
                     <Col md={4}>
                     <span>
                         {" "}
                         Gender :{" "}
-                        <b style={{color:'#0B72AA'}}>{patientObj.sex && patientObj.sex!==null ?  patientObj.sex : '' }</b>
+                        <b style={{color:'#0B72AA'}}>{patientObject.sex && patientObject.sex!==null ?  patientObject.sex : '' }</b>
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Phone Number :<b style={{color:'#0B72AA'}}>{getPhoneNumber(patientObj.contactPoint)}</b>
+                        Phone Number :<b style={{color:'#0B72AA'}}>{getPhoneNumber(patientObject.contactPoint)}</b>
                     </span>
                     </Col>
                     <Col md={4} className={classes.root2}>
                     <span>
                         {" "}
-                        Address :<b style={{color:'#0B72AA'}}>{getAddress(patientObj.address)} </b>
+                        Address :<b style={{color:'#0B72AA'}}>{getAddress(patientObject.address)} </b>
                     </span>
                     </Col>
                     <Col md={12}>
@@ -274,7 +192,7 @@ function PatientCard(props) {
                               <div >
                                   <Typography variant="caption">
                                       <Label color={"teal"} size={"mini"}>
-                                        ART STATUS : {props.patientObj.currentStatus}
+                                        ART STATUS : {patientObject.currentStatus}
                                           
                                       </Label>
                                     
@@ -287,9 +205,9 @@ function PatientCard(props) {
                           <> */}
                               <div >
                                   <Typography variant="caption">
-                                      <Label color={props.patientObj.biometricStatus===true? "green" : "red"} size={"mini"}>
+                                      <Label color={patientObject.biometricStatus===true? "green" : "red"} size={"mini"}>
                                           Biometric Status
-                                          <Label.Detail>{props.patientObj.biometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
+                                          <Label.Detail>{patientObject.biometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
                                       </Label>
                                      
                                       
@@ -303,6 +221,13 @@ function PatientCard(props) {
                           </>
                       } */}
                     </Col>
+                    </>
+                    )
+                    :
+                    (
+                    <p>Loading Please wait...</p>
+                    )
+                    }
                     </Row>
                     </Col>
                 </Row>

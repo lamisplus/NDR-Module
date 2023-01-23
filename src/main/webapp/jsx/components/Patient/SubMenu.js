@@ -1,29 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {Dropdown, Menu, Segment,Sticky } from "semantic-ui-react";
-import { makeStyles } from "@material-ui/core/styles";
+import {Dropdown, Menu, Segment, } from "semantic-ui-react";
 import { url as baseUrl, token } from "../../../api";
 
-const useStyles = makeStyles((theme) => ({
-    navItemText: {
-        padding: theme.spacing(2),
-    },
-}));
-
 function SubMenu(props) {
-    const classes = useStyles();
-    let gender=""
+    //const classes = useStyles();
     const [activeItem, setActiveItem] = useState('home');
-    const patientObjs = props.patientObj ? props.patientObj : {}
+    const patientObj = props.patientObj
     const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
-    const [patientObj, setpatientObj] = useState(patientObjs)
-    const [genderType, setGenderType] = useState()
-    let mentalStatus=false
-    let initialEvaluationStatus=false
+    //const [patientObj, setpatientObj] = useState(patientObjs)
+    // let mentalStatus=false
+    // let initialEvaluationStatus=false
+
     useEffect(() => {
-        Observation();
-        gender =props.patientObj && props.patientObj.sex ? props.patientObj.sex : null
-        setGenderType(gender==="Female" ? true : false)
+        if(props.patientObj && props.patientObj!==null){
+            Observation();
+        }
     }, [props.patientObj]);
 
      //Get list of RegimenLine
@@ -33,15 +25,15 @@ function SubMenu(props) {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                const observation = response.data
-                const mental= observation.filter((x)=> x.type==='mental health')
-                const evaluation= observation.filter((x)=> x.type==='initial evaluation')
-                if(mental.length > 1){
-                    mentalStatus=true
-                }
-                if(evaluation.length > 1){
-                    initialEvaluationStatus=true
-                }
+                //const observation = response.data
+                // const mental= observation.filter((x)=> x.type==='mental health')
+                // const evaluation= observation.filter((x)=> x.type==='initial evaluation')
+                // if(mental.length > 1){
+                //     mentalStatus=true
+                // }
+                // if(evaluation.length > 1){
+                //     initialEvaluationStatus=true
+                // }
 
             })
             .catch((error) => {
@@ -54,17 +46,10 @@ function SubMenu(props) {
         setActiveItem('eac')
         props.setActiveContent({...props.activeContent, route:'counseling'})
     }
-    const loadStatusUpdate =(row)=> {
-        setActiveItem('status')
-        props.setActiveContent({...props.activeContent, route:'status-update'})
-    }
+
     const loadPharmacyModal =(row)=> {
         setActiveItem('pharmacy')
         props.setActiveContent({...props.activeContent, route:'pharmacy'})
-    }
-    const loadLaboratoryModal =(row)=> {
-        setActiveItem('lab')
-        props.setActiveContent({...props.activeContent, route:'laboratory'})
     }
     const loadLaboratoryOrderResult =(row)=> {
         setActiveItem('lab')
@@ -126,7 +111,7 @@ function SubMenu(props) {
 
     return (
          <div>
-            
+           {props.patientObj && props.patientObj!==null && (
             <Segment inverted>
          {/*!props.art && patientObj.commenced!==true && patientObj.enrollment.targetGroupId===473) || (!props.art && (patientObj.commenced!==true || patientObj.commenced===true)  && patientObj.mentalHealth!==true) */}
             { (patientObj.commenced===false || patientObj.createBy!=="Lamis data migration system" ) && (patientObj.commenced!==true || patientObj.clinicalEvaluation!==true || (patientObj.enrollment.targetGroupId!==473 ? patientObj.mentalHealth!==true : false ) )
@@ -200,7 +185,8 @@ function SubMenu(props) {
                 </Menu>
                )
            }
-         </Segment>              
+         </Segment>
+         )}              
         </div>
     );
 }

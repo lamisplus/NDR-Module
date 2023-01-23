@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
@@ -52,6 +52,8 @@ import IntensiveFollowUp from './../IntensiveFollowUp/Index'
 import TransferForm from './../TransferForm/Index'
 import ViewUpdateLabOrderResult from './../Laboratory/LabOrderResult/UpdateLabOrderResult'
 import UpdateViewViralLoadOrderResult from './../Laboratory/ViralLoadOrderResult/UpdateViewViralLoadOrderResult'
+import axios from "axios";
+import { url as baseUrl, token } from "./../../../api";
 
 const styles = theme => ({
   root: {
@@ -94,8 +96,27 @@ function PatientCard(props) {
     const [art, setArt] = useState(false);
     const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
     const { classes } = props;
-    const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
-    
+    const patientObject = history.location && history.location.state ? history.location.state.patientObj : {}
+    const [patientObj, setPatientObj] = useState(null);
+    useEffect(() => {
+      PatientCurrentObject();
+      //CheckBiometric();
+    }, [patientObject.id]);
+  
+      ///GET Patient
+      const PatientCurrentObject=() =>{
+          axios
+              .get(`${baseUrl}hiv/patient/${patientObject.id}`,
+              { headers: {"Authorization" : `Bearer ${token}`} }
+              )
+              .then((response) => {
+                console.log(response.data)
+                setPatientObj(response.data);
+              })
+              .catch((error) => {  
+              });        
+      }
+
   return (
     <div className={classes.root}>
       <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
