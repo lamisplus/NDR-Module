@@ -154,7 +154,6 @@ public class HivPatientService {
         }
         List<Observation> clinicalEvaluationAndMentalHealth =
                 observationRepository.getClinicalEvaluationAndMentalHealth(p.getPersonUuid());
-        System.out.println("clinic : Mental : "+ clinicalEvaluationAndMentalHealth);
         if(clinicalEvaluationAndMentalHealth.size() >= 2){
             patientDTO.setMentalHealth(true);
             patientDTO.setClinicalEvaluation(true);
