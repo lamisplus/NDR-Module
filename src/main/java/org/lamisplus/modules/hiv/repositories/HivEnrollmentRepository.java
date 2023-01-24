@@ -24,7 +24,7 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "WHERE person_uuid = ?1 ",nativeQuery = true)
     Optional<EnrollmentStatus> getHivEnrollmentStatusByPersonUuid(String uuid);
     
-    @Query(value = "SELECT p.id AS id, p.first_name as firstName, p.surname AS surname, p.other_name AS otherName, \n" +
+    @Query(value = "SELECT p.id AS id, p.date_of_registration as dateOfRegistration, p.first_name as firstName, p.surname AS surname, p.other_name AS otherName, \n" +
             "p.hospital_number AS hospitalNumber, CAST (EXTRACT(YEAR from AGE(NOW(),  date_of_birth)) AS INTEGER) AS age, \n" +
             "INITCAP(p.sex) AS gender, p.date_of_birth AS dateOfBirth, p.is_date_of_birth_estimated AS isDobEstimated,\n" +
             "p.facility_id as facilityId , p.uuid as personUuid, \n" +
@@ -33,8 +33,8 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "e.id as enrollmentId,\n" +
             "e.unique_id as uniqueId,\n" +
             "pc.display as enrollmentStatus,\n" +
-            "ca.is_commencement  AS isCommenced,\n" +
-            "b.biometric_type as biometric\n" +
+            "ca.is_commencement  AS commenced,\n" +
+            "b.biometric_type as biometricStatus\n" +
             "FROM patient_person p\n" +
             "LEFT Join biometric b ON b.person_uuid = p.uuid\n" +
             "LEFT JOIN  hiv_enrollment e ON p.uuid = e.person_uuid\n" +
@@ -46,7 +46,7 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             nativeQuery = true)
     Page<PatientProjection> getPatientsByFacilityId(Long facilityId, Pageable page);
     
-    @Query(value = "SELECT p.id AS id, p.first_name as firstName, p.surname AS surname, p.other_name AS otherName, \n" +
+    @Query(value = "SELECT p.id AS id, p.date_of_registration as dateOfRegistration, p.first_name as firstName, p.surname AS surname, p.other_name AS otherName, \n" +
             "p.hospital_number AS hospitalNumber, CAST (EXTRACT(YEAR from AGE(NOW(),  date_of_birth)) AS INTEGER) AS age, \n" +
             "INITCAP(p.sex) AS gender, p.date_of_birth AS dateOfBirth, p.is_date_of_birth_estimated AS isDobEstimated,\n" +
             "p.facility_id as facilityId , p.uuid as personUuid, \n" +
@@ -55,8 +55,8 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "e.id as enrollmentId,\n" +
             "e.unique_id as uniqueId,\n" +
             "pc.display as enrollmentStatus,\n" +
-            "ca.is_commencement  AS isCommenced,\n" +
-            "b.biometric_type as biometric\n" +
+            "ca.is_commencement  AS commenced,\n" +
+            "b.biometric_type as biometricStatus\n" +
             "FROM patient_person p\n" +
             "LEFT Join biometric b ON b.person_uuid = p.uuid\n" +
             "LEFT JOIN  hiv_enrollment e ON p.uuid = e.person_uuid\n" +

@@ -11,11 +11,11 @@ public interface PatientProjection {
 	String getGender();
 	String getUniqueId();
 	
-	String getBiometric();
+	String getBiometricStatus();
 	String getEnrollmentStatus();
 	String getPersonUuid();
 	Boolean getIsEnrolled();
-	Boolean getIsCommenced();
+	Boolean getCommenced();
 	Boolean getIsDobEstimated();
 	Integer getAge();
 	Long getId();
@@ -23,6 +23,7 @@ public interface PatientProjection {
 	Long getTargetGroupId();
 	Long getEnrollmentId();
 	LocalDate getDateOfBirth();
+	LocalDate getDateOfRegistration();
 	
 	
 }

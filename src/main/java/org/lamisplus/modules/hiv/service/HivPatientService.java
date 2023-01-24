@@ -135,12 +135,13 @@ public class HivPatientService {
                 .surname(p.getSurname())
                 .id(p.getId())
                 .isDobEstimated(p.getIsDobEstimated())
-                .isCommenced(p.getIsCommenced())
+                .commenced(p.getCommenced())
                 .isEnrolled(p.getIsEnrolled())
                 .uniqueId(p.getUniqueId())
+                .dateOfRegistration(p.getDateOfRegistration())
                 .build();
         
-        if(p.getIsCommenced() != null && p.getIsCommenced()){
+        if(p.getCommenced() != null && p.getCommenced()){
             String currentStatus = statusManagementService.getCurrentStatus(p.getId());
             patientDTO.setCurrentStatus(currentStatus);
         }else if(p.getIsEnrolled()){
@@ -149,8 +150,8 @@ public class HivPatientService {
             patientDTO.setCurrentStatus("Not Enrolled");
         }
         
-        if(p.getBiometric() != null){
-            patientDTO.setBiometric(true);
+        if(p.getBiometricStatus() != null){
+            patientDTO.setBiometricStatus(true);
         }
         List<Observation> clinicalEvaluationAndMentalHealth =
                 observationRepository.getClinicalEvaluationAndMentalHealth(p.getPersonUuid());
@@ -160,13 +161,12 @@ public class HivPatientService {
         }
         if(clinicalEvaluationAndMentalHealth.size() == 1){
             String observationType = clinicalEvaluationAndMentalHealth.get(0).getType();
-            if(observationType.equals("Mental health")){
+            if(observationType.equalsIgnoreCase("Mental health")){
                 patientDTO.setMentalHealth(true);
-            }else if(observationType.equals("Clinical evaluation")){
+            }
+            
+            if(observationType.equalsIgnoreCase("Clinical evaluation")){
                 patientDTO.setClinicalEvaluation(true);
-            }else {
-                patientDTO.setMentalHealth(false);
-                patientDTO.setClinicalEvaluation(false);
             }
         }
         return patientDTO;

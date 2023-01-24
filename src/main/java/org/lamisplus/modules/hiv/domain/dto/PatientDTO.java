@@ -17,11 +17,11 @@ public class PatientDTO {
 	private String gender;
 	private String personUuid;
 	private String currentStatus;
-	private boolean isClinicalEvaluation;
-	private boolean isMentalHealth;
-	private  Boolean biometric;
+	private boolean clinicalEvaluation;
+	private boolean mentalHealth;
+	private  Boolean biometricStatus;
 	private Boolean isEnrolled;
-	private Boolean isCommenced;
+	private Boolean commenced;
 	private Boolean isDobEstimated;
 	private Long id;
 	private Integer age;
@@ -29,4 +29,5 @@ public class PatientDTO {
 	private Long targetGroupId;
 	private Long enrollmentId;
 	private LocalDate dateOfBirth;
+	private LocalDate dateOfRegistration;
 }
