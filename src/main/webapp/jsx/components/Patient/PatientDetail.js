@@ -96,26 +96,26 @@ function PatientCard(props) {
     const [art, setArt] = useState(false);
     const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
     const { classes } = props;
-    const patientObject = history.location && history.location.state ? history.location.state.patientObj : {}
-    const [patientObj, setPatientObj] = useState(null);
-    useEffect(() => {
-      PatientCurrentObject();
-      //CheckBiometric();
-    }, [patientObject.id]);
+    const patientObj = history.location && history.location.state ? history.location.state.patientObj : {}
+    //const [patientObj, setPatientObj] = useState(patientObject);
+    // useEffect(() => {
+    //   PatientCurrentObject();
+    //   //CheckBiometric();
+    // }, [patientObject.id]);
   
-      ///GET Patient
-      const PatientCurrentObject=() =>{
-          axios
-              .get(`${baseUrl}hiv/patient/${patientObject.id}`,
-              { headers: {"Authorization" : `Bearer ${token}`} }
-              )
-              .then((response) => {
-                console.log(response.data)
-                setPatientObj(response.data);
-              })
-              .catch((error) => {  
-              });        
-      }
+    //   ///GET Patient
+    //   const PatientCurrentObject=() =>{
+    //       axios
+    //           .get(`${baseUrl}hiv/patient/${patientObject.id}`,
+    //           { headers: {"Authorization" : `Bearer ${token}`} }
+    //           )
+    //           .then((response) => {
+    //             console.log(response.data)
+    //             setPatientObj(response.data);
+    //           })
+    //           .catch((error) => {  
+    //           });        
+    //   }
 
   return (
     <div className={classes.root}>
