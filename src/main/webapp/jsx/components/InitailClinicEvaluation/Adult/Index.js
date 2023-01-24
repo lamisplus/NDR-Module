@@ -42,7 +42,7 @@ const UserRegistration = (props) => {
     //const classes = useStyles();
     const location = useLocation();
     const locationState = location.state;
-    const [saving, setSaving] = useState(false);
+    //const [saving, setSaving] = useState(false);
     const [activeItem, setactiveItem] = useState('medical-history');
     const [completed, setCompleted] = useState([]);
     const [patientObj, setPatientObj] = useState("");
@@ -75,7 +75,7 @@ const UserRegistration = (props) => {
         },
         dateOfObservation: null,
         facilityId: null,
-        personId: patientObj.id,
+        personId: patientObj && patientObj.id,
         type: "Clinical evaluation",
         visitId: null
     })
@@ -87,6 +87,8 @@ const UserRegistration = (props) => {
         if(locationState && locationState.patientObj){
             setPatientObj(locationState.patientObj)           
         }
+        console.log(locationState.patientObj)
+        console.log(props.patientObj)
     }, []);
     
     const calculate_age = dob => {

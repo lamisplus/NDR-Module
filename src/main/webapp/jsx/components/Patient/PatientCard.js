@@ -62,28 +62,25 @@ const styles = theme => ({
 function PatientCard(props) {
   const { classes } = props;
   //const patientCurrentStatus=props.patientObj && props.patientObj.currentStatus==="Died (Confirmed)" ? true : false ;
-  const patientObject = props.patientObj
-  console.log(props.patientObj)
-
-  // const [patientObject, setPatientObject] = useState(patientObjs);
+  //const patientObject = props.patientObj
+  const [patientObject, setPatientObject] = useState(null);
   
-  // useEffect(() => {
-  //   //PatientCurrentObject();
-  //   //CheckBiometric();
-  // }, [props.patientObj]);
-
-    ///GET LIST OF Patients
-    // async function PatientCurrentObject() {
-    //     axios
-    //         .get(`${baseUrl}hiv/patient/${patientObjs.id}`,
-    //         { headers: {"Authorization" : `Bearer ${token}`} }
-    //         )
-    //         .then((response) => {
-    //           setPatientObject(response.data);
-    //         })
-    //         .catch((error) => {  
-    //         });        
-    // }
+  useEffect(() => {
+    PatientCurrentObject();
+    //CheckBiometric();
+  }, [props.patientObj]);
+    //GET  Patients
+    async function PatientCurrentObject() {
+        axios
+            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+            { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+              setPatientObject(response.data);
+            })
+            .catch((error) => {  
+            });        
+    }
 
     const calculate_age = dob => {
       var today = new Date();
