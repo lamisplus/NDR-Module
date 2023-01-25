@@ -13,7 +13,7 @@ public class HivPatientDto extends PersonResponseDto  implements Serializable {
     private boolean isClinicalEvaluation;
     private boolean isMentalHealth;
     private String currentStatus;
-    private HivEnrollmentDto enrollment;
+    private HivEnrollmentDTO enrollment;
     private ARTClinicalCommenceDto artCommence;
     private List<ARTClinicVisitDto> artClinicVisits;
     private List<ResponseArtPharmacyDto> artPharmacyRefills;

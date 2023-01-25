@@ -55,8 +55,8 @@ public class HivPatientService {
     
     private  final HivEnrollmentRepository enrollmentRepository;
 
-    public HivEnrollmentDto registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
-        HivEnrollmentDto hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
+    public HivEnrollmentDTO registerAndEnrollHivPatient(HivPatientEnrollmentDto hivPatientEnrollmentDto) {
+        HivEnrollmentDTO hivEnrollmentDto = hivPatientEnrollmentDto.getHivEnrollment ();
         Long personId = hivPatientEnrollmentDto.getPerson ().getId ();
         processAndSavePatient (hivPatientEnrollmentDto, hivEnrollmentDto, personId);
         hivEnrollmentDto.setFacilityId (currentUserOrganizationService.getCurrentUserOrganization ());
@@ -64,7 +64,7 @@ public class HivPatientService {
     }
 
 
-    private void processAndSavePatient(HivPatientEnrollmentDto hivPatientEnrollmentDto, HivEnrollmentDto hivEnrollmentDto, Long personId) {
+    private void processAndSavePatient(HivPatientEnrollmentDto hivPatientEnrollmentDto, HivEnrollmentDTO hivEnrollmentDto, Long personId) {
         if (personId == null) {
             PersonResponseDto person = personService.createPerson (hivPatientEnrollmentDto.getPerson ());
             hivEnrollmentDto.setPersonId (person.getId ());
@@ -241,7 +241,7 @@ public class HivPatientService {
         if (Boolean.TRUE.equals (personService.isPersonExist (personId))) {
             Person person = getPerson (personId);
             PersonResponseDto bioData = personService.getPersonById (personId);
-            Optional<HivEnrollmentDto> enrollment =
+            Optional<HivEnrollmentDTO> enrollment =
                     hivEnrollmentService.getHivEnrollmentByPersonIdAndArchived (bioData.getId ());
             Optional<ARTClinical> artCommencement =
                     artClinicalRepository.findByPersonAndIsCommencementIsTrueAndArchived (person, 0);
@@ -275,7 +275,7 @@ public class HivPatientService {
     }
 
 
-    private void addEnrollmentInfo(Optional<HivEnrollmentDto> enrollment, HivPatientDto hivPatientDto) {
+    private void addEnrollmentInfo(Optional<HivEnrollmentDTO> enrollment, HivPatientDto hivPatientDto) {
         if (enrollment.isPresent ()) {
             hivPatientDto.setEnrolled (true);
             Long enrollStatus = enrollment.get ().getStatusAtRegistrationId ();

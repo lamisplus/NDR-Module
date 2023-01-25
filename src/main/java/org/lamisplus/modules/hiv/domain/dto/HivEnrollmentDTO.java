@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HivEnrollmentDto implements Serializable {
+public class HivEnrollmentDTO implements Serializable {
     private Long facilityId;
     private Long id;
     private String uniqueId;

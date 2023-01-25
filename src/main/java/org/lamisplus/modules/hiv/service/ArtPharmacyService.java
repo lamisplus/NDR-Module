@@ -56,7 +56,7 @@ public class ArtPharmacyService {
 	
 	private static final String REGIMEN = "regimens";
 	
-	public RegisterArtPharmacyDto registerArtPharmacy(RegisterArtPharmacyDto dto) throws IOException {
+	public RegisterArtPharmacyDTO registerArtPharmacy(RegisterArtPharmacyDTO dto) throws IOException {
 		Visit visit = handleHIVisitEncounter.processAndCreateVisit(dto.getPersonId(), dto.getVisitDate());
 		dto.setVisitId(visit.getId());
 		if (dto.getVisitId() == null)
@@ -87,7 +87,7 @@ public class ArtPharmacyService {
 		}
 	}
 	
-	public RegisterArtPharmacyDto updateArtPharmacy(Long id, RegisterArtPharmacyDto dto) throws IOException {
+	public RegisterArtPharmacyDTO updateArtPharmacy(Long id, RegisterArtPharmacyDTO dto) throws IOException {
 		ArtPharmacy existArtPharmacy = getArtPharmacy(id);
 		ArtPharmacy artPharmacy = convertRegisterDtoToEntity(dto);
 		artPharmacy.setId(existArtPharmacy.getId());
@@ -98,7 +98,7 @@ public class ArtPharmacyService {
 	}
 	
 	
-	public RegisterArtPharmacyDto getPharmacyById(Long id) {
+	public RegisterArtPharmacyDTO getPharmacyById(Long id) {
 		ArtPharmacy artPharmacy = getArtPharmacy(id);
 		return getRegisterArtPharmacyDtoWithName(artPharmacy);
 		
@@ -120,7 +120,7 @@ public class ArtPharmacyService {
 				.orElseThrow(() -> getArtPharmacyEntityNotFoundException(id));
 	}
 	
-	public List<RegisterArtPharmacyDto> getPharmacyByPersonId(Long personId, int pageNo, int pageSize) {
+	public List<RegisterArtPharmacyDTO> getPharmacyByPersonId(Long personId, int pageNo, int pageSize) {
 		Person person = getPerson(personId);
 		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("visitDate").descending());
 		Page<ArtPharmacy> artPharmaciesByPerson = artPharmacyRepository.getArtPharmaciesByPersonAndArchived(person, 0, paging);
@@ -151,7 +151,7 @@ public class ArtPharmacyService {
 	
 	
 	@Nullable
-	private RegisterArtPharmacyDto getRegisterArtPharmacyDtoWithName(ArtPharmacy artPharmacy) {
+	private RegisterArtPharmacyDTO getRegisterArtPharmacyDtoWithName(ArtPharmacy artPharmacy) {
 		try {
 			return convertEntityToRegisterDto(artPharmacy);
 		} catch (IOException e) {
@@ -161,7 +161,7 @@ public class ArtPharmacyService {
 	}
 	
 	
-	private ArtPharmacy  convertRegisterDtoToEntity(RegisterArtPharmacyDto dto) throws JsonProcessingException {
+	private ArtPharmacy  convertRegisterDtoToEntity(RegisterArtPharmacyDTO dto) throws JsonProcessingException {
 		ArtPharmacy artPharmacy = new ArtPharmacy();
 		BeanUtils.copyProperties(dto, artPharmacy);
 		Long personId = dto.getPersonId();
@@ -224,8 +224,8 @@ public class ArtPharmacyService {
 		return personRepository.findById(personId).orElseThrow(() -> getPersonEntityNotFoundException(personId));
 	}
 	
-	private RegisterArtPharmacyDto convertEntityToRegisterDto(ArtPharmacy entity) throws IOException {
-		RegisterArtPharmacyDto dto = new RegisterArtPharmacyDto();
+	private RegisterArtPharmacyDTO convertEntityToRegisterDto(ArtPharmacy entity) throws IOException {
+		RegisterArtPharmacyDTO dto = new RegisterArtPharmacyDTO();
 		BeanUtils.copyProperties(entity, dto);
 		//log.info(" dto 1st:  {}", dto);
 		dto.setPersonId(entity.getPerson().getId());
@@ -233,7 +233,7 @@ public class ArtPharmacyService {
 	}
 	
 	
-	private void processAndSetDispenseRegimenInExtra(RegisterArtPharmacyDto dto, ArtPharmacy artPharmacy) {
+	private void processAndSetDispenseRegimenInExtra(RegisterArtPharmacyDTO dto, ArtPharmacy artPharmacy) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Set<RegimenRequestDto> regimen = dto.getRegimen();
 		// find a way to remove duplicates
@@ -254,7 +254,7 @@ public class ArtPharmacyService {
 		return new EntityNotFoundException(Person.class, "id ", "" + personId);
 	}
 	
-	private void processAndSaveHIVStatus(RegisterArtPharmacyDto dto) {
+	private void processAndSaveHIVStatus(RegisterArtPharmacyDTO dto) {
 		HIVStatusTrackerDto statusTracker = new HIVStatusTrackerDto();
 		statusTracker.setHivStatus("ART Start");
 		statusTracker.setStatusDate(dto.getVisitDate());

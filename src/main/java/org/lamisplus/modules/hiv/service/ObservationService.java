@@ -56,7 +56,8 @@ public class ObservationService {
     }
 
     private Optional<Observation> getAnExistingObservationType(ObservationDto observationDto, Person person, Long orgId) {
-        return observationRepository.getAllByTypeAndPersonAndFacilityId (observationDto.getType (), person, orgId);
+        return observationRepository
+                .getAllByTypeAndPersonAndFacilityIdAndArchived (observationDto.getType (), person, orgId, 0);
     }
 
 

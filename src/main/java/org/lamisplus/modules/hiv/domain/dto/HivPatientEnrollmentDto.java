@@ -6,5 +6,5 @@ import org.lamisplus.modules.patient.domain.dto.PersonDto;
 @Data
 public class HivPatientEnrollmentDto {
     private  PersonDto person;
-    private  HivEnrollmentDto hivEnrollment;
+    private HivEnrollmentDTO hivEnrollment;
 }

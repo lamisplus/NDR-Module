@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterArtPharmacyDto implements Serializable {
+public class RegisterArtPharmacyDTO implements Serializable {
     private Long facilityId;
     private Long visitId;
     private Long id;
