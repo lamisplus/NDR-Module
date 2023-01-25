@@ -8,20 +8,16 @@ import {Card, CardContent} from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 // import AddIcon from "@material-ui/icons/Add";
 // import CancelIcon from "@material-ui/icons/Cancel";
-import {ToastContainer, toast} from "react-toastify";
+import { toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import { useHistory, } from "react-router-dom";
-// import {TiArrowBack} from 'react-icons/ti'
 import {token, url as baseUrl } from "../../../../api";
 import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { Button} from 'semantic-ui-react'
-import {  Modal } from "react-bootstrap";
+import { Button} from 'semantic-ui-react';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -92,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MedicalHistory = (props) => {
     const classes = useStyles();
-    const history = useHistory();
+    const [enrollDate, setEnrollDate] = useState("");
     const [errors, setErrors] = useState({});
     const [allergies, setAllergies]= useState([])
     useEffect(() => {
@@ -114,10 +110,26 @@ const MedicalHistory = (props) => {
         
         }
     useEffect(() => { 
+        GetPatientDTOObj();
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory)           
         }
     }, [props.observation.data]);
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO.dateOfRegistration)
+               //setEacStatusObj(response.data);
+               //
+           })
+           .catch((error) => {
+           //console.log(error);
+           });          
+    }
     const [visit, setVisit] = useState({visitDate:""})
     const [objValues, setobjValues] = useState({Nausea:"", 
                                                 Nausea_fever:"",
@@ -261,7 +273,7 @@ const MedicalHistory = (props) => {
                             <InputGroup> 
                                 <Input 
                                     type="date"
-                                    min={props.patientObj && props.patientObj.enrollment ? props.patientObj.enrollment.dateOfRegistration :""}
+                                    min={enrollDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     name="visitDate"
                                     id="visitDate"
