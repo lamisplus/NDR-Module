@@ -90,7 +90,7 @@ const useStyles = makeStyles(theme => ({
 
 const ArtCommencement = (props) => {
     const patientObj = props.patientObj;
-    const enrollDate = patientObj && patientObj.enrollment ? patientObj.enrollment.dateOfRegistration : null
+    const [enrollDate, setEnrollDate] = useState("");
     //let history = useHistory();
     let gender=""
     const classes = useStyles()
@@ -174,6 +174,7 @@ const ArtCommencement = (props) => {
                 return age_now;
     };
     const patientAge=calculate_age(moment(patientObj.dateOfBirth).format("DD-MM-YYYY"));
+    const [patientObject, setPatientObject] = useState(null);
     useEffect(() => {
         FunctionalStatus();
         WhoStaging();
@@ -183,9 +184,22 @@ const ArtCommencement = (props) => {
         InitialClinicEvaluation();
         AdultRegimenLine();
         ChildRegimenLine();
+        PatientCurrentObject()
          gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.patientObj]);
-
+         //GET  Patients
+        async function PatientCurrentObject() {
+            axios
+                .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+                )
+                .then((response) => {
+                    setEnrollDate(response.data.enrollment.dateOfRegistration)
+                    setPatientObject(response.data);
+                })
+                .catch((error) => {  
+                });        
+        }
         //GET AdultRegimenLine 
         const AdultRegimenLine =()=>{
             axios
@@ -447,14 +461,13 @@ const ArtCommencement = (props) => {
 
     /**** Submit Button Processing  */
     const handleSubmit = (e) => {                  
-        e.preventDefault(); 
-        if(validate()){ 
-                
+        e.preventDefault();
+        if(validate()){      
         objValues.personId = props.patientObj.id
         vital.encounterDate = objValues.visitDate
         vital.personId=props.patientObj.id
         objValues.vitalSignDto= vital
-        objValues.hivEnrollmentId= props.patientObj.enrollment.id
+        objValues.hivEnrollmentId= patientObject && patientObject.enrollment.id
         objValues.clinicalStageId = objValues.whoStagingId 
         
         setSaving(true);

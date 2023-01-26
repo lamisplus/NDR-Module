@@ -141,6 +141,7 @@ const UserRegistration = (props) => {
     patientId = locationState ? locationState.patientId : null;
     patientObj = locationState ? locationState.patientObj : {}; 
     const [basicInfo, setBasicInfo]= useState(patientObj)
+    console.log(patientObj.dateOfRegistration)
     objValues.uniqueId=basicInfo.hospitalNumber
     useEffect(() => {        
         CareEntryPoint();
@@ -435,7 +436,7 @@ const UserRegistration = (props) => {
                                                         type="text"
                                                         name="firstName"
                                                         id="firstName"
-                                                        value={basicInfo.firstName + " "+ basicInfo.lastName}
+                                                        value={basicInfo.firstName + " "+ basicInfo.surname}
                                                         onChange={handleInputChangeBasic}
                                                         style={{border: 'none', backgroundColor: 'transparent', outline:'none'}}
                                                         //disabled
@@ -531,7 +532,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateOfRegistration"
                                         id="dateOfRegistration"
-                                        //min={basicInfo.dateOfRegistration}
+                                        min={patientObj.dateOfRegistration}
                                         max= {moment(new Date()).format("YYYY-MM-DD") }
                                         onChange={handleInputChange}
                                         value={objValues.dateOfRegistration}

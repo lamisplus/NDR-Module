@@ -300,7 +300,7 @@ const Patients = (props) => {
                             <MTableToolbar {...props} />
                         </div>
                         ),
-                }}
+                    }}
             />
        
     </div>
