@@ -14,7 +14,7 @@ public class PatientDTO {
 	private String otherName;
 	private String firstName;
 	private String uniqueId;
-	private String gender;
+	private String sex;
 	private String personUuid;
 	private String currentStatus;
 	private boolean clinicalEvaluation;

@@ -124,7 +124,7 @@ public class HivPatientService {
         PatientDTO patientDTO = PatientDTO.builder()
                 .age(p.getAge())
                 .dateOfBirth(p.getDateOfBirth())
-                .gender(p.getGender())
+                .sex(p.getGender())
                 .enrollmentId(p.getEnrollmentId())
                 .hospitalNumber(p.getHospitalNumber())
                 .firstName(p.getFirstName())
