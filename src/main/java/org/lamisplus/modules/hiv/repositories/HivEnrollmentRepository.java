@@ -24,7 +24,7 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "WHERE person_uuid = ?1 ",nativeQuery = true)
     Optional<EnrollmentStatus> getHivEnrollmentStatusByPersonUuid(String uuid);
     
-    @Query(value ="SELECT p.id AS id, p.date_of_registration as dateOfRegistration, p.first_name as firstName, p.surname AS surname,\n" +
+    @Query(value ="SELECT p.id AS id, p.created_by as createBy,  p.date_of_registration as dateOfRegistration, p.first_name as firstName, p.surname AS surname,\n" +
             "             p.other_name AS otherName,\n" +
             "            p.hospital_number AS hospitalNumber, CAST (EXTRACT(YEAR from AGE(NOW(), date_of_birth)) AS INTEGER) AS age,\n" +
             "            INITCAP(p.sex) AS gender, p.date_of_birth AS dateOfBirth, p.is_date_of_birth_estimated AS isDobEstimated,\n" +
@@ -44,7 +44,7 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             nativeQuery = true)
     Page<PatientProjection> getPatientsByFacilityId(Long facilityId, Pageable page);
     
-    @Query(value = "SELECT p.id AS id, p.date_of_registration as dateOfRegistration, p.first_name as firstName, p.surname AS surname,\n" +
+    @Query(value = "SELECT p.id AS id,p.created_by as createBy, p.date_of_registration as dateOfRegistration, p.first_name as firstName, p.surname AS surname,\n" +
             "             p.other_name AS otherName,\n" +
             "            p.hospital_number AS hospitalNumber, CAST (EXTRACT(YEAR from AGE(NOW(), date_of_birth)) AS INTEGER) AS age,\n" +
             "            INITCAP(p.sex) AS gender, p.date_of_birth AS dateOfBirth, p.is_date_of_birth_estimated AS isDobEstimated,\n" +

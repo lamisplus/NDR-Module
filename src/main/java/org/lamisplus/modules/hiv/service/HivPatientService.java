@@ -137,6 +137,7 @@ public class HivPatientService {
                 .isDobEstimated(p.getIsDobEstimated())
                 .commenced(p.getCommenced())
                 .isEnrolled(p.getIsEnrolled())
+                .createBy(p.getCreateBy())
                 .uniqueId(p.getUniqueId())
                 .dateOfRegistration(p.getDateOfRegistration())
                 .build();

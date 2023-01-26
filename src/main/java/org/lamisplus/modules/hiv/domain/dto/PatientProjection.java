@@ -14,6 +14,7 @@ public interface PatientProjection {
 	String getBiometricStatus();
 	String getEnrollmentStatus();
 	String getPersonUuid();
+	String getCreateBy();
 	Boolean getIsEnrolled();
 	Boolean getCommenced();
 	Boolean getIsDobEstimated();
