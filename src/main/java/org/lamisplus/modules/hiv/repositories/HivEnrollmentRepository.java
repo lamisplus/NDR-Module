@@ -40,7 +40,7 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "            LEFT JOIN base_application_codeset pc on pc.id = e.status_at_registration_id\n" +
             "            WHERE p.archived=0 AND p.facility_id=?1\n" +
             "            GROUP BY e.id, e.target_group_id,ca.commenced, p.id, p.first_name,\n" +
-            "            p.first_name, b.biometric_type, pc.display,p.surname, p.other_name, p.hospital_number, p.date_of_birth",
+            "            p.first_name, b.biometric_type, pc.display,p.surname, p.other_name, p.hospital_number, p.date_of_birth ORDER BY p.id DESC",
             nativeQuery = true)
     Page<PatientProjection> getPatientsByFacilityId(Long facilityId, Pageable page);
     
@@ -61,7 +61,8 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "            WHERE p.archived=0 AND p.facility_id=?1\n" +
             "           AND (first_name ilike ?2 OR surname ilike ?2 OR other_name ilike '' OR full_name ilike ?2 OR hospital_number ilike ?2)\n" +
             "            GROUP BY e.id, e.target_group_id,ca.commenced, p.id, p.first_name,\n" +
-            "            p.first_name, b.biometric_type, pc.display,p.surname, p.other_name, p.hospital_number, p.date_of_birth",
+            "            p.first_name, b.biometric_type, pc.display,p.surname, p.other_name, p.hospital_number, p.date_of_birth" +
+            "            ORDER BY p.id DESC",
             nativeQuery = true)
     Page<PatientProjection> getPatientsByFacilityBySearchParam(Long facilityId, String searchParam,  Pageable page);
 }

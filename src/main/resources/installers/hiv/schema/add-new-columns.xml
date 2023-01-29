@@ -92,14 +92,28 @@
     </changeSet>
 
     <changeSet failOnError="true"  id="20230105-008" author="amos-data-fi">
-        <preConditions onFail="MARK_RAN">
-            <not>
+       <preConditions onFail="MARK_RAN">
+             <not>
                 <columnExists tableName="hiv_art_pharmacy" columnName="visit_type" />
             </not>
         </preConditions>
         <sql>
             ALTER TABLE hiv_art_pharmacy
                 ADD  visit_type varchar(100)
+        </sql>
+    </changeSet>
+    <changeSet id="01272023-009" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="true">
+                SELECT active from hiv_regimen
+                WHERE description= 'Isoniazid 100mg'
+                AND  composition is null limit 1;
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            UPDATE hiv_regimen set active = false
+            WHERE description= 'Isoniazid 100mg'
+            AND  composition is null;
         </sql>
     </changeSet>
 </databaseChangeLog>

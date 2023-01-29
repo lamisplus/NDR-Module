@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RegimenRepository extends JpaRepository<Regimen, Long> {
-    List<Regimen> getAllByRegimenType(RegimenType regimenType);
+    List<Regimen> getAllByRegimenTypeAndActiveIsTrue(RegimenType regimenType);
 
 }

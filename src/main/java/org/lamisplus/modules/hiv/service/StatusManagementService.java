@@ -13,7 +13,6 @@ import org.lamisplus.modules.hiv.domain.entity.HIVStatusTracker;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.hiv.repositories.HIVStatusTrackerRepository;
 import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
-import org.lamisplus.modules.hiv.repositories.RegimenRepository;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class StatusManagementService {
 	private final HivEnrollmentRepository hivEnrollmentRepository;
 	
 	private final PersonRepository personRepository;
-	private final RegimenRepository regimenRepository;
+	
 	
 	public Quarter getPreviousQuarter(LocalDate endDate) {
 		int value = endDate.getMonth().getValue();
@@ -89,9 +88,7 @@ public class StatusManagementService {
 	}
 	
 	public HIVInterQuarterStatus getClientCurrentInternalQuarterStatus(String personUuid, LocalDate endReportPeriod) {
-		Quarter currentQuarter = getCurrentQuarter(endReportPeriod);
-		LocalDate quarterEnd = currentQuarter.getEnd();
-		return getClientInternalStatusInQuarter(personUuid, quarterEnd);
+		return getClientInternalStatusInQuarter(personUuid, endReportPeriod);
 	}
 	
 	@Nullable
@@ -100,8 +97,11 @@ public class StatusManagementService {
 				.getStatusByPersonUuidAndDateRange(personUuid, quarterEnd);
 		if (statusPreviousQuarter.isPresent()) {
 			List<String> staticStatus = Arrays.asList("ART_TRANSFER_OUT", "KNOWN_DEATH", "STOPPED_TREATMENT");
-			if (staticStatus.contains(statusPreviousQuarter.get().getHivStatus())) {
-				return new HIVInterQuarterStatus(statusPreviousQuarter.get().getStatusDate(), statusPreviousQuarter.get().getHivStatus());
+			String hivStatus = statusPreviousQuarter.get().getHivStatus();
+			if (staticStatus.contains(hivStatus)) {
+				String finalStatus = hivStatus.replaceAll("_", " ");
+				if(finalStatus.contains("DEATH")) finalStatus = "Died";
+				return new HIVInterQuarterStatus(statusPreviousQuarter.get().getStatusDate(), finalStatus);
 			}
 		}
 		Optional<ArtPharmacy> currentRefillInQuarter = pharmacyRepository
@@ -118,14 +118,6 @@ public class StatusManagementService {
 				return new HIVInterQuarterStatus(visitDate, "ACTIVE");
 			}
 		}
-		Optional<EnrollmentStatus> hivEnrollmentStatus =
-				hivEnrollmentRepository.getHivEnrollmentStatusByPersonUuid(personUuid);
-		
-		if (hivEnrollmentStatus.isPresent()) {
-			EnrollmentStatus status = hivEnrollmentStatus.get();
-			return new HIVInterQuarterStatus(status.getEnrollmentDate(),
-					status.getHivEnrollmentStatus());
-		}
 		return null;
 	}
 	
@@ -140,22 +132,34 @@ public class StatusManagementService {
 				getClientCurrentInternalQuarterStatus(personUuid, reportingDate);
 		
 		//ACTIVE, IIT, null
-		if (clientPreviousInternalQuarterStatus == null) {
+		if (clientPreviousInternalQuarterStatus == null && clientCurrentInternalQuarterStatus != null) {
 			if (isTransferIn(clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE-TRANSFER-IN", currentQuarter.getEnd());
+				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
+						"ACTIVE TRANSFER IN", currentQuarter.getEnd());
 			}
 			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
 					clientCurrentInternalQuarterStatus.getDescription(),
 					currentQuarter.getEnd());
 			
 		}
+//		if (clientPreviousInternalQuarterStatus == null && clientCurrentInternalQuarterStatus == null) {
+//			Optional<EnrollmentStatus> hivEnrollmentStatus =
+//					hivEnrollmentRepository.getHivEnrollmentStatusByPersonUuid(personUuid);
+//
+////			if (hivEnrollmentStatus.isPresent()) {
+////				EnrollmentStatus status = hivEnrollmentStatus.get();
+////				return new HIVStatusDisplay(status.getEnrollmentDate(), "",
+////						status.getHivEnrollmentStatus());
+////			}
+//
+//		}
 		boolean isRestart = isRestart(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus);
 		
 		if (isRestart) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE-RESTART", currentQuarter.getEnd());
+			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE RESTART", currentQuarter.getEnd());
 		}
 		if (isActiveTransferIn(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE-TRANSFER-IN", currentQuarter.getEnd());
+			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
 		}
 		return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), clientCurrentInternalQuarterStatus.getDescription(), currentQuarter.getEnd());
 		
@@ -178,7 +182,7 @@ public class StatusManagementService {
 		//ACTIVE, IIT, null
 		if (clientPreviousInternalQuarterStatus == null) {
 			if (isTransferIn(clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE-TRANSFER-IN", currentQuarter.getEnd());
+				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
 			}
 			if (clientCurrentInternalQuarterStatus != null) {
 				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
@@ -190,10 +194,10 @@ public class StatusManagementService {
 		boolean isRestart = isRestart(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus);
 		
 		if (isRestart) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE-RESTART", currentQuarter.getEnd());
+			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE RESTART", currentQuarter.getEnd());
 		}
 		if (isActiveTransferIn(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE-TRANSFER-IN", currentQuarter.getEnd());
+			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
 		}
 		if (clientCurrentInternalQuarterStatus != null) {
 			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), clientCurrentInternalQuarterStatus.getDescription(), currentQuarter.getEnd());
