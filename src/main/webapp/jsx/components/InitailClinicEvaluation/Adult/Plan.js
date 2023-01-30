@@ -409,32 +409,42 @@ return (
                     </div>
                     <hr/>
                     <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >OI Prophylaxis</Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="oi_prophylaxis"
-                                    id="oi_prophylaxis"
-                                    value={plan.oi_prophylaxis}
-                                    onChange={handlePlan} 
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
+                            
+                            <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="oi_prophylaxis"
+                            id="oi_prophylaxis"
+                            value={plan.oi_prophylaxis}
+                            onChange={handlePlan} 
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            OI Prophylaxis
+                            </label>
+                        </div>
                     </div>
                     <div className="form-group mb-3 col-md-6">
-                            <FormGroup>
-                            <Label >OI therapy </Label>
-                            <InputGroup> 
-                                <Input 
-                                    type="text"
-                                    name="oi_therapy"
-                                    id="oi_therapy" 
-                                    value={plan.oi_therapy}
-                                    onChange={handlePlan} 
-                                />
-                            </InputGroup>                                        
-                            </FormGroup>
+                           
+                            <div className="form-check custom-checkbox ml-1 ">
+                            <input
+                            type="checkbox"
+                            className="form-check-input"                           
+                            name="oi_therapy"
+                            id="oi_therapy"
+                            value={plan.oi_therapy}
+                            onChange={handlePlan} 
+                            />
+                            <label
+                            className="form-check-label"
+                            htmlFor="basic_checkbox_1"
+                            >
+                            OI therapy
+                            </label>
+                        </div>
                     </div>
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>

@@ -272,6 +272,7 @@ return (
                                     type="date"
                                     name="nextAppointment"
                                     id="nextAppointment"
+                                    min={props.observation.dateOfObservation}
                                     onChange={handleInputChangeobjValues} 
                                     value={objValues.nextAppointment}  
                                 />

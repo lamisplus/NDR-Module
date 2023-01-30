@@ -395,7 +395,7 @@ const Laboratory = (props) => {
         <div className="col-md-6">
         <h2>Laboratory Order and Result </h2>
         </div>
-     
+        
         <br/>
         <br/>
         <Card className={classes.root}>

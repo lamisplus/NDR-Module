@@ -17,8 +17,8 @@ function SubMenu(props) {
             Observation();
         }
     }, [props.patientObj]);
-    console.log(patientObj)
-     //Get list of RegimenLine
+   
+    //Get list 
     const Observation =()=>{
         axios
             .get(`${baseUrl}observation/person/${props.patientObj.id}`,
@@ -120,67 +120,67 @@ function SubMenu(props) {
                 (
                 <Menu size='tiny' color={"blue"} inverted pointing >
                     <Menu.Item onClick={() => onClickHome()} name='home' 
-                    active={activeItem === 'home'} > Home</Menu.Item>
+                    active={activeItem === 'home'} title="Home"> Home</Menu.Item>
                     {!patientObj.clinicalEvaluation  && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
-                    active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
+                    active={activeItem === 'initial'} title="Initial Evaluation"> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
-                    active={activeItem === 'art'}  disabled={patientObj.biometricStatus}>Art Commencement</Menu.Item>)}
+                    active={activeItem === 'art'}  disabled={patientObj.biometricStatus} title="Art Commencement">Art Commencement</Menu.Item>)}
                     { (patientObj.targetGroupId!==null && patientObj.targetGroupId!=="" ) && patientObj.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
-                    active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
+                    active={activeItem === 'health'} title="Mental Health Screening">Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
-                    active={activeItem === 'history'}>History</Menu.Item>
+                    active={activeItem === 'history'} title="History">History</Menu.Item>
                 </Menu>
                 )
                :
                (
                 <Menu size='tiny' color={"black"} inverted>                    
                     <Menu.Item onClick={() => onClickHome()} disabled={patientCurrentStatus} name='home'
-                    active={activeItem === 'home'}> Home</Menu.Item>
+                    active={activeItem === 'home'} title="Home"> Home</Menu.Item>
                      {!patientObj.clinicalEvaluation && patientObj.createBy==="Lamis data migration system" && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
-                    active={activeItem === 'initial'}> Initial Evaluation</Menu.Item>)}
+                    active={activeItem === 'initial'} title="Initial Evaluation"> Initial Evaluation</Menu.Item>)}
                     <Menu.Item onClick={() => onClickConsultation()} disabled={patientCurrentStatus} name='visit'
-                    active={activeItem === 'visit'} >Care Card</Menu.Item>
+                    active={activeItem === 'visit'} title="Care Card">Care Card</Menu.Item>
                      <Menu.Menu position='' name='lab' active={activeItem === 'lab'}>
                         <Dropdown item text='Laboratory'>
                             <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => loadLaboratoryOrderResult()} disabled={patientCurrentStatus} >Laboratory Order & Result</Dropdown.Item>
-                            <Dropdown.Item onClick={() => loadLaboratoryViralLoadOrderResult()} disabled={patientCurrentStatus} >Viral Load Order & Result</Dropdown.Item>
+                            <Dropdown.Item onClick={() => loadLaboratoryOrderResult()} disabled={patientCurrentStatus} title="Laboratory Order & Result">Laboratory Order & Result</Dropdown.Item>
+                            <Dropdown.Item onClick={() => loadLaboratoryViralLoadOrderResult()} disabled={patientCurrentStatus} title="Viral Load Order & Result">Viral Load Order & Result</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 
                         </Menu.Menu>
                     <Menu.Item onClick={() => loadPharmacyModal()} disabled={patientCurrentStatus} name='pharmacy'
-                    active={activeItem === 'pharmacy'}> Pharmacy</Menu.Item>
+                    active={activeItem === 'pharmacy'} title="Pharmacy"> Pharmacy</Menu.Item>
                     <Menu.Item onClick={() => loadEAC(patientObj)} disabled={patientCurrentStatus} name='eac'
-                    active={activeItem === 'eac'}> EAC</Menu.Item>
+                    active={activeItem === 'eac'} title="EAC"> EAC</Menu.Item>
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} name='status'
                     active={activeItem === 'status'}>Client Status Update</Menu.Item> */}
                     {/* {patientObj.currentStatus && patientObj.currentStatus==='IIT' && (<Menu.Item onClick={() => loadTrackingForm(patientObj)} >Tracking Form</Menu.Item>)} */}
                     {(!patientObj.mentalHealth  && (patientObj.targetGroupId!==null && patientObj.targetGroupId!==473)) && patientObj.createBy==="Lamis data migration system" && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
-                    active={activeItem === 'health'}>Mental Health Screening</Menu.Item>)}
+                    active={activeItem === 'health'} title="Mental Health Screening">Mental Health Screening</Menu.Item>)}
                    
                     {(props.patientObj.sex==='Female' || props.patientObj.sex==='FEMALE' || props.patientObj.sex==='female') ? 
                         (
                             <>
         
                             <Menu.Item onClick={() => loadCervicalCancer(patientObj)} name='cancer'
-                            active={activeItem === 'cancer'}>Cervical Cancer</Menu.Item>
+                            active={activeItem === 'cancer'} title="Cervical Cancer">Cervical Cancer</Menu.Item>
                             </>
                             )
                             :""
                     }  
                     <Menu.Item onClick={() => loadTrackingForm(patientObj)} name='tracking'
-                    active={activeItem === 'tracking'}>Tracking Form</Menu.Item>
+                    active={activeItem === 'tracking'} title="Tracking Form">Tracking Form</Menu.Item>
                      {/* patientObj.currentStatus && patientObj.currentStatus==='IIT' &&  (<Menu.Item onClick={() => loadChronicCare(patientObj)} >Chronic Care</Menu.Item> */}
                      <Menu.Item onClick={() => loadIntensiveForm(patientObj)} name='intensive'
-                    active={activeItem === 'intensive'}>Intensive Follow Up</Menu.Item>
+                    active={activeItem === 'intensive'} title="Intensive Follow Up">Intensive Follow Up</Menu.Item>
                     <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
-                    active={activeItem === 'transfer'}>Transfer</Menu.Item>
+                    active={activeItem === 'transfer'} title="Transfer">Transfer</Menu.Item>
                     <Menu.Item onClick={() => loadChronicCare(patientObj)} name='transfer'
-                    active={activeItem === 'chronic-care'}>Chronic Care</Menu.Item>
+                    active={activeItem === 'chronic-care'} title="Chronic Care">Chronic Care</Menu.Item>
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
-                    active={activeItem === 'history'}>History</Menu.Item>
+                    active={activeItem === 'history'} title="History">History</Menu.Item>
                     
                 </Menu>
                )

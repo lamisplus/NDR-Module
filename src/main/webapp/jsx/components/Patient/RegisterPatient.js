@@ -104,6 +104,7 @@ const UserRegistration = (props) => {
     const [basicInfo, setBasicInfo]= useState(
             {
                 active: true,
+                streetAddress:"",
                 address: [],
                 contact: [],
                 contactPoint: [],
@@ -176,7 +177,7 @@ const UserRegistration = (props) => {
         householdNumber:"", referredToOVCPartner:"", dateReferredToOVCPartner:"",
         referredFromOVCPartner:"", dateReferredFromOVCPartner:"",
         careEntryPointOther:"",
-        ovcUniqueId:""
+        ovcUniqueId:"",lipName:""
         });
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
@@ -483,7 +484,7 @@ const UserRegistration = (props) => {
             temp.sexId = basicInfo.sexId ? "" : "Gender is required."
             temp.dateOfRegistration = basicInfo.dateOfRegistration ? "" : "Date of Registration is required."
             temp.educationId = basicInfo.educationId ? "" : "Education is required."
-            temp.address = basicInfo.address ? "" : "Address is required."
+            temp.streetAddress = basicInfo.streetAddress ? "" : "Address is required."
             temp.phoneNumber = basicInfo.phoneNumber ? "" : "Phone Number  is required."
             temp.countryId = basicInfo.countryId ? "" : "Country is required."    
             temp.stateId = basicInfo.stateId ? "" : "State is required."  
@@ -505,7 +506,9 @@ const UserRegistration = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); 
+         
          if(validate()){
+            setSaving(true)
             let newConatctsInfo=[]
             //Manipulate relatives contact  address:"",
             const actualcontacts=contacts && contacts.length>0 && contacts.map((x)=>{
@@ -534,7 +537,7 @@ const UserRegistration = (props) => {
                     active: true,
                     address: [
                         {
-                            "city": basicInfo.address,
+                            "city": basicInfo.streetAddress,
                             "countryId": basicInfo.countryId,
                             "district": basicInfo.district,
                             "line": [
@@ -592,9 +595,11 @@ const UserRegistration = (props) => {
                 patientDTO.person=patientForm;
                 patientDTO.hivEnrollment=objValues;
                 const response = await axios.post(`${baseUrl}hiv/patient`, patientDTO, { headers: {"Authorization" : `Bearer ${token}`} });
+                setSaving(false) 
                 toast.success("Patient Register successful", {position: toast.POSITION.BOTTOM_CENTER});
                 history.push('/');
-            } catch (error) {                
+            } catch (error) { 
+                setSaving(false)                
                 if(error.response && error.response.data){
                     let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                     if(error.response.data.apierror && error.response.data.apierror.message!=="" && error.response.data.apierror && error.response.data.apierror.subErrors[0].message!==""){
@@ -1242,14 +1247,15 @@ const UserRegistration = (props) => {
                                                 <input
                                                     className="form-control"
                                                     type="text"
-                                                    name="address"
-                                                    id="address"
+                                                    name="streetAddress"
+                                                    id="streetAddress"
+                                                    value={basicInfo.streetAddress}
                                                     onChange={handleInputChangeBasic}
                                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                    
                                                 />
-                                               {errors.address !=="" ? (
-                                                    <span className={classes.error}>{errors.address}</span>
+                                               {errors.streetAddress !=="" ? (
+                                                    <span className={classes.error}>{errors.streetAddress}</span>
                                                     ) : "" }
                                             </FormGroup>
                                         </div>
@@ -1592,7 +1598,7 @@ const UserRegistration = (props) => {
                                 </div>
 
                                 <div className="form-group mb-3 col-md-6">
-                                {transferIn===true ? 
+                                {objValues.entryPointId==='21' ? 
                                     (
                                         <FormGroup>
                                         <Label >Facility Name</Label>
@@ -1691,7 +1697,22 @@ const UserRegistration = (props) => {
                                         ) : "" }
                                     </FormGroup>
                                 </div>
-                                
+                                {objValues.sourceOfReferrerId==="870"  || objValues.sourceOfReferrerId===870 ? 
+                                    (
+                                        <div className="form-group mb-3 col-md-6">
+                                        <FormGroup>
+                                        <Label >LIP Name</Label>
+                                        <Input
+                                            type="text"
+                                            name="lipName"
+                                            id="lipName"
+                                            onChange={handleInputChange}
+                                            value={objValues.lipName}  
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        />
+                                        </FormGroup>
+                                        </div>
+                                    ):""}
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label >Enrollment Setting *</Label>
@@ -1957,7 +1978,8 @@ const UserRegistration = (props) => {
                                 className={classes.button}
                                 startIcon={<SaveIcon />}
                                 onClick={handleSubmit}
-                                disabled={disabledAgeBaseOnAge}
+                                hidden={disabledAgeBaseOnAge}
+                                disabled={saving}
                                 style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
                             >
                                 {!saving ? (
