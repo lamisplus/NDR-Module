@@ -114,7 +114,8 @@ const MedicalHistory = (props) => {
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory)           
         }
-    }, [props.observation.data]);
+    }, [props.observation.data, props.patientObj]);
+
     const GetPatientDTOObj =()=>{
         axios
            .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
@@ -123,7 +124,6 @@ const MedicalHistory = (props) => {
            .then((response) => {
                const patientDTO= response.data.enrollment
                setEnrollDate (patientDTO.dateOfRegistration)
-               //setEacStatusObj(response.data);
                //
            })
            .catch((error) => {

@@ -12,6 +12,8 @@ import { url as baseUrl, token } from "../../../../api";
 import moment from "moment";
 import { toast} from "react-toastify";
 import Select from 'react-select'
+import {TiArrowBack} from 'react-icons/ti'
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({ 
     button: {
@@ -64,11 +66,10 @@ const Laboratory = (props) => {
     //const [labNumberOption, setLabNumberOption] = useState("")
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
-    const [buttonHidden, setButtonHidden]= useState(false);
-    const [moduleStatus, setModuleStatus]= useState("0")
+    let fieldHidden=props.activeContent.actionType==='update' ? false : true;
+    ///const [moduleStatus, setModuleStatus]= useState("0")
     const [testGroup, setTestGroup] = useState([]);
     const [test, setTest] = useState([]);
-    const [vlRequired, setVlRequired]=useState(false)
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     // const [testOrderList, setTestOrderList] = useState([]);//Test Order List
@@ -106,7 +107,7 @@ useEffect(() => {
         TestGroup();
         ViraLoadIndication();
         //PatientVisit();
-        CheckLabModule();
+        //CheckLabModule();
         CheckEACStatus();
         GetPatientDTOObj();
         LabNumbers();
@@ -189,28 +190,6 @@ useEffect(() => {
             }); 
     }
     //console.log(selectedOption);
-    //Check if Module Exist
-    const CheckLabModule =()=>{
-        axios
-            .get(`${baseUrl}modules/check?moduleName=laboratory`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                if(response.data===true){
-                setModuleStatus("1")
-                setButtonHidden(false)
-                }
-                else{
-                    setModuleStatus("2")
-                    //toast.error("Laboratory module is not install")
-                    setButtonHidden(true)
-                }
-            }).catch((error) => {
-            //console.log(error);
-            });
-        
-    }
-    
     //Get list of Test Group
     const ViraLoadIndication =()=>{
         axios
@@ -290,6 +269,7 @@ useEffect(() => {
     const handleSubmit = (e) => {        
         e.preventDefault();            
         setSaving(true);
+        if(validate()){
         tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS") 
         tests.dateResultReceived = moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS")
         //console.log(tests);
@@ -328,18 +308,33 @@ useEffect(() => {
                 }else{
                     toast.error("Something went wrong. Please try again...",  {position: toast.POSITION.BOTTOM_CENTER}); 
                 }                  
-            }); 
+            });
+        } 
     }
-
+    const Back = (row, actionType) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+        
+        props.setActiveContent({...props.activeContent, route:'laboratoryOrderResult', id:row.id, activeTab:"history", actionType:"", obj:{}})
+     }
 
   return (      
       <div >
 
         <div className="row">
-        <div className="col-md-6">
-        <h2>Laboratory Order & Result </h2>
+        <div className="col-md-12">
+        <h2>Laboratory Order & Result 
+        <Button
+            variant="contained"
+            color="primary"
+            className=" float-end ms-1"
+            style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
+            startIcon={<TiArrowBack />}
+            onClick={()=>Back(props.activeContent.obj, 'view')}
+        >
+            <span style={{ textTransform: "capitalize", color:'#fff' }}>Back </span>
+        </Button>
+        </h2>
         </div>
-     
         <br/>
         <br/>
         <Card className={classes.root}>
@@ -359,7 +354,7 @@ useEffect(() => {
                                     value={tests.labNumber}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 >
                                      <option value="">Select </option>
                                         
@@ -383,7 +378,7 @@ useEffect(() => {
                                     value={tests.sampleNumber}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.sampleNumber !=="" ? (
                                     <span className={classes.error}>{errors.sampleNumber}</span>
@@ -438,6 +433,7 @@ useEffect(() => {
                                     value={selectedOption}
                                     onChange={handleInputChangeObject}
                                     options={labTestOptions}
+                                    disabled={fieldHidden}
                                     
                                 />
                                 {errors.labTestId !=="" ? (
@@ -458,7 +454,7 @@ useEffect(() => {
                                     min={enrollDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.sampleCollectionDate !=="" ? (
                                     <span className={classes.error}>{errors.sampleCollectionDate}</span>
@@ -477,7 +473,7 @@ useEffect(() => {
                                     min={tests.sampleCollectionDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.dateResultReceived !=="" ? (
                                     <span className={classes.error}>{errors.dateResultReceived}</span>
@@ -520,7 +516,8 @@ useEffect(() => {
                                         id="result"
                                         value={tests.result}
                                         onChange={handleInputChange}  
-                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
+                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                        disabled={fieldHidden}                 
                                     />
                                     {errors.result !=="" ? (
                                         <span className={classes.error}>{errors.result}</span>
@@ -539,7 +536,8 @@ useEffect(() => {
                                     id="viralLoadIndication"
                                     value={tests.viralLoadIndication}
                                     onChange={handleInputChange}  
-                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                    style={{border: "1px solid #014D88", borderRadius:"0.25rem"}} 
+                                    disabled={fieldHidden}                
                                     >
                                     <option value="">Select </option>
                                                     
@@ -565,7 +563,7 @@ useEffect(() => {
                                     value={tests.resultReportedBy}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.resultReportedBy !=="" ? (
                                     <span className={classes.error}>{errors.resultReportedBy}</span>
@@ -580,9 +578,11 @@ useEffect(() => {
                                     name="dateResultReported"
                                     id="dateResultReported"
                                     value={tests.dateResultReported}
+                                    min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD")}
+                                    max= {moment(new Date()).format("YYYY-MM-DD") }
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.dateResultReported !=="" ? (
                                     <span className={classes.error}>{errors.dateResultReported}</span>
@@ -599,7 +599,7 @@ useEffect(() => {
                                     value={tests.checkedBy}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.checkedBy !=="" ? (
                                     <span className={classes.error}>{errors.checkedBy}</span>
@@ -616,7 +616,7 @@ useEffect(() => {
                                     value={tests.dateChecked}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.dateChecked !=="" ? (
                                     <span className={classes.error}>{errors.dateChecked}</span>
@@ -633,7 +633,7 @@ useEffect(() => {
                                     value={tests.clinicianName}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={fieldHidden}
                                 />
                                 {errors.clinicianName !=="" ? (
                                     <span className={classes.error}>{errors.clinicianName}</span>
@@ -654,7 +654,7 @@ useEffect(() => {
                             color="primary"
                             className={classes.button}
                             startIcon={<SaveIcon />}
-                            hidden={buttonHidden}
+                            hidden={fieldHidden}
                             style={{backgroundColor:"#014d88"}}
                             disabled={ !saving ? false : true}
                             onClick={handleSubmit}

@@ -11,12 +11,10 @@ import { Spinner } from "reactstrap";
 import { url as baseUrl, token } from "../../../../api";
 import moment from "moment";
 import { List, Label as LabelSui} from 'semantic-ui-react'
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { toast} from "react-toastify";
-import {Alert } from "react-bootstrap";
-import { Icon,Button, } from 'semantic-ui-react'
 
+import { Button, } from 'semantic-ui-react'
+import {TiArrowBack} from 'react-icons/ti'
 
 const useStyles = makeStyles(theme => ({ 
     button: {
@@ -269,11 +267,13 @@ const Laboratory = (props) => {
     ]
     const handleSubmit = (e) => {        
         e.preventDefault();
+        
         if(validate()){
+            setSaving(true);
             tests.labTestGroupId= labTestDetail.labTestGroupId
             tests.labTestId= labTestDetail.id   
             //tests.pcrLabSampleNumber=tests.pcrLabName              
-            setSaving(true);
+            
             tests.sampleCollectionDate = moment(tests.sampleCollectionDate).format("YYYY-MM-DD HH:MM:SS")
             tests.dateResultReceived =tests.dateResultReceived!==null && tests.dateResultReceived!=="" ? moment(tests.dateResultReceived).format("YYYY-MM-DD HH:MM:SS") : ""
             tests.dateReceivedAtPcrLab =tests.dateReceivedAtPcrLab!==null && tests.dateReceivedAtPcrLab!=="" ? moment(tests.dateReceivedAtPcrLab).format("YYYY-MM-DD HH:MM:SS") : ""
@@ -287,7 +287,6 @@ const Laboratory = (props) => {
                 //props.LabOrders();
             })
             .catch(error => {
-                console.log(error)
                 setSaving(false);
                 if(error.response && error.response.data){
                     let errorMessage = error.response.data && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
@@ -318,14 +317,29 @@ const Laboratory = (props) => {
         }
     }
 
-    console.log(tests.dateResultReceived)
+    const Back = (row, actionType) =>{  
+        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
+        
+        props.setActiveContent({...props.activeContent, route:'laboratoryViralLoadOrderResult', id:row.id, activeTab:"history", actionType:"", obj:{}})
+     }
   
   return (      
       <div >
 
         <div className="row">
-        <div className="col-md-6">
-        <h2>Viral Load Order and Result</h2>
+        <div className="col-md-12">
+        <h2>Viral Load Order and Result
+        <Button
+            variant="contained"
+            color="primary"
+            className=" float-end ms-1"
+            style={{backgroundColor:'#014d88',fontWeight:"bolder"}}
+            startIcon={<TiArrowBack />}
+            onClick={()=>Back(props.activeContent.obj, 'view')}
+        >
+            <span style={{ textTransform: "capitalize", color:'#fff' }}>Back </span>
+        </Button>
+        </h2>
         </div>
      
         <br/>

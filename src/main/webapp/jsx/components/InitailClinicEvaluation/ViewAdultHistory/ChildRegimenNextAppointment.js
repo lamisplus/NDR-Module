@@ -264,7 +264,8 @@ return (
                                     name="nextAppointment"
                                     id="nextAppointment"
                                     onChange={handleInputChangeobjValues} 
-                                    value={objValues.nextAppointment}  
+                                    value={objValues.nextAppointment} 
+                                    min={props.observation.dateOfObservation} 
                                 />
                             </InputGroup>                                        
                             </FormGroup>

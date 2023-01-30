@@ -94,7 +94,7 @@ const MedicalHistory = (props) => {
     const classes = useStyles();
     const history = useHistory();
     const [errors, setErrors] = useState({});
-    
+    const [enrollDate, setEnrollDate] = useState("");
     const [visit, setVisit] = useState({visitDate:""})
     const [allergies, setAllergies]= useState([])
     useEffect(() => {
@@ -116,6 +116,7 @@ const MedicalHistory = (props) => {
         
         }
     useEffect(() => { 
+        GetPatientDTOObj()
         if(props.observation.data && props.observation.data.medicalHistory){
             setobjValues(props.observation.data.medicalHistory) 
             visit.visitDate=moment(props.observation.dateOfObservation).format("YYYY-MM-DD")          
@@ -123,8 +124,21 @@ const MedicalHistory = (props) => {
         // else{
         //     console.log(props.observation)
         // }
-    }, [props.observation.data]);
-    console.log(visit.visitDate)
+    }, [props.observation.data, props.patientObj]);
+    const GetPatientDTOObj =()=>{
+        axios
+           .get(`${baseUrl}hiv/patient/${props.patientObj.id}`,
+               { headers: {"Authorization" : `Bearer ${token}`} }
+           )
+           .then((response) => {
+               const patientDTO= response.data.enrollment
+               setEnrollDate (patientDTO.dateOfRegistration)
+               //
+           })
+           .catch((error) => {
+           //console.log(error);
+           });          
+    }
     const [objValues, setobjValues] = useState({Nausea:"", 
                                                 Nausea_fever:"",
                                                 as_never_receive_arvs:"",
@@ -260,10 +274,11 @@ const MedicalHistory = (props) => {
                     <div className="row">
                     <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Visit Date</Label>
+                            <Label >Visit Date *</Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"
+                                    min={enrollDate}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
                                     name="visitDate"
                                     id="visitDate"

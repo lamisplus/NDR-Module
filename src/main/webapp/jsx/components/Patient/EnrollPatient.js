@@ -113,12 +113,12 @@ const UserRegistration = (props) => {
      //const [values, setValues] = useState([]);
      const [objValues, setObjValues] = useState({
             id:"", uniqueId: "",dateOfRegistration:"",entryPointId:"", facilityName:"",statusAtRegistrationId:"",
-            dateConfirmedHiv:"",sourceOfReferrer:"",enrollmentSettingId:"",pregnancyStatusId:"",
+            dateConfirmedHiv:"",sourceOfReferrerId:"",enrollmentSettingId:"",pregnancyStatusId:"",
             dateOfLpm:"",tbStatusId:"",targetGroupId:"",ovc_enrolled:"",ovcNumber:"",
             householdNumber:"", referredToOVCPartner:"", dateReferredToOVCPartner:"",
             referredFromOVCPartner:"", dateReferredFromOVCPartner:"",
             careEntryPointOther:"",
-            personId:"",ovcUniqueId:""
+            personId:"",ovcUniqueId:"",lipName:""
         });
      const [carePoints, setCarePoints] = useState([]);
      const [sourceReferral, setSourceReferral] = useState([]);
@@ -141,7 +141,6 @@ const UserRegistration = (props) => {
     patientId = locationState ? locationState.patientId : null;
     patientObj = locationState ? locationState.patientObj : {}; 
     const [basicInfo, setBasicInfo]= useState(patientObj)
-    console.log(patientObj.dateOfRegistration)
     objValues.uniqueId=basicInfo.hospitalNumber
     useEffect(() => {        
         CareEntryPoint();
@@ -156,8 +155,6 @@ const UserRegistration = (props) => {
         }
         
     }, [patientObj, patientId]);
-
-
 
     const handleAgeChange = (e) => {
         const ageNumber = e.target.value.replace(/\D/g, '')
@@ -188,7 +185,7 @@ const UserRegistration = (props) => {
 
             temp.targetGroupId = objValues.targetGroupId ? "" : "Target group is required."
             temp.dateConfirmedHiv = objValues.dateConfirmedHiv ? "" : "date confirm HIV is required."
-            temp.sourceOfReferrer = objValues.sourceOfReferrer ? "" : "Source of referrer is required."
+            temp.sourceOfReferrerId = objValues.sourceOfReferrerId ? "" : "Source of referrer is required."
             temp.enrollmentSettingId = objValues.enrollmentSettingId ? "" : "Enrollment Setting Number  is required."
             temp.tbStatusId = objValues.tbStatusId ? "" : "TB status is required."    
             temp.statusAtRegistrationId = objValues.statusAtRegistrationId ? "" : "Status at Registration is required."  
@@ -366,15 +363,19 @@ const UserRegistration = (props) => {
         history.push({ pathname: '/' });
     }
     const handleSubmit = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
+       
          if(validate()){
+            setSaving(true) 
             try {
 
                 objValues.personId = patientId;
                 const response = await axios.post(`${baseUrl}hiv/enrollment`, objValues, { headers: {"Authorization" : `Bearer ${token}`} });
                 toast.success("Patient Register successful", {position: toast.POSITION.BOTTOM_CENTER});
+                setSaving(false) 
                 history.push('/');
-            } catch (error) {                
+            } catch (error) { 
+                setSaving(false)                
                 if(error.response && error.response.data){
                     let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                     if(error.response.data.apierror && error.response.data.apierror.message!=="" && error.response.data.apierror && error.response.data.apierror.subErrors[0].message!==""){
@@ -572,7 +573,7 @@ const UserRegistration = (props) => {
                                 
                                 </div>                                
                                 <div className="form-group mb-3 col-md-6">
-                                {transferIn===true ? 
+                                {objValues.entryPointId==="21" ? 
                                     (
                                         <FormGroup>
                                         <Label >Facility Name</Label>
@@ -636,7 +637,7 @@ const UserRegistration = (props) => {
                                         type="date"
                                         name="dateConfirmedHiv"
                                         id="dateConfirmedHiv"
-                                        min={basicInfo.dob}
+                                        min={patientObj.dateOfBirth}
                                         max={objValues.dateOfRegistration}
                                         onChange={handleInputChange}
                                         value={objValues.dateConfirmedHiv}
@@ -653,9 +654,9 @@ const UserRegistration = (props) => {
                                     <Label >Source of Referral *</Label>
                                     <Input
                                         type="select"
-                                        name="sourceOfReferrer"
-                                        id="sourceOfReferrer"
-                                        value={objValues.sourceOfReferrer}
+                                        name="sourceOfReferrerId"
+                                        id="sourceOfReferrerId"
+                                        value={objValues.sourceOfReferrerId}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                         required
@@ -667,12 +668,25 @@ const UserRegistration = (props) => {
                                                 </option>
                                             ))}
                                     </Input>
-                                    {errors.sourceOfReferrer !=="" ? (
-                                        <span className={classes.error}>{errors.sourceOfReferrer}</span>
+                                    {errors.sourceOfReferrerId !=="" ? (
+                                        <span className={classes.error}>{errors.sourceOfReferrerId}</span>
                                         ) : "" }
                                     </FormGroup>
                                 </div>
-                                
+                                {objValues.sourceOfReferrerId==="870" || objValues.sourceOfReferrerId===870 ? 
+                                    (
+                                        <FormGroup>
+                                        <Label >LIP Name</Label>
+                                        <Input
+                                            type="text"
+                                            name="lipName"
+                                            id="lipName"
+                                            onChange={handleInputChange}
+                                            value={objValues.lipName}  
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        />
+                                        </FormGroup>
+                                    ):""}
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
                                     <Label >Enrollment Setting *</Label>
@@ -956,8 +970,9 @@ const UserRegistration = (props) => {
                                 color="primary"
                                 className={classes.button}
                                 startIcon={<SaveIcon />}
-                                disabled={disabledAgeBaseOnAge}
+                                hidden={disabledAgeBaseOnAge}
                                 onClick={handleSubmit}
+                                disabled={saving}
                             >
                                 {!saving ? (
                                     <span style={{ textTransform: "capitalize" }}>Save</span>

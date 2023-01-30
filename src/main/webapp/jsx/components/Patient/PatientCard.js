@@ -112,8 +112,10 @@ function PatientCard(props) {
     };
     const getAddress = (identifier) => {     
       const identifiers = identifier;
-      const address = identifiers.address.find(obj => obj.city);      
-      return address ? address.line[0] + " " + address.city: '';
+      const address = identifiers.address.find(obj => obj.city); 
+      const houseAddress= address.line[0]!==null ? address.line[0] :""  
+      const landMark= address.city!==null ? address.city :""    
+      return address ? houseAddress + " " + landMark : '';
     };
   
   return (
@@ -204,7 +206,7 @@ function PatientCard(props) {
                                   <Typography variant="caption">
                                       <Label color={patientObject.biometricStatus===true? "green" : "red"} size={"mini"}>
                                           Biometric Status
-                                          <Label.Detail>{patientObject.biometricStatus===true? "Captured" : "Not Capture"}</Label.Detail>
+                                          <Label.Detail>{patientObject.biometricStatus===true? "Captured" : "Not Captured"}</Label.Detail>
                                       </Label>
                                      
                                       

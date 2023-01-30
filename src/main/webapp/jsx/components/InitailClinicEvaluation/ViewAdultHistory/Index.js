@@ -119,7 +119,7 @@ const UserRegistration = (props) => {
                 return age_now ;
       };
       const patientAge=calculate_age(moment(props.patientObj.dateOfBirth).format("DD-MM-YYYY"));
-      console.log(props)
+      //console.log(props)
 
     return (
         <>

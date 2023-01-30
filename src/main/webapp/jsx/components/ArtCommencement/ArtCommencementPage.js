@@ -1210,6 +1210,7 @@ const ArtCommencement = (props) => {
                 className={classes.button}
                 startIcon={<SaveIcon />}
                 onClick={handleSubmit}
+                disabled={saving}
                 style={{backgroundColor:"#014d88"}}
                 >
                     {!saving ? (

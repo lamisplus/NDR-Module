@@ -87,8 +87,7 @@ const UserRegistration = (props) => {
         if(locationState && locationState.patientObj){
             setPatientObj(locationState.patientObj)           
         }
-        console.log(locationState.patientObj)
-        console.log(props.patientObj)
+        
     }, []);
     
     const calculate_age = dob => {
