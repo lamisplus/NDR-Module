@@ -71,4 +71,5 @@ public class HivEnrollmentDTO implements Serializable {
     @Convert(converter = LocalDateConverter.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateReferredFromOVCPartner;
+    private String lipName;
 }

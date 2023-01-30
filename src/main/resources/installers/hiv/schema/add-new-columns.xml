@@ -105,15 +105,30 @@
     <changeSet id="01272023-009" author="amos-data-fi">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="true">
-                SELECT active from hiv_regimen
-                WHERE description= 'Isoniazid 100mg'
-                AND  composition is null limit 1;
+                SELECT CASE WHEN totalCount > 0 THEN true ELSE false END
+                           as newColumn
+                from (
+                         SELECT count(active) as totalCount from hiv_regimen
+                         WHERE description = 'Isoniazid 100mg'
+                           AND  composition is null
+                     ) a
             </sqlCheck>
         </preConditions>
         <sql>
             UPDATE hiv_regimen set active = false
             WHERE description= 'Isoniazid 100mg'
             AND  composition is null;
+        </sql>
+    </changeSet>
+    <changeSet failOnError="true"  id="20230130-010" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_enrollment" columnName="lip_name" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_enrollment
+                ADD  lip_name varchar(100)
         </sql>
     </changeSet>
 </databaseChangeLog>

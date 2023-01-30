@@ -129,8 +129,10 @@ public class HivEnrollment extends HivAuditEntity implements Persistable<Long>, 
     @Basic
     @Column(name = "tb_status_id")
     private Long tbStatusId;
-
-
+    
+    @Basic
+    @Column(name = "lip_name")
+    private String lipName;
     @Override
     public boolean isNew() {
 
