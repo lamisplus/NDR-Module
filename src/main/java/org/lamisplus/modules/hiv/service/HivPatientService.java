@@ -155,6 +155,8 @@ public class HivPatientService {
         
         if(p.getBiometricStatus() != null){
             patientDTO.setBiometricStatus(true);
+        }else {
+            patientDTO.setBiometricStatus(false);
         }
         List<Observation> clinicalEvaluationAndMentalHealth =
                 observationRepository.getClinicalEvaluationAndMentalHealth(p.getPersonUuid());
