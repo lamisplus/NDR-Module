@@ -137,26 +137,20 @@ public class HivPatientService {
                 .surname(p.getSurname())
                 .id(p.getId())
                 .isDobEstimated(p.getIsDobEstimated())
-                .commenced(p.getCommenced())
                 .isEnrolled(p.getIsEnrolled())
                 .createBy(p.getCreateBy())
                 .uniqueId(p.getUniqueId())
                 .dateOfRegistration(p.getDateOfRegistration())
                 .build();
-        
+        patientDTO.setCommenced(p.getCommenced() != null);
+        patientDTO.setBiometricStatus(p.getBiometricStatus() != null);
         if(p.getCommenced() != null && p.getCommenced()){
             String currentStatus = statusManagementService.getCurrentStatus(p.getId());
             patientDTO.setCurrentStatus(currentStatus);
         }else if(p.getIsEnrolled()){
-         patientDTO.setCurrentStatus(p.getEnrollmentStatus());
+            patientDTO.setCurrentStatus(p.getEnrollmentStatus());
         }else{
             patientDTO.setCurrentStatus("Not Enrolled");
-        }
-        
-        if(p.getBiometricStatus() != null){
-            patientDTO.setBiometricStatus(true);
-        }else {
-            patientDTO.setBiometricStatus(false);
         }
         List<Observation> clinicalEvaluationAndMentalHealth =
                 observationRepository.getClinicalEvaluationAndMentalHealth(p.getPersonUuid());
