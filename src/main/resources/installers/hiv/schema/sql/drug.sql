@@ -102,4 +102,23 @@ INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, 
 INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (110, 'LPV/r', 'Abacavir', '120mg', 60, 'Tablets', 1, 0, 1, 110);
 INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (111, 'ABC', 'Lopinavir/Ritonavir', '100/25mg', 60, 'Capsules', 1, 0, 1, 111);
 INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (112, 'Hian', 'Pyridoxine(25mg)', '25mg', 60, 'Tablets', 1, 0, 0, 112);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (113, 'AM', 'Amlodipine(5mg)', '5mg', 60, 'Tablets', 1, 0, 0, 113);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (114, 'AM', 'Amlodipine(10mg)', '10mg', 60, 'Tablets', 1, 0, 0, 114);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (115, 'LST', 'Losartan(50mg)', '50mg', 60, 'Tablets', 1, 0, 0, 115);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (116, 'LST', 'Losartan(100mg)', '100mg', 60, 'Tablets', 1, 0, 0, 116);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (117, 'HCTZ', 'Hydrochlorothiazide(25mg)', '25mg', 60, 'Tablets', 1, 0, 0, 117);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (118, 'DTG', 'Dolutegravir(10mg)', '10mg', 60, 'Tablets', 1, 0, 0, 118);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (119, 'DTG', 'Dolutegravir(5mg)', '5mg', 60, 'Tablets', 1, 0, 0, 119);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (120, 'ABC', 'Abacavir(120mg)', '120mg', 60, 'Tablets', 1, 0, 0, 120);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (121, 'AZT', 'Zidovudine(120mg)', '120mg', 60, 'Tablets', 1, 0, 0, 120);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (122, 'DTG', 'Dolutegravir(50mg)', '50mg', 60, 'Tablets', 1, 0, 0, 122);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (123, 'MDOP', 'Methyldopa(250mg)', '250mg', 60, 'Tablets', 1, 0, 0, 123);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (124, 'LS', 'Lisinopril(5mg)', '5mg', 60, 'Tablets', 1, 0, 0, 124);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (125, 'LS', 'Lisinopril(10mg)', '10mg', 60, 'Tablets', 1, 0, 0, 125);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (126, 'AML', 'Amiloride(5mg)', '5mg', 60, 'Tablets', 1, 0, 0, 126);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (127, 'Ni', 'Nifedipine(5mg)', '5mg', 60, 'Tablets', 1, 0, 0, 127);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (128, 'Ni', 'Nifedipine(10mg)', '10mg', 60, 'Tablets', 1, 0, 0, 128);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (129, 'HCT', 'Telmisartan(40mg)', '40mg', 60, 'Tablets', 1, 0, 0, 129);
+INSERT INTO hiv_drug (id, abbrev, name, strength, pack_size, doseform, morning, afternoon, evening, item_id) VALUES (130, 'HCT', 'Telmisartan(80mg)', '80mg', 60, 'Tablets', 1, 0, 0, 130);
+
 
