@@ -435,7 +435,7 @@ const Tracking = (props) => {
                         <div className="row">
                         <div className="form-group mb-3 col-md-4">        
                             <FormGroup>
-                                <Label >Date of Observation</Label>
+                                <Label >Date of Observation <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="date"
                                     name="dateOfObservation"
@@ -457,7 +457,7 @@ const Tracking = (props) => {
                         <div className="row">
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Duration on ART *</Label>
+                            <Label for="">Duration on ART <span style={{ color:"red"}}> *</span></Label>
 
                                 <Input 
                                     type="select"
@@ -477,7 +477,7 @@ const Tracking = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">DSD Status *</Label>
+                            <Label for="">DSD Status <span style={{ color:"red"}}> *</span></Label>
                                 <Input 
                                     type="select"
                                     name="dsdStatus"
@@ -501,7 +501,7 @@ const Tracking = (props) => {
                         {objValues.dsdStatus==='TRACKING_DSD_STATUS_DEVOLVED' && (
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">DSD Model *</Label>
+                            <Label for="">DSD Model <span style={{ color:"red"}}> *</span></Label>
 
                                 <Input 
                                     type="select"
@@ -523,7 +523,7 @@ const Tracking = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Reason for Tracking *</Label>
+                            <Label for="">Reason for Tracking <span style={{ color:"red"}}> *</span></Label>
 
                                 <Input 
                                     type="select"
@@ -565,7 +565,7 @@ const Tracking = (props) => {
                         )}
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Date of Last Actual Contact/ Appointment *</Label>
+                            <Label for="">Date of Last Actual Contact/ Appointment <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="date"
                                 name="dateLastAppointment"
@@ -584,7 +584,7 @@ const Tracking = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Date of Missed Scheduled Appointment *</Label>
+                            <Label for="">Date of Missed Scheduled Appointment <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="date"
                                 name="dateMissedAppointment"
@@ -772,7 +772,7 @@ const Tracking = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="">Patient Care in Facility Discontinued * ? </Label>
+                            <Label for="">Patient Care in Facility Discontinued ? <span style={{ color:"red"}}> *</span> </Label>
 
                                 <Input 
                                     type="select"

@@ -219,29 +219,7 @@ useEffect(() => {
         setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
         setTests ({...tests,  [e.target.name]: e.target.value});               
     }
-    // const handleInputChangeTest = e => {
-    //     setErrors({...temp, [e.target.name]:""})//reset the error message to empty once the field as value
-    //     if(e.target.value==="16"){
-    //         setShowVLIndication(true)
-    //         setTests ({...tests,  labTestId: e.target.value});
-    //     }else{
-    //         setShowVLIndication(false)
-    //         setTests ({...tests,  labTestId: e.target.value});
-    //     }
-    //     //setObjValues ({...objValues,  [e.target.name]: e.target.value});       
-    // }
-    // const addOrder = e => {   
-    //     if(validate()){            
-    //         tests.visitId=visitId
-    //         setTestOrderList([...testOrderList, tests])
-    //     }
-    // }
-      /* Remove ADR  function **/
-    //   const removeOrder = index => {       
-    //     testOrderList.splice(index, 1);
-    //     setTestOrderList([...testOrderList]);
-         
-    //   };
+
     const handleInputChangeObject = e => {
         setSelectedOption(e)
         //console.log(e);
@@ -370,7 +348,7 @@ useEffect(() => {
                     </Col>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Sample Number* </Label>
+                                <Label for="encounterDate">Sample Number <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="text"
                                     name="labNumber"
@@ -411,7 +389,7 @@ useEffect(() => {
                         </Col> */}
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="testGroup">Select Test*</Label>
+                                <Label for="testGroup">Select Test <span style={{ color:"red"}}> *</span></Label>
                                 {/* <Input
                                     type="select"
                                     name="labTestId"
@@ -443,7 +421,7 @@ useEffect(() => {
                         </Col>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate"> Date Sample Collected*</Label>
+                                <Label for="encounterDate"> Date Sample Collected <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="datetime-local"
                                     name="sampleCollectionDate"
@@ -463,7 +441,7 @@ useEffect(() => {
                         </Col>
                         <Col md={4} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Date Result Received*</Label>
+                                <Label for="encounterDate">Date Result Received <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="datetime-local"
                                     name="dateResultReceived"
@@ -484,7 +462,7 @@ useEffect(() => {
                         (<>
                             <div className="form-group  col-md-3">
                                 <FormGroup>
-                                    <Label>Result *</Label>
+                                    <Label>Result <span style={{ color:"red"}}> *</span></Label>
                                     <select
                                         className="form-control"
                                         name="result"
@@ -508,7 +486,7 @@ useEffect(() => {
                         (<>
                             <Col md={4} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="priority">Result *</Label>
+                                    <Label for="priority">Result <span style={{ color:"red"}}> *</span></Label>
                                     
                                     <Input
                                         type="text"
@@ -529,7 +507,7 @@ useEffect(() => {
                        {tests.labTestId==='16' || tests.labTestId===16 && (
                         <Col md={4} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="vlIndication">VL Indication*</Label>
+                                    <Label for="vlIndication">VL Indication <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                     type="select"
                                     name="viralLoadIndication"

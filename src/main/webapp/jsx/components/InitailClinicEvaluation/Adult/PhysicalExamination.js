@@ -344,7 +344,7 @@ return (
                    
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Body Weight *</Label>
+                        <Label >Body Weight <span style={{ color:"red"}}> *</span></Label>
                         <InputGroup> 
                             <Input 
                                 type="number"
@@ -371,7 +371,7 @@ return (
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <Label >Height *</Label>
+                        <Label >Height <span style={{ color:"red"}}> *</span></Label>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
