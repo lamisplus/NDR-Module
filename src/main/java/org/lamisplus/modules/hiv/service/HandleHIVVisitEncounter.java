@@ -53,7 +53,7 @@ public class HandleHIVVisitEncounter {
 			Visit visit = new Visit();
 			personOptional.ifPresent(visit::setPerson);
 			personOptional.ifPresent(person -> visit.setFacilityId(person.getFacilityId()));
-			visit.setVisitStartDate(visitDate.atTime(8,0));
+			visit.setVisitStartDate(visitDate.atTime(0,0));
 			visit.setArchived(0);
 			visit.setUuid(UUID.randomUUID().toString());
 			//Log.info("about saving visit {}", personOptional.isPresent());
