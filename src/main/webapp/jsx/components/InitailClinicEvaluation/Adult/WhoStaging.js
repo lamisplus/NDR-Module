@@ -240,7 +240,7 @@ return (
                     <form >
                     {/* Medical History form inputs */}
                     <div className="row">
-                    <h3>Assessment *</h3>
+                    <h3>Assessment <span style={{ color:"red"}}> *</span></h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
                         <InputGroup> 
@@ -268,7 +268,7 @@ return (
                     <h3>WHO staging criteria (History of any of the following) </h3>
                     <div className="form-group mb-3 col-md-6">                                    
                         <FormGroup>
-                        <Label >WHO STAGE *</Label>
+                        <Label >WHO STAGE <span style={{ color:"red"}}> *</span></Label>
                         <InputGroup> 
                                 <Input 
                                     type="select"

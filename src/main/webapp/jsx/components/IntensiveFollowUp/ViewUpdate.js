@@ -290,7 +290,7 @@ const Tracking = (props) => {
                         <div className="row">
                         <div className="form-group mb-3 col-md-4">        
                             <FormGroup>
-                                <Label >Date of Observation</Label>
+                                <Label >Date of Observation <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="date"
                                     name="dateOfObservation"

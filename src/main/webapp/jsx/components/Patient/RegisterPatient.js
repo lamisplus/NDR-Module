@@ -802,7 +802,7 @@ const UserRegistration = (props) => {
                                         <div className="row">
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="dateOfRegistration">Date of Registration* </Label>
+                                                    <Label for="dateOfRegistration">Date of Registration <span style={{ color:"red"}}> *</span> </Label>
                                                     <Input
                                                         className="form-control"
                                                         type="date"
@@ -824,7 +824,7 @@ const UserRegistration = (props) => {
                                             
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="patientId">Hospital Number* </Label>
+                                                    <Label for="patientId">Hospital Number <span style={{ color:"red"}}> *</span></Label>
                                                     <input
                                                         className="form-control"
                                                         type="text"
@@ -847,7 +847,7 @@ const UserRegistration = (props) => {
                                             </div>
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="patientId">EMR Number* </Label>
+                                                    <Label for="patientId">EMR Number <span style={{ color:"red"}}> *</span> </Label>
                                                     <input
                                                         className="form-control"
                                                         type="text"
@@ -867,7 +867,7 @@ const UserRegistration = (props) => {
                                         <div className="row">
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label for="firstName">First Names *</Label>
+                                                    <Label for="firstName">First Names <span style={{ color:"red"}}> *</span></Label>
                                                     <Input
                                                         className="form-control"
                                                         type="text"
@@ -900,7 +900,7 @@ const UserRegistration = (props) => {
 
                                             <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
-                                                    <Label>Last Name *</Label>
+                                                    <Label>Last Name <span style={{ color:"red"}}> *</span></Label>
                                                     <input
                                                         className="form-control"
                                                         type="text"
@@ -920,7 +920,7 @@ const UserRegistration = (props) => {
                                         <div className="row">
                                             <div className="form-group  col-md-4">
                                                 <FormGroup>
-                                                    <Label>Sex *</Label>
+                                                    <Label>Sex <span style={{ color:"red"}}> *</span></Label>
                                                     <select
                                                             className="form-control"
                                                             name="sexId"
@@ -1054,7 +1054,7 @@ const UserRegistration = (props) => {
 
                                             <div className="form-group  col-md-4">
                                                 <FormGroup>
-                                                    <Label>Education Level *</Label>
+                                                    <Label>Education Level <span style={{ color:"red"}}> *</span></Label>
                                                     <select
                                                         className="form-control"
                                                         name="educationId"
@@ -1103,7 +1103,7 @@ const UserRegistration = (props) => {
                                     <div className={"row"}>
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>Phone Number *</Label>
+                                                <Label>Phone Number <span style={{ color:"red"}}> *</span></Label>
                                                 <PhoneInput
                                                     containerStyle={{width:'100%',border: "1px solid #014D88"}}
                                                     inputStyle={{width:'100%',borderRadius:'0px'}}
@@ -1166,7 +1166,7 @@ const UserRegistration = (props) => {
                                     <div className="row">
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>Country *</Label>
+                                                <Label>Country <span style={{ color:"red"}}> *</span></Label>
                                                 <select
                                                     className="form-control"
                                                     type="text"
@@ -1191,7 +1191,7 @@ const UserRegistration = (props) => {
 
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>State *</Label>
+                                                <Label>State <span style={{ color:"red"}}> *</span></Label>
                                                 <select
                                                     className="form-control"
                                                     type="text"
@@ -1216,7 +1216,7 @@ const UserRegistration = (props) => {
 
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>Province/District/LGA *</Label>
+                                                <Label>Province/District/LGA <span style={{ color:"red"}}> *</span></Label>
                                                 <select
                                                     className="form-control"
                                                     type="text"
@@ -1243,7 +1243,7 @@ const UserRegistration = (props) => {
                                     <div className={"row"}>
                                         <div className="form-group  col-md-4">
                                             <FormGroup>
-                                                <Label>Street Address*</Label>
+                                                <Label>Street Address <span style={{ color:"red"}}> *</span></Label>
                                                 <input
                                                     className="form-control"
                                                     type="text"
@@ -1346,7 +1346,7 @@ const UserRegistration = (props) => {
                                                             <div className="row">
                                                                 <div className="form-group mb-3 col-md-3">
                                                                     <FormGroup>
-                                                                        <Label for="relationshipType">Relationship Type *</Label>
+                                                                        <Label for="relationshipType">Relationship Type <span style={{ color:"red"}}> *</span></Label>
                                                                         <select
                                                                             className="form-control"
                                                                             name="relationshipId"
@@ -1368,7 +1368,7 @@ const UserRegistration = (props) => {
 
                                                                 <div className="form-group mb-3 col-md-3">
                                                                     <FormGroup>
-                                                                        <Label for="cfirstName">First Name *</Label>
+                                                                        <Label for="cfirstName">First Name <span style={{ color:"red"}}> *</span></Label>
                                                                         <input
                                                                             className="form-control"
                                                                             type="text"
@@ -1402,7 +1402,7 @@ const UserRegistration = (props) => {
 
                                                                 <div className="form-group mb-3 col-md-3">
                                                                     <FormGroup>
-                                                                        <Label>Last Name *</Label>
+                                                                        <Label>Last Name <span style={{ color:"red"}}> *</span></Label>
                                                                         <input
                                                                             className="form-control"
                                                                             type="text"
@@ -1534,7 +1534,7 @@ const UserRegistration = (props) => {
                                 
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label for="uniqueId">Unique ID No  * </Label>
+                                    <Label for="uniqueId">Unique ID No <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="text"
                                         name="uniqueId"
@@ -1552,7 +1552,7 @@ const UserRegistration = (props) => {
                                 </div>
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label for="dateOfRegistration">Date of Enrollment * </Label>
+                                    <Label for="dateOfRegistration">Date of Enrollment <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="date"
                                         name="dateOfRegistration"
@@ -1573,7 +1573,7 @@ const UserRegistration = (props) => {
                             <div className="row">
                                 <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label for="entryPointId">Care Entry Point * </Label>
+                                <Label for="entryPointId">Care Entry Point <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="select"
                                     name="entryPointId"
@@ -1630,7 +1630,7 @@ const UserRegistration = (props) => {
                                 
                                 <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >HIV Status at Registration *</Label>
+                                <Label >HIV Status at Registration <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="select"
                                     name="statusAtRegistrationId"
@@ -1655,7 +1655,7 @@ const UserRegistration = (props) => {
                                 {basicInfo.dob!=="" && (
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label >Date of Confirmed HIV Test *</Label>
+                                    <Label >Date of Confirmed HIV Test <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="date"
                                         name="dateConfirmedHiv"
@@ -1675,7 +1675,7 @@ const UserRegistration = (props) => {
                                 )}
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label >Source of Referral *</Label>
+                                    <Label >Source of Referral <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="select"
                                         name="sourceOfReferrerId"
@@ -1715,7 +1715,7 @@ const UserRegistration = (props) => {
                                     ):""}
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label >Enrollment Setting *</Label>
+                                    <Label >Enrollment Setting <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="select"
                                         name="enrollmentSettingId"
@@ -1741,7 +1741,7 @@ const UserRegistration = (props) => {
 
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label >TB Status * </Label>
+                                    <Label >TB Status <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="select"
                                         name="tbStatusId"
@@ -1767,7 +1767,7 @@ const UserRegistration = (props) => {
                                 {hideTargetGroup==="false" ? (
                                 <div className="form-group mb-3 col-md-6">
                                     <FormGroup>
-                                    <Label >Target Group *</Label>
+                                    <Label >Target Group <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="select"
                                         name="targetGroupId"

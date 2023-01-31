@@ -661,7 +661,7 @@ const Pharmacy = (props) => {
     }
     const addDrug = e => {
            if(validateDrugDispense()){
-            console.log(regimenDrug)
+            //console.log(regimenDrug)
             setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
             const drugObj=[{
                 dispense:"",
@@ -675,12 +675,58 @@ const Pharmacy = (props) => {
 
             }]                
             setRegimenDrug([])
+            setShowRegimen(false)
         }else{
             toast.error("All fields are required")
         }
                      
     }
-    console.log(regimenDrug)
+    const addDrugTB = e => {
+        if(validateDrugDispense()){
+         //console.log(regimenDrug)
+         setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
+         const drugObj=[{
+             dispense:"",
+             prescribed:"",
+             dosage:"",
+             freqency:"",
+             duration:"",
+             name:"",
+             regimenId:"",
+             regimenName:"",
+
+         }]                
+         setRegimenDrug([])
+         setShowRegimenTB(false)
+     }else{
+         toast.error("All fields are required")
+     }
+                  
+    }
+
+    const addDrugOI = e => {
+        if(validateDrugDispense()){
+         //console.log(regimenDrug)
+         setRegimenDrugList([...regimenDrugList, ...regimenDrug]) 
+         const drugObj=[{
+             dispense:"",
+             prescribed:"",
+             dosage:"",
+             freqency:"",
+             duration:"",
+             name:"",
+             regimenId:"",
+             regimenName:"",
+
+         }]                
+         setRegimenDrug([])
+         setShowRegimenOI(false)
+     }else{
+         toast.error("All fields are required")
+     }
+                  
+    }
+    
     /* Remove ADR  function **/
     const removeAttempt = index => {       
         regimenDrugList.splice(index, 1);
@@ -886,7 +932,7 @@ const Pharmacy = (props) => {
                 </div>
                 <div className="form-group mb-3 col-md-4">
                     <FormGroup>
-                    <Label for="artDate">Encounter Date * </Label>
+                    <Label for="artDate">Encounter Date <span style={{ color:"red"}}> *</span> </Label>
                     <Input
                         type="date"
                         name="visitDate"
@@ -990,7 +1036,7 @@ const Pharmacy = (props) => {
                 </div>
                 <div className="form-group mb-3 col-md-4">
                 <FormGroup>
-                    <Label for="artDate"> Date of Next Appointment* </Label>
+                    <Label for="artDate"> Date of Next Appointment <span style={{ color:"red"}}> *</span> </Label>
                     <Input
                         type="date"
                         name="nextAppointment"
@@ -1186,7 +1232,7 @@ const Pharmacy = (props) => {
             </div>
             
             {/* List of Regimen Drug selected  */}
-            {showRegimen && regimenDrug && regimenDrug.length >0 ? 
+            {showRegimen  ? 
                 (
                     <>
                         <Card>
@@ -1553,7 +1599,7 @@ const Pharmacy = (props) => {
                         </div>
                         <div className="row">
                         <div className="form-group mb-3 col-md-2 float-end">
-                            <LabelSui as='a' color='black'  onClick={addDrug}  size='small' style={{ marginTop:35}}>
+                            <LabelSui as='a' color='black'  onClick={addDrugOI}  size='small' style={{ marginTop:35}}>
                                 <Icon name='plus' /> Add
                             </LabelSui>
                         </div>
@@ -1756,7 +1802,7 @@ const Pharmacy = (props) => {
                         </div>
                         <div className="row">
                         <div className="form-group mb-3 col-md-2 float-end">
-                            <LabelSui as='a' color='black'  onClick={addDrug}  size='small' style={{ marginTop:35}}>
+                            <LabelSui as='a' color='black'  onClick={addDrugTB}  size='small' style={{ marginTop:35}}>
                                 <Icon name='plus' /> Add
                             </LabelSui>
                         </div>

@@ -175,10 +175,10 @@ function SubMenu(props) {
                      {/* patientObj.currentStatus && patientObj.currentStatus==='IIT' &&  (<Menu.Item onClick={() => loadChronicCare(patientObj)} >Chronic Care</Menu.Item> */}
                      <Menu.Item onClick={() => loadIntensiveForm(patientObj)} name='intensive'
                     active={activeItem === 'intensive'} title="Intensive Follow Up">Intensive Follow Up</Menu.Item>
-                    <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
-                    active={activeItem === 'transfer'} title="Transfer">Transfer</Menu.Item>
-                    <Menu.Item onClick={() => loadChronicCare(patientObj)} name='transfer'
-                    active={activeItem === 'chronic-care'} title="Chronic Care">Chronic Care</Menu.Item>
+                    {/* <Menu.Item onClick={() => loadTransferForm(patientObj)} name='transfer'
+                    active={activeItem === 'transfer'} title="Transfer">Transfer</Menu.Item> */}
+                    {/* <Menu.Item onClick={() => loadChronicCare(patientObj)} name='transfer'
+                    active={activeItem === 'chronic-care'} title="Chronic Care">Chronic Care</Menu.Item> */}
                     <Menu.Item onClick={() => loadPatientHistory(patientObj)} name='history'
                     active={activeItem === 'history'} title="History">History</Menu.Item>
                     

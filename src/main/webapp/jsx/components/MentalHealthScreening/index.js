@@ -172,7 +172,7 @@ const MentalHealthScreening = (props) => {
                         <div className="row">
                         <div className="form-group mb-3 col-md-4">        
                             <FormGroup>
-                                <Label >Date of Observation <sup style={{ color:"red"}}> *</sup></Label>
+                                <Label >Date of Observation <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="date"
                                     name="dateOfObservation"
@@ -193,7 +193,7 @@ const MentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself ? <sup style={{ color:"red"}}> *</sup></Label>
+                            <Label >Have you ever been depressed for weeks at a time, lost interest, or pleasure in most activities, had trouble concentrating and making decisions, or thought about killing yourself ? <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="mhs1"
@@ -211,7 +211,7 @@ const MentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Have you ever had spells or attacks when you suddenly felt anxious, frightened, uneasy to the extent that you began sweating, your heart began to beat rapidly, you were shaking or trembling, your stomach was upset, you felt dizzy or unsteady, as if you would faint ? <sup style={{ color:"red"}}> *</sup></Label>
+                            <Label >Have you ever had spells or attacks when you suddenly felt anxious, frightened, uneasy to the extent that you began sweating, your heart began to beat rapidly, you were shaking or trembling, your stomach was upset, you felt dizzy or unsteady, as if you would faint ? <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="mhs2"
@@ -247,7 +247,7 @@ const MentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Have you used drugs other than those required for medical reasons? For example, cannabis, cocaine, stimulants, or narcotics (e.g., heroin). May equally ask about the abuse of alcohol and other local drugs or psychoactive substances. <sup style={{ color:"red"}}> *</sup></Label>
+                            <Label >Have you used drugs other than those required for medical reasons? For example, cannabis, cocaine, stimulants, or narcotics (e.g., heroin). May equally ask about the abuse of alcohol and other local drugs or psychoactive substances. <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="mhs4"
@@ -265,7 +265,7 @@ const MentalHealthScreening = (props) => {
                         </div>
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >In recent time, has any one punched, slapped, kicked, bit, or caused you any type of physical or sexual harm ? <sup style={{ color:"red"}}> *</sup></Label>
+                            <Label >In recent time, has any one punched, slapped, kicked, bit, or caused you any type of physical or sexual harm ? <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="mhs5"

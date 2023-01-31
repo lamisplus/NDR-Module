@@ -546,7 +546,7 @@ const ArtCommencement = (props) => {
                     <br/>
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label for="artDate">ART Start Date  * </Label>
+                            <Label for="artDate">ART Start Date <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="date"
                                 name="visitDate"
@@ -657,7 +657,7 @@ const ArtCommencement = (props) => {
 
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen Line * </Label>
+                        <Label >Original Regimen Line <span style={{ color:"red"}}> *</span></Label>
                         <Input
                                 type="select"
                                 name="regimenTypeId"
@@ -694,7 +694,7 @@ const ArtCommencement = (props) => {
                         </div>                    
                         <div className="form-group mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Original Regimen *</Label>
+                        <Label >Original Regimen <span style={{ color:"red"}}> *</span></Label>
                         <Input
                                 type="select"
                                 name="regimenId"
@@ -777,7 +777,7 @@ const ArtCommencement = (props) => {
                         )}
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >WHO Staging *</Label>
+                            <Label >WHO Staging <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="whoStagingId"
@@ -805,7 +805,7 @@ const ArtCommencement = (props) => {
                         
                         <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Functional Status *</Label>
+                            <Label >Functional Status <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="functionalStatusId"
@@ -985,7 +985,7 @@ const ArtCommencement = (props) => {
                    
                     <div className=" mb-3 col-md-4">
                         <FormGroup>
-                        <Label >Body Weight *</Label>
+                        <Label >Body Weight <span style={{ color:"red"}}> *</span></Label>
                         <InputGroup> 
                             <Input 
                                 type="number"
@@ -1012,7 +1012,7 @@ const ArtCommencement = (props) => {
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <Label >Height *</Label>
+                        <Label >Height <span style={{ color:"red"}}> *</span></Label>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"

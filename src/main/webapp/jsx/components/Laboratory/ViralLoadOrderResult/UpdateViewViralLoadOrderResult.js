@@ -377,7 +377,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="labNumber">Sample Number*</Label>
+                                <Label for="labNumber">Sample Number <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                 type="text"
                                 name="sampleNumber"
@@ -395,7 +395,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="vlIndication">VL Indication*</Label>
+                                <Label for="vlIndication">VL Indication <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                 type="select"
                                 name="viralLoadIndication"
@@ -419,7 +419,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="encounterDate">Sample Type *</Label>
+                                <Label for="encounterDate">Sample Type <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="select"
                                     name="sampleTypeId"
@@ -444,7 +444,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Order by *</Label>
+                            <Label for="encounterDate">Order by <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="text"
                                 name="orderBy"
@@ -463,7 +463,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Date Ordered  *</Label>
+                                    <Label for="encounterDate">Date Ordered  <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="date"
                                         name="dateOrderBy"
@@ -483,7 +483,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Collected by *</Label>
+                            <Label for="encounterDate">Collected by <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="text"
                                 name="sampleCollectedBy"
@@ -502,7 +502,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate"> Date Sample Collected*</Label>
+                            <Label for="encounterDate"> Date Sample Collected <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="datetime-local"
                                 name="sampleCollectionDate"
@@ -547,7 +547,7 @@ const Laboratory = (props) => {
                         <Row>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Assayed by *</Label>
+                                    <Label for="encounterDate">Assayed by <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="text"
                                         name="assayedBy"
@@ -564,7 +564,7 @@ const Laboratory = (props) => {
                             </Col>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Date Assayed  *</Label>
+                                    <Label for="encounterDate">Date Assayed <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="date"
                                         name="dateAssayedBy"
@@ -584,7 +584,7 @@ const Laboratory = (props) => {
                             </Col>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="encounterDate">Date Result Received *</Label>
+                                    <Label for="encounterDate">Date Result Received <span style={{ color:"red"}}> *</span></Label>
                                     <Input
                                         type="datetime-local"
                                         name="dateResultReceived"
@@ -604,7 +604,7 @@ const Laboratory = (props) => {
                             </Col>
                             <Col md={6} className="form-group mb-3">
                                 <FormGroup>
-                                    <Label for="priority">Result *</Label>
+                                    <Label for="priority">Result <span style={{ color:"red"}}> *</span></Label>
                                     <InputGroup>
                                     <Input
                                         type="number"
@@ -671,7 +671,7 @@ const Laboratory = (props) => {
                     <Row>
                     <Col md={6} className="form-group mb-3">
                             <FormGroup>
-                                <Label for="vlIndication">PCR Lab Name *</Label>
+                                <Label for="vlIndication">PCR Lab Name <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                 type="select"
                                 name="pcrLabName"
@@ -754,7 +754,7 @@ const Laboratory = (props) => {
                     {tests.sampleLoggedRemotely ==='1' && (
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Sample logged remotely *</Label>
+                            <Label for="encounterDate">Date Sample logged remotely <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="date"
                                 name="dateSampleLoggedRemotely"
@@ -773,7 +773,7 @@ const Laboratory = (props) => {
                     )}
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Sample Received at PCR Lab *</Label>
+                            <Label for="encounterDate">Date Sample Received at PCR Lab <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="datetime-local"
                                 name="dateReceivedAtPcrLab"
@@ -794,7 +794,7 @@ const Laboratory = (props) => {
                     
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Checked by * </Label>
+                            <Label for="encounterDate">Checked by <span style={{ color:"red"}}> *</span> </Label>
                             <Input
                                 type="text"
                                 name="checkedBy"
@@ -813,7 +813,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Checked *</Label>
+                            <Label for="encounterDate">Date Checked <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="date"
                                 name="dateCheckedBy"
@@ -833,7 +833,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Approved by *</Label>
+                            <Label for="encounterDate">Approved by <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="text"
                                 name="approvedBy"
@@ -852,7 +852,7 @@ const Laboratory = (props) => {
                     </Col>
                     <Col md={6} className="form-group mb-3">
                         <FormGroup>
-                            <Label for="encounterDate">Date Approved *</Label>
+                            <Label for="encounterDate">Date Approved <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="date"
                                 name="dateApproved"

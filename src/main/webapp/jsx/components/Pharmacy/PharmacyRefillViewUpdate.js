@@ -724,7 +724,7 @@ const Pharmacy = (props) => {
             <div className="row">
                 <div className="form-group mb-3 col-md-4">
                     <FormGroup>
-                    <Label for="artDate">Encounter Date * </Label>
+                    <Label for="artDate">Encounter Date <span style={{ color:"red"}}> *</span> </Label>
                     <Input
                         type="date"
                         name="visitDate"
@@ -855,7 +855,7 @@ const Pharmacy = (props) => {
                 </div>
                 <div className="form-group mb-3 col-md-4">
                     <FormGroup>
-                    <Label for="artDate">Encounter Date * </Label>
+                    <Label for="artDate">Encounter Date <span style={{ color:"red"}}> *</span></Label>
                     <Input
                         type="date"
                         name="visitDate"
@@ -935,7 +935,7 @@ const Pharmacy = (props) => {
             <div className="row">
                 <div className="form-group mb-3 col-md-4">
                 <FormGroup>
-                    <Label >Refill Period(days) *</Label>
+                    <Label >Refill Period(days) <span style={{ color:"red"}}> *</span></Label>
                     <Input
                         type="select"
                         name="refillPeriod"
@@ -960,7 +960,7 @@ const Pharmacy = (props) => {
                 
                 <div className="form-group mb-3 col-md-4">
                 <FormGroup>
-                    <Label for="artDate"> Date of Next Appointment* </Label>
+                    <Label for="artDate"> Date of Next Appointment <span style={{ color:"red"}}> *</span> </Label>
                     <Input
                         type="date"
                         name="nextAppointment"

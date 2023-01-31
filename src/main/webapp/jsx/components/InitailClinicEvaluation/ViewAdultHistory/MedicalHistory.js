@@ -274,7 +274,7 @@ const MedicalHistory = (props) => {
                     <div className="row">
                     <div className="form-group mb-3 col-md-4">
                             <FormGroup>
-                            <Label >Visit Date *</Label>
+                            <Label >Visit Date <span style={{ color:"red"}}> *</span></Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"
@@ -1000,7 +1000,7 @@ const MedicalHistory = (props) => {
                      <div className="row">
                      <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Patient Screen for TB *</Label>
+                            <Label >Patient Screen for TB <span style={{ color:"red"}}> *</span></Label>
                             <InputGroup> 
                                 <Input 
                                     type="select"
@@ -1026,7 +1026,7 @@ const MedicalHistory = (props) => {
                     {/* Past medical history */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Past Medical History *</Label>
+                            <Label >Past Medical History <span style={{ color:"red"}}> *</span></Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1046,7 +1046,7 @@ const MedicalHistory = (props) => {
                     {/* Past Family medical history */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Relevant Family History *</Label>
+                            <Label >Relevant Family History <span style={{ color:"red"}}> *</span></Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1084,7 +1084,7 @@ const MedicalHistory = (props) => {
                     {/* Drug Allergies */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Drug Allergies * </Label>
+                            <Label >Drug Allergies <span style={{ color:"red"}}> *</span></Label>
                             <InputGroup> 
                             <Input
                                 type="select"

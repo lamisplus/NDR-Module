@@ -946,7 +946,7 @@ const ClinicVisit = (props) => {
                         <div className="row">
                         <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <FormLabelName >Date of Visit *</FormLabelName>
+                            <FormLabelName >Date of Visit <span style={{ color:"red"}}> *</span></FormLabelName>
                             <Input
                                 type="date"
                                 name="encounterDate"
@@ -1051,7 +1051,7 @@ const ClinicVisit = (props) => {
                     </div>
                     <div className=" mb-3 col-md-5">
                         <FormGroup>
-                        <FormLabelName >Body Weight *</FormLabelName>
+                        <FormLabelName >Body Weight <span style={{ color:"red"}}> *</span></FormLabelName>
                         <InputGroup> 
                             <Input 
                                 type="number"
@@ -1078,7 +1078,7 @@ const ClinicVisit = (props) => {
                     </div>                                   
                     <div className="form-group mb-3 col-md-5">
                         <FormGroup>
-                        <FormLabelName >Height *</FormLabelName>
+                        <FormLabelName >Height <span style={{ color:"red"}}> *</span></FormLabelName>
                         <InputGroup> 
                         <InputGroupText
                                 addonType="append"
@@ -1281,7 +1281,7 @@ const ClinicVisit = (props) => {
 
               <div className=" mb-3 col-md-6">
                   <FormGroup>
-                  <FormLabelName >WHO Staging *</FormLabelName>
+                  <FormLabelName >WHO Staging <span style={{ color:"red"}}> *</span></FormLabelName>
                   <Input
                       type="select"
                       name="whoStagingId"
@@ -1307,7 +1307,7 @@ const ClinicVisit = (props) => {
               </div>
               <div className=" mb-3 col-md-6">
                   <FormGroup>
-                  <FormLabelName >Functional Status *</FormLabelName>
+                  <FormLabelName >Functional Status <span style={{ color:"red"}}> *</span></FormLabelName>
                   <Input
                       type="select"
                       name="functionalStatusId"
@@ -1334,7 +1334,7 @@ const ClinicVisit = (props) => {
               
               <div className=" mb-3 col-md-6">
               <FormGroup>
-                <FormLabelName >Level of Adherence *</FormLabelName>
+                <FormLabelName >Level of Adherence <span style={{ color:"red"}}> *</span></FormLabelName>
                 <Input
                   type="select"
                   name="levelOfAdherence"
@@ -1382,7 +1382,7 @@ const ClinicVisit = (props) => {
                 </div>
                 <div className="form-group mb-3 col-md-6">
                     <FormGroup>
-                    <FormLabelName >TB Status * </FormLabelName>
+                    <FormLabelName >TB Status <span style={{ color:"red"}}> *</span></FormLabelName>
                     <Input
                         type="select"
                         name="tbStatus"

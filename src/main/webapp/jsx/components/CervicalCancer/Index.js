@@ -8,8 +8,6 @@ import axios from "axios";
 import { toast} from "react-toastify";
 import { url as baseUrl } from "../../../api";
 import { token as token } from "../../../api";
-import { useHistory } from "react-router-dom";
-import {  Modal, Button } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
 import moment from "moment";
 import 'react-summernote/dist/react-summernote.css'; // import styles
@@ -309,7 +307,7 @@ const CervicalCancer = (props) => {
                             <h2> Cervical Cancer </h2>
                             <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label for="artDate">Date of Screening * </Label>
+                                <Label for="artDate">Date of Screening <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="date"
                                     name="dateOfScreening"
@@ -327,7 +325,7 @@ const CervicalCancer = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Screening Method *</Label>
+                            <Label >Screening Method <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                     type="select"
                                     name="screenMethod"
@@ -351,7 +349,7 @@ const CervicalCancer = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Screening Type *</Label>
+                            <Label >Screening Type <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                     type="select"
                                     name="screenType"
@@ -375,7 +373,7 @@ const CervicalCancer = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Screening Result *</Label>
+                                <Label >Screening Result <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="select"
                                     name="screeningResult"
@@ -425,7 +423,7 @@ const CervicalCancer = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >New Squamocolumnar junction visible *</Label>
+                            <Label >New Squamocolumnar junction visible <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                 type="select"
                                 name="screeningVisible"
@@ -451,7 +449,7 @@ const CervicalCancer = (props) => {
                             )}
                             <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Gross Cervical Lesions seen *</Label>
+                                <Label >Gross Cervical Lesions seen <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="select"
                                     name="screeningGross"
@@ -475,7 +473,7 @@ const CervicalCancer = (props) => {
                             </div>
                             <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Screening Treatment *</Label>
+                            <Label >Screening Treatment <span style={{ color:"red"}}> *</span></Label>
                             <Input
                                     type="select"
                                     name="screenType"
@@ -499,7 +497,7 @@ const CervicalCancer = (props) => {
                             </div>                        
                             <div className="form-group mb-3 col-md-6">
                                 <FormGroup>
-                                <Label >Referral *</Label>
+                                <Label >Referral <span style={{ color:"red"}}> *</span></Label>
                                 <Input
                                     type="select"
                                     name="screeningRefferal"

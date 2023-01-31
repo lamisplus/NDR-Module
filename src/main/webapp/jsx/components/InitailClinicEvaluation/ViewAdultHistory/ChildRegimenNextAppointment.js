@@ -257,7 +257,7 @@ return (
                     <div className="row">
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Next appointment</Label>
+                            <Label >Next appointment </Label>
                             <InputGroup> 
                                 <Input 
                                     type="date"
