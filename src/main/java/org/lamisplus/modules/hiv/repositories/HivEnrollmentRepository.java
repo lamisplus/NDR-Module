@@ -1,6 +1,7 @@
 package org.lamisplus.modules.hiv.repositories;
 
 import org.lamisplus.modules.hiv.domain.dto.EnrollmentStatus;
+import org.lamisplus.modules.hiv.domain.dto.OVCDomainDTO;
 import org.lamisplus.modules.hiv.domain.dto.PatientProjection;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.patient.domain.entity.Person;
@@ -65,4 +66,11 @@ public interface HivEnrollmentRepository extends JpaRepository<HivEnrollment, Lo
             "            ORDER BY p.id DESC",
             nativeQuery = true)
     Page<PatientProjection> getPatientsByFacilityBySearchParam(Long facilityId, String searchParam,  Pageable page);
+    
+    
+    @Query(value = "SELECT id, name  from domain", nativeQuery = true)
+    List<OVCDomainDTO> getOVCDomains();
+    
+    @Query(value = "SELECT name from ovc_service where domain_id =?1", nativeQuery = true)
+    List<String> getOVCServiceByDomainId(Long domainId);
 }

@@ -10,6 +10,7 @@ import org.lamisplus.modules.base.domain.repositories.ApplicationCodesetReposito
 import org.lamisplus.modules.hiv.domain.dto.ARTClinicalCommenceDto;
 import org.lamisplus.modules.hiv.domain.dto.HivEnrollmentDTO;
 import org.lamisplus.modules.hiv.domain.dto.HivPatientDto;
+import org.lamisplus.modules.hiv.domain.dto.OVCDomainDTO;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.domain.entity.HivEnrollment;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
@@ -164,6 +165,15 @@ public class HivEnrollmentService {
 		return personRepository.findById(personId)
 				.orElseThrow(() -> new EntityNotFoundException(Person.class, "id", String.valueOf(personId)));
 	}
+	
+	public List<OVCDomainDTO> getOvcDomainDTOList() {
+		return hivEnrollmentRepository.getOVCDomains();
+    }
+	
+	public List<String> getOVCServicesByDomainId(Long domainId) {
+		return hivEnrollmentRepository.getOVCServiceByDomainId(domainId);
+	}
+	
 	
 	
 }
