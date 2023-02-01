@@ -137,7 +137,7 @@ public class HivEnrollment extends HivAuditEntity implements Persistable<Long>, 
     private String lipName;
     
     @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "ovc_service_provided")
     private JsonNode ovcServiceProvided;
     @Override
     public boolean isNew() {

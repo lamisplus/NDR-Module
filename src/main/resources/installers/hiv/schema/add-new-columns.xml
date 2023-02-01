@@ -139,7 +139,7 @@
         </preConditions>
         <sql>
             ALTER TABLE hiv_enrollment
-                ADD   ovcServiceProvided JSONB
+                ADD  ovc_service_provided JSONB
         </sql>
     </changeSet>
 </databaseChangeLog>
