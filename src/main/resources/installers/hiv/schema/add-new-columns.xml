@@ -131,4 +131,15 @@
                 ADD  lip_name varchar(100)
         </sql>
     </changeSet>
+    <changeSet failOnError="true"  id="20230201-011" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="hiv_enrollment" columnName="ovc_service_provided" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE hiv_enrollment
+                ADD   ovcServiceProvided JSONB
+        </sql>
+    </changeSet>
 </databaseChangeLog>

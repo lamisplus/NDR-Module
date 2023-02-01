@@ -43,8 +43,7 @@
                 date_confirmed_hiv date,
                 date_enrolled_pmtct date,
                 source_of_referrer_id BIGINT,
-                time_hiv_diagnosis TIMESTAMP
-                                             with time zone,
+                time_hiv_diagnosis TIMESTAMP with time zone,
                                                  pregnant BOOLEAN,
                                                  breastfeeding BOOLEAN,
                                                  date_of_registration date,

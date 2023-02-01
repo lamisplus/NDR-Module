@@ -1,7 +1,9 @@
 package org.lamisplus.modules.hiv.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
+import org.hibernate.annotations.Type;
 import org.lamisplus.modules.hiv.utility.LocalDateConverter;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
@@ -133,6 +135,10 @@ public class HivEnrollment extends HivAuditEntity implements Persistable<Long>, 
     @Basic
     @Column(name = "lip_name")
     private String lipName;
+    
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    private JsonNode ovcServiceProvided;
     @Override
     public boolean isNew() {
 
