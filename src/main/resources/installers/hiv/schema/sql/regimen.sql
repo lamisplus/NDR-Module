@@ -126,10 +126,10 @@ INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, 
 INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (122, 'TDF(300mg)+3TC(30mg)+DTG(50mg)', 'Tenofovir+Lamivudine+Dolutegravir', 3, true, 50);
 INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (130, 'Isoniazid 100mg', '', 15, true, 1);
 INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (200, 'Isoniazid 100mg', '', 15, false, 1);
-INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (200, 'Isoniazid/Rifampentine(3HP)', '', 15, true, 1);
-INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (200, 'Isoniazid/Rifampicin(3HR)', '', 15, true, 1);
-INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (200, 'Cotrimoxazole/Isoniazid/Pyridoxine (960/300/25mg)', '', 15, true, 1);
-INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (200, 'Liposomal Amphotericin B (3mg/Kg IV dly) (50mg)', '', 15, true, 1);
+INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (244, 'Isoniazid/Rifampentine(3HP)', '', 15, true, 1);
+INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (245, 'Isoniazid/Rifampicin(3HR)', '', 15, true, 1);
+INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (246, 'Cotrimoxazole/Isoniazid/Pyridoxine (960/300/25mg)', '', 15, true, 1);
+INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (247, 'Liposomal Amphotericin B (3mg/Kg IV dly) (50mg)', '', 15, true, 1);
 INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (201, 'TDF(300mg)+3TC(150mg)', 'Tenofovir+Lamivudine', 30, true, 1);
 INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (202, 'ABC(120mg)+3TC(60mg)+LPV/r(100mg/25mg)', 'Abacavir+Lamivudine+Lopinavir/Ritonavir', 3, true, 1);
 INSERT INTO hiv_regimen (id, description, composition, regimen_type_id, active, priority) VALUES (203, 'ABC(120mg)+3TC(60mg)+LPV/r(40mg/10mg)', 'Abacavir+Lamivudine+Lopinavir/Ritonavir', 3, true, 1);
