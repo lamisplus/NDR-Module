@@ -105,6 +105,14 @@ public class HivEnrollmentController {
     public List<PatientActivity> getActivitiesHistory(@PathVariable Long patientId) {
         return patientActivityService.getActivities (patientId);
     }
-
+    @GetMapping(value = "ovc/service/domains", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<OVCDomainDTO>> getOVCServiceDomain() {
+        return ResponseEntity.ok (hivEnrollmentService.getOvcDomainDTOList());
+    }
+    
+    @GetMapping(value = "ovc/service/{domainId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getOVCServiceByDomain(@PathVariable("domainId") Long domainId) {
+        return ResponseEntity.ok (hivEnrollmentService.getOVCServicesByDomainId(domainId));
+    }
 
 }

@@ -139,7 +139,700 @@
         </preConditions>
         <sql>
             ALTER TABLE hiv_enrollment
-                ADD   ovcServiceProvided JSONB
+                ADD  ovc_service_provided JSONB
+        </sql>
+    </changeSet>
+    <changeSet failOnError="true"  id="20230201-012" author="amos-data-fi">
+        <sql>
+            CREATE TABLE IF NOT EXISTS domain
+            (
+                id bigint NOT NULL DEFAULT nextval('domain_id_seq'::regclass),
+                name character varying COLLATE pg_catalog."default",
+                code character varying COLLATE pg_catalog."default" NOT NULL,
+                created_by character varying(255) COLLATE pg_catalog."default" NOT NULL,
+                date_created timestamp without time zone NOT NULL,
+                date_modified timestamp without time zone,
+                modified_by character varying(255) COLLATE pg_catalog."default",
+                archived integer,
+                uid uuid DEFAULT uuid_generate_v4(),
+                CONSTRAINT domain_pkey PRIMARY KEY (id),
+                CONSTRAINT unique_uuid UNIQUE (code)
+                )
+        </sql>
+    </changeSet>
+    <changeSet failOnError="true"  id="20230201-013" author="amos-data-fi">
+        <sql>
+     CREATE TABLE IF NOT EXISTS ovc_service
+            (
+                id bigint NOT NULL DEFAULT nextval('ovc_service_id_seq'::regclass),
+                name character varying COLLATE pg_catalog."default",
+                domain_id bigint NOT NULL,
+                code character varying COLLATE pg_catalog."default",
+                created_by character varying(255) COLLATE pg_catalog."default" NOT NULL,
+                date_created timestamp without time zone NOT NULL,
+                date_modified timestamp without time zone,
+                modified_by character varying(255) COLLATE pg_catalog."default",
+                archived integer,
+                service_type integer,
+                uid uuid DEFAULT uuid_generate_v4(),
+                CONSTRAINT service_pkey PRIMARY KEY (id),
+                CONSTRAINT uk_jxqx9q5tehvt65cvnfydu83uw UNIQUE (code),
+                CONSTRAINT domain_id_fk FOREIGN KEY (domain_id)
+                REFERENCES public.domain (id) MATCH SIMPLE
+                                       ON UPDATE NO ACTION
+                                       ON DELETE NO ACTION
+                )
+        </sql>
+    </changeSet>
+    <changeSet failOnError="true"  id="20230201-014" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="true">
+                SELECT CASE WHEN totalCount > 0 THEN true ELSE false END
+                           as newColumn
+                from (
+                         SELECT count(code) as totalCount from domain
+                     ) a
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            INSERT INTO domain(id, name, code, created_by, date_created, date_modified, modified_by, archived,uid)VALUES
+                (
+                    1, 'HEALTHY', 'd883bdd9-f5b0-4a9d-af31-64c476bd7c4b', 'admin@nomisng.org', '2021-12-16 12:18:39.061"', '"2021-12-16 12:18:39.061"', '"admin@nomisng.org"', 0, '"44a5e47a-8fab-41bf-8f30-32e18729aced'
+                );
+            INSERT INTO domain(id, name, code, created_by, date_created, date_modified, modified_by, archived, uid)
+            VALUES
+                (
+                    2, 'SAFE', 'f8f2a6bd-3ab6-4b74-95ee-65324b261d4a', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 'a3386fd5-e0a9-4c62-93c1-b93c093d6b55'
+                );
+            INSERT INTO domain(id, name, code, created_by, date_created, date_modified, modified_by, archived, uid)
+            VALUES
+                (
+                    3, 'SCHOOLED', '0da517b0-ff47-411d-aa98-a8bded2cf5a0', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 'e042036d-1085-4be3-90f8-17db715a807b'
+                );
+            INSERT INTO domain(id, name, code, created_by, date_created, date_modified, modified_by, archived, uid)
+            VALUES
+                (
+                    4, 'STABLE', '7dec108c-3b23-4066-9468-507e0182cc02', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 'c12a36fc-7324-414a-8869-a8b8e257a8bd'
+                );
+
+        </sql>
+    </changeSet>
+
+    <changeSet failOnError="true"  id="20230201-015" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="true">
+                SELECT CASE WHEN totalCount > 0 THEN true ELSE false END
+                           as newColumn
+                from (
+                         SELECT count(code) as totalCount from ovc_service
+                     ) a
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            /* CREATE TABLE */
+            CREATE TABLE ovc_service(
+                                        id DOUBLE,
+                                        name VARCHAR(100),
+                                        domain_id DOUBLE,
+                                        code VARCHAR(100),
+                                        created_by VARCHAR(100),
+                                        date_created VARCHAR(100),
+                                        date_modified VARCHAR(100),
+                                        modified_by VARCHAR(100),
+                                        archived DOUBLE,
+                                        service_type DOUBLE,
+                                        uid VARCHAR(100)
+            );
+
+/* INSERT QUERY NO: 1 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    1, 'Health education', 1, 'cdd43abe-348e-405e-9e92-612ebb2714a8', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '52faaaf8-71e7-4ddf-8ba0-38e9d8dfc37b'
+                );
+
+/* INSERT QUERY NO: 2 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    2, 'Insecticide treated bed net (LLINs)', 1, '5fc22cb5-5be2-4929-86cb-0a04ab288eff', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '784a67c9-3bfb-4fb8-8820-07087cb7e2c8'
+                );
+
+/* INSERT QUERY NO: 3 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    3, 'Household health insurance coverage', 1, '54e840ec-d182-4782-874f-b2ff9c11ad54', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, 'd1db0479-347b-49b4-a2bd-abe3bd2ffbfd'
+                );
+
+/* INSERT QUERY NO: 4 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    4, 'Water', 0, '1', '220648ad-d8d0-47a6-9822-e0c5a3e0684f', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 0, 0, '3'
+                );
+
+/* INSERT QUERY NO: 5 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    5, 'Community HIV services ÔÇô HTS', 1, '6637fd66-ffcf-4231-b8b6-d8d9ad2c88ab', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '9aed1b93-9de3-4704-83db-0281dcd70ac7'
+                );
+
+/* INSERT QUERY NO: 6 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    6, 'HIV services referral ÔÇô HTS/EID/ART/PMTCT/VL/TB/STIs', 1, '61eca6d8-0e76-439f-a0ed-f5a92f676580', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, 'a1760b41-d56f-4413-a451-9bcafb2a5b34'
+                );
+
+/* INSERT QUERY NO: 7 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    7, 'Age-appropriate counselling and HIV disclosure support', 1, 'd1e2aa16-6e73-4744-9f54-f871ac6801a1', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '9c8aee6c-3130-42ae-8977-602a80177db0'
+                );
+
+/* INSERT QUERY NO: 8 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    8, 'Age-appropriate HIV treatment literacy (for CLHIV)', 1, '9ebd0fb9-0730-4278-bcd4-fd960c9adba1', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, 'b772df0a-6b28-4a2d-a5fd-5e95d6cb655e'
+                );
+
+/* INSERT QUERY NO: 9 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    9, 'ART adherence support (including transportation support)', 1, 'c6cf8129-fa8f-480b-bce9-8d6306210b00', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '23aa7b40-626b-4e08-8758-bc39a6b59b4b'
+                );
+
+/* INSERT QUERY NO: 10 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    10, 'Structured PLHA support group', 1, 'bc509e72-666e-465d-94ce-a28a1cdaa5ea', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '24f6b390-e0b1-4a08-b5e6-0d41173b8c17'
+                );
+
+/* INSERT QUERY NO: 11 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    12, 'Community TB symptom screening ', 1, '0474a09a-8d70-4b9c-a462-88d99f628446', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '465d3730-b845-4c8a-a530-b3f3c0e501ca'
+                );
+
+/* INSERT QUERY NO: 12 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    13, 'Food package (s)/ Nutritional supplements', 1, '155d0387-30d5-4a60-a11f-1638333f878c', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '8c17e3f3-c39b-44e6-98f0-b1e100a19828'
+                );
+
+/* INSERT QUERY NO: 13 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    14, 'Nutrition assessment', 0, ' and support (NACS)', '1', 'a6cf3ba8-1ed6-4269-9f48-c14bebbdd4ca', 'admin@nomisng.org', '2021-12-16 12:18:39.061', 0, 0, '0'
+                );
+
+/* INSERT QUERY NO: 14 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    15, 'Growth monitoring ', 1, '3cee1ef9-538d-4269-8ccb-65bab085a9cf', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, 'b8278e96-2b4c-4fc8-af12-590334fd32d7'
+                );
+
+/* INSERT QUERY NO: 15 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    16, 'Adolescent HIV Prevention and SRH services', 1, 'c8300b32-b404-4216-92be-41ef1c4ea57d', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '332e6a4e-0b10-4da6-ae1b-51db91a59051'
+                );
+
+/* INSERT QUERY NO: 16 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    17, 'Structured PSS related to family conflict mitigation ', 2, 'd39e933e-5711-4972-807d-6785c5aebc54', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '1f0c0812-c511-4af5-b6e4-fed4f4f4caaf'
+                );
+
+/* INSERT QUERY NO: 17 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    18, 'Clothing support', 2, 'ca918d6a-4a14-4ff5-8470-456d1304953a', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '2c5264d5-d769-4b56-8cb4-ad47527b7153'
+                );
+
+/* INSERT QUERY NO: 18 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    19, 'Emergency shelter/care facility', 2, 'e46be6a2-fa8c-412d-afd0-0a4796e8e757', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '97d367c1-fc6a-4a4d-96f0-fcfeb23cabb9'
+                );
+
+/* INSERT QUERY NO: 19 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    20, 'Post-violence trauma counselling from a trained provider', 2, '4454b60e-fb6a-4d2f-a59c-c2e22a27e4db', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '6efb2206-2a8b-48eb-a76f-9a996803dce9'
+                );
+
+/* INSERT QUERY NO: 20 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    21, 'Recreational activity (e.g.', 0, '2', '0e57c4c5-dde8-4413-9371-f66b62017542', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 0, 0, '2'
+                );
+
+/* INSERT QUERY NO: 21 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    22, 'Structured safe spaces intervention', 2, 'b19828e2-3dff-44c1-a82c-ca36a8e987c8', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '6c1c6049-dcbc-4ab4-809b-352f0bea0045'
+                );
+
+/* INSERT QUERY NO: 22 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    23, 'Life skills support', 2, 'f0657e20-a817-492b-bc3e-3614fdc6ff75', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '1834299e-0a29-42b8-820a-8a1bbd86f653'
+                );
+
+/* INSERT QUERY NO: 23 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    24, 'Legal services (eg. received for GBV', 0, ' exploitation', ' maltreatment)', '2', '2e986b36-03c5-4da3-9156-b38c9ed687ec', 'admin@nomisng.org', 0, 0, 'admin@nomisng.org'
+                );
+
+/* INSERT QUERY NO: 24 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    25, 'Succession plan', 2, 'd156e165-7276-46c5-a1e5-ce56c4fb4579', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '3d9b3176-eeca-4e01-adee-1793a972681c'
+                );
+
+/* INSERT QUERY NO: 25 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    26, 'Birth registration', 2, '64eaeea2-397b-4e17-8d39-1998e41f4f34', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '177ea604-cc26-4162-aa0f-d07adaf2be87'
+                );
+
+/* INSERT QUERY NO: 26 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    27, 'Post GBV Care', 2, '0f8de88b-ff1e-44f7-994b-96eeedb14dc2', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '7ee6f05b-b654-40a4-9e37-b50762a1f3b1'
+                );
+
+/* INSERT QUERY NO: 27 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    28, 'Child abuse case report to police/local authority', 2, '48d9146b-3560-49e7-bd47-25ca61496fc4', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, 'f23658ad-e701-4318-8905-e3b4809df563'
+                );
+
+/* INSERT QUERY NO: 28 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    29, 'Participated in evidence-based intervention on preventing HIV and sexual violence ', 2, '89c0acfb-8b39-443e-87d5-5cd27817e486', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, 'fab82bce-3fe8-45f0-b8f6-a561f84ed278'
+                );
+
+/* INSERT QUERY NO: 29 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    30, 'School enrolment / re-enrolment ', 3, 'c7064844-1502-4821-b571-95a917dd1b1a', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, 'c10bbefd-ad38-479c-b23d-82a519821056'
+                );
+
+/* INSERT QUERY NO: 30 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    31, 'Waiver of school fees', 3, 'b15c9969-b804-4bf0-a9b7-9aea653a268f', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '8d4ca954-b8ef-4e7d-bf8e-557f5d5cc320'
+                );
+
+/* INSERT QUERY NO: 31 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    32, 'Provision of school materials / uniform ', 3, 'aadaed6c-2044-48b2-b1f7-512a04809f17', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '857748bc-bdb5-446b-b68d-ec79b037311a'
+                );
+
+/* INSERT QUERY NO: 32 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    33, 'Assistance/support with homework', 3, '8716ce97-6129-4a13-be25-36fc2300bc27', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, '1cdac7e5-f267-4bc9-9f86-1bef22fa03ca'
+                );
+
+/* INSERT QUERY NO: 33 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    34, 'School performance assessment', 3, 'bea2ca96-ed12-481d-ba50-45470f52e95e', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 2, 'c3fb1533-237b-4d79-a090-07245b921abb'
+                );
+
+/* INSERT QUERY NO: 34 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    35, 'Financial Education', 4, '4cd38436-173d-44bd-93ec-c123564a5b39', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, 'bbd87f2d-2116-4735-88d4-04de10469569'
+                );
+
+/* INSERT QUERY NO: 35 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    36, 'Access to Micro-finance ', 4, 'ccc0f27b-ced4-4022-a2de-5742d222c64c', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '7879cef7-f3b9-4448-89e9-b65def37cd08'
+                );
+
+/* INSERT QUERY NO: 36 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    37, 'Vocational/apprenticeship training', 4, 'afb19bfc-0d51-45cd-bf44-4df425996332', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '89b21792-5ed2-47a3-b001-6c7709288359'
+                );
+
+/* INSERT QUERY NO: 37 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    38, 'Agricultural inputs/agricultural value chain', 4, '83afedc6-1b88-45fa-a29c-e3963c90672c', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '03e3ab01-57d5-480d-b0d9-9e9a1fd37d11'
+                );
+
+/* INSERT QUERY NO: 38 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    39, 'Cash transfer scheme', 4, 'f209194b-d31f-4360-b984-306b348993c5', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '15249d66-3474-47b3-8731-8737f00027cb'
+                );
+
+/* INSERT QUERY NO: 39 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    40, 'Savings group (SILC', 0, '4', '1f50977c-d8c0-42a5-bc7c-4f417d631ac2', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 0, 0, '3'
+                );
+
+/* INSERT QUERY NO: 40 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    41, 'Short-term emergency cash support', 4, 'f35d6f6d-0be1-45f0-846f-e71fc2ce34c1', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '1bebcf24-d951-433c-8310-abc74742041b'
+                );
+
+/* INSERT QUERY NO: 41 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    42, 'Safe shelter-related repair or construction', 4, '0ba6e946-c3cc-49d2-8423-33591a5b55b4', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '2d6e7e76-2178-416e-a978-44af1ddb0d86'
+                );
+
+/* INSERT QUERY NO: 42 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    51, 'IYCF support group', 1, 'b574d276-4260-4b3b-9acc-e5f6e512e4b4', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, '5bb4eca7-ab02-4d87-8591-00f5576c5a8b'
+                );
+
+/* INSERT QUERY NO: 43 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    52, 'Healthy food demonstration', 1, '71b1c305-23dd-44ac-97b2-b1d66c7db320', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'f365e661-e09b-4159-b8f8-11f997c94166'
+                );
+
+/* INSERT QUERY NO: 44 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    54, 'Clothing support', 2, '5c2c4f41-8902-4e5c-8f0b-45ba1ea9b0f3', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, '09831876-5519-4dbf-866f-cd2fb77ad0de'
+                );
+
+/* INSERT QUERY NO: 45 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    55, 'Emergency shelter/care facility', 2, 'c1ecbeb2-6b75-418d-a439-fe98e8f99a73', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'b58339ac-33d2-4cde-b2ac-dc823aad3a71'
+                );
+
+/* INSERT QUERY NO: 46 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    56, 'Post-violence trauma counselling from a trained provider', 2, '16244c88-582d-47b0-b423-b98206ac438e', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'af66c460-8443-4bee-a67a-f7172ad4e938'
+                );
+
+/* INSERT QUERY NO: 47 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    57, 'Parenting skills', 2, '369aeca5-656b-44ce-8771-4042dd8a75c0', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, '7a55966e-5c60-413a-9ac3-cead0f953f1f'
+                );
+
+/* INSERT QUERY NO: 48 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    58, 'Access to legal services ', 2, 'fcc9727d-3a2c-4b38-a452-9235c9c73152', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, '0ef0bccd-e309-42e4-8ce1-402c104a89ec'
+                );
+
+/* INSERT QUERY NO: 49 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    60, 'Birth registration awareness', 2, '7b919275-a339-48c5-a869-6e8283ff7956', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, '0b937f2d-b4f7-4071-9eb8-3819ecb8070b'
+                );
+
+/* INSERT QUERY NO: 50 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    61, 'Caregiver participated in an evidence-based parenting intervention ', 2, '5640d678-9b5d-4ca3-ada9-7a52110fcc52', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'dec7b602-ba22-46e4-b160-cec2b70ae410'
+                );
+
+/* INSERT QUERY NO: 51 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    62, 'Sensitization for child school enrolment/re-enrolment ', 3, '3c02b363-ff3d-4465-ae15-42426e253caf', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'ff994911-9971-4bfb-973f-55524f6d318c'
+                );
+
+/* INSERT QUERY NO: 52 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    67, 'Home gardening support', 4, '59733adb-49f5-4592-b89c-171ec0d84e66', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'fe024bec-5d08-4941-9580-ea90064b77e9'
+                );
+
+/* INSERT QUERY NO: 53 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    68, 'Evidence-based food security intervention', 4, 'f2e19628-3f9e-454e-a6e9-7cd6778181f6', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 1, 'c70bb3d8-8db2-4763-aa3b-912d50a110db'
+                );
+
+/* INSERT QUERY NO: 54 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    73, 'HIV-related testing (HTS', 0, '1', '7cb4f735-5df1-4099-ab21-15839b73f996', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 0, 0, '4'
+                );
+
+/* INSERT QUERY NO: 55 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    74, 'Early Infant Diagnosis (EID)', 1, 'fc8e6e7b-859e-4359-8a58-fe6951d1c0dc', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '221a94cf-2081-4e76-9c4b-6fd2f81339c9'
+                );
+
+/* INSERT QUERY NO: 56 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    75, 'ART', 1, 'c377944b-844e-4582-843a-97c6e2f6e41f', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '966ce1cc-9400-4cc7-ac99-0c3fc4b18f6c'
+                );
+
+/* INSERT QUERY NO: 57 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    76, 'CD4 VL', 1, 'b7641d66-3953-4d7e-bfe3-e3fcb69b63ee', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '4f7327dc-6b09-4097-b33d-ad83a26bd0b8'
+                );
+
+/* INSERT QUERY NO: 58 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    77, 'TB diagnosis', 1, '5dc77df4-2a90-4613-8323-abcf2cd0d915', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '539f67d5-c3b5-49a0-b20e-648a1ef6721f'
+                );
+
+/* INSERT QUERY NO: 59 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    78, 'STI treatment ', 1, 'a63f4d1f-db88-41ef-b403-7bd4d20704d7', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '9716075b-810c-4cb4-81f7-c2392cf14d50'
+                );
+
+/* INSERT QUERY NO: 60 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    79, 'Prevention support (PrEP/condoms and/or VMMC)', 1, '6839a947-72b6-423e-adf3-fc934fb3dfff', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '366e77a2-ca6e-450b-97f7-e21eb7af61b5'
+                );
+
+/* INSERT QUERY NO: 61 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    80, 'Sexual / Reproductive health', 1, '2332328a-4d43-4f7e-ab53-fdc4e552c0ec', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '88e4e6b5-800c-43dd-a093-72d8f1d93772'
+                );
+
+/* INSERT QUERY NO: 62 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    81, 'Routine healthcare (e.g. Immunization etc.)', 1, '26289de8-9ed4-4c90-b3ef-e44bd7c5203e', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, 'a688560c-6931-4dc5-9ff3-e8c716f015b8'
+                );
+
+/* INSERT QUERY NO: 63 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    82, 'Emergency healthcare', 1, '95f75c64-de87-4499-b72e-35f1c9b4af5a', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '203cd7f6-65df-4eea-86f7-65cbd193caf7'
+                );
+
+/* INSERT QUERY NO: 64 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    83, 'Vitamin A', 0, '1', 'abb5d44b-753f-47a7-a46e-8551a265f752', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 0, 0, '4'
+                );
+
+/* INSERT QUERY NO: 65 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    84, 'Insecticide treated Nets', 1, '3e9a8892-6cb1-4372-9399-cd8a90ee989d', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '5210954d-8f68-4994-ad22-d7b8b0811a77'
+                );
+
+/* INSERT QUERY NO: 66 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    85, 'Water treatment', 1, '8f8de978-4def-4660-ac04-905609e9bb93', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '758c8114-6acc-4d88-abf3-4b6927bf6762'
+                );
+
+/* INSERT QUERY NO: 67 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    86, 'Food and nutrition supplement', 1, 'c4bec0fb-1c37-4670-b4cb-7d39465599bf', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '63dc351b-e708-4f93-8391-e228054fd113'
+                );
+
+/* INSERT QUERY NO: 68 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    87, 'Severe Acute Malnutrition (SAM)', 1, '5a4b786d-0d6d-40e5-90d1-95ba30ddf4ea', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, 'f0417976-4247-47b4-ba7b-577423e1eaae'
+                );
+
+/* INSERT QUERY NO: 69 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    88, 'Wasting/edema', 1, 'ebca2a1c-8487-444f-a56c-3c06cbf6517b', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '5ea0acc3-a3ac-4728-b175-1f2d5588a732'
+                );
+
+/* INSERT QUERY NO: 70 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    89, 'Post-violence trauma-informed counselling', 2, 'd97ae3ab-4037-465b-b348-af3bd82f3313', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '02b4c9eb-2dfe-4be0-9617-5615fdbe552d'
+                );
+
+/* INSERT QUERY NO: 71 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    90, 'Spiritual support', 2, '4fbac8a4-7a6f-4c41-a750-0928ef0d4e37', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, 'd1ef2807-3428-46b0-bfdd-f598fa8a9bbe'
+                );
+
+/* INSERT QUERY NO: 72 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    91, 'Community support group (positive living group', 0, ' etc.)', '2', 'b1cb87e4-e3a0-470d-8410-0c2dd3140875', 'admin@nomisng.org', '2021-12-16 12:18:39.061', 0, 0, '0'
+                );
+
+/* INSERT QUERY NO: 73 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    92, 'Life building skills', 2, '20fc7aba-b52e-4913-a79f-edf357ac1229', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '68dabf57-1f9f-4197-8f32-0381875e4857'
+                );
+
+/* INSERT QUERY NO: 74 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    93, 'Legal services', 2, '871cb914-2281-4a0e-96bf-ca4d78a5ac05', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '22100589-4e4a-47f9-8293-d4584eeef45d'
+                );
+
+/* INSERT QUERY NO: 75 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    94, 'Birth registration', 2, '921bb020-0288-4bd7-a06c-73740f5e9816', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, 'a0eb50dc-1f19-4918-b5a2-041a0568b087'
+                );
+
+/* INSERT QUERY NO: 76 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    95, 'Post-violence medical services', 2, '1d19ee85-1089-4b15-9de5-a087381a7816', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '57adff29-77f0-4f71-b585-40c149ed1072'
+                );
+
+/* INSERT QUERY NO: 77 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    96, 'Emergency shelter', 2, '811480a5-671e-4cf2-9392-885eca3bdebd', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '1b5475f6-ce3c-4a2c-be60-8b858f97d7f0'
+                );
+
+/* INSERT QUERY NO: 78 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    97, 'Vocational training', 4, '001b6642-7471-4ccb-898d-bdeb16404b19', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '9b42319d-50b8-4554-aa50-57c1671f4526'
+                );
+
+/* INSERT QUERY NO: 79 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    98, 'Microfinance', 4, '8aee5cac-3c42-402c-bdbb-c6222a5bafb2', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, '8976c568-b6ba-4306-af35-e307a79d6fef'
+                );
+
+/* INSERT QUERY NO: 80 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    99, 'Private and public sector skill acquisition schemes', 4, '27494ff5-be2c-4e5d-95d0-483de2aba8d5', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, 'c7a8d93d-c2e6-4816-aac1-cf998fd23d8e'
+                );
+
+/* INSERT QUERY NO: 81 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    100, 'Income Generating Activities', 4, 'a1fca861-2ee7-4ca8-baa3-4ff010435f54', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 4, 'd64d03c6-ff68-4fd4-a4ce-d294b7230b3a'
+                );
+
+/* INSERT QUERY NO: 82 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    101, 'drugs', 1, 'ede5f9d7-8147-4d68-b7bc-2975485d8cff', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '9afa8f5f-016d-495c-8ec7-601c09d01c57'
+                );
+
+/* INSERT QUERY NO: 83 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    102, 'Covid services', 1, '0f19c995-66b2-4906-a461-963c691b4540', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '1300d96e-5527-4957-a169-3590b96ad28b'
+                );
+
+/* INSERT QUERY NO: 84 */
+            INSERT INTO ovc_service(id, name, domain_id, code, created_by, date_created, date_modified, modified_by, archived, service_type, uid)
+            VALUES
+                (
+                    103, 'Test', 1, 'd73b9ae3-c4ca-40f5-910c-2242643cb665', 'admin@nomisng.org', '2021-12-16 12:18:39.061', '2021-12-16 12:18:39.061', 'admin@nomisng.org', 0, 3, '22664c82-f735-4fa0-9702-7625922c083f'
+                );
+
+
         </sql>
     </changeSet>
 </databaseChangeLog>
