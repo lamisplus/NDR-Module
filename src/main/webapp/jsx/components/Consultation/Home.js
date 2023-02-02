@@ -1923,7 +1923,7 @@ const ClinicVisit = (props) => {
                 <LabelSui as='a' color='black'  size='tiny' onClick={addOrder} style={{ marginTop:35}}>
                     <Icon name='plus' /> Add
                 </LabelSui> 
-            </div>
+              </div>
            
             {testOrderList.length >0 ?   
                     <List>

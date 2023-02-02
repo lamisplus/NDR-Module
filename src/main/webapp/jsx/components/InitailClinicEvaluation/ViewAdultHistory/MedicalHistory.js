@@ -239,8 +239,8 @@ const MedicalHistory = (props) => {
     //Validations of the forms
   const validate = () => {        
     temp.screen_for_tb = objValues.screen_for_tb ? "" : "This field is required"
-    temp.past_medical_history = objValues.past_medical_history ? "" : "This field is required"
-    temp.relevant_family_history = objValues.relevant_family_history ? "" : "This field is required"
+    //temp.past_medical_history = objValues.past_medical_history ? "" : "This field is required"
+    //temp.relevant_family_history = objValues.relevant_family_history ? "" : "This field is required"
     temp.drug_allergies = objValues.drug_allergies ? "" : "This field is required"
     temp.visitDate = visit.visitDate ? "" : "This field is required"
 
@@ -1026,7 +1026,7 @@ const MedicalHistory = (props) => {
                     {/* Past medical history */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Past Medical History <span style={{ color:"red"}}> *</span></Label>
+                            <Label >Past Medical History </Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1038,15 +1038,13 @@ const MedicalHistory = (props) => {
                                 
                             </InputGroup>
                             </FormGroup>
-                            {errors.past_medical_history !=="" ? (
-                                <span className={classes.error}>{errors.past_medical_history}</span>
-                            ) : "" }
+                          
                     </div>
                     {/* end of Past medical history  */}
                     {/* Past Family medical history */}
                     <div className="form-group mb-3 col-md-6">
                             <FormGroup>
-                            <Label >Relevant Family History <span style={{ color:"red"}}> *</span></Label>
+                            <Label >Relevant Family History</Label>
                             <InputGroup> 
                                 <Input 
                                     type="textarea"
@@ -1058,9 +1056,7 @@ const MedicalHistory = (props) => {
                                 
                             </InputGroup>
                             </FormGroup>
-                            {errors.relevant_family_history !=="" ? (
-                                <span className={classes.error}>{errors.relevant_family_history}</span>
-                            ) : "" }
+                          
                     </div>
                     {/* end of FamilyPast medical history  */}
                     {/* hospitalization */}

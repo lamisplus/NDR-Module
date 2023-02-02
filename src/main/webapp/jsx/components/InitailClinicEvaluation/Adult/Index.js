@@ -223,7 +223,7 @@ const UserRegistration = (props) => {
                                 active={activeItem === 'regimen'}
                                 onClick={()=>handleItemClick('regimen')}
                                 style={{backgroundColor:activeItem === 'regimen' ? '#000': ""}}
-                                disabled={activeItem !== 'regimen' ? true : false}
+                                //disabled={activeItem !== 'regimen' ? true : false}
                             >
                                 {/* <Label>4</Label> */}
                                 <span style={{color:'#fff'}}>Regimen & <br/>Next Appointment 

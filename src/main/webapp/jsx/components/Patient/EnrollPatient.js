@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import {format} from 'date-fns';
 import MatButton from "@material-ui/core/Button";
 import Button from "@material-ui/core/Button";
 import {FormGroup, Label, Spinner,Input,Form} from "reactstrap";
@@ -28,7 +27,8 @@ import 'react-phone-input-2/lib/style.css'
 import  './patient.css'
 // import Form from 'react-bootstrap/Form';
 import {  Modal } from "react-bootstrap";
-
+import {Label as LabelSui} from 'semantic-ui-react'
+import { Icon} from 'semantic-ui-react'
 
 
 
@@ -472,7 +472,7 @@ const UserRegistration = (props) => {
                                                             name="sexId"
                                                             id="sexId"
                                                             onChange={handleInputChangeBasic}
-                                                            value={basicInfo.gender}
+                                                            value={basicInfo.sex}
                                                             style={{border: 'none', backgroundColor: 'transparent', outline:'none'}}
                                                             
                                                         />
@@ -953,6 +953,44 @@ const UserRegistration = (props) => {
                                             <span className={classes.error}>{errors.dateConfirmedHiv}</span>
                                             ) : "" }  */}
                                         </FormGroup>
+                                    </div>
+                                    <div className="row">
+                                    <h3>OVC Service Provided</h3>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Service Domain</Label>
+                                        <Input
+                                            type="select"
+                                            name="dateReferredFromOVCPartner"
+                                            id="dateReferredFromOVCPartner"
+                                            min={basicInfo.dob}
+                                            max={objValues.dateOfRegistration }
+                                            onChange={handleInputChange}
+                                            value={objValues.dateReferredFromOVCPartner}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            
+                                        /> 
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Avialable Services</Label>
+                                        <Input
+                                            type="text"
+                                            name="services"
+                                            id="services"
+                                            onChange={handleInputChange}
+                                            value={objValues.services}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            
+                                        /> 
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-2">
+                                    <LabelSui as='a' color='black'  size='tiny'  style={{ marginTop:35}}>
+                                        <Icon name='plus' /> Add
+                                    </LabelSui> 
+                                </div>
                                     </div>
                                 </div>
                                 </>

@@ -278,21 +278,21 @@ const ArtCommencement = (props) => {
            });
        
         }
-         //Get list of RegimenLine
-         const RegimenType =(id)=>{
-            axios
-               .get(`${baseUrl}hiv/regimen/types/${id}`,
-                   { headers: {"Authorization" : `Bearer ${token}`} }
-               )
-               .then((response) => {
-                   //console.log(response.data);
-                   setRegimenType(response.data);
-               })
-               .catch((error) => {
-               //console.log(error);
-               });
-           
-            }
+        //Get list of RegimenLine
+        const RegimenType =(id)=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/types/${id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setRegimenType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+        }
         //Get list of PREGANACY_STATUS
       const PreganacyStatus =()=>{
         axios

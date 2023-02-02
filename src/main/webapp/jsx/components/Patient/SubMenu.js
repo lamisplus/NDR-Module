@@ -124,7 +124,7 @@ function SubMenu(props) {
                     {!patientObj.clinicalEvaluation  && (<Menu.Item onClick={() => loadAdultEvaluation()} name='initial'
                     active={activeItem === 'initial'} title="Initial Evaluation"> Initial Evaluation</Menu.Item>)}
                     {!patientObj.commenced && (<Menu.Item onClick={() => loadArtCommencement()} name='art'
-                    active={activeItem === 'art'}  disabled={patientObj.biometricStatus} title="Art Commencement">Art Commencement</Menu.Item>)}
+                    active={activeItem === 'art'}  title="Art Commencement">Art Commencement</Menu.Item>)}
                     { (patientObj.targetGroupId!==null && patientObj.targetGroupId!=="" ) && patientObj.targetGroupId!==473 && patientObj.mentalHealth===false  && (<Menu.Item onClick={() => loadMentalHealth(patientObj)} name='health'
                     active={activeItem === 'health'} title="Mental Health Screening">Mental Health Screening</Menu.Item>)}
                     {/* <Menu.Item onClick={() => loadStatusUpdate(patientObj)} disabled>Client Status Update</Menu.Item>                     */}

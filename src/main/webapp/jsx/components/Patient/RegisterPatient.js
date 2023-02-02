@@ -22,7 +22,8 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import  './patient.css'
 import {  Modal } from "react-bootstrap";
-
+import {Label as LabelSui} from 'semantic-ui-react'
+import { Icon} from 'semantic-ui-react'
 
 
 library.add(faCheckSquare, faCoffee, faEdit, faTrash);
@@ -124,7 +125,7 @@ const UserRegistration = (props) => {
                 phoneNumber:"",
                 altPhonenumber:"",
                 dob:"",
-                countryId:"",
+                countryId:1,
                 stateId:"",
                 district:"",
                 sexId:"",
@@ -216,7 +217,7 @@ const UserRegistration = (props) => {
         KP();
         PregnancyStatus();
         GetCountry();
-    
+        setStateByCountryId()
         if(basicInfo.dateOfRegistration < basicInfo.dob){
             toast.error('Date of registration can not be earlier than date of birth')
         }
@@ -287,14 +288,13 @@ const UserRegistration = (props) => {
      //Get States from selected country
      const getStates = e => {
         const getCountryId =e.target.value;
-        console.log(getCountryId)
-            setStateByCountryId(getCountryId); 
+            setStateByCountryId(1); 
             setBasicInfo({ ...basicInfo, countryId: getCountryId });
     };
     //Get list of State
-    function setStateByCountryId(getCountryId) {
+    function setStateByCountryId() {
         axios
-        .get(`${baseUrl}organisation-units/parent-organisation-units/${getCountryId}`,
+        .get(`${baseUrl}organisation-units/parent-organisation-units/1`,
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
@@ -436,7 +436,7 @@ const UserRegistration = (props) => {
         let temp = { ...errors }
             temp.firstName = relatives.firstName ? "" : "First Name is required"
             //temp.lastName = relatives.lastName ? "" : "Last Name  is required."
-            temp.phone = relatives.phone ? "" : "Phone Number  is required."
+            //temp.phone = relatives.phone ? "" : "Phone Number  is required."
             temp.relationshipId = relatives.relationshipId ? "" : "Relationship Type is required."  
                 setErrors({ ...temp })
         return Object.values(temp).every(x => x == "")
@@ -845,7 +845,7 @@ const UserRegistration = (props) => {
                                                     ) :""} */}
                                                 </FormGroup>
                                             </div>
-                                            <div className="form-group mb-3 col-md-4">
+                                            {/* <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
                                                     <Label for="patientId">EMR Number <span style={{ color:"red"}}> *</span> </Label>
                                                     <input
@@ -861,7 +861,7 @@ const UserRegistration = (props) => {
                                                    
                                                 </FormGroup>
                                             
-                                        </div>
+                                            </div> */}
                                         </div>
                                         
                                         <div className="row">
@@ -1073,7 +1073,7 @@ const UserRegistration = (props) => {
                                                     ) : "" }
                                                 </FormGroup>
                                             </div>
-                                            <div className="form-group mb-3 col-md-4">
+                                            {/* <div className="form-group mb-3 col-md-4">
                                                 <FormGroup>
                                                     <Label for="ninNumber">National Identity Number (NIN)  </Label>
                                                     <input
@@ -1088,7 +1088,7 @@ const UserRegistration = (props) => {
                                                    
                                                 </FormGroup>
                                             
-                                        </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>
@@ -1402,7 +1402,7 @@ const UserRegistration = (props) => {
 
                                                                 <div className="form-group mb-3 col-md-3">
                                                                     <FormGroup>
-                                                                        <Label>Last Name <span style={{ color:"red"}}> *</span></Label>
+                                                                        <Label>Last Name </Label>
                                                                         <input
                                                                             className="form-control"
                                                                             type="text"
@@ -1412,9 +1412,7 @@ const UserRegistration = (props) => {
                                                                             style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                                             onChange={handleInputChangeRelatives}
                                                                         />
-                                                                        {errors.lastName !=="" ? (
-                                                                        <span className={classes.error}>{errors.lastName}</span>
-                                                                        ) : "" }
+                                                                        
                                                                     </FormGroup>
                                                                 </div>
                                                             </div>
@@ -1888,8 +1886,7 @@ const UserRegistration = (props) => {
                                             
                                         />
                                         </FormGroup>
-                                    </div>
-                                  
+                                    </div>                                  
                                     <div className="form-group mb-3 col-md-6">
                                         <FormGroup>
                                         <Label >Referred To OVC Partner</Label>
@@ -1957,6 +1954,44 @@ const UserRegistration = (props) => {
                                             <span className={classes.error}>{errors.dateConfirmedHiv}</span>
                                             ) : "" }  */}
                                         </FormGroup>
+                                    </div>
+                                    <div className="row">
+                                    <h3>OVC Service Provided</h3>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Service Domain</Label>
+                                        <Input
+                                            type="select"
+                                            name="dateReferredFromOVCPartner"
+                                            id="dateReferredFromOVCPartner"
+                                            min={basicInfo.dob}
+                                            max={objValues.dateOfRegistration }
+                                            onChange={handleInputChange}
+                                            value={objValues.dateReferredFromOVCPartner}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            
+                                        /> 
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-4">
+                                        <FormGroup>
+                                        <Label >Avialable Services</Label>
+                                        <Input
+                                            type="text"
+                                            name="services"
+                                            id="services"
+                                            onChange={handleInputChange}
+                                            value={objValues.services}
+                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                            
+                                        /> 
+                                        </FormGroup>
+                                    </div>
+                                    <div className="form-group mb-3 col-md-2">
+                                    <LabelSui as='a' color='black'  size='tiny'  style={{ marginTop:35}}>
+                                        <Icon name='plus' /> Add
+                                    </LabelSui> 
+                                </div>
                                     </div>
                                 </div>
                                 </>
