@@ -131,6 +131,7 @@ const Pharmacy = (props) => {
         temperature:"",
         respiratoryRate:"" 
     })
+    const [disabledField, setDisabledField] = useState(false);
     useEffect(() => {
         RegimenLine();
         PrepSideEffect();
@@ -141,6 +142,9 @@ const Pharmacy = (props) => {
         IPT_TYPE();
         VitalSigns();
         ChildRegimenLine();
+        if(props.activeContent && props.activeContent.actionType==='view'){
+            setDisabledField(true)
+        } 
     }, [props.activeContent.obj, props.activeContent.id, objValues.dsdModelType]);
     const IPT_TYPE =()=>{
         axios
@@ -734,7 +738,7 @@ const Pharmacy = (props) => {
                         min={enrollDate}
                         max= {moment(new Date()).format("YYYY-MM-DD") }
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
+                        disabled={disabledField}
                     />
                     </FormGroup>
                 </div>
@@ -824,7 +828,8 @@ const Pharmacy = (props) => {
                         id="visitType"
                         value={objValues.visitType}
                         onChange={handleInputChange}   
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}  
+                        disabled={disabledField}               
                         >
                         <option value="">Select </option>
                         <option value="Initial Visit">Initial Visit</option>
@@ -843,7 +848,8 @@ const Pharmacy = (props) => {
                         id="refill"
                         value={objValues.refill}
                         onChange={handleInputChange}   
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}} 
+                        disabled={disabledField}                
                         >
                         <option value="">Select </option>
                         <option value="Yes">Yes</option>
@@ -865,7 +871,7 @@ const Pharmacy = (props) => {
                         min={enrollDate!=='' ? enrollDate : ""}
                         max= {moment(new Date()).format("YYYY-MM-DD") }
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
+                        disabled={disabledField}
                     />
                     </FormGroup>
                 </div>
@@ -917,7 +923,7 @@ const Pharmacy = (props) => {
                         name="refillType"
                         id="refillType"
                         value={objValues.refillType}
-        
+                        disabled={disabledField}
                         onChange={handleInputChange}   
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
                         >
@@ -943,7 +949,8 @@ const Pharmacy = (props) => {
                         value={objValues.refillPeriod}
                         disabled={objValues.visitDate!==null? false : true}
                         onChange={handlRefillPeriod}   
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}   
+                                     
                         >
                         <option value="">Select </option>
                         <option value="15">15</option>
@@ -1001,7 +1008,8 @@ const Pharmacy = (props) => {
                         id="dsdModel"
                         value={objValues.dsdModel}
                         onChange={handleInputChange} 
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}   
+                        disabled={disabledField}                
                         >
                         <option value="">Select </option>
                         <option value="Facility">Facility </option>
@@ -1020,7 +1028,8 @@ const Pharmacy = (props) => {
                         id="dsdModelType"
                         value={objValues.dsdModelType}
                         onChange={handleInputChange} 
-                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                   
+                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}  
+                        disabled={disabledField}                 
                         >
                         <option value="">Select </option>
                         {dsdModelType.map((value) => (
@@ -1211,7 +1220,7 @@ const Pharmacy = (props) => {
                     value={objValues.iptType}
                     onChange={handleInputChange} 
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                   
+                    disabled={disabledField}              
                     >
                     <option value="">Select </option>
                     {iptType.map((value) => (
@@ -1462,6 +1471,7 @@ const Pharmacy = (props) => {
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
+                    hidden={disabledField}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}
                     disabled={saving}

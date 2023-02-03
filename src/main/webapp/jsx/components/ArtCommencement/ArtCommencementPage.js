@@ -251,12 +251,15 @@ const ArtCommencement = (props) => {
             .then((response) => {
 
                     const obj1 =response.data.find(x=> x.type==='Clinical evaluation')
-                    console.log(obj1)
+                    
                     //const cd4CountObj=obj1.data.plan
                     objValues.cd4Count=obj1.data.plan.cd4Count
                     objValues.cd4SemiQuantitative=obj1.data.plan.cd4SemiQuantitative
-                    objValues.cd4FlowCyteometry=obj1.data.plan.cd4SemiQuantitative
+                    objValues.cd4FlowCyteometry=obj1.data.plan.cd4FlowCyteometry
                     objValues.whoStagingId = obj1.data.who.stage
+                    objValues.regimenTypeId=obj1.data.regimen.regimenLine
+                    RegimenType(obj1.data.regimen.regimenLine)
+                    objValues.regimenId=obj1.data.regimen.regimen
                     setVitalSignDto({...obj1.data.physicalExamination})
             })
             .catch((error) => {
@@ -600,6 +603,7 @@ const ArtCommencement = (props) => {
                                         value={objValues.cd4Count}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled
                                     >
                                         <option value={""}></option>
                                         <option value="Semi-Quantitative">Semi-Quantitative</option>
@@ -620,6 +624,7 @@ const ArtCommencement = (props) => {
                                     value={objValues.cd4SemiQuantitative}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    disabled
                                 >
                                     <option value={""}></option>
                                     <option value="Semi-Quantitative">{"<200"}</option>
@@ -642,7 +647,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.cd4FlowCyteometry}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled
                             />
                                 
                             </FormGroup>
@@ -660,6 +665,7 @@ const ArtCommencement = (props) => {
                             onChange={handleSelecteRegimen}
                             required
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            disabled
                             >
                                 <option value=""> Select</option>
         
@@ -697,7 +703,7 @@ const ArtCommencement = (props) => {
                             value={objValues.regimenId}
                             onChange={handleInputChange}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
+                            disabled
                             >
                                 <option value=""> Select</option>    
                                 {regimenType.map((value) => (
@@ -778,7 +784,7 @@ const ArtCommencement = (props) => {
                             onChange={handleInputChange}
                             max= {moment(new Date()).format("YYYY-MM-DD") }
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
+                            disabled
                             >
                                 <option value=""> Select</option>
                                 {clinicalStage.map((value) => (
@@ -833,7 +839,7 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChange}
                                 value="72"
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled
 
                             >
                                 <option value=""> Select</option>
@@ -988,6 +994,7 @@ const ArtCommencement = (props) => {
                                 value={vital.bodyWeight}
                                 onKeyUp={handleInputValueCheckBodyWeight} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 kg
@@ -1022,6 +1029,7 @@ const ArtCommencement = (props) => {
                                 max="216.408"
                                 onKeyUp={handleInputValueCheckHeight} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled
                             />
                                 <InputGroupText
                                 addonType="append"

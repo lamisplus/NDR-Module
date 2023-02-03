@@ -26,6 +26,8 @@ const ADR = (props) => {
   const [errors, setErrors] = useState({});
   const classes = useStyles()
   let temp = { ...errors }
+  const [prepSideEffect, setPrepSideEffect] = useState([]);
+  
   useEffect(() => {
     PrepSideEffect();
   }, []);
@@ -40,7 +42,7 @@ const ADR = (props) => {
         )
         .then((response) => {
             //console.log(response.data);
-            props.setPrepSideEffect(response.data);
+            setPrepSideEffect(response.data);
         })
         .catch((error) => {
         //console.log(error);
@@ -111,7 +113,7 @@ const ADR = (props) => {
                 required
                 >
                   <option value=""> Select</option>
-                    {props.prepSideEffect.map((value) => (
+                    {prepSideEffect.map((value) => (
                         <option key={value.id} value={value.display}>
                             {value.display}
                         </option>

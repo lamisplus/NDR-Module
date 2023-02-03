@@ -67,7 +67,7 @@ const Laboratory = (props) => {
     const [errors, setErrors] = useState({});
     const [buttonHidden, setButtonHidden]= useState(false);
     const [moduleStatus, setModuleStatus]= useState("0")
-    
+    const [disabledField, setDisabledField] = useState(false);
     //const [currentVisit, setCurrentVisit]=useState(true)
     const [vLIndication, setVLIndication] = useState([]);
     const [labTestDetail, setLabTestDetail]=useState([])
@@ -110,6 +110,7 @@ const Laboratory = (props) => {
             sampleTypeId: "",
             viralLoadIndication: ""
     })
+
     useEffect(() => {
            
         CheckLabModule();
@@ -130,7 +131,10 @@ const Laboratory = (props) => {
             setShowResult(true)
         }else{
             setShowResult(false)  
-        }  
+        } 
+        if(props.activeContent && props.activeContent.actionType==='view'){
+            setDisabledField(true)
+        } 
     }, [props.patientObj.id, props.activeContent.obj]);
     //console.log(props.activeContent.obj)
      //Get list of LabNumbers
@@ -361,7 +365,7 @@ const Laboratory = (props) => {
                                 value={tests.labNumber}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             >
                                     <option value="">Select </option>
                                     
@@ -384,7 +388,8 @@ const Laboratory = (props) => {
                                 id="sampleNumber"
                                 value={tests.sampleNumber}
                                 onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}} 
+                                disabled={disabledField}                
                                 >
                                 
                             </Input>
@@ -402,7 +407,8 @@ const Laboratory = (props) => {
                                 id="viralLoadIndication"
                                 value={tests.viralLoadIndication}
                                 onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}   
+                                disabled={disabledField}              
                                 >
                                 <option value="">Select </option>
                                                 
@@ -428,7 +434,7 @@ const Laboratory = (props) => {
                                     value={tests.sampleTypeId}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={disabledField}
                                 >
                                     <option value="">Select </option>
                                     {labTestDetail.map((value) => (
@@ -454,7 +460,7 @@ const Laboratory = (props) => {
                                 onChange={handleInputChange}
                                 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.orderBy !=="" ? (
                                 <span className={classes.error}>{errors.orderBy}</span>
@@ -474,7 +480,7 @@ const Laboratory = (props) => {
                                         //min={tests.sampleCollectionDate}
                                         max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        required
+                                        disabled={disabledField}
                                     />
                                     {errors.dateOrderBy !=="" ? (
                                         <span className={classes.error}>{errors.dateOrderBy}</span>
@@ -493,7 +499,7 @@ const Laboratory = (props) => {
                                 onChange={handleInputChange}
                                 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.sampleCollectedBy !=="" ? (
                                 <span className={classes.error}>{errors.sampleCollectedBy}</span>
@@ -513,7 +519,7 @@ const Laboratory = (props) => {
                                 min={tests.dateOrderBy!==null && tests.dateOrderBy!==''? moment(tests.dateOrderBy).format("YYYY-MM-DD HH:MM:SS") :moment(enrollDate).format("YYYY-MM-DD HH:MM:SS")}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.sampleCollectionDate !=="" ? (
                                 <span className={classes.error}>{errors.sampleCollectionDate}</span>
@@ -532,6 +538,7 @@ const Laboratory = (props) => {
                                 onChange={handleCheckBox}
                                 checked={showObj.hasResult}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={disabledField}
                                 />
                                 <label
                                 className="form-check-label"
@@ -555,7 +562,7 @@ const Laboratory = (props) => {
                                         value={tests.assayedBy}                              
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        required
+                                        disabled={disabledField}
                                     />
                                     {errors.assayedBy !=="" ? (
                                         <span className={classes.error}>{errors.assayedBy}</span>
@@ -575,7 +582,7 @@ const Laboratory = (props) => {
                                         //min={tests.sampleCollectionDate}
                                         max= {moment(new Date()).format("YYYY-MM-DD") }
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        required
+                                        disabled={disabledField}
                                     />
                                     {errors.dateAssayedBy !=="" ? (
                                         <span className={classes.error}>{errors.dateAssayedBy}</span>
@@ -595,7 +602,7 @@ const Laboratory = (props) => {
                                         //min={tests.sampleCollectionDate}
                                         max= {moment(new Date()).format("YYYY-MM-DD HH:MM:SS")}
                                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                        required
+                                        disabled={disabledField}
                                     />
                                     {errors.dateResultReceived !=="" ? (
                                         <span className={classes.error}>{errors.dateResultReceived}</span>
@@ -612,7 +619,8 @@ const Laboratory = (props) => {
                                         id="result"
                                         value={tests.result}
                                         onChange={handleInputChange}  
-                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}}                 
+                                        style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
+                                        disabled={disabledField}                
                                     />
 
                                     {/* <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
@@ -633,7 +641,8 @@ const Laboratory = (props) => {
                                         id="comments"
                                         value={tests.comments}
                                         onChange={handleInputChange}  
-                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                        style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}  
+                                        disabled={disabledField}               
                                         >
                                         
                                     </Input>
@@ -653,6 +662,7 @@ const Laboratory = (props) => {
                                     checked={showObj.isPcr}
                                     onChange={handleCheckBoxPCR}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                    disabled={disabledField}
                                     />
                                     <label
                                     className="form-check-label"
@@ -678,7 +688,8 @@ const Laboratory = (props) => {
                                 id="pcrLabName"
                                 value={tests.pcrLabName}
                                 onChange={handleInputChange}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={disabledField}                 
                                 >
                                 <option value="">Select </option>
                                 {pcr_lab.map((value) => (
@@ -705,7 +716,7 @@ const Laboratory = (props) => {
                                 value={tests.pcrLabSampleNumber}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             
                         </FormGroup>
@@ -743,7 +754,7 @@ const Laboratory = (props) => {
                                 value={tests.sampleLoggedRemotely}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                                 >
                                 <option value="">Select </option>
                                 <option value="1">Yes </option>
@@ -763,7 +774,7 @@ const Laboratory = (props) => {
                                 value={tests.dateSampleLoggedRemotely}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.dateSampleLoggedRemotely !=="" ? (
                                 <span className={classes.error}>{errors.dateSampleLoggedRemotely}</span>
@@ -784,7 +795,7 @@ const Laboratory = (props) => {
                                 //min={moment(tests.sampleCollectionDate).format("YYYY-MM-DD") }
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.dateReceivedAtPcrLab !=="" ? (
                                 <span className={classes.error}>{errors.dateReceivedAtPcrLab}</span>
@@ -804,7 +815,7 @@ const Laboratory = (props) => {
                                 onChange={handleInputChange}
                                
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.checkedBy !=="" ? (
                                 <span className={classes.error}>{errors.checkedBy}</span>
@@ -824,7 +835,7 @@ const Laboratory = (props) => {
                                 //min={tests.sampleCollectionDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.dateCheckedBy !=="" ? (
                                 <span className={classes.error}>{errors.dateCheckedBy}</span>
@@ -843,7 +854,7 @@ const Laboratory = (props) => {
                                 onChange={handleInputChange}
                                 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.approvedBy !=="" ? (
                                 <span className={classes.error}>{errors.approvedBy}</span>
@@ -863,7 +874,7 @@ const Laboratory = (props) => {
                                 //min={tests.sampleCollectionDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                             />
                             {errors.dateApproved !=="" ? (
                                 <span className={classes.error}>{errors.dateApproved}</span>
@@ -884,7 +895,7 @@ const Laboratory = (props) => {
                         color="primary"
                         className={classes.button}
                         startIcon={<SaveIcon />}
-                        hidden={buttonHidden}
+                        hidden={disabledField}
                         style={{backgroundColor:"#014d88"}}
                         disabled={saving}
                         onClick={handleSubmit}

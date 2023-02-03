@@ -227,7 +227,7 @@ const UserRegistration = (props) => {
     const loadGenders = useCallback(async () => {
         try {
             const response = await axios.get(`${baseUrl}application-codesets/v2/SEX`, { headers: {"Authorization" : `Bearer ${token}`} });
-            setGenders(response.data);
+            setGenders(response.data.sort());
         } catch (e) {
             
         }
@@ -235,14 +235,14 @@ const UserRegistration = (props) => {
     const loadMaritalStatus = useCallback(async () => {
         try {
             const response = await axios.get(`${baseUrl}application-codesets/v2/MARITAL_STATUS`, { headers: {"Authorization" : `Bearer ${token}`} });
-            setMaritalStatusOptions(response.data);
+            setMaritalStatusOptions(response.data.sort());
         } catch (e) {
         }
     }, []);
     const loadEducation = useCallback(async () => {
         try {
             const response = await axios.get(`${baseUrl}application-codesets/v2/EDUCATION`, { headers: {"Authorization" : `Bearer ${token}`} });
-            setEducationOptions(response.data);
+            setEducationOptions(response.data.sort());
         } catch (e) {
 
         }
@@ -250,7 +250,7 @@ const UserRegistration = (props) => {
     const loadOccupation = useCallback(async () => {
         try {
             const response = await axios.get(`${baseUrl}application-codesets/v2/OCCUPATION`, { headers: {"Authorization" : `Bearer ${token}`} });
-            setOccupationOptions(response.data);
+            setOccupationOptions(response.data.sort());
         } catch (e) {
 
         }
@@ -258,13 +258,13 @@ const UserRegistration = (props) => {
     const loadRelationships = useCallback(async () => {
       try {
           const response = await axios.get(`${baseUrl}application-codesets/v2/RELATIONSHIP`, { headers: {"Authorization" : `Bearer ${token}`} });
-          setRelationshipOptions(response.data);
+          setRelationshipOptions(response.data.sort());
       } catch (e) {
       }
     }, []);
     const loadTopLevelCountry = useCallback(async () => {
         const response = await axios.get(`${baseUrl}organisation-units/parent-organisation-units/0`, { headers: {"Authorization" : `Bearer ${token}`} });
-        settopLevelUnitCountryOptions(response.data);
+        settopLevelUnitCountryOptions(response.data.sort());
     }, []);
     const loadOrganisationUnitsByParentId = async (parentId) => {
         const response = await axios.get(`${baseUrl}organisation-units/parent-organisation-units/${parentId}`, { headers: {"Authorization" : `Bearer ${token}`} });
@@ -298,8 +298,8 @@ const UserRegistration = (props) => {
             { headers: {"Authorization" : `Bearer ${token}`} }
         )
         .then((response) => {
-            console.log(response.data);
-            setStates(response.data);
+            //console.log(response.data);
+            setStates(response.data.sort());
         })
         .catch((error) => {
         //console.log(error);
@@ -314,7 +314,7 @@ const UserRegistration = (props) => {
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                setProvinces(response.data);
+                setProvinces(response.data.sort());
             })
             .catch((error) => {
             //console.log(error);
@@ -1004,6 +1004,9 @@ const UserRegistration = (props) => {
                                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
                                                     />
                                                 </FormGroup>
+                                                {basicInfo.age!=='' && basicInfo.age >=80 ? (
+                                                        <span className={classes.error}>Are you sure of the age</span>
+                                                        ) : "" }
                                             </div>
                                         </div>
 
@@ -1955,44 +1958,7 @@ const UserRegistration = (props) => {
                                             ) : "" }  */}
                                         </FormGroup>
                                     </div>
-                                    <div className="row">
-                                    <h3>OVC Service Provided</h3>
-                                    <div className="form-group mb-3 col-md-4">
-                                        <FormGroup>
-                                        <Label >Service Domain</Label>
-                                        <Input
-                                            type="select"
-                                            name="dateReferredFromOVCPartner"
-                                            id="dateReferredFromOVCPartner"
-                                            min={basicInfo.dob}
-                                            max={objValues.dateOfRegistration }
-                                            onChange={handleInputChange}
-                                            value={objValues.dateReferredFromOVCPartner}
-                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            
-                                        /> 
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-4">
-                                        <FormGroup>
-                                        <Label >Avialable Services</Label>
-                                        <Input
-                                            type="text"
-                                            name="services"
-                                            id="services"
-                                            onChange={handleInputChange}
-                                            value={objValues.services}
-                                            style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                                            
-                                        /> 
-                                        </FormGroup>
-                                    </div>
-                                    <div className="form-group mb-3 col-md-2">
-                                    <LabelSui as='a' color='black'  size='tiny'  style={{ marginTop:35}}>
-                                        <Icon name='plus' /> Add
-                                    </LabelSui> 
-                                </div>
-                                    </div>
+                                    
                                 </div>
                                 </>
                                 )}

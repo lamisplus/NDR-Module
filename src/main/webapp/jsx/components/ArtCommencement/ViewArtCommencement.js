@@ -112,6 +112,7 @@ const ArtCommencement = (props) => {
     const [functionalStatus, setFunctionalStatus] = useState([]);
     const [adultRegimenLine, setAdultRegimenLine] = useState([]);
     const [childRegimenLine, setChildRegimenLine] = useState([]);
+    const [disabledField, setDisabledField] = useState(false);
     const [objValues, setObjValues] = useState({
                                                 personId:props.patientObj.id,
                                                 visitDate: "",
@@ -190,6 +191,9 @@ const ArtCommencement = (props) => {
         GetARTCommencement();
         AdultRegimenLine();
         ChildRegimenLineObj();
+        if(props.activeContent && props.activeContent.actionType==='view'){
+            setDisabledField(true)
+        }
         gender =props.patientObj.gender && props.patientObj.gender.display ? props.patientObj.gender.display : null
       }, [props.activeContent.id]);
       //GET AdultRegimenLine 
@@ -556,7 +560,7 @@ const ArtCommencement = (props) => {
                                 min={enrollDate}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                disabled={disabledField}
                             />
                                 {errors.visitDate !=="" ? (
                                 <span className={classes.error}>{errors.visitDate}</span>
@@ -589,7 +593,7 @@ const ArtCommencement = (props) => {
                             onChange={handleInputChange}
                             value={objValues.cd4Percentage}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            disabled={props.activeContent.actionType==='update' ? false :true}
+                            disabled={disabledField}
                         />
                         
                         </FormGroup>
@@ -605,6 +609,7 @@ const ArtCommencement = (props) => {
                                         value={objValues.cd4Count}
                                         onChange={handleInputChange}
                                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                        disabled={disabledField}
                                     >
                                         <option value={""}></option>
                                         <option value="Semi-Quantitative">Semi-Quantitative</option>
@@ -625,6 +630,7 @@ const ArtCommencement = (props) => {
                                     value={objValues.cd4SemiQuantitative}
                                     onChange={handleInputChange}
                                     style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
+                                    disabled={disabledField}
                                 >
                                     <option value={""}></option>
                                     <option value="Semi-Quantitative">{"<200"}</option>
@@ -647,7 +653,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.cd4FlowCyteometry}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                                 
                             </FormGroup>
@@ -666,6 +672,7 @@ const ArtCommencement = (props) => {
                                 onChange={handleSelecteRegimen}
                                 required
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={disabledField}
                                 >
                                     <option value=""> Select</option>
                                     {patientAge && patientAge >5 &&  (
@@ -702,7 +709,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.regimenId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                required
+                                disabled={disabledField}
                                 >
                                     <option value=""> Select</option>
             
@@ -728,7 +735,7 @@ const ArtCommencement = (props) => {
                             onChange={handleInputChange}                                            
                             value={objValues.isViralLoadAtStartOfArt}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            disabled={props.activeContent.actionType==='update' ? false :true}
+                            disabled={disabledField}
                             
                         >
                             <option value=""> Select</option>
@@ -750,7 +757,7 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.viralLoadAtStartOfArt}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                disabled={disabledField}
                                 
                             />
                             
@@ -763,12 +770,12 @@ const ArtCommencement = (props) => {
                                 type="date"
                                 name="dateOfViralLoadAtStartOfArt"
                                 id="dateOfViralLoadAtStartOfArt"
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                               
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 onChange={handleInputChange}
                                 value={objValues.dateOfViralLoadAtStartOfArt}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                             
                             </FormGroup>
@@ -786,8 +793,7 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChange}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                
+                                disabled={disabledField}
                                 >
                                     <option value=""> Select</option>
             
@@ -813,8 +819,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.functionalStatusId}
                                 onChange={handleInputChange}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                disabled={props.activeContent.actionType==='update' ? false :true}
-                                
+                                disabled={disabledField}
                                 >
                                     <option value=""> Select</option>
             
@@ -915,6 +920,7 @@ const ArtCommencement = (props) => {
                                 value={vital.pulse}
                                 onKeyUp={handleInputValueCheckPulse} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 bmp
@@ -942,6 +948,7 @@ const ArtCommencement = (props) => {
                                 value={vital.respiratoryRate}
                                 onKeyUp={handleInputValueCheckRespiratoryRate} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 bmp
@@ -969,6 +976,7 @@ const ArtCommencement = (props) => {
                                 value={vital.temperature}
                                 onKeyUp={handleInputValueCheckTemperature} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 <sup>o</sup>c
@@ -997,6 +1005,7 @@ const ArtCommencement = (props) => {
                                 value={vital.bodyWeight}
                                 onKeyUp={handleInputValueCheckBodyWeight} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 kg
@@ -1019,6 +1028,7 @@ const ArtCommencement = (props) => {
                                 isOpen={dropdownOpen}
                                 toggle={toggleDropDown}
                                 style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}
+                               
                                 >
                                 cm
                         </InputGroupText>
@@ -1032,6 +1042,7 @@ const ArtCommencement = (props) => {
                                 max="216.408"
                                 onKeyUp={handleInputValueCheckHeight} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                                 <InputGroupText
                                 addonType="append"
@@ -1089,6 +1100,7 @@ const ArtCommencement = (props) => {
                                 value={vital.systolic}
                                 onKeyUp={handleInputValueCheckSystolic}
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                             diastolic(mmHg)
@@ -1103,6 +1115,7 @@ const ArtCommencement = (props) => {
                                 value={vital.diastolic}
                                 onKeyUp={handleInputValueCheckDiastolic} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                                 />
                             
                             
@@ -1139,6 +1152,7 @@ const ArtCommencement = (props) => {
                                 value={vital.headCircumference}
                                 onKeyUp={handleInputValueCheckTemperature} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 cm
@@ -1159,6 +1173,7 @@ const ArtCommencement = (props) => {
                                 value={vital.surfaceArea}
                                 onKeyUp={handleInputValueCheckTemperature} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={disabledField}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 cm<sup>3</sup>
@@ -1177,6 +1192,7 @@ const ArtCommencement = (props) => {
                                         id="muac"
                                         onChange={handleInputChangeVitalSignDto} 
                                         value={vital.muac} 
+                                        disabled={disabledField}
                                     >
                                     <option value="">Select</option>
                                     <option value="Normal">Normal</option>
@@ -1206,7 +1222,7 @@ const ArtCommencement = (props) => {
                                 value={objValues.pregnantStatus}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 required
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                disabled={disabledField}
 
                             >
                                 <option value=""> Select</option>
@@ -1229,8 +1245,7 @@ const ArtCommencement = (props) => {
                                 onChange={handleInputChange}
                                 value={values.LMPDate}
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
-                                disabled={props.activeContent.actionType==='update' ? false :true}
+                                disabled={disabledField}
                             />
                             </FormGroup>
                         </div>
@@ -1251,7 +1266,7 @@ const ArtCommencement = (props) => {
                             value={objValues.clinicalNote}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             required
-                            disabled={props.activeContent.actionType==='update' ? false :true}
+                            disabled={disabledField}
                         />
                         </FormGroup>
                     </div>
