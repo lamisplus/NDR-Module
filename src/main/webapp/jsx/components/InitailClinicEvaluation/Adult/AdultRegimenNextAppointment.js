@@ -91,13 +91,15 @@ const BasicInfo = (props) => {
     useEffect(() => { 
         AdultRegimenLine()
         if(props.observation.data ){
-        setRegimen(props.observation.data.regimen) 
-        setobjValues(props.observation.data.nextAppointment)             
+            if(props.observation.data.regimen!==""){
+                setRegimen(props.observation.data.regimen) 
+            } 
+            setobjValues(props.observation.data.nextAppointment)             
         }
     }, [props.observation.data]);
     const [saving, setSaving] = useState(false); 
     const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
-    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
+    const [regimenObj, setRegimen] = useState({regimenLine:"", regimen:""}); 
     const [adultRegimenLine, setAdultRegimenLine] = useState([]);
     const [regimenType, setRegimenType] = useState([]);
     const handleInputChangeobjValues = e => {  
@@ -115,18 +117,18 @@ const BasicInfo = (props) => {
     const handleSelecteRegimen = e => { 
         let regimenID=  e.target.value
         //regimenTypeId regimenId
-        setRegimen ({...regimen, regimen:regimenID});
+        setRegimen ({...regimenObj, regimenLine:regimenID});
         RegimenType(regimenID)           
         setErrors({...temp, [e.target.name]:""})
     }
     //GET AdultRegimenLine 
     const AdultRegimenLine =()=>{
         axios
-            .get(`${baseUrl}hiv/regimen/arv/adult`,
+            .get(`${baseUrl}hiv/regimen/arv/children`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14)) 
+                const artRegimen=response.data 
                 setAdultRegimenLine(artRegimen);
             })
             .catch((error) => {
@@ -151,12 +153,12 @@ const BasicInfo = (props) => {
     const handleRegimen =e =>{
         setErrors({...errors, [e.target.name]: ""})
         
-        setRegimen({...regimen, [e.target.name]: e.target.value})
+        setRegimen({...regimenObj, [e.target.name]: e.target.value})
     }
     const validate = () => {        
         temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
-        temp.regimenLine = regimen.regimenLine ? "" : "This field is required" 
-        temp.regimen = regimen.regimen ? "" : "This field is required" 
+        temp.regimenLine = regimenObj.regimenLine ? "" : "This field is required" 
+        temp.regimen = regimenObj.regimen ? "" : "This field is required" 
        
         setErrors({
             ...temp
@@ -166,7 +168,7 @@ const BasicInfo = (props) => {
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
-        props.observation.data.regimen= regimen
+        props.observation.data.regimen= regimenObj
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
         props.observation.data.clinicianName = objValues.clinicianName
@@ -196,7 +198,8 @@ const BasicInfo = (props) => {
         }
                          
     }
-        
+      
+
 return (
         <>  
         
@@ -215,9 +218,8 @@ return (
                             type="select"
                             name="regimenLine"
                             id="regimenLine"
-                            value={regimen.regimenLine}
+                            value={regimenObj.regimenLine}
                             onChange={handleSelecteRegimen}
-                            required
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             >
                                 <option value=""> Select</option>
@@ -240,7 +242,7 @@ return (
                             type="select"
                             name="regimen"
                             id="regimen"
-                            value={regimen.regimen}
+                            value={regimenObj.regimen}
                             onChange={handleRegimen}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                             required

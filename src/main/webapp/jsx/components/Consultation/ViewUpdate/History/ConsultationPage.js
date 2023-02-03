@@ -148,6 +148,7 @@ const ClinicVisit = (props) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [labTestOptions, setLabTestOptions] = useState([]);
   const [loadClinicHistory, setLoadClinicHistory] = useState(true);
+  const [disabledField, setDisabledField] = useState(false);
   const [arvDrugObj, setArvDrugObj] = useState({
     regimenLine: "",
     regimenDrug: "",
@@ -266,9 +267,12 @@ const ClinicVisit = (props) => {
       GetVisitById(props.activeContent.id)
       setVisitId(props.activeContent.id)
     }
+    if(props.activeContent && props.activeContent.actionType==='view'){
+      setDisabledField(true)
+   }
     if(objValues.adherenceLevel!==null && objValues.adherenceLevel==='Good'){
       objValues.levelOfAdherence = 354
-      console.log("am here")
+      
     }else if(objValues.adherenceLevel!==null && objValues.adherenceLevel==='Fair'){
       objValues.levelOfAdherence = 355
     }else if(objValues.adherenceLevel!==null && objValues.adherenceLevel==='Poor'){
@@ -982,6 +986,7 @@ const ClinicVisit = (props) => {
                                 value={vital.pulse}
                                 onKeyUp={handleInputValueCheckPulse} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 bmp
@@ -1009,6 +1014,7 @@ const ClinicVisit = (props) => {
                                 value={vital.respiratoryRate}
                                 onKeyUp={handleInputValueCheckRespiratoryRate} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 bmp
@@ -1036,6 +1042,7 @@ const ClinicVisit = (props) => {
                                 value={vital.temperature}
                                 onKeyUp={handleInputValueCheckTemperature} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 <sup>o</sup>c
@@ -1063,6 +1070,7 @@ const ClinicVisit = (props) => {
                                 value={vital.bodyWeight}
                                 onKeyUp={handleInputValueCheckBodyWeight} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 kg
@@ -1098,6 +1106,7 @@ const ClinicVisit = (props) => {
                                 max="216.408"
                                 onKeyUp={handleInputValueCheckHeight} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                                 <InputGroupText
                                 addonType="append"
@@ -1153,6 +1162,7 @@ const ClinicVisit = (props) => {
                           value={vital.systolic}
                           onKeyUp={handleInputValueCheckSystolic}
                           style={{border: "1px solid #014D88", borderRadius:"0rem"}} 
+                          disabled={!enableUpdate}
                       />
                       <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                       diastolic(mmHg)
@@ -1204,6 +1214,7 @@ const ClinicVisit = (props) => {
                                 value={vital.headCircumference}
                                 onKeyUp={handleInputValueCheckTemperature} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 cm
@@ -1224,6 +1235,7 @@ const ClinicVisit = (props) => {
                                 value={vital.surfaceArea}
                                 onKeyUp={handleInputValueCheckTemperature} 
                                 style={{border: "1px solid #014D88", borderRadius:"0rem"}}
+                                disabled={!enableUpdate}
                             />
                             <InputGroupText addonType="append" style={{ backgroundColor:"#014D88", color:"#fff", border: "1px solid #014D88", borderRadius:"0rem"}}>
                                 cm<sup>3</sup>
@@ -1242,6 +1254,7 @@ const ClinicVisit = (props) => {
                                         id="muac"
                                         onChange={handleInputChangeVitalSignDto} 
                                         value={vital.muac} 
+                                        disabled={!enableUpdate}
                                     >
                                     <option value="">Select</option>
                                     <option value="Normal">Normal</option>
@@ -1290,7 +1303,7 @@ const ClinicVisit = (props) => {
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                       disabled={!enableUpdate}
-                      required
+                      
                   >
                       <option value="select">Select </option>
 
@@ -1316,7 +1329,7 @@ const ClinicVisit = (props) => {
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                       disabled={!enableUpdate}
-                      required
+                      
                   >
                       <option value="select">Select </option>
 
@@ -1342,7 +1355,7 @@ const ClinicVisit = (props) => {
                   value={objValues.levelOfAdherence}
                   onChange={handleInputChange}
                   style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                  required
+                  disabled={!enableUpdate}
                 >
                   <option value="select">Select </option>
 
@@ -1367,7 +1380,7 @@ const ClinicVisit = (props) => {
                       value={objValues.cryptococcalScreeningStatus}
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                      required
+                      disabled={!enableUpdate}
                     >
                       <option value="select">Select </option>
 
@@ -1390,7 +1403,7 @@ const ClinicVisit = (props) => {
                         value={objValues.tbStatus}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.2rem"}}
-                        required
+                        disabled={!enableUpdate}
                         >
                         <option value=""> Select</option>
                             {tbStatus.map((value) => (
@@ -1417,7 +1430,7 @@ const ClinicVisit = (props) => {
                         value={objValues.cervicalCancerScreeningStatus}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
+                        disabled={!enableUpdate}
                       >
                         <option value="select">Select </option>
 
@@ -1440,7 +1453,7 @@ const ClinicVisit = (props) => {
                         value={objValues.cervicalCancerTreatmentProvided}
                         onChange={handleInputChange}
                         style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                        required
+                        disabled={!enableUpdate}
                       >
                         <option value="select">Select </option>
 
@@ -1463,7 +1476,7 @@ const ClinicVisit = (props) => {
                     value={objValues.pregnancyStatus}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
+                    disabled={!enableUpdate}
                   >
                     <option value="select">Select </option>
 
@@ -1488,7 +1501,7 @@ const ClinicVisit = (props) => {
                     value={objValues.hepatitisScreeningResult}
                     onChange={handleInputChange}
                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                    required
+                    disabled={!enableUpdate}
                   >
                     <option value="select">Select </option>
 
@@ -1513,7 +1526,7 @@ const ClinicVisit = (props) => {
                       value={objValues.familyPlaning}
                       onChange={handleInputChange}
                       style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                      required
+                      disabled={!enableUpdate}
                     >
                       <option value="select">Select </option>
                       <option value="Yes">Yes </option>
@@ -1533,7 +1546,7 @@ const ClinicVisit = (props) => {
                             value={objValues.onFamilyPlaning}
                             onChange={handleInputChange}
                             style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                            required
+                            disabled={!enableUpdate}
                           >
                             <option value="select">Select </option>
 
@@ -1588,7 +1601,7 @@ const ClinicVisit = (props) => {
                                     value={arvDrugObj.regimenLine}
                                     onChange={handleInputChangeRegimen}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={!enableUpdate}
                                   >
                                     <option value="select">Select </option>
                                     {patientAge >5 &&  (
@@ -1625,7 +1638,7 @@ const ClinicVisit = (props) => {
                                     value={arvDrugObj.regimenDrug}
                                     onChange={handleInputChangeRegimenLine}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={!enableUpdate}
                                   >
                                     <option value="select">Select </option>
 
@@ -1650,7 +1663,7 @@ const ClinicVisit = (props) => {
                                     value={arvDrugObj.dosage}
                                     onChange={handleInputChangeRegimenLine}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={!enableUpdate}
                                   />
                                   {errors.dosage !=="" ? (
                                             <span className={classes.error}>{errors.dosage}</span>
@@ -1667,7 +1680,7 @@ const ClinicVisit = (props) => {
                                     value={arvDrugObj.regimenAdherance}
                                     onChange={handleInputChangeRegimenLine}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    required
+                                    disabled={!enableUpdate}
                                   >
                                     <option value="select">Select </option>
 
@@ -1797,7 +1810,8 @@ const ClinicVisit = (props) => {
                                 id="viralLoadIndication"
                                 value={tests.viralLoadIndication}
                                 onChange={handleInputChangeTest}  
-                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}                 
+                                style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}  
+                                disabled={!enableUpdate}               
                                 >
                                 <option value="">Select </option>
                                                 
@@ -1868,7 +1882,7 @@ const ClinicVisit = (props) => {
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                 min={moment(new Date()).format("YYYY-MM-DD")}
                                 disabled={!enableUpdate}
-                                required
+                                
                             />
                         {errors.nextAppointment !=="" ? (
                                 <span className={classes.error}>{errors.nextAppointment}</span>

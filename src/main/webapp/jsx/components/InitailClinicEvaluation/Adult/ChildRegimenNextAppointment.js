@@ -96,23 +96,64 @@ const ChildRegimenNextAppointment = (props) => {
     const classes = useStyles()
     const [errors, setErrors] = useState({});
     let temp = { ...errors } 
+    const [adultRegimenLine, setAdultRegimenLine] = useState([]);
+    const [regimenType, setRegimenType] = useState([]);
     useEffect(() => { 
+        AdultRegimenLine();
         if(props.observation.data ){
-        setRegimen(props.observation.data.regimen) 
-        setobjValues(props.observation.data.nextAppointment)             
+            if(props.observation.data.regimen!==""){
+                setRegimen(props.observation.data.regimen) 
+            } 
+            setobjValues(props.observation.data.nextAppointment)             
         }
     }, [props.observation.data]);
     const [saving, setSaving] = useState(false); 
     const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
-    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
+    const [regimenObj, setRegimen] = useState({regimenLine:"", regimen:""}); 
     const handleRegimen =e =>{
         setErrors({...errors, [e.target.name]: ""})
         
-        setRegimen({...regimen, [e.target.name]: e.target.value})
+        setRegimen({...regimenObj, [e.target.name]: e.target.value})
     }
     const handleInputChangeobjValues = e => {   
         setErrors({...errors, [e.target.name]: ""})         
         setobjValues ({...objValues,  [e.target.name]: e.target.value});
+    }
+    const handleSelecteRegimen = e => { 
+        let regimenID=  e.target.value
+        //regimenTypeId regimenId
+        setRegimen ({...regimenObj, regimenLine:regimenID});
+        RegimenType(regimenID)           
+        setErrors({...temp, [e.target.name]:""})
+    }
+    //GET AdultRegimenLine 
+    const AdultRegimenLine =()=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/arv/adult`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14)) 
+                setAdultRegimenLine(artRegimen);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //Get list of RegimenLine
+    const RegimenType =(id)=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/types/${id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setRegimenType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
     }
     const handleItemClick =(page, completedMenu)=>{
         props.handleItemClick(page)
@@ -124,8 +165,8 @@ const ChildRegimenNextAppointment = (props) => {
     } 
     const validate = () => {        
         temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
-        temp.regimenLine = regimen.regimenLine ? "" : "This field is required" 
-        temp.regimen = regimen.regimen ? "" : "This field is required" 
+        temp.regimenLine = regimenObj.regimenLine ? "" : "This field is required" 
+        temp.regimen = regimenObj.regimen ? "" : "This field is required" 
        
         setErrors({
             ...temp
@@ -135,11 +176,11 @@ const ChildRegimenNextAppointment = (props) => {
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
-        props.observation.data.regimen= regimen
+        props.observation.data.regimen= regimenObj
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
         props.observation.data.clinicianName = objValues.clinicianName
-        console.log(props.observation)
+        //console.log(props.observation)
         if(validate()){
         axios.post(`${baseUrl}observation`, props.observation,
         { headers: {"Authorization" : `Bearer ${token}`}},            
@@ -177,107 +218,56 @@ return (
                     {/* Medical History form inputs */}
                     <div className="row">
                     <h3>Regimen</h3>
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Regimen Line <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimenLine"
-                                    id="regimenLine"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimenLine} 
-                                >
-                                <option value="">Select</option>
-                                <option value="first line">First Line</option>
-                                <option value="second line">Second Line</option>
-                                <option value="third line">Third Line </option>
-                               
-                                </Input>
-                                {errors.regimenLine !=="" ? (
-                                    <span className={classes.error}>{errors.regimenLine}</span>
-                                ) : "" }
-                        </FormGroup>
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >Original Regimen Line <span style={{ color:"red"}}> *</span></Label>
+                    <Input
+                            type="select"
+                            name="regimenLine"
+                            id="regimenLine"
+                            value={regimenObj.regimenLine}
+                            onChange={handleSelecteRegimen}
+                            
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            >
+                                <option value=""> Select</option>
+                                    {adultRegimenLine.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                    ))}
+                                
+                        </Input>
+                        {errors.regimenLine !=="" ? (
+                            <span className={classes.error}>{errors.regimenLine}</span>
+                            ) : "" }
+                    </FormGroup>
+                    </div>                    
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >Original Regimen <span style={{ color:"red"}}> *</span></Label>
+                    <Input
+                            type="select"
+                            name="regimen"
+                            id="regimen"
+                            value={regimenObj.regimen}
+                            onChange={handleRegimen}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>    
+                                {regimenType.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.regimen !=="" ? (
+                            <span className={classes.error}>{errors.regimen}</span>
+                            ) : "" }
+                    </FormGroup>
                     </div>
-                    {regimen.regimenLine==='first line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>First Line Regimen <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimen}  
-                                >
-                                <option value="">Select</option>
-                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option>
-                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
-                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option>
-                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option> 
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option> 
-                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL</option> 
-                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
-                                <option value="ABC + 3TC + EFV">ABC + 3TC + EFV</option>                             
-                                <option value="ABC + 3TC + NVP">ABC + 3TC + NVP</option>
-                                <option value="AZT + 3TC + EFV">AZT + 3TC + EFV</option>
-                                <option value="AZT + 3TC + NVP">AZT + 3TC + NVP</option>
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
-                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>                              
-                            </Input>
-                            {errors.regimen !=="" ? (
-                                    <span className={classes.error}>{errors.regimen}</span>
-                                ) : "" }
-                        </FormGroup>
-                    </div>
-                    )}
-                    {regimen.regimenLine==='second line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Second Line Regimen <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimen}   
-                                >
-                                <option value="">Select</option>
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
-                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
-                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option>
-                                <option value="ABC + 3TC +  ATV/r">ABC + 3TC +  ATV/r</option>  
-                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL </option>
-                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
-                            </Input>
-                            {errors.regimen !=="" ? (
-                                    <span className={classes.error}>{errors.regimen}</span>
-                                ) : "" }
-                        </FormGroup>
-                    </div>
-                    )}
-                    {regimen.regimenLine==='third line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Third Line Regimen <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen}
-                                    value={regimen.regimen}    
-                                >
-                                <option value="">Select</option>
-                                <option value="DTG + DRV/r + ABC + 3TC">DTG + DRV/r + ABC + 3TC</option>
-                                <option value="DTG + DRV/r + AZT + 3TC">DTG + DRV/r + AZT + 3TC</option>
-                                <option value="RAL + DRV/r + ABC + 3TC">RAL + DRV/r + ABC + 3TC</option>
-                                <option value="RAL + DRV/r + AZT + 3TC">RAL + DRV/r + AZT + 3TC</option>                    
-                            </Input>
-                            {errors.regimen !=="" ? (
-                                    <span className={classes.error}>{errors.regimen}</span>
-                                ) : "" }   
-                        </FormGroup>
-                    </div>
-                    )}
+                   
                     <br/>
                     </div>
                     <div className="row">

@@ -94,7 +94,8 @@ const Tracking = (props) => {
     const [modeCommunication, setmodeCommunication] = useState([]);
     const [dsdStatus, setdsdStatus] = useState([]);
     const [enrollDate, setEnrollDate] = useState("");
-    const [attemptList, setAttemptList] = useState([]) 
+    const [attemptList, setAttemptList] = useState([])
+    const [disabledField, setDisabledField] = useState(false); 
     const [observation, setObservation]=useState({
         data: {},
         dateOfObservation: "yyyy-MM-dd",
@@ -152,6 +153,9 @@ const Tracking = (props) => {
             setObjValues({...props.activeContent.obj})
                 setAttemptList(props.activeContent.obj.attempts)
                 
+        }
+        if(props.activeContent && props.activeContent.actionType==='view'){
+            setDisabledField(true)
         }
     }, [props.activeContent, props.activeContent.id]);
     //Get Tracking Form Object
@@ -445,7 +449,7 @@ const Tracking = (props) => {
                                     onChange={handleInputChangeObservation}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
-                                    
+                                    disabled={disabledField}
                                     > 
                                 </Input>
                                 {errors.dateOfObservation !=="" ? (
@@ -465,6 +469,7 @@ const Tracking = (props) => {
                                     id="durationOnART"
                                     onChange={handleInputChange}
                                     value={objValues.durationOnART} 
+                                    disabled={disabledField}
                                 >
                                     <option value=""></option>
                                     <option value="<3months">{"<"} 3 months</option>
@@ -484,6 +489,7 @@ const Tracking = (props) => {
                                     id="dsdStatus"
                                     onChange={handleInputChange}
                                     value={objValues.dsdStatus} 
+                                    disabled={disabledField}
                                 >
                                    <option value="">Select</option>
                                     {dsdStatus.map((value) => (
@@ -508,7 +514,8 @@ const Tracking = (props) => {
                                     name="dsdModel"
                                     id="dsdModel"
                                     onChange={handleInputChange}
-                                    value={objValues.dsdModel} 
+                                    value={objValues.dsdModel}
+                                    disabled={disabledField} 
                                 >
                                     <option value=""></option>
                                     <option value="FBM">FBM</option>
@@ -531,6 +538,7 @@ const Tracking = (props) => {
                                     id="reasonForTracking"
                                     onChange={handleInputChange}
                                     value={objValues.reasonForTracking} 
+                                    disabled={disabledField}
                                 >
                                     <option value="">Select</option>
                                     {reasonTracking.map((value) => (
@@ -554,7 +562,8 @@ const Tracking = (props) => {
                                     name="reasonForTrackingOthers"
                                     id="reasonForTrackingOthers"
                                     onChange={handleInputChange}
-                                    value={objValues.reasonForTrackingOthers} 
+                                    value={objValues.reasonForTrackingOthers}
+                                    disabled={disabledField} 
                                 />
                                  {errors.reasonForTrackingOthers !=="" ? (
                                     <span className={classes.error}>{errors.reasonForTrackingOthers}</span>
@@ -575,6 +584,7 @@ const Tracking = (props) => {
                                 min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={disabledField}
                                 
                             />
                             {errors.dateLastAppointment !=="" ? (
@@ -594,6 +604,7 @@ const Tracking = (props) => {
                                 min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                                disabled={disabledField}
                                 
                             />
                             {errors.dateMissedAppointment !=="" ? (
@@ -616,6 +627,7 @@ const Tracking = (props) => {
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     min={enrollDate!=='' ? enrollDate : ""}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
+                                    disabled={disabledField}
                                     
                                     > 
                                 </Input>
@@ -634,7 +646,7 @@ const Tracking = (props) => {
                                     value={attempt.whoAttemptedContact}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    disabled={disabledField}
                                 />
                                 {errors.whoAttemptedContact !=="" ? (
                                     <span className={classes.error}>{errors.whoAttemptedContact}</span>
@@ -651,7 +663,7 @@ const Tracking = (props) => {
                                     value={attempt.modeOfConatct}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    disabled={disabledField}
                                 >
                                  <option value="">Select</option>
                                     {modeCommunication.map((value) => (
@@ -675,7 +687,7 @@ const Tracking = (props) => {
                                     value={attempt.personContacted}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    disabled={disabledField}
                                 >
                                  <option value="">Select</option>
                                     {personContact.map((value) => (
@@ -699,7 +711,7 @@ const Tracking = (props) => {
                                     value={attempt.reasonForDefaulting}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    disabled={disabledField}
                                 >
                                  <option value="">Select</option>
                                     {reasonDefaulting.map((value) => (
@@ -724,7 +736,7 @@ const Tracking = (props) => {
                                     value={attempt.reasonForDefaultingOthers}
                                     onChange={handleInputChangeAttempt}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                    
+                                    disabled={disabledField}
                                 />
                                 {errors.reasonForDefaultingOthers !=="" ? (
                                 <span className={classes.error}>{errors.reasonForDefaultingOthers}</span>
@@ -779,7 +791,8 @@ const Tracking = (props) => {
                                     name="careInFacilityDiscountinued"
                                     id="careInFacilityDiscountinued"
                                     onChange={handleInputChange}
-                                    value={objValues.careInFacilityDiscountinued}  
+                                    value={objValues.careInFacilityDiscountinued} 
+                                    disabled={disabledField} 
                                 >
                                     <option value=""></option>
                                     <option value="Yes">Yes</option>
@@ -803,7 +816,7 @@ const Tracking = (props) => {
                                 min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                             {errors.dateReturnToCare !=="" ? (
                                 <span className={classes.error}>{errors.dateReturnToCare}</span>
@@ -820,7 +833,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.referredFor} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             >
                                 <option value=""></option>
                                 <option value="Adherence Counselling">Adherence Counselling</option>
@@ -842,7 +855,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.referredForOthers} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                              {errors.referredForOthers !=="" ? (
                                 <span className={classes.error}>{errors.referredForOthers}</span>
@@ -864,7 +877,7 @@ const Tracking = (props) => {
                                 min={enrollDate!=='' ? enrollDate : ""}
                                 max= {moment(new Date()).format("YYYY-MM-DD") }
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                             {errors.dateOfDiscontinuation !=="" ? (
                                 <span className={classes.error}>{errors.dateOfDiscontinuation}</span>
@@ -881,7 +894,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.reasonForDiscountinuation} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             >
                                 <option value="">Select</option>
                                     {reasonDiscountinuation.map((value) => (
@@ -908,7 +921,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.causeOfDeath} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             >
                                  {causeDeath.map((value) => (
                                         <option key={value.code} value={value.code}>
@@ -933,7 +946,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.causeOfDeathOthers} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                             {errors.causeOfDeathOthers !=="" ? (
                                 <span className={classes.error}>{errors.causeOfDeathOthers}</span>
@@ -952,7 +965,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.reasonForLossToFollowUp} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             >
                                 <option value="">Select</option>
                                 <option value="Travel/Relocation">Travel/Relocation</option>
@@ -979,7 +992,7 @@ const Tracking = (props) => {
                                 onChange={handleInputChange}
                                 value={objValues.reasonForLossToFollowUpOthers} 
                                 style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
-                                
+                                disabled={disabledField}
                             />
                               
                             </FormGroup>
@@ -998,6 +1011,7 @@ const Tracking = (props) => {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    hidden={disabledField}
                     startIcon={<SaveIcon />}
                     onClick={handleSubmit}
                     style={{backgroundColor:"#014d88"}}

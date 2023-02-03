@@ -203,7 +203,7 @@ const ViewMentalHealthScreening = (props) => {
                                     onChange={handleInputChangeKP}
                                     style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
                                     max= {moment(new Date()).format("YYYY-MM-DD") }
-                                    
+                                    disabled={props.activeContent.actionType !=='update' ? true : false}
                                     > 
                                 </Input>
                                 {errors.dateOfObservation !=="" ? (
