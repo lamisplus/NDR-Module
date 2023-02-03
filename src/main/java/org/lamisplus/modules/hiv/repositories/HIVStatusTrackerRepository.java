@@ -20,4 +20,9 @@ public interface HIVStatusTrackerRepository extends JpaRepository<HIVStatusTrack
     
     @Query(value ="SELECT * FROM hiv_status_tracker WHERE person_id = ?1 AND status_date <= ?2  AND archived = 0 order by status_date  DESC LIMIT 1", nativeQuery = true)
     Optional<HIVStatusTracker>getStatusByPersonUuidAndDateRange(String personUuid, LocalDate endDate);
+   
+    @Query(value ="SELECT cause_of_death, status_date FROM hiv_status_tracker \n" +
+            "WHERE person_id = ?1 \n" +
+            "order by status_date desc limit 1", nativeQuery = true)
+    String getCauseOfDeathByPersonUuid(String personUuid);
 }

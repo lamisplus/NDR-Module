@@ -96,11 +96,16 @@ public class StatusManagementService {
 		Optional<HIVStatusTracker> statusPreviousQuarter = hivStatusTrackerRepository
 				.getStatusByPersonUuidAndDateRange(personUuid, quarterEnd);
 		if (statusPreviousQuarter.isPresent()) {
-			List<String> staticStatus = Arrays.asList("ART_TRANSFER_OUT", "KNOWN_DEATH", "STOPPED_TREATMENT");
+			List<String> staticStatus =
+					Arrays.asList("ART_TRANSFER_OUT",
+							"KNOWN_DEATH","Died (Confirmed)",
+							"STOPPED_TREATMENT",
+							"Stopped Treatment",
+					"Interruption in Treatment", "Interruption in Treatment");
 			String hivStatus = statusPreviousQuarter.get().getHivStatus();
 			if (staticStatus.contains(hivStatus)) {
-				String finalStatus = hivStatus.replaceAll("_", " ");
-				if(finalStatus.contains("DEATH")) finalStatus = "Died";
+				String finalStatus = hivStatus.replaceAll("_", " ").toUpperCase();
+				if(finalStatus.contains("DEATH") || finalStatus.contains("Died")) finalStatus = "DIED";
 				return new HIVInterQuarterStatus(statusPreviousQuarter.get().getStatusDate(), finalStatus);
 			}
 		}
@@ -133,10 +138,10 @@ public class StatusManagementService {
 		
 		//ACTIVE, IIT, null
 		if (clientPreviousInternalQuarterStatus == null && clientCurrentInternalQuarterStatus != null) {
-			if (isTransferIn(clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
-						"ACTIVE TRANSFER IN", currentQuarter.getEnd());
-			}
+//			if (isTransferIn(clientCurrentInternalQuarterStatus, enrollmentStatus)) {
+//				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
+//						"ACTIVE TRANSFER IN", currentQuarter.getEnd());
+//			}
 			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
 					clientCurrentInternalQuarterStatus.getDescription(),
 					currentQuarter.getEnd());
@@ -158,9 +163,9 @@ public class StatusManagementService {
 		if (isRestart) {
 			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE RESTART", currentQuarter.getEnd());
 		}
-		if (isActiveTransferIn(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
-		}
+//		if (isActiveTransferIn(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus, enrollmentStatus)) {
+//			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
+//		}
 		return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), clientCurrentInternalQuarterStatus.getDescription(), currentQuarter.getEnd());
 		
 	}
@@ -181,9 +186,9 @@ public class StatusManagementService {
 		
 		//ACTIVE, IIT, null
 		if (clientPreviousInternalQuarterStatus == null) {
-			if (isTransferIn(clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
-			}
+//			if (isTransferIn(clientCurrentInternalQuarterStatus, enrollmentStatus)) {
+//				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
+//			}
 			if (clientCurrentInternalQuarterStatus != null) {
 				return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
 						clientCurrentInternalQuarterStatus.getDescription(),
@@ -196,11 +201,12 @@ public class StatusManagementService {
 		if (isRestart) {
 			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE RESTART", currentQuarter.getEnd());
 		}
-		if (isActiveTransferIn(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus, enrollmentStatus)) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
-		}
+//		if (isActiveTransferIn(clientPreviousInternalQuarterStatus, clientCurrentInternalQuarterStatus, enrollmentStatus)) {
+//			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), "ACTIVE TRANSFER IN", currentQuarter.getEnd());
+//		}
 		if (clientCurrentInternalQuarterStatus != null) {
-			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(), clientCurrentInternalQuarterStatus.getDescription(), currentQuarter.getEnd());
+			return new HIVStatusDisplay(clientCurrentInternalQuarterStatus.getDate(),
+					clientCurrentInternalQuarterStatus.getDescription(), currentQuarter.getEnd());
 		}
 		return null;
 	}
@@ -213,25 +219,25 @@ public class StatusManagementService {
 				&& clientCurrentInternalQuarterStatus.getDescription().contains("ACTIVE");
 	}
 	
-	private static boolean isActiveTransferIn(
-			HIVInterQuarterStatus clientPreviousInternalQuarterStatus,
-			HIVInterQuarterStatus clientCurrentInternalQuarterStatus,
-			EnrollmentStatus enrollmentStatus) {
-		return clientPreviousInternalQuarterStatus != null
-				&& clientPreviousInternalQuarterStatus.getDescription().contains("ACTIVE")
-				&& clientCurrentInternalQuarterStatus != null
-				&& clientCurrentInternalQuarterStatus.getDescription().contains("ACTIVE")
-				&& enrollmentStatus.getHivEnrollmentStatus() != null
-				&& enrollmentStatus.getHivEnrollmentStatus().contains("In");
-	}
+//	private static boolean isActiveTransferIn(
+//			HIVInterQuarterStatus clientPreviousInternalQuarterStatus,
+//			HIVInterQuarterStatus clientCurrentInternalQuarterStatus,
+//			EnrollmentStatus enrollmentStatus) {
+//		return clientPreviousInternalQuarterStatus != null
+//				&& clientPreviousInternalQuarterStatus.getDescription().contains("ACTIVE")
+//				&& clientCurrentInternalQuarterStatus != null
+//				&& clientCurrentInternalQuarterStatus.getDescription().contains("ACTIVE")
+//				&& enrollmentStatus.getHivEnrollmentStatus() != null
+//				&& enrollmentStatus.getHivEnrollmentStatus().contains("In");
+//	}
 	
-	private static boolean isTransferIn(HIVInterQuarterStatus clientCurrentInternalQuarterStatus, EnrollmentStatus enrollmentStatus) {
-		return enrollmentStatus != null
-				&& enrollmentStatus.getHivEnrollmentStatus() != null
-				&& enrollmentStatus.getHivEnrollmentStatus().contains("In")
-				&& clientCurrentInternalQuarterStatus != null
-				&& clientCurrentInternalQuarterStatus.getDescription().contains("ACTIVE");
-	}
+//	private static boolean isTransferIn(HIVInterQuarterStatus clientCurrentInternalQuarterStatus, EnrollmentStatus enrollmentStatus) {
+//		return enrollmentStatus != null
+//				&& enrollmentStatus.getHivEnrollmentStatus() != null
+//				&& enrollmentStatus.getHivEnrollmentStatus().contains("In")
+//				&& clientCurrentInternalQuarterStatus != null
+//				&& clientCurrentInternalQuarterStatus.getDescription().contains("ACTIVE");
+//	}
 	
 	
 	public EnrollmentStatus getEnrollmentStatus(String personUuid) {

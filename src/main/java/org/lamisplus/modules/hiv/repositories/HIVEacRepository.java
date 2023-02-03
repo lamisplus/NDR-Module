@@ -318,6 +318,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    hr.description as regimenAtStart,\n" +
 			"    h.ovc_number as ovcUniqueId,\n" +"   " +
 			"    h.house_hold_number as householdUniqueNo,\n" +
+			"    ecareEntry.display as careEntry,\n" +
 			"    hrt.description as regimenLineAtStart\n" +
 			"FROM\n" +
 			"    patient_person p\n" +
@@ -328,6 +329,7 @@ public interface HIVEacRepository extends JpaRepository<HIVEac, Long> {
 			"    INNER JOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
 			"    LEFT JOIN base_application_codeset tgroup ON tgroup.id = h.target_group_id\n" +
 			"    LEFT JOIN base_application_codeset eSetting ON eSetting.id = h.enrollment_setting_id\n" +
+			"    LEFT JOIN base_application_codeset ecareEntry ON ecareEntry.id = h.entry_point_id\n" +
 			"    INNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = h.uuid\n" +
 			"    AND hac.archived = 0\n" +
 			"    INNER JOIN hiv_regimen hr ON hr.id = hac.regimen_id\n" +

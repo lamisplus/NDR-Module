@@ -101,6 +101,8 @@ public interface RadetReportDto {
  String getOvcNumber();
  String  getHouseholdNumber();
  
+ String getCareEntry();
+ 
  Boolean getIsOvcServiceProvided();
 		
 	

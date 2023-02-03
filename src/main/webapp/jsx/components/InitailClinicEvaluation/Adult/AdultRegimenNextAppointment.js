@@ -155,8 +155,8 @@ const BasicInfo = (props) => {
     }
     const validate = () => {        
         temp.nextAppointment = objValues.nextAppointment ? "" : "This field is required"
-        temp.regimenLine = regimen.regimenLine ? "" : "This field is required" 
-        temp.regimen = regimen.regimen ? "" : "This field is required" 
+        //temp.regimenLine = regimen.regimenLine ? "" : "This field is required"
+        //temp.regimen = regimen.regimen ? "" : "This field is required"
        
         setErrors({
             ...temp

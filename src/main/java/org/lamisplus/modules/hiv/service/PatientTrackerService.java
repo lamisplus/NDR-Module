@@ -30,8 +30,9 @@ public class PatientTrackerService {
 	
 	public PatientTrackingDto createPatientTracker(PatientTrackingDto dto) {
 		PatientTracker patientTracker = mapDtoEntity(dto);
-		if (dto.getStatusTracker() != null){
-			HIVStatusTrackerDto statusDto = statusTrackerService.registerHIVStatusTracker(dto.getStatusTracker());
+		HIVStatusTrackerDto statusTracker = dto.getStatusTracker();
+		if (statusTracker != null){
+			HIVStatusTrackerDto statusDto = statusTrackerService.registerHIVStatusTracker(statusTracker);
 			HIVStatusTracker status = hivStatusTrackerRepository.findById(statusDto.getId()).orElseThrow(
 					() -> new EntityNotFoundException(HIVStatusTracker.class, "id", String.valueOf(statusDto.getId())));
 			patientTracker.setStatusTracker(status);
