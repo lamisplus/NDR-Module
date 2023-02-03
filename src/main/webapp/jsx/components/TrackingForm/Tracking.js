@@ -883,7 +883,7 @@ console.log(errors)
                                 
                             >
                                  {causeDeath.map((value) => (
-                                        <option key={value.code} value={value.code}>
+                                        <option key={value.code} value={value.display}>
                                             {value.display}
                                         </option>
                                     ))}
