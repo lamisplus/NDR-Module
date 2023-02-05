@@ -1,14 +1,12 @@
 
 import React, { useEffect, useState} from "react";
 import axios from "axios";
-import {FormGroup, Label , CardBody, Spinner,Input,Form, InputGroup,} from "reactstrap";
+import {FormGroup, Label , CardBody,Input, InputGroup,} from "reactstrap";
 import {makeStyles} from "@material-ui/core/styles";
-import {Card, CardContent} from "@material-ui/core";
+import {Card,} from "@material-ui/core";
 import { toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import { useHistory, } from "react-router-dom";
-// import {TiArrowBack} from 'react-icons/ti'
 import {token, url as baseUrl } from "../../../../api";
 import 'react-phone-input-2/lib/style.css'
 import 'semantic-ui-css/semantic.min.css';
@@ -124,11 +122,11 @@ const BasicInfo = (props) => {
     //GET AdultRegimenLine 
     const AdultRegimenLine =()=>{
         axios
-            .get(`${baseUrl}hiv/regimen/arv/children`,
+            .get(`${baseUrl}hiv/regimen/arv/adult`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                const artRegimen=response.data 
+                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14)) 
                 setAdultRegimenLine(artRegimen);
             })
             .catch((error) => {
@@ -163,7 +161,7 @@ const BasicInfo = (props) => {
         setErrors({
             ...temp
         })
-        return Object.values(temp).every(x => x == "")
+        return Object.values(temp).every(x => x === "")
         }  
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 

@@ -129,12 +129,12 @@ const ChildRegimenNextAppointment = (props) => {
     //GET AdultRegimenLine 
     const AdultRegimenLine =()=>{
         axios
-            .get(`${baseUrl}hiv/regimen/arv/adult`,
+            .get(`${baseUrl}hiv/regimen/arv/children`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
-                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14)) 
-                setAdultRegimenLine(artRegimen);
+                const artRegimenChildren=response.data.filter((x)=> (x.id===3 || x.id===4))
+                setAdultRegimenLine(artRegimenChildren);
             })
             .catch((error) => {
             //console.log(error);

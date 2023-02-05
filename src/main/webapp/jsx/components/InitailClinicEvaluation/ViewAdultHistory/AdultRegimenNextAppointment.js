@@ -98,17 +98,22 @@ const AdultRegimenNextAppointment = (props) => {
     let temp = { ...errors } 
     const [saving, setSaving] = useState(false); 
     const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
-    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
+    const [regimenObj, setRegimen] = useState({regimenLine:"", regimen:""}); 
+    const [adultRegimenLine, setAdultRegimenLine] = useState([]);
+    const [regimenType, setRegimenType] = useState([]);
     useEffect(() => { 
         if(props.observation.data ){
-        setRegimen(props.observation.data.regimen) 
-        objValues.nextAppointment = props.observation.data.nextAppointment  
-        objValues.clinicianName = props.observation.data.clinicianName          
+        setRegimen({...props.observation.data.regimen}) 
+        objValues.nextAppointment = props.observation.data.nextAppointment
+        //regimenObj.regimenLine= props.observation.dataregimen.regimenLine 
+        objValues.clinicianName = props.observation.data.clinicianName 
+        regimenObj.regimenLine=props.observation.data.regimen.regimenLine
+        console.log(props.observation.data.regimen)         
         }
     }, [props.observation.data]);
     const handleRegimen =e =>{
        
-        setRegimen({...regimen, [e.target.name]: e.target.value})
+        setRegimen({...regimenObj, [e.target.name]: e.target.value})
     }
     const handleInputChangeobjValues = e => { 
         setErrors({...errors, [e.target.name]: ""})            
@@ -121,11 +126,47 @@ const AdultRegimenNextAppointment = (props) => {
         }else{
             props.setCompleted([...props.completed, completedMenu])
         }
-    }  
+    } 
+    const handleSelecteRegimen = e => { 
+        let regimenID=  e.target.value
+        //regimenTypeId regimenId
+        setRegimen ({...regimenObj, regimenLine:regimenID});
+        RegimenType(regimenID)           
+        setErrors({...temp, [e.target.name]:""})
+    }
+    //GET AdultRegimenLine 
+    const AdultRegimenLine =()=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/arv/adult`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                const artRegimen=response.data.filter((x)=> (x.id===1 || x.id===2 || x.id===14)) 
+                setAdultRegimenLine(artRegimen);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //Get list of RegimenLine
+    const RegimenType =(id)=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/types/${id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setRegimenType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
+    } 
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
-        props.observation.data.regimen= regimen
+        props.observation.data.regimen= regimenObj
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
         axios.put(`${baseUrl}observation/${props.observation.id}`, props.observation,
@@ -163,104 +204,54 @@ return (
                     {/* Medical History form inputs */}
                     <div className="row">
                     <h3>Regimen</h3>
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Regimen Line <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimenLine"
-                                    id="regimenLine"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimenLine} 
-                                >
-                                <option value="">Select</option>
-                                <option value="first line">First Line</option>
-                                <option value="second line">Second Line</option>
-                                <option value="third line">Third Line </option>
-                               
-                                </Input>
-                        </FormGroup>
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >Original Regimen Line <span style={{ color:"red"}}> *</span></Label>
+                    <Input
+                            type="select"
+                            name="regimenLine"
+                            id="regimenLine"
+                            value={regimenObj.regimenLine}
+                            onChange={handleSelecteRegimen}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            >
+                                <option value=""> Select</option>
+                                    {adultRegimenLine.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                    ))}
+                                
+                        </Input>
+                        {errors.regimenLine !=="" ? (
+                            <span className={classes.error}>{errors.regimenLine}</span>
+                            ) : "" }
+                    </FormGroup>
+                    </div>                    
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >Original Regimen <span style={{ color:"red"}}> *</span></Label>
+                    <Input
+                            type="select"
+                            name="regimen"
+                            id="regimen"
+                            value={regimenObj.regimen}
+                            onChange={handleRegimen}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>    
+                                {regimenType.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.regimen !=="" ? (
+                            <span className={classes.error}>{errors.regimen}</span>
+                            ) : "" }
+                    </FormGroup>
                     </div>
-                    {regimen.regimenLine==='first line'  && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>First Line Regimen <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimen}  
-                                >
-                                <option value="">Select</option>
-                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
-                                <option value="TDF + FTC + DTG">TDF + FTC + DTG</option>
-                                <option value="TDF + 3TC + EFV400">TDF + 3TC + EFV400</option>
-                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option> 
-                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option> 
-                                <option value="AZT + 3TC + EFV400">AZT + 3TC + EFV400</option>                              
-                            </Input>
-                        </FormGroup>
-                    </div>
-                    )}
-                    {regimen.regimenLine==='second line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Second Line Regimen <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimen}   
-                                >
-                                <option value="">Select</option>
-                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
-                                <option value="AZT + FTC + ATV/r">AZT + FTC + ATV/r</option>
-                                <option value="AZT + FTC + LPV/r">AZT + FTC + LPV/r</option>  
-                                <option value="TDF + 3TC + ATV/r">TDF + 3TC + ATV/r </option>
-                                <option value="TDF + 3TC + LPV/r">TDF + 3TC + LPV/r </option>
-                                <option value="TDF +  FTC + ATV/r">TDF +  FTC + ATV/r</option>  
-                                <option value="TDF + FTC + LPV/r">TDF + FTC + LPV/r</option>
-                                <option value="AZT + 3TC + DRV/r">AZT + 3TC + DRV/r</option>   
-                                <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                       
-                                <option value="AZT + 3TC + DTG">AZT + 3TC + DTG</option>
-                                <option value="AZT +  FTC + DTG">AZT +  FTC + DTG</option>
-                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
-                                <option value="TDF +  FTC + DTG">TDF +  FTC + DTG</option>
-                            </Input>
-                        </FormGroup>
-                    </div>
-                    )}
-                    {regimen.regimenLine==='third line'  && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Third Line Regimen <span style={{ color:"red"}}> *</span></Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen}
-                                    value={regimen.regimen}    
-                                >
-                                <option value="">Select</option>
-                                <option value="TDF + 3TC + DRV/r + DTG">TDF + 3TC + DRV/r + DTG</option>
-                                <option value="TDF + 3TC + DRV/r + DTG + ETV">TDF + 3TC + DRV/r + DTG + ETV</option>
-                                <option value="TDF + FTC + DRV/r + DTG">TDF + FTC + DRV/r + DTG</option>
-                                <option value="TDF + FTC + DRV/r + DTG + ETV">TDF + FTC + DRV/r + DTG + ETV</option>  
-                                <option value="AZT + 3TC + DRV/r + ETV + DTG">AZT + 3TC + DRV/r + ETV + DTG</option>
-                                <option value="AZT + FTC + DRV/r + ETV + DTG">AZT + FTC + DRV/r + ETV + DTG </option>
-                                <option value="AZT + 3TC + DRV/r + ETV">AZT + 3TC + DRV/r + ETV</option>  
-                                <option value="AZT + FTC + DRV/r + ETV">AZT + FTC + DRV/r + ETV</option>
-                                <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r + DTG</option>   
-                                <option value="AZT + 3TC + DRV/r + DTG">AZT + FTC + DRV/r + DTG</option> 
-                                <option value="AZT + 3TC + DRV/r + DTG">AZT + 3TC + DRV/r</option> 
-                                <option value="AZT + FTC + DRV/r">AZT + FTC + DRV/r</option>                        
-                            </Input>
-                        </FormGroup>
-                    </div>
-                    )}
                     <br/>
                     </div>
                     <div className="row">

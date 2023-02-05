@@ -98,7 +98,9 @@ const ChildRegimenNextAppointment = (props) => {
     let temp = { ...errors } 
     const [saving, setSaving] = useState(false); 
     const [objValues, setobjValues] = useState({nextAppointment:"", clinicianName:""});
-    const [regimen, setRegimen] = useState({regimenLine:"", regimen:""}); 
+    const [regimenObj, setRegimen] = useState({regimenLine:"", regimen:""}); 
+    const [regimenType, setRegimenType] = useState([]);
+    const [adultRegimenLine, setAdultRegimenLine] = useState([]);
     useEffect(() => { 
         if(props.observation.data ){
         setRegimen(props.observation.data.regimen) 
@@ -108,7 +110,43 @@ const ChildRegimenNextAppointment = (props) => {
     }, [props.observation.data]);
     const handleRegimen =e =>{
         
-        setRegimen({...regimen, [e.target.name]: e.target.value})
+        setRegimen({...regimenObj, [e.target.name]: e.target.value})
+    }
+    const handleSelecteRegimen = e => { 
+        let regimenID=  e.target.value
+        //regimenTypeId regimenId
+        setRegimen ({...regimenObj, regimenLine:regimenID});
+        RegimenType(regimenID)           
+        setErrors({...temp, [e.target.name]:""})
+    }
+    //GET AdultRegimenLine 
+    const AdultRegimenLine =()=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/arv/children`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                const artRegimenChildren=response.data.filter((x)=> (x.id===3 || x.id===4))
+                setAdultRegimenLine(artRegimenChildren);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });        
+    }
+    //Get list of RegimenLine
+    const RegimenType =(id)=>{
+        axios
+            .get(`${baseUrl}hiv/regimen/types/${id}`,
+                { headers: {"Authorization" : `Bearer ${token}`} }
+            )
+            .then((response) => {
+                //console.log(response.data);
+                setRegimenType(response.data);
+            })
+            .catch((error) => {
+            //console.log(error);
+            });
+        
     }
     const handleInputChangeobjValues = e => {  
         setErrors({...errors, [e.target.name]: ""})           
@@ -125,7 +163,7 @@ const ChildRegimenNextAppointment = (props) => {
     /**** Submit Button Processing  */
     const handleSubmit = (e) => { 
         e.preventDefault();  
-        props.observation.data.regimen= regimen
+        props.observation.data.regimen= regimenObj
         props.observation.personId =props.patientObj.id
         props.observation.data.nextAppointment=objValues.nextAppointment
         axios.put(`${baseUrl}observation/${props.observation.id}`, props.observation,
@@ -163,95 +201,56 @@ return (
                     {/* Medical History form inputs */}
                     <div className="row">
                     <h3>Regimen</h3>
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Regimen Line</Label>
-                            <Input 
-                                    type="select"
-                                    name="regimenLine"
-                                    id="regimenLine"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimenLine} 
-                                >
-                                <option value="">Select</option>
-                                <option value="first line">First Line</option>
-                                <option value="second line">Second Line</option>
-                                <option value="third line">Third Line </option>
-                               
-                                </Input>
-                        </FormGroup>
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >Original Regimen Line <span style={{ color:"red"}}> *</span></Label>
+                    <Input
+                            type="select"
+                            name="regimenLine"
+                            id="regimenLine"
+                            value={regimenObj.regimenLine}
+                            onChange={handleSelecteRegimen}
+                            
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            >
+                                <option value=""> Select</option>
+                                    {adultRegimenLine.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                    ))}
+                                
+                        </Input>
+                        {errors.regimenLine !=="" ? (
+                            <span className={classes.error}>{errors.regimenLine}</span>
+                            ) : "" }
+                    </FormGroup>
+                    </div>                    
+                    <div className="form-group mb-3 col-md-6">
+                    <FormGroup>
+                    <Label >Original Regimen <span style={{ color:"red"}}> *</span></Label>
+                    <Input
+                            type="select"
+                            name="regimen"
+                            id="regimen"
+                            value={regimenObj.regimen}
+                            onChange={handleRegimen}
+                            style={{border: "1px solid #014D88", borderRadius:"0.25rem"}}
+                            required
+                            >
+                                <option value=""> Select</option>    
+                                {regimenType.map((value) => (
+                                    <option key={value.id} value={value.id}>
+                                        {value.description}
+                                    </option>
+                                ))}
+                        </Input>
+                        {errors.regimen !=="" ? (
+                            <span className={classes.error}>{errors.regimen}</span>
+                            ) : "" }
+                    </FormGroup>
                     </div>
-                    {regimen.regimenLine==='first line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>First Line Regimen</Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimen}  
-                                >
-                                <option value="">Select</option>
-                                <option value="ABC + 3TC + DTG">ABC + 3TC + DTG</option>
-                                <option value="TDF + 3TC + DTG">TDF + 3TC + DTG</option>
-                                <option value="TAF + 3TC + DTG">TAF + 3TC + DTG</option>
-                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option> 
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option> 
-                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL</option> 
-                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
-                                <option value="ABC + 3TC + EFV">ABC + 3TC + EFV</option>                             
-                                <option value="ABC + 3TC + NVP">ABC + 3TC + NVP</option>
-                                <option value="AZT + 3TC + EFV">AZT + 3TC + EFV</option>
-                                <option value="AZT + 3TC + NVP">AZT + 3TC + NVP</option>
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
-                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>                             
-                            </Input>
-                        </FormGroup>
-                    </div>
-                    )}
-                    {regimen.regimenLine==='second line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Second Line Regimen</Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen} 
-                                    value={regimen.regimen}   
-                                >
-                                <option value="">Select</option>
-                                <option value="AZT + 3TC + LPV/r">AZT + 3TC + LPV/r</option>
-                                <option value="AZT + 3TC + ATV/r">AZT + 3TC + ATV/r</option>
-                                <option value="ABC + 3TC + LPV/r">ABC + 3TC + LPV/r</option>
-                                <option value="ABC + 3TC +  ATV/r">ABC + 3TC +  ATV/r</option>  
-                                <option value="ABC + 3TC + RAL">ABC + 3TC + RAL </option>
-                                <option value="AZT + 3TC + RAL">AZT + 3TC + RAL</option>
-                            </Input>
-                        </FormGroup>
-                    </div>
-                    )}
-                    {regimen.regimenLine==='third line' && (
-                    <div className="form-group mb-3 col-md-6">                                    
-                        <FormGroup>
-                            <Label>Third Line Regimen</Label>
-                            <Input 
-                                    type="select"
-                                    name="regimen"
-                                    id="regimen"
-                                    onChange={handleRegimen}
-                                    value={regimen.regimen}    
-                                >
-                                <option value="">Select</option>
-                                <option value="DTG + DRV/r + ABC + 3TC">DTG + DRV/r + ABC + 3TC</option>
-                                <option value="DTG + DRV/r + AZT + 3TC">DTG + DRV/r + AZT + 3TC</option>
-                                <option value="RAL + DRV/r + ABC + 3TC">RAL + DRV/r + ABC + 3TC</option>
-                                <option value="RAL + DRV/r + AZT + 3TC">RAL + DRV/r + AZT + 3TC</option>                   
-                            </Input>
-                        </FormGroup>
-                    </div>
-                    )}
+                   
                     <br/>
                     </div>
                     <div className="row">
