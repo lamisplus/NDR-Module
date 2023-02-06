@@ -105,12 +105,13 @@ const AdultRegimenNextAppointment = (props) => {
         if(props.observation.data ){
         setRegimen({...props.observation.data.regimen}) 
         objValues.nextAppointment = props.observation.data.nextAppointment
-        //regimenObj.regimenLine= props.observation.dataregimen.regimenLine 
+        regimenObj.regimenLine= props.observation.data.regimen.regimenLine 
         objValues.clinicianName = props.observation.data.clinicianName 
         regimenObj.regimenLine=props.observation.data.regimen.regimenLine
-        console.log(props.observation.data.regimen)         
+        RegimenType(props.observation.data.regimen.regimenLine)        
         }
-    }, [props.observation.data]);
+        AdultRegimenLine()
+    }, [props.observation.data, props.observation.data.regimen]);
     const handleRegimen =e =>{
        
         setRegimen({...regimenObj, [e.target.name]: e.target.value})
