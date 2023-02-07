@@ -407,7 +407,7 @@ const Pharmacy = (props) => {
     function RegimenDrugOI(id) {        
         let drugId = id
         if(drugId!==""  || drugId !==null){
-            setShowRegimen(true)    
+            setShowRegimenOI(true)    
             async function getCharacters(drugId) {            
                 try{
                 const response = await axios.get(`${baseUrl}hiv/regimen/drugs/${id}`,
@@ -440,7 +440,7 @@ const Pharmacy = (props) => {
             }
             getCharacters(drugId);
         }else{
-            setShowRegimen(false) 
+            setShowRegimenOI(false) 
         }
     }
     function RegimenDrugTB(id) {        
@@ -490,7 +490,7 @@ const Pharmacy = (props) => {
         
         if(regimenId!==""){
             RegimenType(regimenId)
-            setShowRegimen(true)
+            //setShowRegimen(true)
         }else{
             setRegimenType([])
             setShowRegimen(false)
@@ -799,8 +799,8 @@ const Pharmacy = (props) => {
         const duration = (current && current.frequency ? current.frequency : "") * current.duration
         return prev + +duration
       }, 0);
-     
-
+   console.log(showRegimen)  
+   console.log(showRegimenOI) 
   return (      
       <div>
  
@@ -1232,7 +1232,7 @@ const Pharmacy = (props) => {
             </div>
             
             {/* List of Regimen Drug selected  */}
-            {showRegimen  ? 
+            {showRegimen   ? 
                 (
                     <>
                         <Card>
@@ -1464,7 +1464,7 @@ const Pharmacy = (props) => {
             </div>
             )}
             {/* Display List of the OI drugs selected */}
-            {showRegimenOI && regimenDrug && regimenDrug.length >0 ? 
+            {showRegimenOI  ? 
                 (
                     <>
                         <Card>
