@@ -54,6 +54,7 @@ public class EncountersTypeMapper {
               List<ARTClinicalInfo> clinicalInfoList =
                       ndrXmlStatusRepository.getClinicalInfoByPersonUuid(demographics.getPersonUuid());
               log.info ("encounter list size {}",  clinicalInfoList.size());
+              
               clinicalInfoList.forEach (
                     artClinical -> {
                         HIVEncounterType hivEncounterType = new HIVEncounterType ();
@@ -72,6 +73,7 @@ public class EncountersTypeMapper {
                         }
                         hivEncounter.add (hivEncounterType);
                     });
+              if(hivEncounter.isEmpty()) return null;
 
         }
         return encountersType;
@@ -104,6 +106,7 @@ public class EncountersTypeMapper {
                         }
                         hivEncounter.add (hivEncounterType);
                     });
+            if(hivEncounter.isEmpty()) return null;
             
         }
         return encountersType;

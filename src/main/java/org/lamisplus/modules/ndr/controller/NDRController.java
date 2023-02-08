@@ -58,7 +58,7 @@ public class NDRController {
     @GetMapping("/generate/{personId}")
     public void generatePatientXml(@PathVariable("personId") String personId, @RequestParam("facility") Long facility) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        ndrService.shouldPrintPatientContainerXml (personId, facility);
+        ndrService.shouldPrintPatientContainerXml (personId, facility, true);
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
     }
 
