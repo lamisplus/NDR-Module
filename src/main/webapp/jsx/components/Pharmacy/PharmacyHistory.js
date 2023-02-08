@@ -8,9 +8,6 @@ import { forwardRef } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
-import { makeStyles } from '@material-ui/core/styles'
-// import ButtonGroup from '@material-ui/core/ButtonGroup';
-// import { MdEditNote } from "react-icons/md";
 import "@reach/menu-button/styles.css";
 import 'semantic-ui-css/semantic.min.css';
 import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
@@ -30,7 +27,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
+import {  Modal } from "react-bootstrap";
 
 
 
@@ -54,54 +51,12 @@ ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
 ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const useStyles = makeStyles(theme => ({
-    card: {
-        margin: theme.spacing(20),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3)
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2)
-    },
-    cardBottom: {
-        marginBottom: 20
-    },
-    Select: {
-        height: 45,
-        width: 350
-    },
-    button: {
-        margin: theme.spacing(1)
-    },
-
-    root: {
-        '& > *': {
-            margin: theme.spacing(1)
-        }
-    },
-    input: {
-        display: 'none'
-    },
-    error: {
-        color: "#f85032",
-        fontSize: "11px",
-    },
-    success: {
-        color: "#4BB543 ",
-        fontSize: "11px",
-    }, 
-}))
-
-
 const PharmacyHistory = (props) => {    
     
-    //const [loading, setLoading] = useState(true)
-    
+    const [open, setOpen] = React.useState(false)
+    const [saving, setSaving] = useState(false)
+    const [record, setRecord] = useState(null)
+     const toggle = () => setOpen(!open);
     useEffect(() => {
 
       }, [props.patientObj.id, props.refillList]);
@@ -110,13 +65,16 @@ const PharmacyHistory = (props) => {
        // props.setActiveContent({...props.activeContent, route:'pharmacy', activeTab:"hsitory"})
         props.setActiveContent({...props.activeContent, route:'pharmacy-update', id:row.id, activeTab:"history", actionType:actionType, obj:row})
     }
-    const LoadDeletePage = (row) =>{  
+    const LoadDeletePage = (row) =>{ 
+        setSaving(true)  
         axios.delete(`${baseUrl}hiv/art/pharmacy/${row.id}`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
             )
             .then((response) => {
                 toast.success("Record Deleted Successfully");
                 props.PharmacyList()
+                toggle()
+                setSaving(false)
             })
             .catch((error) => {
                 if(error.response && error.response.data){
@@ -135,6 +93,10 @@ const PharmacyHistory = (props) => {
             regimenArr.push(<li key={index}>{value['name']}</li>)
         })
         return regimenArr; 
+        }
+        const LoadModal =(row)=>{
+            toggle()
+            setRecord(row)
         }
 
   return (
@@ -189,7 +151,7 @@ const PharmacyHistory = (props) => {
 
                                 <Dropdown.Menu style={{ marginTop:"10px", }}>
                                    <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
-                                    <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
+                                    <Dropdown.Item  onClick={()=>LoadModal(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                                 </Button>
@@ -216,7 +178,24 @@ const PharmacyHistory = (props) => {
                           debounceInterval: 400
                       }}
             />
-       
+        <Modal show={open} toggle={toggle} className="fade" size="md"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered backdrop="static">
+                <Modal.Header >
+            <Modal.Title id="contained-modal-title-vcenter">
+                Notification!
+            </Modal.Title>
+            </Modal.Header>
+                <Modal.Body>
+                    <h4>Are you Sure you want to delete  - <b>{record && record.visitDate}</b></h4>
+                    
+                </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={()=>LoadDeletePage(record)}  style={{backgroundColor:"red", color:"#fff"}} disabled={saving}>{saving===false ? "Yes": "Deleting..."}</Button>
+                <Button onClick={toggle} style={{backgroundColor:"#014d88", color:"#fff"}} disabled={saving}>No</Button>
+                
+            </Modal.Footer>
+            </Modal> 
     </div>
   );
 }

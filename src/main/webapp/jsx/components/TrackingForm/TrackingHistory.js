@@ -24,14 +24,13 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import {  Card,CardBody,} from 'reactstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-widgets/dist/css/react-widgets.css';
-import { makeStyles } from '@material-ui/core/styles'
 import "@reach/menu-button/styles.css";
 import "@reach/menu-button/styles.css";
 import 'semantic-ui-css/semantic.min.css';
 import "react-widgets/dist/css/react-widgets.css";
 import { toast} from "react-toastify";
 import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react';
-import {Alert } from "react-bootstrap";
+import {  Modal } from "react-bootstrap";
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -53,52 +52,11 @@ ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
 ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const useStyles = makeStyles(theme => ({
-    card: {
-        margin: theme.spacing(20),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3)
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2)
-    },
-    cardBottom: {
-        marginBottom: 20
-    },
-    Select: {
-        height: 45,
-        width: 350
-    },
-    button: {
-        margin: theme.spacing(1)
-    },
-
-    root: {
-        '& > *': {
-            margin: theme.spacing(1)
-        }
-    },
-    input: {
-        display: 'none'
-    },
-    error: {
-        color: "#f85032",
-        fontSize: "11px",
-    },
-    success: {
-        color: "#4BB543 ",
-        fontSize: "11px",
-    }, 
-}))
-
-
 const TrackingHistory = (props) => {    
-    const [buttonHidden, setButtonHidden]= useState(false);
+    const [open, setOpen] = React.useState(false)
+    const [saving, setSaving] = useState(false)
+    const [record, setRecord] = useState(null)
+    const toggle = () => setOpen(!open);
     useEffect(() => {
         //CheckLabModule();
         //LabOrders()
@@ -110,12 +68,15 @@ const TrackingHistory = (props) => {
      }
 
      const LoadDeletePage = (row) =>{  
+        setSaving(true) 
       axios.delete(`${baseUrl}patient-tracker/${row.id}`,
               { headers: {"Authorization" : `Bearer ${token}`} }
           )
           .then((response) => {
               toast.success("Record deleted successfully");
               props.TrackingDetails()
+              toggle()
+              setSaving(false)
           })
           .catch((error) => {
               if(error.response && error.response.data){
@@ -127,7 +88,10 @@ const TrackingHistory = (props) => {
                 }
           }); 
    }
-
+   const LoadModal =(row)=>{
+    toggle()
+    setRecord(row)
+  }
 
   return (
     <div>
@@ -165,7 +129,7 @@ const TrackingHistory = (props) => {
                                   <Dropdown.Menu style={{ marginTop:"10px", }}>
                                     <Dropdown.Item  onClick={()=>onClickHome(row, 'view')}><Icon name='eye' />View</Dropdown.Item>
                                     <Dropdown.Item  onClick={()=>onClickHome(row, 'update')}><Icon name='edit' />Update</Dropdown.Item>
-                                      <Dropdown.Item  onClick={()=>LoadDeletePage(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
+                                      <Dropdown.Item  onClick={()=>LoadModal(row)}> <Icon name='trash' /> Delete</Dropdown.Item>
                                   </Dropdown.Menu>
                               </Dropdown>
                                   </Button>
@@ -191,18 +155,24 @@ const TrackingHistory = (props) => {
                             debounceInterval: 400
                         }}
               />
-            {/* )}
-            {moduleStatus==="2" && (
-              <>
-              <Alert
-                  variant="warning"
-                  className="alert-dismissible solid fade show"
-              >
-                  <p>Laboratory Module is not install</p>
-              </Alert>
-            
-              </>
-              )}  */}
+            <Modal show={open} toggle={toggle} className="fade" size="md"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered backdrop="static">
+                <Modal.Header >
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Notification!
+                </Modal.Title>
+                </Modal.Header>
+                    <Modal.Body>
+                        <h4>Are you Sure you want to delete  record</h4>
+                        
+                    </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={()=>LoadDeletePage(record)}  style={{backgroundColor:"red", color:"#fff"}} disabled={saving}>{saving===false ? "Yes": "Deleting..."}</Button>
+                    <Button onClick={toggle} style={{backgroundColor:"#014d88", color:"#fff"}} disabled={saving}>No</Button>
+                    
+                </Modal.Footer>
+              </Modal> 
     </div>
   );
 }

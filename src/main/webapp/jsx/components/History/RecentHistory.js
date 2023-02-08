@@ -12,7 +12,8 @@ import {  Card,Accordion } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import "react-widgets/dist/css/react-widgets.css";
 import { toast} from "react-toastify";
-
+import {  Modal } from "react-bootstrap";
+import {Button } from 'semantic-ui-react'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,6 +36,10 @@ const RecentHistory = (props) => {
   const [loadingPharmacy, setLoadingPharmacy] = useState(true)
   const [notToBeUpdated, setNotToBeUpdated] = useState(['eac', 'eac-session', 'client-tracker']);
   let history = useHistory();
+  const [open, setOpen] = React.useState(false)
+    const [saving, setSaving] = useState(false)
+    const [record, setRecord] = useState(null)
+     const toggle = () => setOpen(!open);
   const [
     activeAccordionHeaderShadow,
     setActiveAccordionHeaderShadow,
@@ -220,7 +225,8 @@ const RecentHistory = (props) => {
 }
 const LoadDeletePage =(row)=>{
         
-  if(row.path==='Mental-health'){        
+  if(row.path==='Mental-health'){  
+    setSaving(true)        
       //props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
       axios
       .delete(`${baseUrl}observation/${row.id}`,
@@ -229,6 +235,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false) 
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -240,6 +248,7 @@ const LoadDeletePage =(row)=>{
             }
       });  
   }else if(row.path==='Art-commence'){
+    setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'art-commencement-view', id:row.id})
       axios
       .delete(`${baseUrl}hiv/art/commencement/${row.id}`,
@@ -248,6 +257,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -260,6 +271,7 @@ const LoadDeletePage =(row)=>{
       });
 
   }else if(row.path==='Clinical-evaluation'){
+      setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'adult-clinic-eveluation-view', id:row.id})
       axios
       .delete(`${baseUrl}observation/${row.id}`,
@@ -268,6 +280,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -280,6 +294,7 @@ const LoadDeletePage =(row)=>{
       });
 
   }else if(row.path==='eac1'){
+      setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'first-eac-history', id:row.id})
       axios
       .delete(`${baseUrl}observation/eac/${row.id}`,
@@ -288,6 +303,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -300,6 +317,7 @@ const LoadDeletePage =(row)=>{
       });  
   }
   else if(row.path==='eac2'){
+      setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'second-eac-history', id:row.id})
       axios
       .delete(`${baseUrl}observation/eac/${row.id}`,
@@ -308,6 +326,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -320,6 +340,7 @@ const LoadDeletePage =(row)=>{
       });  
   }
   else if(row.path==='eac3'){
+      setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'completed-eac-history', id:row.id})
       axios
       .delete(`${baseUrl}observation/eac/${row.id}`,
@@ -328,6 +349,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -339,6 +362,7 @@ const LoadDeletePage =(row)=>{
             }
       });  
   }else if(row.path==='hiv-enrollment'){
+    setSaving(true)  
       axios
       .delete(`${baseUrl}hiv/enrollment/${row.id}`,
           { headers: {"Authorization" : `Bearer ${token}`} }
@@ -346,6 +370,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -358,6 +384,7 @@ const LoadDeletePage =(row)=>{
       });  
       //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
   }else if(row.path==='pharmacy'){
+      setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
       //props.setActiveContent({...props.activeContent, route:'pharmacy', id:row.id, activeTab:"home", actionType:"update", obj:row})
       axios
@@ -367,6 +394,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -379,6 +408,7 @@ const LoadDeletePage =(row)=>{
       }); 
 
   }else if(row.path==='clinic-visit'){
+      setSaving(true)  
       //props.setActiveContent({...props.activeContent, route:'mental-health-history', id:row.id})
       axios
       .delete(`${baseUrl}hiv/art/clinic-visit/${row.id}`,
@@ -387,6 +417,8 @@ const LoadDeletePage =(row)=>{
       .then((response) => {
           toast.success("Record Deleted Successfully");
           RecentActivities()
+          toggle()
+          setSaving(false)
       })
       .catch((error) => {
           if(error.response && error.response.data){
@@ -405,7 +437,10 @@ const LoadDeletePage =(row)=>{
 const redirectLink=()=>{
   props.setActiveContent({...props.activeContent, route:'recent-history'})
 }
-
+const LoadModal =(row)=>{
+  toggle()
+  setRecord(row)
+} 
 
   return (
     <Fragment>
@@ -508,7 +543,7 @@ const redirectLink=()=>{
                                       {activity.deletable && (<Dropdown.Item
                                       className="dropdown-item"
                                       to="/widget-basic"
-                                      onClick={()=>LoadDeletePage(activity)}
+                                      onClick={()=>LoadModal(activity, 'delete')}
                                       >
                                       Delete
                                       </Dropdown.Item>
@@ -687,9 +722,26 @@ const redirectLink=()=>{
       </div>
        
 
- </div>
-      
-    </Fragment>
+  </div>
+  <Modal show={open} toggle={toggle} className="fade" size="md"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered backdrop="static">
+            <Modal.Header >
+        <Modal.Title id="contained-modal-title-vcenter">
+            Notification!
+        </Modal.Title>
+        </Modal.Header>
+            <Modal.Body>
+                <h4>Are you Sure you want to delete <b>{record && record.name}</b></h4>
+                
+            </Modal.Body>
+        <Modal.Footer>
+            <Button onClick={()=>LoadDeletePage(record)}  style={{backgroundColor:"red", color:"#fff"}} disabled={saving}>{saving===false ? "Yes": "Deleting..."}</Button>
+            <Button onClick={toggle} style={{backgroundColor:"#014d88", color:"#fff"}} disabled={saving}>No</Button>
+            
+        </Modal.Footer>
+        </Modal>
+  </Fragment>
   );
 };
 

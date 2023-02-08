@@ -1,7 +1,6 @@
 import React, {useState, Fragment, useEffect } from "react";
 import axios from "axios";
 import { Row, Col, Card,  Tab, Tabs, } from "react-bootstrap";
-import ViralLoadOrder from './ViralLoadOrder';
 import ViralLoadOrderResult from './ViralLoadOrderResult';
 import ViralLoadOrderResultHistory from "./ViralLoadOrderResultHistory";
 import { url as baseUrl, token } from "../../../../api";
