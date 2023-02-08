@@ -320,7 +320,7 @@
 			                        <phase>generate-resources</phase>
 			                        <configuration>
 			                            <target>
-			                                <copy todir="${project.build.directory}/classes/views/static/hiv">
+			                                <copy todir="${project.build.directory}/classes/views/static/ndr">
 			                                    <fileset dir="${project.basedir}/build"/>
 			                                </copy>
 			                            </target>
