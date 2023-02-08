@@ -1,16 +1,16 @@
-basePackage: org.lamisplus.modules.hiv
-name: HivModule
-dependencies: {PatientModule: 1.0.0, TriageModule: 1.0.0, LaboratoryModule: 1.0.0 }
+basePackage: org.lamisplus.modules.ndr
+name: NDRModule
+dependencies: {PatientModule: 1.0.0, TriageModule: 1.0.0, HivModule: 1.0.0 }
 store: true
 menus:
-  - icon: fa-solid fa-shield-virus
+  - icon:
     disabled: false
-    name: HIV
-    state: hiv
-    url: /across/resources/static/hiv/index.html
-umdLocation: /across/resources/static/hiv/index.html
+    name: NDR
+    state: ndr
+    url: /across/resources/static/ndr/index.html
+umdLocation: /across/resources/static/ndr/index.html
 webModules:
-  - breadcrumb: HIV
-    name: HivModule
-    path: hiv
+  - breadcrumb: NDR
+    name: NDRModule
+    path: NDR
     position: 99
