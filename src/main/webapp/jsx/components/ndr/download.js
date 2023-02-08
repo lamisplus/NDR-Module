@@ -151,7 +151,7 @@ export default function DownloadNdr() {
                     name: row.facility,
                     files: row.files,
                     fileName: row.fileName,
-                    date: moment(row.lastModified).format("YYYY-MM-DD HH:MM:SS"),
+                    date: moment(row.lastModified).format("LLLL"),
                     actions:
 
                         <Tooltip title="Download" onClick={() => downloadFile(row.fileName)}>
