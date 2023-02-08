@@ -260,7 +260,7 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
-                    return processAndGenerateNDRFile(jaxbMarshaller, container, facilityId, identifier, id);
+                    return processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
                 }
             }
             } catch(Exception ignore){
@@ -308,7 +308,7 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
-                    return processAndGenerateNDRFile(jaxbMarshaller, container, facilityId, identifier, id);
+                    return processAndGenerateNDRFile(jaxbMarshaller, container, demographics, identifier, id);
                 }
             }
         } catch(Exception ignore){
@@ -376,13 +376,7 @@ public class NDRService {
                 .filter(Objects::nonNull)
                 .map(ndrStatus -> new NdrMessageLog(ndrStatus.identifier, ndrStatus.getFile(), LocalDateTime.now()))
                 .map(this::saveMessageLog).count();
-        String fileName = zipFiles (facilityId);
-        NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
-        ndrXmlStatus.setFacilityId (facilityId);
-        ndrXmlStatus.setFiles (filesSize);
-        ndrXmlStatus.setFileName (fileName);
-        ndrXmlStatus.setLastModified (LocalDateTime.now ());
-        ndrXmlStatusRepository.save (ndrXmlStatus);
+         processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize);
     }
     
     private void processAndGenerateNDRFiles(Long facilityId, Set<String> personUuidsForNDR, LocalDateTime lastUpdated) {
@@ -395,13 +389,24 @@ public class NDRService {
                 .filter(Objects::nonNull)
                 .map(ndrStatus -> new NdrMessageLog(ndrStatus.identifier, ndrStatus.getFile(), LocalDateTime.now()))
                 .map(this::saveMessageLog).count();
-        String fileName = zipFiles (facilityId);
-        NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
-        ndrXmlStatus.setFacilityId (facilityId);
-        ndrXmlStatus.setFiles (filesSize);
-        ndrXmlStatus.setFileName (fileName);
-        ndrXmlStatus.setLastModified (LocalDateTime.now ());
-        ndrXmlStatusRepository.save (ndrXmlStatus);
+        processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize);
+    }
+    
+    private void processAndZipFacilityNDRXML(Long facilityId, Set<String> personUuidsForNDR, int filesSize) {
+        Optional<String> personId = personUuidsForNDR.stream().findFirst();
+        if(personId.isPresent()) {
+            Optional<PatientDemographics> patientDemographicsOptional=
+                    ndrXmlStatusRepository.getPatientDemographicsByUUID(personId.get());
+            if(patientDemographicsOptional.isPresent()) {
+                String fileName = zipFiles (patientDemographicsOptional.get());
+                NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
+                ndrXmlStatus.setFacilityId (facilityId);
+                ndrXmlStatus.setFiles (filesSize);
+                ndrXmlStatus.setFileName (fileName);
+                ndrXmlStatus.setLastModified (LocalDateTime.now ());
+                ndrXmlStatusRepository.save (ndrXmlStatus);
+            }
+        }
     }
     
     
@@ -419,16 +424,16 @@ public class NDRService {
     public NDRStatus processAndGenerateNDRFile(
             Marshaller jaxbMarshaller,
             Container container,
-            Long facilityId,
+            PatientDemographics demographics,
             String identifier,
             Long id) {
        try {
-           String fileName = generateFileName(facilityId, identifier);
-           File file = new File(BASE_DIR + "temp/" + facilityId + "/" + fileName);
-           File dir = new File(BASE_DIR + "temp/"+facilityId+"/");
+           File dir = new File(BASE_DIR + "temp/"+demographics.getFacilityId()+"/");
            if (!dir.exists()) {
                log.info(" directory created => : {}", dir.mkdirs());
            }
+           String fileName = generateFileName(demographics, identifier);
+           File file = new File(BASE_DIR + "temp/" + demographics.getFacilityId() + "/" + fileName);
            jaxbMarshaller.marshal(container, file);
            return new NDRStatus(id, identifier, fileName);
        }catch (Exception ignore){
@@ -438,39 +443,26 @@ public class NDRService {
        return null;
     }
 
-    private String generateFileName(Long facilityId, String identifier) {
-        OrganisationUnit facility = organisationUnitService.getOrganizationUnit (facilityId);
-        Long lgaIdOfTheFacility = facility.getParentOrganisationUnitId ();
-        OrganisationUnit lgaOrgUnitOfFacility = organisationUnitService.getOrganizationUnit (lgaIdOfTheFacility);
-        String lga = getLga (facility);
-        String state = getState (lgaOrgUnitOfFacility);
-        log.info ("State {}", state);
-        log.info ("lga {}", lga);
-        String datimCode = messageHeaderTypeMapper.getDatimCode (facilityId).orElse ("");
+    private String generateFileName( PatientDemographics demographics, String identifier) {
         Date date = new Date ();
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-        String fileName = StringUtils.leftPad (state, 2, "0") +
-                StringUtils.leftPad (lga, 3, "0") +
-                "_" + datimCode + "_" + StringUtils.replace (identifier, "/", "-")
+        String fileName = StringUtils.leftPad (demographics.getState(), 2, "0") +
+                StringUtils.leftPad (demographics.getLga(), 3, "0") +
+                "_" + demographics.getDatimId() + "_" + StringUtils.replace (identifier, "/", "-")
                 + "_" + dateFormat.format (date) + ".xml";
         return RegExUtils.replaceAll (fileName, "/", "-");
     }
 
-    private String zipFiles(long facilityId) {
+    private String zipFiles(PatientDemographics demographics) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-        OrganisationUnit facility = organisationUnitService.getOrganizationUnit (facilityId);
-        Long lgaIdOfTheFacility = facility.getParentOrganisationUnitId ();
-        OrganisationUnit lgaOrgUnitOfFacility = organisationUnitService.getOrganizationUnit (lgaIdOfTheFacility);
-        String lga = getLga (facility);
-        String state = getState (lgaOrgUnitOfFacility);
-        String datimCode = messageHeaderTypeMapper.getDatimCode (facilityId).orElse ("");
-        String fileName = StringUtils.leftPad (state, 2, "0") +
-                StringUtils.leftPad (lga, 3, "0") + "_" + datimCode +
-                "_" + facility.getName () + "_" + dateFormat.format (new Date());
+      
+        String fileName = StringUtils.leftPad (demographics.getState(), 2, "0") +
+                StringUtils.leftPad (demographics.getLga(), 3, "0") + "_" + demographics.getDatimId() +
+                "_" + demographics.getFacilityName()+ "_" + dateFormat.format (new Date());
         
         fileName = RegExUtils.replaceAll (fileName, "/", "-");
         try {
-            String sourceFolder = BASE_DIR + "temp/" + facilityId + "/";
+            String sourceFolder = BASE_DIR + "temp/" + demographics.getFacilityId() + "/";
             String outputZipFile = BASE_DIR + "ndr/" + fileName;
             new File (BASE_DIR + "ndr").mkdirs ();
             new File (Paths.get (outputZipFile).toAbsolutePath ().toString ()).createNewFile ();
@@ -522,18 +514,18 @@ public class NDRService {
             }
         } catch (IOException ignored) {
         }
-        String file = BASE_DIR + "ndr/";
-        try (Stream<Path> list = Files.list (Paths.get (BASE_DIR + "ndr/"))) {
-            list.filter (path -> path.getFileName ().toString ().contains (file))
-                    .forEach (path -> {
-                        try {
-                            Files.delete (path);
-                        } catch (IOException e) {
-                            e.printStackTrace ();
-                        }
-                    });
-        } catch (IOException e) {
-        }
+//        String file = BASE_DIR + "ndr/";
+//        try (Stream<Path> list = Files.list (Paths.get (BASE_DIR + "ndr/"))) {
+//            list.filter (path -> path.getFileName ().toString ().contains (file))
+//                    .forEach (path -> {
+//                        try {
+//                            Files.delete (path);
+//                        } catch (IOException e) {
+//                            e.printStackTrace ();
+//                        }
+//                    });
+//        } catch (IOException e) {
+//        }
     }
 
     private Set<String> listFilesUsingDirectoryStream(String dir) throws IOException {

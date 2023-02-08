@@ -302,15 +302,15 @@
 <!--										<arguments>install &#45;&#45;legacy-peer-deps</arguments>-->
 <!--									</configuration>-->
 <!--								</execution>-->
-								<execution>
-									<id>npm run build</id>
-									<goals>
-										<goal>npm</goal>
-									</goals>
-									<configuration>
-										<arguments>run build</arguments>
-									</configuration>
-								</execution>
+<!--								<execution>-->
+<!--									<id>npm run build</id>-->
+<!--									<goals>-->
+<!--										<goal>npm</goal>-->
+<!--									</goals>-->
+<!--									<configuration>-->
+<!--										<arguments>run build</arguments>-->
+<!--									</configuration>-->
+<!--								</execution>-->
 							</executions>
 						</plugin>
 			            <plugin>
@@ -320,7 +320,7 @@
 			                        <phase>generate-resources</phase>
 			                        <configuration>
 			                            <target>
-			                                <copy todir="${project.build.directory}/classes/views/static/hiv">
+			                                <copy todir="${project.build.directory}/classes/views/static/ndr">
 			                                    <fileset dir="${project.basedir}/build"/>
 			                                </copy>
 			                            </target>

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface NdrXmlStatusRepository extends JpaRepository<NdrXmlStatus, Integer> {
 	
-	@Query(value = "SELECT p.id,p.uuid as personUuid, p.archived \\:\\:BOOLEAN as archived, p.uuid,p.hospital_number as hospitalNumber, \n" +
+	@Query(value = "SELECT p.id,p.uuid as personUuid, p.facility_id as facilityId, p.archived \\:\\:BOOLEAN as archived, p.uuid,p.hospital_number as hospitalNumber, \n" +
 			"\t\t\t\t  p.surname, p.first_name as firstName,\n" +
 			"\t\t\t\t  EXTRACT(YEAR from AGE(NOW(),  date_of_birth)) as age,\n" +
 			"\t\t\t\t  p.other_name as otherName, p.sex, p.date_of_birth as dateOfBirth, \n" +
