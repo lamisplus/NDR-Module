@@ -26,6 +26,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import Button from '@material-ui/core/Button';
+import moment from "moment";
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -150,7 +151,7 @@ export default function DownloadNdr() {
                     name: row.facility,
                     files: row.files,
                     fileName: row.fileName,
-                    date: row.lastModified,
+                    date: moment(row.lastModified).format("YYYY-MM-DD HH:MM:SS"),
                     actions:
 
                         <Tooltip title="Download" onClick={() => downloadFile(row.fileName)}>
