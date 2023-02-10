@@ -153,14 +153,11 @@ const HomePage = (props) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const urlIndex = getQueryParams("tab", props.location); 
-    const urlTabs = urlIndex !== null ? urlIndex : props.location ;
+    //const urlTabs = urlIndex !== null ? urlIndex : props.location ;
+    //
     useEffect ( () => {
-        switch(urlTabs){  
-        case "generate": return setValue(0)
-        case "download": return setValue(1)
-        default: return setValue(0)
-        }
-    }, [urlIndex]);
+        //using the value to control the tabs
+    }, [value]);
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -201,10 +198,10 @@ const HomePage = (props) => {
         </AppBar>
 
        
-        <TabPanel value={value} index={0}>
+        <TabPanel value={value} setValue={setValue} index={0}>
           <GenerateNdr />
         </TabPanel>
-        <TabPanel value={value} index={1}>
+        <TabPanel value={value} setValue={setValue} index={1}>
           <DownloadNdr />
         </TabPanel>
         

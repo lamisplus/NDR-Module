@@ -108,6 +108,7 @@ export default function GenerateNdr(props) {
               window.setTimeout(() => {
                 toast.success(" Generating NDR Successful!");
                 setModal(false)
+                props.setValue(1)
               }, 5000);
               
               //props.history.push("/generate", { state: 'download'});
