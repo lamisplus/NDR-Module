@@ -1,5 +1,7 @@
 package org.lamisplus.modules.ndr.repositories;
 
+import org.lamisplus.modules.hiv.domain.dto.ARTClinicalCommenceDto;
+import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ARTClinicalInfo;
 import org.lamisplus.modules.ndr.domain.dto.LabDTO;
@@ -42,13 +44,13 @@ public interface NdrXmlStatusRepository extends JpaRepository<NdrXmlStatus, Inte
 			nativeQuery = true)
 	Optional<PatientDemographics> getPatientDemographicsByUUID(String patientUuid);
 	
-	@Query(value ="SELECT pregnancy_status from hiv_art_clinical\n" +
+	@Query(value = "SELECT pregnancy_status from hiv_art_clinical\n" +
 			"WHERE person_uuid = ?1 \n" +
 			"AND archived = 0\n" +
 			"ORDER BY visit_date DESC limit 1", nativeQuery = true)
 	Optional<String> getPregnancyStatusByPersonUuid(String patientUuid);
 	
-	@Query(value ="SELECT a.display as tbStatus from hiv_art_clinical c " +
+	@Query(value = "SELECT a.display as tbStatus from hiv_art_clinical c " +
 			"INNER JOIN base_application_codeset a on a.id = cast(c.tb_status as INTEGER) " +
 			"WHERE person_uuid = ?1\n" +
 			"AND c.archived = 0\n" +
@@ -161,7 +163,7 @@ public interface NdrXmlStatusRepository extends JpaRepository<NdrXmlStatus, Inte
 	List<ARTClinicalInfo> getClinicalInfoByPersonUuidByLastModifiedDate(String personUuid, LocalDateTime lastModified);
 	
 	
-	@Query(value ="SELECT\n" +
+	@Query(value = "SELECT\n" +
 			"lt.patient_uuid AS patientId, lt.viral_load_indication AS indicationId, \n" +
 			"lr.date_result_reported resultDate,\n" +
 			"ls.date_sample_collected dateSampleCollected,\n" +
@@ -179,5 +181,6 @@ public interface NdrXmlStatusRepository extends JpaRepository<NdrXmlStatus, Inte
 			"WHERE (llt.lab_test_name = 'Viral Load' OR llt.lab_test_name='CD4') \n" +
 			"AND lt.patient_uuid = ?1\n" +
 			"AND lr.date_result_reported >= ?2", nativeQuery = true)
-	 List<LabDTO> getLabInfoByPersonUuid(String personUuid, LocalDateTime lastGenerateDateTime);
+	List<LabDTO> getLabInfoByPersonUuid(String personUuid, LocalDateTime lastGenerateDateTime);
+	
 }

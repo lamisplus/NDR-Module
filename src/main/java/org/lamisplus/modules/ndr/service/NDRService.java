@@ -449,10 +449,18 @@ public class NDRService {
     }
 
     private String generateFileName( PatientDemographics demographics, String identifier) {
+        String sCode = "";
+        String lCode = "";
+        Optional<String> stateCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
+        if(stateCode.isPresent()) sCode = stateCode.get();
+        Optional<String> lgaCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
+        if(lgaCode.isPresent()) lCode = lgaCode.get();
         Date date = new Date ();
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-        String fileName = StringUtils.leftPad (demographics.getState(), 2, "0") +"_"+
-                StringUtils.leftPad (demographics.getLga(), 3, "0") +
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad (lCode, 3, "0") +
                 "_" + demographics.getDatimId() + "_" + StringUtils.replace (identifier, "/", "-")
                 + "_" + dateFormat.format (date) + ".xml";
         return RegExUtils.replaceAll (fileName, "/", "-");
@@ -460,9 +468,16 @@ public class NDRService {
 
     private String zipFiles(PatientDemographics demographics) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-      
-        String fileName = StringUtils.leftPad (demographics.getState(), 2, "0") +"_"+
-                StringUtils.leftPad (demographics.getLga(), 3, "0") + "_" + demographics.getDatimId() +
+        String sCode = "";
+        String lCode = "";
+        Optional<String> stateCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
+        if(stateCode.isPresent()) sCode = stateCode.get();
+        Optional<String> lgaCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
+        if(lgaCode.isPresent()) lCode = lgaCode.get();
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad ( lCode, 3, "0") + "_" + demographics.getDatimId() +
                 "_" + demographics.getFacilityName()+ "_" + dateFormat.format (new Date());
         
         fileName = RegExUtils.replaceAll (fileName, "/", "-");
