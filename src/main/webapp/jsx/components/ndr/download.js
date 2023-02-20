@@ -8,7 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import {FiUploadCloud} from "react-icons/fi";
-//import FileSaver from "file-saver";
+import FileSaver from "file-saver";
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -102,7 +102,7 @@ export default function DownloadNdr() {
             .then((response) => {
                 const responseData = response.data
                 let blob = new Blob([responseData], {type: "application/octet-stream"});
-                //FileSaver.saveAs(blob, `${fileName}.zip`);
+                FileSaver.saveAs(blob, `${fileName}.zip`);
             })
             .catch((error) => {
             });

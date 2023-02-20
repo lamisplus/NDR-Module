@@ -36,12 +36,12 @@ import static org.lamisplus.modules.ndr.utility.DateUtil.getXmlDate;
 public class ConditionSpecificQuestionsTypeMapper {
 
     private final NDRCodeSetResolverService ndrCodeSetResolverService;
-    private final HivEnrollmentRepository hivEnrollmentRepository;
+    
 
     private final ApplicationCodesetService applicationCodesetService;
 
     private final ARTClinicalRepository artClinicalRepository;
-    private final PersonRepository personRepository;
+    
 
     private final RegimenRepository regimenRepository;
 
@@ -59,24 +59,29 @@ public class ConditionSpecificQuestionsTypeMapper {
                                 processAndHandleARTStatus (hiv, demographics.getId (), enrollmentStatus);
             }
                 
-                List<ARTClinical> artCommencement = artClinicalRepository.findByArchivedAndIsCommencementIsTrue (0);
-                if (artCommencement.size () == 1) {
-                    ARTClinical firstArtClinical = artCommencement.get (0);
-                    processAndSetArtStartDate (hiv, firstArtClinical);
-                    VitalSign vitalSign = firstArtClinical.getVitalSign ();
+                Optional<ARTClinical> artCommencement =
+                        artClinicalRepository.findByArchivedAndIsCommencementIsTrue(0)
+                        .stream()
+                        .filter(artClinical -> artClinical.getPerson().getUuid().equals(demographics.getPersonUuid()))
+                       .findFirst();
+                System.out.println("ART Commencement: " + artCommencement);
+                if (artCommencement.isPresent()) {
+                    processAndSetArtStartDate (hiv, artCommencement.get());
+                    VitalSign vitalSign = artCommencement.get().getVitalSign ();
                     if (vitalSign != null) {
                         processAndSetHeightAndWeight (hiv, vitalSign);
                     }
-                    processAndSetWHOStagingAndFunctionalStatus (hiv, firstArtClinical);
-                    long regimenId = firstArtClinical.getRegimenId ();
+                    processAndSetWHOStagingAndFunctionalStatus (hiv, artCommencement.get());
+                    long regimenId = artCommencement.get().getRegimenId ();
                     Optional<Regimen> regimenOptional = regimenRepository.findById (regimenId);
                     regimenOptional.ifPresent (regimen -> {
-                        String ndrRegimen = StringUtils.trim (regimen.getComposition ()) + "_" + regimen.getRegimenType ().getId ();
-                        System.out.println("ndrRegimen: " + ndrRegimen);
-                        Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getSimpleCodeSet (ndrRegimen);
+                        Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen.getDescription());
+                        // String ndrRegimen = StringUtils.trim (regimen.getComposition ()) + "_" + regimen.getRegimenType ().getId ();
+                        System.out.println("ndrRegimen: " + regimen.getDescription());
+                       // Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getSimpleCodeSet (ndrRegimen);
                         simpleCodeSet.ifPresent (hiv::setFirstARTRegimen);
                     });
-                    processAndSetCD4 (hiv, demographics.getAge(), firstArtClinical);
+                    processAndSetCD4 (hiv, demographics.getAge(), artCommencement.get());
                 }
                 hivQuestions.setHIVQuestions (hiv);
             return hivQuestions;
@@ -108,18 +113,22 @@ public class ConditionSpecificQuestionsTypeMapper {
 
     private void processAndSetWHOStagingAndFunctionalStatus(HIVQuestionsType hiv, ARTClinical firstArtClinical) {
         Long whoStagingId = firstArtClinical.getWhoStagingId ();
-        Long functionalStatusId = firstArtClinical.getFunctionalStatusId ();
-        ApplicationCodesetDTO WHOStageCode = applicationCodesetService.getApplicationCodeset (whoStagingId);
-        if (WHOStageCode != null) {
-            Optional<String> whoStageCodeSet =
-                    ndrCodeSetResolverService.getNDRCodeSetCode ("WHO_STAGE", WHOStageCode.getDisplay ());
-            whoStageCodeSet.ifPresent (hiv::setWHOClinicalStageARTStart);
+        if(whoStagingId != null) {
+            ApplicationCodesetDTO WHOStageCode = applicationCodesetService.getApplicationCodeset(whoStagingId);
+            if (WHOStageCode != null) {
+                Optional<String> whoStageCodeSet =
+                        ndrCodeSetResolverService.getNDRCodeSetCode("WHO_STAGE", WHOStageCode.getDisplay());
+                whoStageCodeSet.ifPresent(hiv::setWHOClinicalStageARTStart);
+            }
         }
-        ApplicationCodesetDTO functionalStatusCode = applicationCodesetService.getApplicationCodeset (functionalStatusId);
-        if (functionalStatusCode != null) {
-            Optional<String> functionalStatusCodeSet =
-                    ndrCodeSetResolverService.getNDRCodeSetCode ("FUNCTIONAL_STATUS", functionalStatusCode.getDisplay ());
-            functionalStatusCodeSet.ifPresent (hiv::setFunctionalStatusStartART);
+        Long functionalStatusId = firstArtClinical.getFunctionalStatusId ();
+        if(functionalStatusId != null) {
+            ApplicationCodesetDTO functionalStatusCode = applicationCodesetService.getApplicationCodeset(functionalStatusId);
+            if (functionalStatusCode != null) {
+                Optional<String> functionalStatusCodeSet =
+                        ndrCodeSetResolverService.getNDRCodeSetCode("FUNCTIONAL_STATUS", functionalStatusCode.getDisplay());
+                functionalStatusCodeSet.ifPresent(hiv::setFunctionalStatusStartART);
+            }
         }
     }
 

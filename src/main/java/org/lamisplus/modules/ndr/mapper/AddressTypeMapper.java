@@ -33,7 +33,7 @@ public class AddressTypeMapper {
 			addressType.setTown(patientDemographics.getTown());
 		}
 		Optional<String> stateCode =
-				ndrCodeSetResolverService.getNDRCodeSetCode("STATES", patientDemographics.getResidentialState());
+				ndrCodeSetResolverService.getNDRCodeSetCode("STATES", patientDemographics.getState());
 		Optional<String> lgaCode =
 				ndrCodeSetResolverService.getNDRCodeSetCode("LGA", patientDemographics.getLga());
 		stateCode.ifPresent(addressType::setStateCode);

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,9 +29,12 @@ public class NdrMessageLog {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
-    public NdrMessageLog(String identifier, String file, LocalDateTime lastUpdated) {
+
+    public NdrMessageLog(String identifier, String file, LocalDateTime lastUpdated)
+    {
         this.identifier = identifier;
         this.file = file;
         this.lastUpdated = lastUpdated;
+
     }
 }
