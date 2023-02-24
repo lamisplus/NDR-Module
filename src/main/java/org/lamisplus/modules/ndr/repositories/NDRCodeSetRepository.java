@@ -1,5 +1,6 @@
 package org.lamisplus.modules.ndr.repositories;
 
+import org.lamisplus.modules.ndr.domain.dto.ArtCommencementDTO;
 import org.lamisplus.modules.ndr.domain.dto.BiometricDto;
 import org.lamisplus.modules.ndr.domain.entities.NDRCodeSet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,20 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
     @Query(value = "select template_type as templateType, enrollment_date as enrollmentDate, template from biometric where person_uuid = :patientUuid" +
             " and biometric_type = 'FINGERPRINT' and archived = 0 and version_iso_20 = true  and iso = true", nativeQuery = true)
     List<BiometricDto> getPatientBiometricByPatientUuid(String patientUuid);
+    
+   
+   @Query(value = "SELECT cd_4 as cd4, cd_4_percentage as cd4Percentage, arc.visit_date AS artStartDate,sgn.body_weight AS bodyWeight,\n" +
+           "sgn.height, who.display AS whoStage, funstatus.display AS functionStatus, \n" +
+           "reg.description AS regimen\n" +
+           "FROM  hiv_art_clinical arc \n" +
+           "INNER JOIN triage_vital_sign sgn ON arc.visit_id = sgn.visit_id\n" +
+           "LEFT JOIN base_application_codeset who ON who.id = arc.who_staging_id\n" +
+           "LEFT JOIN base_application_codeset funstatus ON  funstatus.id = arc.functional_status_id\n" +
+           "LEFT JOIN hiv_regimen reg ON reg.id = arc.regimen_id\n" +
+           "WHERE is_commencement IS TRUE\n" +
+           "AND arc.archived = 0 "+
+           "AND  arc.person_uuid = ?1", nativeQuery = true)
+   Optional<ArtCommencementDTO> getArtCommencementByPatientUuid(String patientUuid);
     
 
 

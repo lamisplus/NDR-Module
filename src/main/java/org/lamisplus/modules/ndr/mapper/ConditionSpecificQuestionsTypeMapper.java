@@ -14,6 +14,8 @@ import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenRepository;
 import org.lamisplus.modules.hiv.service.HIVStatusTrackerService;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.ArtCommencementDTO;
+import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
 import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionSpecificQuestionsType;
 import org.lamisplus.modules.ndr.schema.HIVQuestionsType;
@@ -37,12 +39,10 @@ public class ConditionSpecificQuestionsTypeMapper {
 
     private final NDRCodeSetResolverService ndrCodeSetResolverService;
     
+    private final NDRCodeSetRepository ndrCodeSetRepository;
 
     private final ApplicationCodesetService applicationCodesetService;
-
-    private final ARTClinicalRepository artClinicalRepository;
     
-
     private final RegimenRepository regimenRepository;
 
     private final HIVStatusTrackerService hivStatusTrackerService;
@@ -59,28 +59,22 @@ public class ConditionSpecificQuestionsTypeMapper {
                                 processAndHandleARTStatus (hiv, demographics.getId (), enrollmentStatus);
             }
                 
-                Optional<ARTClinical> artCommencement =
-                        artClinicalRepository.findByArchivedAndIsCommencementIsTrue(0)
-                        .stream()
-                        .filter(artClinical -> artClinical.getPerson().getUuid().equals(demographics.getPersonUuid()))
-                       .findFirst();
-                System.out.println("ART Commencement: " + artCommencement);
+//                Optional<ARTClinical> artCommencement =
+//                        artClinicalRepository.findByArchivedAndIsCommencementIsTrue(0)
+//                        .stream()
+//                        .filter(artClinical -> artClinical.getPerson().getUuid().equals(demographics.getPersonUuid()))
+//                       .findFirst();
+            Optional<ArtCommencementDTO> artCommencement = ndrCodeSetRepository.getArtCommencementByPatientUuid(demographics.getPersonUuid());
+            System.out.println("ART Commencement: " + artCommencement);
                 if (artCommencement.isPresent()) {
-                    processAndSetArtStartDate (hiv, artCommencement.get());
-                    VitalSign vitalSign = artCommencement.get().getVitalSign ();
-                    if (vitalSign != null) {
-                        processAndSetHeightAndWeight (hiv, vitalSign);
-                    }
-                    processAndSetWHOStagingAndFunctionalStatus (hiv, artCommencement.get());
-                    long regimenId = artCommencement.get().getRegimenId ();
-                    Optional<Regimen> regimenOptional = regimenRepository.findById (regimenId);
-                    regimenOptional.ifPresent (regimen -> {
-                        Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen.getDescription());
-                        // String ndrRegimen = StringUtils.trim (regimen.getComposition ()) + "_" + regimen.getRegimenType ().getId ();
-                        System.out.println("ndrRegimen: " + regimen.getDescription());
-                       // Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getSimpleCodeSet (ndrRegimen);
-                        simpleCodeSet.ifPresent (hiv::setFirstARTRegimen);
-                    });
+                    processAndSetArtStartDate (hiv, artCommencement.get().getArtStartDate());
+                    processAndSetWHOStagingAndFunctionalStatus (hiv, artCommencement.get().getWhoStage(), artCommencement.get().getFunctionStatus());
+                    String regimen = artCommencement.get().getRegimen();
+                    if(regimen != null) {
+                     Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen);
+                     System.out.println("ndrRegimen: " + regimen);
+                     simpleCodeSet.ifPresent(hiv::setFirstARTRegimen);
+                     }
                     processAndSetCD4 (hiv, demographics.getAge(), artCommencement.get());
                 }
                 hivQuestions.setHIVQuestions (hiv);
@@ -111,24 +105,18 @@ public class ConditionSpecificQuestionsTypeMapper {
         }
     }
 
-    private void processAndSetWHOStagingAndFunctionalStatus(HIVQuestionsType hiv, ARTClinical firstArtClinical) {
-        Long whoStagingId = firstArtClinical.getWhoStagingId ();
-        if(whoStagingId != null) {
-            ApplicationCodesetDTO WHOStageCode = applicationCodesetService.getApplicationCodeset(whoStagingId);
-            if (WHOStageCode != null) {
+    private void processAndSetWHOStagingAndFunctionalStatus(HIVQuestionsType hiv, String whoStage, String functionalStatus) {
+       
+        if(whoStage != null) {
                 Optional<String> whoStageCodeSet =
-                        ndrCodeSetResolverService.getNDRCodeSetCode("WHO_STAGE", WHOStageCode.getDisplay());
+                        ndrCodeSetResolverService.getNDRCodeSetCode("WHO_STAGE",whoStage);
                 whoStageCodeSet.ifPresent(hiv::setWHOClinicalStageARTStart);
-            }
+            
         }
-        Long functionalStatusId = firstArtClinical.getFunctionalStatusId ();
-        if(functionalStatusId != null) {
-            ApplicationCodesetDTO functionalStatusCode = applicationCodesetService.getApplicationCodeset(functionalStatusId);
-            if (functionalStatusCode != null) {
+        if(functionalStatus != null) {
                 Optional<String> functionalStatusCodeSet =
-                        ndrCodeSetResolverService.getNDRCodeSetCode("FUNCTIONAL_STATUS", functionalStatusCode.getDisplay());
+                        ndrCodeSetResolverService.getNDRCodeSetCode("FUNCTIONAL_STATUS", functionalStatus);
                 functionalStatusCodeSet.ifPresent(hiv::setFunctionalStatusStartART);
-            }
         }
     }
 
@@ -157,9 +145,8 @@ public class ConditionSpecificQuestionsTypeMapper {
        }
     }
 
-    private void processAndSetArtStartDate(HIVQuestionsType hiv, ARTClinical firstArtClinical) {
+    private void processAndSetArtStartDate(HIVQuestionsType hiv,  LocalDate visitDate) {
         try {
-            LocalDate visitDate = firstArtClinical.getVisitDate ();
             if (visitDate != null) {
                 hiv.setARTStartDate (getXmlDate (Date.valueOf (visitDate)));
             }
@@ -223,7 +210,7 @@ public class ConditionSpecificQuestionsTypeMapper {
                 .findFirst ();
     }
 
-    private void processAndSetCD4(HIVQuestionsType hiv, int age, ARTClinical artCommence) {
+    private void processAndSetCD4(HIVQuestionsType hiv, int age, ArtCommencementDTO artCommence) {
         Long cd4 = artCommence.getCd4 ();
         Long cd4p = artCommence.getCd4Percentage ();
         String clinicalStage = null;
@@ -240,9 +227,8 @@ public class ConditionSpecificQuestionsTypeMapper {
                 Optional<String> ndrCodeSet = ndrCodeSetResolverService.getNDRCodeSetCode (whyEligible, "CD4");
                 if (ndrCodeSet.isPresent ()) eligible = ndrCodeSet.get ();
             } else {
-                ApplicationCodesetDTO WHOStageCode = applicationCodesetService.getApplicationCodeset (artCommence.getWhoStagingId ());
-                if (WHOStageCode != null) {
-                    clinicalStage = WHOStageCode.getDisplay ();
+                if (artCommence.getWhoStage() != null) {
+                    clinicalStage = artCommence.getWhoStage();
                     if (clinicalStage.equalsIgnoreCase ("Stage III") ||
                             clinicalStage.equalsIgnoreCase ("Stage IV")) {
                         Optional<String> ndrCodeSet = ndrCodeSetResolverService.getNDRCodeSetCode (whyEligible, "Staging");
@@ -268,12 +254,12 @@ public class ConditionSpecificQuestionsTypeMapper {
             }
         }
         try {
-            hiv.setARTStartDate (getXmlDate (Date.valueOf (artCommence.getVisitDate ())));
+            hiv.setARTStartDate (getXmlDate (Date.valueOf (artCommence.getArtStartDate())));
         } catch (DatatypeConfigurationException e) {
             e.printStackTrace ();
         }
         try {
-            hiv.setMedicallyEligibleDate (getXmlDate (Date.valueOf (artCommence.getVisitDate ())));
+            hiv.setMedicallyEligibleDate (getXmlDate (Date.valueOf (artCommence.getArtStartDate())));
         } catch (DatatypeConfigurationException e) {
             e.printStackTrace ();
         }
