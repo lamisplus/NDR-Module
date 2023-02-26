@@ -56,7 +56,10 @@ public class ConditionTypeMapper {
         }
         //encounter
         EncountersType encounter = encountersTypeMapper.encounterType (demographics);
-        condition.setEncounters (encounter);
+        if(encounter != null) {
+            condition.setEncounters (encounter);
+         }
+        //
         regimenTypeMapper.regimenType (demographics, condition);
         LocalDateTime lastUpdated = LocalDateTime.of(1990, 1, 1, 0, 0);
         laboratoryReportTypeMapper.laboratoryReportType(demographics.getPersonUuid(), lastUpdated, condition);
@@ -89,7 +92,9 @@ public class ConditionTypeMapper {
         }
         //encounter
         EncountersType encounter = encountersTypeMapper.encounterType (demographics, lastUpdate);
-        condition.setEncounters (encounter);
+        if(encounter != null){
+            condition.setEncounters (encounter);
+        }
         regimenTypeMapper.regimenType (demographics, condition, lastUpdate);
         
         //Lab

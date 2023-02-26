@@ -70,7 +70,7 @@ public class RegimenTypeMapper {
 					.findAll()
 					.stream()
 					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
-					.filter(artPharmacy -> artPharmacy.getLastModifiedDate().minusDays(1).isAfter(lastUpdate))
+					.filter(artPharmacy -> artPharmacy.getLastModifiedDate().isAfter(lastUpdate))
 					.collect(Collectors.toSet());
 			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
 			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));

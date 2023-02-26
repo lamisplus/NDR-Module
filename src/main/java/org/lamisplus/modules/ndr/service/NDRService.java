@@ -1,5 +1,10 @@
 package org.lamisplus.modules.ndr.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import liquibase.pro.packaged.L;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -8,23 +13,31 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.base.domain.entities.OrganisationUnit;
+import org.lamisplus.modules.base.domain.entities.User;
+import org.lamisplus.modules.base.domain.repositories.OrganisationUnitRepository;
 import org.lamisplus.modules.base.service.OrganisationUnitService;
+import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
+import org.lamisplus.modules.ndr.domain.entities.NDRMessages;
 import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;
 import org.lamisplus.modules.ndr.mapper.ConditionTypeMapper;
 import org.lamisplus.modules.ndr.mapper.MessageHeaderTypeMapper;
 import org.lamisplus.modules.ndr.mapper.NDREligibleClientMapper;
 import org.lamisplus.modules.ndr.mapper.PatientDemographicsMapper;
+import org.lamisplus.modules.ndr.repositories.NDRMessagesRepository;
 import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.ZipUtility;
+import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
+import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import javax.xml.XMLConstants;
@@ -38,7 +51,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -49,6 +64,9 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Slf4j
 public class NDRService {
+
+    private int MAX = 2;
+    private final OrganisationUnitRepository organisationUnitRepository;
 
     private final MessageHeaderTypeMapper messageHeaderTypeMapper;
 
@@ -71,6 +89,12 @@ public class NDRService {
     private final ArtPharmacyRepository pharmacyRepository;
     
     private final NDREligibleClientMapper clientMap;
+
+    private final PersonRepository personRepository;
+
+    private final NDRMessagesRepository ndrMessagesRepository;
+
+    private final UserService userService;
 
     private static final String BASE_DIR = "runtime/ndr/transfer/";
 
@@ -222,7 +246,7 @@ public class NDRService {
 //        }
 //    }
 
-    public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId) {
+    public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, boolean isInitial, String pushIdentifier) {
         try {
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
@@ -239,13 +263,13 @@ public class NDRService {
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics);
                     individualReportType.setPatientDemographics(patientDemographics);
                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
-                    String messageStatusCode = "INITIAL";
-                    List<NdrMessageLog> ndrMessageLogByIdentifier =
-                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
-                    if (!ndrMessageLogByIdentifier.isEmpty()) {
-                        messageStatusCode = "UPDATED";
-                    }
-                    messageHeader.setMessageStatusCode(messageStatusCode);
+//                    String messageStatusCode = "INITIAL";
+//                    List<NdrMessageLog> ndrMessageLogByIdentifier =
+//                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
+//                    if (!ndrMessageLogByIdentifier.isEmpty()) {
+//                        messageStatusCode = "UPDATED";
+//                    }
+                    messageHeader.setMessageStatusCode("INITIAL");
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
@@ -260,7 +284,12 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
-                    return processAndGenerateNDRFile(jaxbMarshaller, container, facilityId, identifier, id);
+
+                    NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
+                    //====================Dr Karim coding session begins
+                    if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+                    //====================Dr Karim coding session ends
+                    return ndrStatus;
                 }
             }
             } catch(Exception ignore){
@@ -270,7 +299,7 @@ public class NDRService {
         return null;
     }
     
-    public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, LocalDateTime lastUpdated) {
+    public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, LocalDateTime lastUpdated, String pushIdentifier) {
         try {
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
@@ -287,16 +316,17 @@ public class NDRService {
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics, lastUpdated);
                     individualReportType.setPatientDemographics(patientDemographics);
                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
-                    String messageStatusCode = "INITIAL";
-                    List<NdrMessageLog> ndrMessageLogByIdentifier =
-                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
-                    if (!ndrMessageLogByIdentifier.isEmpty()) {
-                        messageStatusCode = "UPDATED";
-                    }
-                    messageHeader.setMessageStatusCode(messageStatusCode);
+//                    String messageStatusCode = "INITIAL";
+//                    List<NdrMessageLog> ndrMessageLogByIdentifier =
+//                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
+//                    if (!ndrMessageLogByIdentifier.isEmpty()) {
+//                        messageStatusCode = "UPDATED";
+//                    }
+                    messageHeader.setMessageStatusCode("UPDATED");
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
+
                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -308,7 +338,12 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
-                    return processAndGenerateNDRFile(jaxbMarshaller, container, facilityId, identifier, id);
+                    NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
+                    //====================Dr Karim coding session begins
+                    if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+                    //====================Dr Karim coding session ends
+                    return ndrStatus;
+                    //return processAndGenerateNDRFile(jaxbMarshaller, container, demographics, identifier, id);
                 }
             }
         } catch(Exception ignore){
@@ -321,6 +356,7 @@ public class NDRService {
     public void generateNDRXMLByFacility(Long facilityId, boolean isInitial) {
         cleanupFacility(facilityId);
        if(isInitial){
+           System.out.println("I am in initial");
            Set<String> personUuidsForNDR = artClinicalRepository.findAll()
                    .stream()
                    .filter(artClinical -> artClinical.getFacilityId().equals(facilityId))
@@ -329,18 +365,22 @@ public class NDRService {
                    .collect(Collectors.toSet());
            processAndGenerateNDRFiles(facilityId, personUuidsForNDR);
        }else {
+           System.out.println("I am in updated 1");
             Optional<NdrXmlStatus> optionalNdrXmlStatus = ndrXmlStatusRepository.findAll()
                     .stream()
                     .filter(ndrXmlStatus -> ndrXmlStatus.getFacilityId().equals(facilityId))
                     .sorted(Comparator.comparing(NdrXmlStatus::getLastModified).reversed())
                     .findFirst();
            optionalNdrXmlStatus.ifPresent(status -> {
+               System.out.println("I am in updated 2");
                LocalDateTime lastModified = status.getLastModified();
+               System.out.println("I am in updated 2: "+lastModified);
                Set<String> personUuidsForNDR = pharmacyRepository.findAll()
                        .stream()
-                       .filter(artPharmacy -> artPharmacy.getLastModifiedDate().minusDays(1).isAfter(lastModified))
+                       .filter(artPharmacy -> artPharmacy.getLastModifiedDate().isAfter(lastModified))
                        .map(artPharmacy -> artPharmacy.getPerson().getUuid())
                        .collect(Collectors.toSet());
+               System.out.println("ids: " + personUuidsForNDR);
                processAndGenerateNDRFiles(facilityId, personUuidsForNDR, lastModified);
            });
         }
@@ -367,41 +407,54 @@ public class NDRService {
     
    
     private void processAndGenerateNDRFiles(Long facilityId, Set<String> personUuidsForNDR) {
+        String pushIdentifier = UUID.randomUUID().toString();
         List<NDRStatus> ndrStatusList =
                 personUuidsForNDR.stream ()
-                        .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId))
+                        .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true, pushIdentifier))
                         .collect (Collectors.toList ());
         int filesSize = (int) ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)
                 .map(ndrStatus -> new NdrMessageLog(ndrStatus.identifier, ndrStatus.getFile(), LocalDateTime.now()))
                 .map(this::saveMessageLog).count();
-        String fileName = zipFiles (facilityId);
-        NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
-        ndrXmlStatus.setFacilityId (facilityId);
-        ndrXmlStatus.setFiles (filesSize);
-        ndrXmlStatus.setFileName (fileName);
-        ndrXmlStatus.setLastModified (LocalDateTime.now ());
-        ndrXmlStatusRepository.save (ndrXmlStatus);
+         processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize, pushIdentifier);
     }
     
     private void processAndGenerateNDRFiles(Long facilityId, Set<String> personUuidsForNDR, LocalDateTime lastUpdated) {
+        String pushIdentifier = UUID.randomUUID().toString();
         List<NDRStatus> ndrStatusList =
                 personUuidsForNDR.stream ()
-                        .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated))
+                        .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated, pushIdentifier))
                         .collect (Collectors.toList ());
         int filesSize = (int) ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)
                 .map(ndrStatus -> new NdrMessageLog(ndrStatus.identifier, ndrStatus.getFile(), LocalDateTime.now()))
                 .map(this::saveMessageLog).count();
-        String fileName = zipFiles (facilityId);
-        NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
-        ndrXmlStatus.setFacilityId (facilityId);
-        ndrXmlStatus.setFiles (filesSize);
-        ndrXmlStatus.setFileName (fileName);
-        ndrXmlStatus.setLastModified (LocalDateTime.now ());
-        ndrXmlStatusRepository.save (ndrXmlStatus);
+        processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize, pushIdentifier);
+    }
+    
+    private void processAndZipFacilityNDRXML(Long facilityId, Set<String> personUuidsForNDR, int filesSize, String pushIdentifier) {
+        Optional<String> personId = personUuidsForNDR.stream().findFirst();
+        if(personId.isPresent()) {
+            Optional<PatientDemographics> patientDemographicsOptional=
+                    ndrXmlStatusRepository.getPatientDemographicsByUUID(personId.get());
+            if(patientDemographicsOptional.isPresent()) {
+                patientDemographicsOptional.get().getAddress();
+                String fileName = zipFiles (patientDemographicsOptional.get());
+                NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
+                ndrXmlStatus.setFacilityId (facilityId);
+                ndrXmlStatus.setFiles (filesSize);
+                ndrXmlStatus.setFileName (fileName);
+                ndrXmlStatus.setLastModified (LocalDateTime.now ());
+                ndrXmlStatus.setPushIdentifier(pushIdentifier);
+                ndrXmlStatus.setCompletelyPushed(Boolean.FALSE);
+                ndrXmlStatus.setPercentagePushed(0);
+
+
+                ndrXmlStatusRepository.save (ndrXmlStatus);
+            }
+        }
     }
     
     
@@ -411,6 +464,7 @@ public class NDRService {
            NdrMessageLog ndrMessageLog = list.get(0);
            ndrMessageLog.setLastUpdated(LocalDateTime.now());
            ndrMessageLog.setIdentifier(ndrStatus.getIdentifier());
+           //coming back here
      return  ndrMessageLogRepository.save(ndrMessageLog);
        } else {
            return ndrMessageLogRepository.save(ndrStatus);
@@ -419,16 +473,16 @@ public class NDRService {
     public NDRStatus processAndGenerateNDRFile(
             Marshaller jaxbMarshaller,
             Container container,
-            Long facilityId,
+            PatientDemographics demographics,
             String identifier,
             Long id) {
        try {
-           String fileName = generateFileName(facilityId, identifier);
-           File file = new File(BASE_DIR + "temp/" + facilityId + "/" + fileName);
-           File dir = new File(BASE_DIR + "temp/"+facilityId+"/");
+           File dir = new File(BASE_DIR + "temp/"+demographics.getFacilityId()+"/");
            if (!dir.exists()) {
                log.info(" directory created => : {}", dir.mkdirs());
            }
+           String fileName = generateFileName(demographics, identifier);
+           File file = new File(BASE_DIR + "temp/" + demographics.getFacilityId() + "/" + fileName);
            jaxbMarshaller.marshal(container, file);
            return new NDRStatus(id, identifier, fileName);
        }catch (Exception ignore){
@@ -438,39 +492,41 @@ public class NDRService {
        return null;
     }
 
-    private String generateFileName(Long facilityId, String identifier) {
-        OrganisationUnit facility = organisationUnitService.getOrganizationUnit (facilityId);
-        Long lgaIdOfTheFacility = facility.getParentOrganisationUnitId ();
-        OrganisationUnit lgaOrgUnitOfFacility = organisationUnitService.getOrganizationUnit (lgaIdOfTheFacility);
-        String lga = getLga (facility);
-        String state = getState (lgaOrgUnitOfFacility);
-        log.info ("State {}", state);
-        log.info ("lga {}", lga);
-        String datimCode = messageHeaderTypeMapper.getDatimCode (facilityId).orElse ("");
+    private String generateFileName( PatientDemographics demographics, String identifier) {
+        String sCode = "";
+        String lCode = "";
+        Optional<String> stateCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
+        if(stateCode.isPresent()) sCode = stateCode.get();
+        Optional<String> lgaCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
+        if(lgaCode.isPresent()) lCode = lgaCode.get();
         Date date = new Date ();
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-        String fileName = StringUtils.leftPad (state, 2, "0") +
-                StringUtils.leftPad (lga, 3, "0") +
-                "_" + datimCode + "_" + StringUtils.replace (identifier, "/", "-")
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad (lCode, 3, "0") +
+                "_" + demographics.getDatimId() + "_" + StringUtils.replace (identifier, "/", "-")
                 + "_" + dateFormat.format (date) + ".xml";
         return RegExUtils.replaceAll (fileName, "/", "-");
     }
 
-    private String zipFiles(long facilityId) {
+    private String zipFiles(PatientDemographics demographics) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-        OrganisationUnit facility = organisationUnitService.getOrganizationUnit (facilityId);
-        Long lgaIdOfTheFacility = facility.getParentOrganisationUnitId ();
-        OrganisationUnit lgaOrgUnitOfFacility = organisationUnitService.getOrganizationUnit (lgaIdOfTheFacility);
-        String lga = getLga (facility);
-        String state = getState (lgaOrgUnitOfFacility);
-        String datimCode = messageHeaderTypeMapper.getDatimCode (facilityId).orElse ("");
-        String fileName = StringUtils.leftPad (state, 2, "0") +
-                StringUtils.leftPad (lga, 3, "0") + "_" + datimCode +
-                "_" + facility.getName () + "_" + dateFormat.format (new Date());
+        String sCode = "";
+        String lCode = "";
+        Optional<String> stateCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
+        if(stateCode.isPresent()) sCode = stateCode.get();
+        Optional<String> lgaCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
+        if(lgaCode.isPresent()) lCode = lgaCode.get();
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad ( lCode, 3, "0") + "_" + demographics.getDatimId() +
+                "_" + demographics.getFacilityName()+ "_" + dateFormat.format (new Date());
         
         fileName = RegExUtils.replaceAll (fileName, "/", "-");
         try {
-            String sourceFolder = BASE_DIR + "temp/" + facilityId + "/";
+            String sourceFolder = BASE_DIR + "temp/" + demographics.getFacilityId() + "/";
             String outputZipFile = BASE_DIR + "ndr/" + fileName;
             new File (BASE_DIR + "ndr").mkdirs ();
             new File (Paths.get (outputZipFile).toAbsolutePath ().toString ()).createNewFile ();
@@ -522,18 +578,18 @@ public class NDRService {
             }
         } catch (IOException ignored) {
         }
-        String file = BASE_DIR + "ndr/";
-        try (Stream<Path> list = Files.list (Paths.get (BASE_DIR + "ndr/"))) {
-            list.filter (path -> path.getFileName ().toString ().contains (file))
-                    .forEach (path -> {
-                        try {
-                            Files.delete (path);
-                        } catch (IOException e) {
-                            e.printStackTrace ();
-                        }
-                    });
-        } catch (IOException e) {
-        }
+//        String file = BASE_DIR + "ndr/";
+//        try (Stream<Path> list = Files.list (Paths.get (BASE_DIR + "ndr/"))) {
+//            list.filter (path -> path.getFileName ().toString ().contains (file))
+//                    .forEach (path -> {
+//                        try {
+//                            Files.delete (path);
+//                        } catch (IOException e) {
+//                            e.printStackTrace ();
+//                        }
+//                    });
+//        } catch (IOException e) {
+//        }
     }
 
     private Set<String> listFilesUsingDirectoryStream(String dir) throws IOException {
@@ -565,6 +621,9 @@ public class NDRService {
                         .files (ndrXmlStatus.getFiles ())
                         .lastModified (ndrXmlStatus.getLastModified ())
                         .id (ndrXmlStatus.getId ())
+                        .percentagePushed (ndrXmlStatus.getPercentagePushed())
+                        .completelyPushed (ndrXmlStatus.getCompletelyPushed())
+                        .pushIdentifier (ndrXmlStatus.getPushIdentifier())
                         .build ()
                 )
                 .sorted(Comparator.comparing(NdrXmlStatusDto::getLastModified).reversed())
@@ -614,5 +673,33 @@ public class NDRService {
                     .limit(10)
                     .collect(Collectors.toList());
         }
+    }
+
+
+//  Here my coding begins Dr Karim
+private String ConvertContainerToString(Container container) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.ALWAYS));
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        mapper.setDateFormat(df);
+        return mapper.writeValueAsString(container);
+    }
+
+    public void creatNDRMessages(Container container, String identifier){
+        try {
+            NDRMessages ndrMessages = new NDRMessages();
+            String msg = ConvertContainerToString(container);
+            ndrMessages.setDeMessage(msg);
+            ndrMessages.setMessageDate(LocalDate.now());
+            ndrMessages.setIsPushed(Boolean.FALSE);
+            Optional<User> currentUser = this.userService.getUserWithRoles();
+            if (currentUser.isPresent()) {
+                ndrMessages.setFacilityId(currentUser.get().getCurrentOrganisationUnitId());
+            }
+            ndrMessages.setIdentifier(identifier);
+            ndrMessagesRepository.save(ndrMessages);
+        }catch (Exception e){}
+
     }
 }

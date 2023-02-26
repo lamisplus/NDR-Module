@@ -28,4 +28,13 @@ public class NdrXmlStatus {
     @Column(name = "last_modified", nullable = false)
     private LocalDateTime lastModified;
 
+    @Column(name = "push_identifier", nullable = true)
+    private String pushIdentifier;
+
+    @Column(name = "percentage_pushed", nullable = true)
+    private Integer percentagePushed;
+
+    @Column(name = "completely_pushed", nullable = true)
+    private Boolean completelyPushed;
+
 }
