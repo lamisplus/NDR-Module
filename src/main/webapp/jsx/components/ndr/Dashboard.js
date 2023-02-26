@@ -9,6 +9,7 @@ import Box from '@material-ui/core/Box';
 import { MdDashboard, MdContacts } from 'react-icons/md';
 import GenerateNdr from './generate';
 import DownloadNdr from './download';
+import NdrConfiguration from './NdrConfiguration';
 import {getQueryParams} from "./../PageUtils";
 
 
@@ -192,17 +193,25 @@ const HomePage = (props) => {
               icon={<MdContacts />}
               {...a11yProps(1)}
             />
-            
+            <Tab
+              className={classes.title}
+              label="NDR COnfiguration"
+              icon={<MdContacts />}
+              {...a11yProps(2)}
+            />
           </Tabs>
           <div></div>
         </AppBar>
 
        
         <TabPanel value={value} setValue={setValue} index={0}>
-          <GenerateNdr />
+          <GenerateNdr value={value} setValue={setValue}/>
         </TabPanel>
         <TabPanel value={value} setValue={setValue} index={1}>
-          <DownloadNdr />
+          <DownloadNdr value={value} setValue={setValue}/>
+        </TabPanel>
+        <TabPanel value={value} setValue={setValue} index={2}>
+          <NdrConfiguration value={value} setValue={setValue}/>
         </TabPanel>
         
 

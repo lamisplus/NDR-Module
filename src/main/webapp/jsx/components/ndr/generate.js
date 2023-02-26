@@ -15,11 +15,11 @@ import {GiFiles} from 'react-icons/gi';
 import Button from "@material-ui/core/Button";
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import {  Modal, ModalBody } from 'reactstrap';
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
-import { Spinner } from "reactstrap";
+//import { Spinner } from "reactstrap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,9 +84,8 @@ export default function GenerateNdr(props) {
 
   const handleChange = (event) => {
     setStatus(!status);
-    console.log(status);
   }
- const  generateAction = () => {
+  const  generateAction = () => {
    setProcessing(true)
    setModal(true)
    let FacilityIDArray = "";
@@ -116,7 +115,7 @@ export default function GenerateNdr(props) {
             .catch(error => {
               setModal(false)
               setProcessing(false) // set the generate button true
-              //toast.error(" Something went wrong!");
+              toast.error(" Something went wrong! Please contact administrator.");
               if(error.response && error.response.data){
                 let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                 toast.error(errorMessage);
@@ -125,7 +124,8 @@ export default function GenerateNdr(props) {
                 toast.error("Something went wrong. Please try again...");
               }
             });
-        }
+  }
+
 
 
   return (

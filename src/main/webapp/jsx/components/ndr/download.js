@@ -4,11 +4,16 @@ import * as api from "./../../../api";
 import axios from "axios";
 import {Modal, ModalBody, ModalHeader} from 'reactstrap';
 import MaterialTable from 'material-table';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
+import CloudUpload from '@material-ui/icons/CloudUpload';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import {FiUploadCloud} from "react-icons/fi";
 import FileSaver from "file-saver";
+import 'semantic-ui-css/semantic.min.css';
+import { Dropdown,Button as Buuton2, Menu, Icon } from 'semantic-ui-react'
+import { token as token, } from "./../../../api";
+import { ToastContainer, toast } from "react-toastify";
+import ProgressBar from 'react-bootstrap/ProgressBar';
+
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
@@ -83,9 +88,9 @@ export default function DownloadNdr() {
                 {headers: {"Authorization": `Bearer ${api.token}`}}
             )
             .then((response) => {
-                console.log(response.data)
+                //console.log(response.data)
                 setGeneratedNdrList(response.data);
-                console.log(response.data);
+                //console.log(response.data);
 
             })
             .catch((error) => {
@@ -96,7 +101,7 @@ export default function DownloadNdr() {
     const downloadFile = (fileName) => {
  
         axios
-            .get(`${api.url}ndr/download/${fileName}`,
+            .delete(`${api.url}ndr/download/${fileName}`,
                 {headers: {"Authorization": `Bearer ${api.token}`}, responseType: 'blob'}
             )
             .then((response) => {
@@ -107,11 +112,48 @@ export default function DownloadNdr() {
             .catch((error) => {
             });
     }
+    const  generateAction = (ndrFileId) => {
+        setModal(true)
+        const fileID ={id: ndrFileId }
+         //SENDING A POST REQUEST 
+         axios.POST(`${api.url}ndr-emr/ndr-auto-pusher?id=${ndrFileId}`, fileID,
+                     { headers: {"Authorization" : `Bearer ${token}`} }
+                   )
+                 .then(response => {
+                   window.setTimeout(() => {
+                     toast.success(" Generating NDR Successful!");
+                     setModal(false)
+                     //props.setValue(1)
+                   }, 5000);
+                   
+                   //props.history.push("/generate", { state: 'download'});
+                 })
+                 .catch(error => {
+                   setModal(false)
+                   toast.error(" Something went wrong!");
+                   if(error.response && error.response.data){
+                     let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
+                     toast.error(errorMessage);
+                   }
+                   else{
+                     toast.error("Something went wrong. Please try again...");
+                   }
+                 });
+       }
 
+    const varient =(value)=>{
+
+        if(value<=0){
+            return "info"
+        }else{
+            return "success"
+        }
+
+    }
 
     return (
         <div>
-
+            <ToastContainer autoClose={3000} hideProgressBar />
             <Button
                 variant="contained"
                 color="primary"
@@ -122,13 +164,13 @@ export default function DownloadNdr() {
                 //onClick={loadNdrWeb}
                 target="_blank"
             >
-                <span>Upload to NDR</span>
+                <span> NDR Portal</span>
             </Button>
 
             <br/><br/>
             <MaterialTable
                 icons={tableIcons}
-                title="List of Filies Generated"
+                title="List of Files Generated"
 
                 columns={[
                     {title: "Facility Name", field: "name", filtering: false},
@@ -139,6 +181,7 @@ export default function DownloadNdr() {
                     },
                     {title: "File Name", field: "fileName", filtering: false},
                     {title: "Date Last Generated", field: "date", type: "date", filtering: false},
+                    {title: "NDR Upload Status", field: "ndrStatus", type: "date", filtering: false},
 
                     {
                         title: "Action",
@@ -152,18 +195,28 @@ export default function DownloadNdr() {
                     files: row.files,
                     fileName: row.fileName,
                     date: moment(row.lastModified).format("LLLL"),
-                    actions:
+                    ndrStatus:(<ProgressBar now="60" variant={varient(row.files)} label={`60%`} />),
+                    actions:<div>
+                    <Menu.Menu position='right'  >
+                    <Menu.Item >
+                        <Buuton2 style={{backgroundColor:'rgb(153,46,98)'}} primary>
+                        <Dropdown item text='Action'>
 
-                        <Tooltip title="Download" onClick={() => downloadFile(row.fileName)}>
-                            <IconButton aria-label="Download">
-                                <CloudDownloadIcon color="primary"/>
-                            </IconButton>
-                        </Tooltip>
-
+                        <Dropdown.Menu style={{ marginTop:"10px", }}>
+                            <Dropdown.Item  onClick={() => downloadFile(row.fileName)}><CloudDownloadIcon color="primary"/> Download File
+                            </Dropdown.Item>
+                            <Dropdown.Item  onClick= {() => generateAction(row.id)}><CloudUpload color="primary"/> Upload To NDR
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                        </Buuton2>
+                    </Menu.Item>
+                    </Menu.Menu>
+              </div>
                 }))}
                 options={{
 
-                    pageSizeOptions: [5, 10, 50, 100, 150, 200],
+                    pageSizeOptions: [5, 10, 50, 100, 150, 500],
                     headerStyle: {
                         backgroundColor: "#014d88",
                         color: "#fff",
@@ -180,19 +233,13 @@ export default function DownloadNdr() {
 
             />
 
-            <Modal isOpen={modal} toggle={toggle} backdrop={false} fade={true} size="xl" style={{marginTop: "50px"}}>
-                <ModalHeader toggle={toggle}></ModalHeader>
-                <ModalBody>
-                    <iframe style={{width: "100%", height: "100%", border: "none", margin: 0, padding: 0}}
-                            src="https://ndr.phis3project.org.ng/Identity/Account/Login?ReturnUrl=%2F"></iframe>
-                    <embed src="https://ndr.phis3project.org.ng/"
-                           width="100%"
-                           height="1000"
-                           onerror="alert('URL invalid !!');"
-                    />
-                </ModalBody>
-
-            </Modal>
+            <Modal isOpen={modal} toggle={toggle} backdrop={false} fade={true} style={{marginTop:"250px"}} size='lg'>
+            
+            <ModalBody>
+            <h1>Uploading File To NDR. Please wait...</h1>
+            </ModalBody>
+            
+            </Modal> 
         </div>
 
     );
