@@ -141,7 +141,7 @@ export default function DownloadNdr() {
     return (
         <div>
             <ToastContainer autoClose={3000} hideProgressBar />
-            {ndrDetail &&  [ndrDetail].length <=0 && (
+            {ndrDetail!=="" &&  [ndrDetail].length <=0 && (
             <Button
                 variant="contained"
                 color="primary"
