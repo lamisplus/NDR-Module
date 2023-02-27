@@ -243,6 +243,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20220320</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -293,15 +299,15 @@
 <!--										<npmVersion>8.1.2</npmVersion>-->
 <!--									</configuration>-->
 <!--								</execution>-->
-								<execution>
-									<id>npm install</id>
-									<goals>
-										<goal>npm</goal>
-									</goals>
-									<configuration>
-										<arguments>install --legacy-peer-deps</arguments>
-									</configuration>
-								</execution>
+<!--								<execution>-->
+<!--									<id>npm install</id>-->
+<!--									<goals>-->
+<!--										<goal>npm</goal>-->
+<!--									</goals>-->
+<!--									<configuration>-->
+<!--										<arguments>install &#45;&#45;legacy-peer-deps</arguments>-->
+<!--									</configuration>-->
+<!--								</execution>-->
 								<execution>
 									<id>npm run build</id>
 									<goals>

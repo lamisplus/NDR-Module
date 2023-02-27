@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/ndr")
@@ -58,7 +59,8 @@ public class NDRController {
     @GetMapping("/generate/{personId}")
     public void generatePatientXml(@PathVariable("personId") String personId, @RequestParam("facility") Long facility) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        ndrService.shouldPrintPatientContainerXml (personId, facility, true);
+        String pushIdentifier = UUID.randomUUID().toString();
+        ndrService.shouldPrintPatientContainerXml (personId, facility, true, pushIdentifier);
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
     }
 
