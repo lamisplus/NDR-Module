@@ -37,7 +37,11 @@
         </preConditions>
         <sql>
             ALTER TABLE ndr_xml_status
-                ADD completely_pushed boolean
+                ADD completely_pushed boolean;
+
+          update public.ndr_xml_status set push_identifier ='2hhjjjj',
+                                             completely_pushed = true,
+                                             percentage_pushed = 100;
         </sql>
     </changeSet>
 
