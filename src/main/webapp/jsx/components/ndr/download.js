@@ -114,23 +114,23 @@ export default function DownloadNdr() {
     }
     const  generateAction = (ndrFileId) => {
         setModal(true)
-        const fileID ={id: ndrFileId }
+        //const fileID ={id: ndrFileId }
          //SENDING A POST REQUEST 
-         axios.POST(`${api.url}ndr-emr/ndr-auto-pusher?id=${ndrFileId}`, fileID,
+         axios.get(`${api.url}ndr-emr/ndr-auto-pusher?id=${ndrFileId}`,
                      { headers: {"Authorization" : `Bearer ${token}`} }
                    )
                  .then(response => {
                    window.setTimeout(() => {
-                     toast.success(" Generating NDR Successful!");
+                     toast.success(" Uploading To NDR Successful!");
                      setModal(false)
-                     //props.setValue(1)
+                     generatedNdrList()
                    }, 5000);
                    
                    //props.history.push("/generate", { state: 'download'});
                  })
                  .catch(error => {
                    setModal(false)
-                   toast.error(" Something went wrong!");
+                   //toast.error(" Something went wrong!");
                    if(error.response && error.response.data){
                      let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
                      toast.error(errorMessage);
@@ -142,11 +142,17 @@ export default function DownloadNdr() {
        }
 
     const varient =(value)=>{
-
-        if(value<=0){
+        console.log(value)
+        if(value<=20 ){
+            return "danger"
+        }else if(value> 20 && value<=69){
+            return "warning"
+        }else if(value>= 70 && value<=99){
             return "info"
-        }else{
+        }else if(value=== 100){
             return "success"
+        }else{
+            return "success" 
         }
 
     }
@@ -195,8 +201,8 @@ export default function DownloadNdr() {
                     files: row.files,
                     fileName: row.fileName,
                     date: moment(row.lastModified).format("LLLL"),
-                    ndrStatus:(<ProgressBar now="60" variant={varient(row.files)} label={`60%`} />),
-                    actions:<div>
+                    ndrStatus:(<ProgressBar now={row.percentagePushed} variant={varient(row.percentagePushed)} label={`${row.percentagePushed}%`} />),
+                    actions:(<div>
                     <Menu.Menu position='right'  >
                     <Menu.Item >
                         <Buuton2 style={{backgroundColor:'rgb(153,46,98)'}} primary>
@@ -205,14 +211,15 @@ export default function DownloadNdr() {
                         <Dropdown.Menu style={{ marginTop:"10px", }}>
                             <Dropdown.Item  onClick={() => downloadFile(row.fileName)}><CloudDownloadIcon color="primary"/> Download File
                             </Dropdown.Item>
-                            <Dropdown.Item  onClick= {() => generateAction(row.id)}><CloudUpload color="primary"/> Upload To NDR
+                            {!row.completelyPushed && (<Dropdown.Item  onClick= {() => generateAction(row.id)}><CloudUpload color="primary"/> Upload To NDR
                             </Dropdown.Item>
+                            )}
                         </Dropdown.Menu>
                     </Dropdown>
                         </Buuton2>
                     </Menu.Item>
                     </Menu.Menu>
-              </div>
+              </div>)
                 }))}
                 options={{
 

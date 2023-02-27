@@ -98,7 +98,7 @@ public class NDRJSONController {
         return NDRJSONService.getViewConfiguration();
     }
 
-    @PostMapping("/ndr-auto-pusher")
+    @GetMapping("/ndr-auto-pusher")
     public void pushData(@RequestParam("id") Integer id) throws Exception {
         NDRJSONService.batchPushToNDR(id);//.PushPatientData(container);
     }
