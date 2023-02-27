@@ -78,7 +78,7 @@ public class NDRController {
     public void generateFacilitySelectedPatientXmls(
             @RequestParam List<Long> facilityIds,
             @RequestParam boolean initial,
-            @RequestParam Set<String> patientIds
+            @RequestParam List<String> patientIds
     ){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");
         Stopwatch stopwatch = Stopwatch.createStarted();

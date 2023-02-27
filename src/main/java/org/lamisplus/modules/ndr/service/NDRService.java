@@ -21,6 +21,7 @@ import org.lamisplus.modules.ndr.mapper.ConditionTypeMapper;
 import org.lamisplus.modules.ndr.mapper.MessageHeaderTypeMapper;
 import org.lamisplus.modules.ndr.mapper.NDREligibleClientMapper;
 import org.lamisplus.modules.ndr.mapper.PatientDemographicsMapper;
+import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
 import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
 import org.lamisplus.modules.ndr.schema.*;
@@ -38,6 +39,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -69,6 +71,8 @@ public class NDRService {
     private final NdrXmlStatusRepository ndrXmlStatusRepository;
     
     private final ArtPharmacyRepository pharmacyRepository;
+    
+    private final NDRCodeSetRepository ndrCodeSetRepository;
     
     private final NDREligibleClientMapper clientMap;
 
@@ -322,37 +326,26 @@ public class NDRService {
         cleanupFacility(facilityId);
        if(isInitial){
            System.out.println("I am in initial");
-           Set<String> personUuidsForNDR = artClinicalRepository.findAll()
-                   .stream()
-                   .filter(artClinical -> artClinical.getFacilityId().equals(facilityId))
-                   .filter(ARTClinical::getIsCommencement)
-                   .map(artClinical -> artClinical.getPerson().getUuid())
-                   .collect(Collectors.toSet());
+           List<String> personUuidsForNDR = ndrCodeSetRepository.getNDREligiblePatientUuidList(facilityId);
            processAndGenerateNDRFiles(facilityId, personUuidsForNDR);
        }else {
            System.out.println("I am in updated 1");
-            Optional<NdrXmlStatus> optionalNdrXmlStatus = ndrXmlStatusRepository.findAll()
-                    .stream()
-                    .filter(ndrXmlStatus -> ndrXmlStatus.getFacilityId().equals(facilityId))
-                    .sorted(Comparator.comparing(NdrXmlStatus::getLastModified).reversed())
-                    .findFirst();
-           optionalNdrXmlStatus.ifPresent(status -> {
+           Optional<Timestamp> lastGenerateDateTime = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
+           lastGenerateDateTime.ifPresent(status -> {
                System.out.println("I am in updated 2");
-               LocalDateTime lastModified = status.getLastModified();
+               Timestamp lastModified = lastGenerateDateTime.get();
                System.out.println("I am in updated 2: "+lastModified);
-               Set<String> personUuidsForNDR = pharmacyRepository.findAll()
-                       .stream()
-                       .filter(artPharmacy -> artPharmacy.getLastModifiedDate().isAfter(lastModified))
-                       .map(artPharmacy -> artPharmacy.getPerson().getUuid())
-                       .collect(Collectors.toSet());
+             List<String> personUuidsForNDR =
+                     ndrCodeSetRepository.getNDREligiblePatientUuidUpdatedListByLastModifyDate(lastModified.toLocalDateTime(),
+                            facilityId);
                System.out.println("ids: " + personUuidsForNDR);
-               processAndGenerateNDRFiles(facilityId, personUuidsForNDR, lastModified);
+               processAndGenerateNDRFiles(facilityId, personUuidsForNDR, lastModified.toLocalDateTime());
            });
         }
 
     }
     
-    public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, Set<String> patientUuidList) {
+    public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
         cleanupFacility(facilityId);
         if(isInitial){
             processAndGenerateNDRFiles(facilityId, patientUuidList);
@@ -371,7 +364,7 @@ public class NDRService {
     }
     
    
-    private void processAndGenerateNDRFiles(Long facilityId, Set<String> personUuidsForNDR) {
+    private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR) {
         List<NDRStatus> ndrStatusList =
                 personUuidsForNDR.stream ()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true))
@@ -384,7 +377,7 @@ public class NDRService {
          processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize);
     }
     
-    private void processAndGenerateNDRFiles(Long facilityId, Set<String> personUuidsForNDR, LocalDateTime lastUpdated) {
+    private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR, LocalDateTime lastUpdated) {
         List<NDRStatus> ndrStatusList =
                 personUuidsForNDR.stream ()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated))
@@ -397,7 +390,7 @@ public class NDRService {
         processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize);
     }
     
-    private void processAndZipFacilityNDRXML(Long facilityId, Set<String> personUuidsForNDR, int filesSize) {
+    private void processAndZipFacilityNDRXML(Long facilityId, List<String> personUuidsForNDR, int filesSize) {
         Optional<String> personId = personUuidsForNDR.stream().findFirst();
         if(personId.isPresent()) {
             Optional<PatientDemographics> patientDemographicsOptional=

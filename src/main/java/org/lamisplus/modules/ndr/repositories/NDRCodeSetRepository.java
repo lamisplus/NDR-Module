@@ -6,6 +6,7 @@ import org.lamisplus.modules.ndr.domain.entities.NDRCodeSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,22 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
            "AND arc.archived = 0 "+
            "AND  arc.person_uuid = ?1", nativeQuery = true)
    Optional<ArtCommencementDTO> getArtCommencementByPatientUuid(String patientUuid);
+   
+   @Query(value = "SELECT  arc.person_uuid as personUuid\n" +
+           "FROM  hiv_art_clinical arc \n" +
+           "INNER JOIN patient_person p ON arc.person_uuid = p.uuid\n" +
+           "WHERE is_commencement IS TRUE\n" +
+           "AND facility_id = ?1"+
+           "AND p.archived = 0", nativeQuery = true)
+   List<String> getNDREligiblePatientUuidList(Long facilityId);
+   
+   @Query(value = "select person_uuid from hiv_art_pharmacy \n" +
+           "where last_modified_date > ?1\n" +
+           "and archived = 0\n" +
+           "and  facility_id = ?2", nativeQuery = true)
+   List<String> getNDREligiblePatientUuidUpdatedListByLastModifyDate(LocalDateTime lastModifyDate, Long facilityId);
+   
+   
     
 
 

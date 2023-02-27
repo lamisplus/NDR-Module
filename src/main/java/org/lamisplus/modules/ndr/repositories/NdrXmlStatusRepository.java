@@ -1,7 +1,4 @@
 package org.lamisplus.modules.ndr.repositories;
-
-import org.lamisplus.modules.hiv.domain.dto.ARTClinicalCommenceDto;
-import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ARTClinicalInfo;
 import org.lamisplus.modules.ndr.domain.dto.LabDTO;
@@ -9,6 +6,7 @@ import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -182,5 +180,10 @@ public interface NdrXmlStatusRepository extends JpaRepository<NdrXmlStatus, Inte
 			"AND lt.patient_uuid = ?1\n" +
 			"AND lr.date_result_reported >= ?2", nativeQuery = true)
 	List<LabDTO> getLabInfoByPersonUuid(String personUuid, LocalDateTime lastGenerateDateTime);
+	
+	@Query (value = "select last_modified from ndr_xml_status where \n" +
+			"facility_id = ?1\n" +
+			"order by last_modified desc limit 1", nativeQuery = true)
+	 Optional<Timestamp> getLastGenerateDateTimeByFacilityId(Long facilityId);
 	
 }
