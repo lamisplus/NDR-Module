@@ -137,10 +137,12 @@ export default function DownloadNdr() {
     const deleteModal =()=> {        
         setModal(!modal)
     }
-    console.log(setUpDetail)
+
+    
     return (
         <div>
             <ToastContainer autoClose={3000} hideProgressBar />
+            {ndrDetail===undefined && (
             <Button
                 variant="contained"
                 color="primary"
@@ -152,7 +154,7 @@ export default function DownloadNdr() {
             >
                 <span> NDR Setup</span>
             </Button>
-
+            )}
             <br/><br/>
             <MaterialTable
                 icons={tableIcons}
@@ -179,8 +181,8 @@ export default function DownloadNdr() {
                         <Dropdown item text='Action'>
 
                         <Dropdown.Menu style={{ marginTop:"10px", }}>
-                            <Dropdown.Item  onClick={() =>setupModal(row)}><Edit color="primary"/> Edit
-                            </Dropdown.Item>
+                            {/* <Dropdown.Item  onClick={() =>setupModal(row)}><Edit color="primary"/> Edit
+                            </Dropdown.Item> */}
                             <Dropdown.Item  onClick= {() => deleteModal(row.id)}><DeleteOutline color="primary"/> Delete
                             </Dropdown.Item>
                         </Dropdown.Menu>
@@ -227,7 +229,7 @@ export default function DownloadNdr() {
             
         </Modal2.Footer>
         </Modal2>      
-            <NdrConfigurationSetup toggleModal={toggleModal} showModal={showModal} NdrSetup={ndrSetup} setUpDetail={setUpDetail}/>
+            <NdrConfigurationSetup toggleModal={toggleModal} showModal={showModal} NdrSetup={ndrSetup} setUpDetail={ndrDetail}/>
         </div>
 
     );
