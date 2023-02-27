@@ -350,14 +350,13 @@ public class NDRService {
         if(isInitial){
             processAndGenerateNDRFiles(facilityId, patientUuidList);
         }else{
-            Optional<NdrXmlStatus> optionalNdrXmlStatus = ndrXmlStatusRepository.findAll()
-                    .stream()
-                    .filter(ndrXmlStatus -> ndrXmlStatus.getFacilityId().equals(facilityId))
-                    .sorted(Comparator.comparing(NdrXmlStatus::getLastModified).reversed())
-                    .findFirst();
-            optionalNdrXmlStatus.ifPresent(status -> {
-                LocalDateTime lastModified = status.getLastModified();
-                processAndGenerateNDRFiles(facilityId, patientUuidList, lastModified);
+            System.out.println("I am in updated 1");
+            Optional<Timestamp> lastGenerateDateTime = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
+            lastGenerateDateTime.ifPresent(status -> {
+                System.out.println("I am in updated 2");
+                Timestamp lastModified = lastGenerateDateTime.get();
+                System.out.println("I am in updated 2: "+lastModified);
+                processAndGenerateNDRFiles(facilityId, patientUuidList, lastModified.toLocalDateTime());
             });
         }
         
