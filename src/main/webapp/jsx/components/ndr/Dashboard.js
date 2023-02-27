@@ -9,6 +9,7 @@ import Box from '@material-ui/core/Box';
 import { MdDashboard, MdContacts } from 'react-icons/md';
 import GenerateNdr from './generate';
 import DownloadNdr from './download';
+import NdrConfiguration from './NdrConfiguration';
 import {getQueryParams} from "./../PageUtils";
 
 
@@ -153,14 +154,11 @@ const HomePage = (props) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const urlIndex = getQueryParams("tab", props.location); 
-    const urlTabs = urlIndex !== null ? urlIndex : props.location ;
+    //const urlTabs = urlIndex !== null ? urlIndex : props.location ;
+    //
     useEffect ( () => {
-        switch(urlTabs){  
-        case "generate": return setValue(0)
-        case "download": return setValue(1)
-        default: return setValue(0)
-        }
-    }, [urlIndex]);
+        //using the value to control the tabs
+    }, [value]);
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -195,17 +193,25 @@ const HomePage = (props) => {
               icon={<MdContacts />}
               {...a11yProps(1)}
             />
-            
+            <Tab
+              className={classes.title}
+              label="NDR COnfiguration"
+              icon={<MdContacts />}
+              {...a11yProps(2)}
+            />
           </Tabs>
           <div></div>
         </AppBar>
 
        
-        <TabPanel value={value} index={0}>
-          <GenerateNdr />
+        <TabPanel value={value} setValue={setValue} index={0}>
+          <GenerateNdr value={value} setValue={setValue}/>
         </TabPanel>
-        <TabPanel value={value} index={1}>
-          <DownloadNdr />
+        <TabPanel value={value} setValue={setValue} index={1}>
+          <DownloadNdr value={value} setValue={setValue}/>
+        </TabPanel>
+        <TabPanel value={value} setValue={setValue} index={2}>
+          <NdrConfiguration value={value} setValue={setValue}/>
         </TabPanel>
         
 

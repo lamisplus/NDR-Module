@@ -12,7 +12,6 @@ target/
 .settings
 .springBeans
 .sts4-cache
-!**/src/main/**/resources/views/
 
 ### IntelliJ IDEA ###
 .idea
@@ -33,10 +32,10 @@ application-debug.log
 /nbdist/
 /.nb-gradle/
 build/
-src/main/resources/views/static/hiv/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+/build/*
+src/main/resources/views/static/patient/*
+classes/
 ### VS Code ###
 .vscode/
-
