@@ -37,7 +37,9 @@ import java.util.*;
 public class NDRJSONService {
     //TODO: Save the hard-coded values in database
     String pingUrl = "http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping";
-    String baseUrl = "https://emr-ndrpush.phis3project.org.ng/api/Cronbox";//"http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
+    
+    //"https://emr-ndrpush.phis3project.org.ng/api/Cronbox";
+    String baseUrl = "http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
     String authEndPoint = "/auth";
     String pushEndPoint = "/beep";
     String logsEndPoint = "/errorLogs";
