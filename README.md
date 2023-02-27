@@ -1,5 +1,5 @@
-# HIV Module
-* HIV module is one of the core module on lamisplus is basically the entry point to the application
+# NDR Module
+* NDR module is one of the core module on lamisplus is basically the entry point to the application
 
 ## Build
 
@@ -25,11 +25,11 @@ To do so execute
 ##### Install the version control tool git and clone this repository with
 
 ```bash
-https://github.com/lamisplus/hiv-module.git
+https://github.com/lamisplus/NDR_module.git
 ```
 ### Build Command
 ```bash
-cd hiv-module
+cd NDR-module
 mvn clean package
 ```
 
