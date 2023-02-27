@@ -101,7 +101,7 @@ export default function DownloadNdr() {
     const downloadFile = (fileName) => {
  
         axios
-            .delete(`${api.url}ndr/download/${fileName}`,
+            .get(`${api.url}ndr/download/${fileName}`,
                 {headers: {"Authorization": `Bearer ${api.token}`}, responseType: 'blob'}
             )
             .then((response) => {

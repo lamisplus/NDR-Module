@@ -137,7 +137,7 @@ export default function DownloadNdr() {
     const deleteModal =()=> {        
         setModal(!modal)
     }
-    console.log(setUpDetail)
+
     return (
         <div>
             <ToastContainer autoClose={3000} hideProgressBar />
