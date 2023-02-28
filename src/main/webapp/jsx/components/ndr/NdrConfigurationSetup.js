@@ -59,8 +59,8 @@ const useStyles = makeStyles(theme => ({
 const DatabaseSyn = (props) => {
     const classes = useStyles()
     const defaultValues = { username: "", password: ""  }
-    const setUpDetail= props.setUpDetail!==""? props.setUpDetail : defaultValues 
-    const [patDetails, setPatDetails] = useState(setUpDetail);
+    console.log(props)
+    const [patDetails, setPatDetails] = useState(defaultValues);
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     
@@ -87,8 +87,7 @@ const DatabaseSyn = (props) => {
       e.preventDefault();
             if (validate()) {      
                     setSaving(true);
-                    if(props.setUpDetail!==""){// The opertaion will be updating the record
-                        axios.put(`${baseUrl}ndr-emr/auto-push-configuration`,patDetails,
+                    axios.post(`${baseUrl}ndr-emr/auto-push-configuration?username=${patDetails.username}&password=${patDetails.password}`,patDetails,
                      { headers: {"Authorization" : `Bearer ${token}`}},
                     
                     ).then(response => {
@@ -110,31 +109,7 @@ const DatabaseSyn = (props) => {
                             }
                         
                         });
-                    }else{ // creating a new setup detail
-                        axios.post(`${baseUrl}ndr-emr/auto-push-configuration`,patDetails,
-                     { headers: {"Authorization" : `Bearer ${token}`}},
-                    
-                    ).then(response => {
-                            setSaving(false);
-                            props.NdrSetup()
-                            toast.success("NDR Setup Successful");
-                            props.toggleModal()
-
-                    }).catch(error => {
-                            setSaving(false);
-                            if(error.response && error.response.data){
-                                let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                                
-                                    toast.error(errorMessage, {position: toast.POSITION.BOTTOM_CENTER});
-                                
-                            }
-                            else{
-                                toast.error("Something went wrong. Please try again...", {position: toast.POSITION.BOTTOM_CENTER});
-                            }
-                        
-                        });
-                    }  
-            };
+            }
         }
 
       
