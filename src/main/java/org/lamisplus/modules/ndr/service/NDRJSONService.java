@@ -37,6 +37,8 @@ import java.util.*;
 public class NDRJSONService {
     //TODO: Save the hard-coded values in database
     String pingUrl = "http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping";
+    
+    //"https://emr-ndrpush.phis3project.org.ng/api/Cronbox";
     String baseUrl = "http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
     String authEndPoint = "/auth";
     String pushEndPoint = "/beep";
@@ -219,6 +221,7 @@ public class NDRJSONService {
     }
 
     public NDRPusherConfig getViewConfiguration() {
+        System.out.println("I get here now "+LocalDate.now());
         Long facilityId = 0L;
         Optional<User> currentUser = this.userService.getUserWithRoles();
         if (currentUser.isPresent()) {
@@ -226,6 +229,7 @@ public class NDRJSONService {
         }
         Optional<NDRPusherConfig> ndrPusherConfigOptional = this.ndrPusherConfigRepository.findByFacilityId(facilityId);//.orElseThrow(() -> new Exception("NDRPusherConfig NOT FOUND"));
         if (ndrPusherConfigOptional.isPresent()) {
+            System.out.println("I get here now2 "+LocalDate.now()+"\tfacilityId = "+facilityId);
             return ndrPusherConfigOptional.get();
         }
         return null;
