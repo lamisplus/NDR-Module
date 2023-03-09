@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 const DatabaseSyn = (props) => {
     const classes = useStyles()
     const defaultValues = { username: "", password: ""  }
-    console.log(props)
+    //console.log(props)
     const [patDetails, setPatDetails] = useState(defaultValues);
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});

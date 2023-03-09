@@ -167,18 +167,21 @@ const HomePage = (props) => {
         
     return (
       <div className={classes.root}>
-        <div className={classes.inforoot}>
-          {/* <PatientDetailCard getpatientdetails={props.location.state }/>    */}
+       <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
+			<ol className="breadcrumb">
+				<li className="breadcrumb-item active"><h4>NDR</h4></li>
+			</ol>
         </div>
+        <br/>
 
-        <AppBar position="static" style={{backgroundColor:'#014d88'}}>
+        <AppBar position="static" style={{backgroundColor:'#fff'}}>
           <Tabs
             value={value}
             onChange={handleChange}
             variant="scrollable"
             scrollButtons="on"
             indicatorColor="secondary"
-            textColor="inherit"
+            textColor="primary"
             aria-label="scrollable force tabs example"
           >
             <Tab
