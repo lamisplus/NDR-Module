@@ -185,5 +185,8 @@ public interface NdrXmlStatusRepository extends JpaRepository<NdrXmlStatus, Inte
 			"facility_id = ?1\n" +
 			"order by last_modified desc limit 1", nativeQuery = true)
 	 Optional<Timestamp> getLastGenerateDateTimeByFacilityId(Long facilityId);
+
+	@Query (value = "SELECT * FROM public.ndr_xml_status ORDER BY  id DESC", nativeQuery = true)
+	List<NdrXmlStatus> getAllFiles();
 	
 }

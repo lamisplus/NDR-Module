@@ -98,6 +98,10 @@
                 files         INTEGER                                  NOT NULL,
                 file_name     VARCHAR(255),
                 last_modified TIMESTAMP WITHOUT TIME ZONE              NOT NULL,
+                push_identifier VARCHAR(255),
+                percentage_pushed BIGINT,
+                completely_pushed boolean,
+
                 CONSTRAINT pk_ndr_xml_status PRIMARY KEY (id)
             );
         </sql>

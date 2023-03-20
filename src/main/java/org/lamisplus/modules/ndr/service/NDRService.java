@@ -40,6 +40,7 @@ import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
+import org.testcontainers.shaded.org.bouncycastle.asn1.DEROctetString;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -436,7 +437,7 @@ public class NDRService {
                 ndrXmlStatus.setLastModified (LocalDateTime.now ());
                 ndrXmlStatus.setPushIdentifier(pushIdentifier);
                 ndrXmlStatus.setCompletelyPushed(Boolean.FALSE);
-                ndrXmlStatus.setPercentagePushed(0);
+                ndrXmlStatus.setPercentagePushed(0L);
 
 
                 ndrXmlStatusRepository.save (ndrXmlStatus);
@@ -599,22 +600,56 @@ public class NDRService {
 
     @SneakyThrows
     public List<NdrXmlStatusDto> getNdrStatus() {
-        return ndrXmlStatusRepository.findAll ()
-                .stream ()
-                .map (ndrXmlStatus -> NdrXmlStatusDto
-                        .builder ()
-                        .facility (organisationUnitService.getOrganizationUnit (ndrXmlStatus.getFacilityId ()).getName ())
-                        .fileName (ndrXmlStatus.getFileName ())
-                        .files (ndrXmlStatus.getFiles ())
-                        .lastModified (ndrXmlStatus.getLastModified ())
-                        .id (ndrXmlStatus.getId ())
-                        .percentagePushed (ndrXmlStatus.getPercentagePushed())
-                        .completelyPushed (ndrXmlStatus.getCompletelyPushed())
-                        .pushIdentifier (ndrXmlStatus.getPushIdentifier())
-                        .build ()
-                )
-                .sorted(Comparator.comparing(NdrXmlStatusDto::getLastModified).reversed())
-                .collect (Collectors.toList ());
+        List<NdrXmlStatus> ndrXmlStatusList= ndrXmlStatusRepository.getAllFiles ();
+        List<NdrXmlStatusDto> ndrXmlStatusDtos = new ArrayList<>();
+        Iterator iterator = ndrXmlStatusList.iterator();
+        System.out.println("SIZE = "+ndrXmlStatusList.size());
+        while (iterator.hasNext()){
+            NdrXmlStatus ndrXmlStatus = (NdrXmlStatus) iterator.next();
+            NdrXmlStatusDto ndrXmlStatusDto = new NdrXmlStatusDto();
+            ndrXmlStatusDto.setFacility((organisationUnitService.getOrganizationUnit (ndrXmlStatus.getFacilityId ()).getName ()));
+            ndrXmlStatusDto.setFileName(ndrXmlStatus.getFileName());
+            ndrXmlStatusDto.setFiles(ndrXmlStatus.getFiles());
+            ndrXmlStatusDto.setLastModified(ndrXmlStatus.getLastModified());
+            ndrXmlStatusDto.setId(ndrXmlStatus.getId());
+            try {
+                if (null == ndrXmlStatus.getPercentagePushed()) {
+                    ndrXmlStatusDto.setPercentagePushed(100L);
+                    ndrXmlStatusDto.setCompletelyPushed(Boolean.TRUE);
+                    ndrXmlStatusDto.setPushIdentifier("Not Linked");
+                } else {
+                    ndrXmlStatusDto.setPercentagePushed(ndrXmlStatus.getPercentagePushed());
+                    ndrXmlStatusDto.setCompletelyPushed(ndrXmlStatus.getCompletelyPushed());
+                    ndrXmlStatusDto.setPushIdentifier(ndrXmlStatus.getPushIdentifier());
+
+                }
+            }catch (Exception e){
+                System.out.println("Doc here is within here");
+            }
+            ndrXmlStatusDtos.add(ndrXmlStatusDto);
+
+
+
+        }
+//
+//        return ndrXmlStatusRepository.findAll ()
+//                .stream ()
+//                .map (ndrXmlStatus -> NdrXmlStatusDto
+//                        .builder ()
+//                        .facility
+//                        .fileName (ndrXmlStatus.getFileName ())
+//                        .files (ndrXmlStatus.getFiles ())
+//                        .lastModified (ndrXmlStatus.getLastModified ())
+//                        .id (ndrXmlStatus.getId ())
+//                        .percentagePushed (ndrXmlStatus.getPercentagePushed())
+//                        .completelyPushed (ndrXmlStatus.getCompletelyPushed())
+//                        .pushIdentifier (ndrXmlStatus.getPushIdentifier())
+//                        .build ()
+//                )
+//                .sorted(Comparator.comparing(NdrXmlStatusDto::getLastModified).reversed())
+//                .collect (Collectors.toList ());
+
+        return ndrXmlStatusDtos;
     }
 
 
