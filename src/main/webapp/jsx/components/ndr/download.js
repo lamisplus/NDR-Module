@@ -187,7 +187,7 @@ export default function DownloadNdr() {
                     },
                     {title: "File Name", field: "fileName", filtering: false},
                     {title: "Date Last Generated", field: "date", type: "date", filtering: false},
-                    // {title: "NDR Upload Status", field: "ndrStatus", type: "date", filtering: false},
+                    {title: "NDR Upload Status", field: "ndrStatus", type: "date", filtering: false},
 
                     {
                         title: "Action",

@@ -213,9 +213,9 @@ const HomePage = (props) => {
         <TabPanel value={value} setValue={setValue} index={1}>
           <DownloadNdr value={value} setValue={setValue}/>
         </TabPanel>
-        {/* <TabPanel value={value} setValue={setValue} index={2}>
+        <TabPanel value={value} setValue={setValue} index={2}>
           <NdrConfiguration value={value} setValue={setValue}/>
-        </TabPanel> */}
+        </TabPanel>
         
 
       </div>
