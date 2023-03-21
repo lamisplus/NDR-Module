@@ -14,7 +14,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AddressTypeMapper {
-	private final PersonRepository personRepository;
 	private final NDRCodeSetResolverService ndrCodeSetResolverService;
 	
 	

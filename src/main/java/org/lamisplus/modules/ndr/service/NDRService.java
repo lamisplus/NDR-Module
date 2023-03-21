@@ -396,9 +396,11 @@ public class NDRService {
     private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR) {
         String pushIdentifier = UUID.randomUUID().toString();
         List<NDRStatus> ndrStatusList =
-                personUuidsForNDR.stream ()
+                personUuidsForNDR.parallelStream ()
+                        .parallel()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true, pushIdentifier))
                         .collect (Collectors.toList ());
+       
         int filesSize = (int) ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)

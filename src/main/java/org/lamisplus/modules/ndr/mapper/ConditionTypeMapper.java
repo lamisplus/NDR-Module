@@ -31,6 +31,7 @@ public class ConditionTypeMapper {
 
 
     public ConditionType getConditionType(PatientDemographics demographics) {
+       
         ConditionType condition = new ConditionType ();
         Optional<String> conditionCode = ndrCodeSetResolverService.getNDRCodeSetCode ("CONDITION_CODE", "HIV_CODE");
         conditionCode.ifPresent (condition::setConditionCode);
