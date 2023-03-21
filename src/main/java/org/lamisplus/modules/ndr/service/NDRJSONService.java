@@ -46,6 +46,7 @@ public class NDRJSONService {
     String email = "nonye.nwanya@thepalladiumgroup.com";
     String password = "]W(I*=v}-+z8h$F";
 
+    private final int BATCHMAX = 10;
     private final NDRPusherRepository ndrPusherRepository;
 
     private final UserService userService;
@@ -243,24 +244,73 @@ public class NDRJSONService {
     }
 
 
-    public int getPacentagePushed(Integer id) {
-        int per = 0;
-        Long facilityId = 0L;
-        Optional<User> currentUser = this.userService.getUserWithRoles();
-        if (currentUser.isPresent()) {
-            facilityId = currentUser.get().getCurrentOrganisationUnitId();
-        }
-        try {
-            String identifier = ndrXmlStatusRepository.findById(id).get().getPushIdentifier();
-            int yet2bePushed = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier).size();
-            int totalRecords = ndrMessagesRepository.getTotalRecordByFacilityAndIdentifier(facilityId, identifier);
-            float percentage = 0F;
-            if (totalRecords > 0) percentage = (float) (((totalRecords - yet2bePushed) / totalRecords) * 100);
-            per = Math.round(percentage);
-        } catch (Exception e) {
-        }
-        return per;
-    }
+//    public int getPacentagePushed(Integer id) {
+//        int per = 0;
+//        Long facilityId = 0L;
+//        Optional<User> currentUser = this.userService.getUserWithRoles();
+//        if (currentUser.isPresent()) {
+//            facilityId = currentUser.get().getCurrentOrganisationUnitId();
+//        }
+//        try {
+//            String identifier = ndrXmlStatusRepository.findById(id).get().getPushIdentifier();
+//            int yet2bePushed = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier).size();
+//            int totalRecords = ndrMessagesRepository.getTotalRecordByFacilityAndIdentifier(facilityId, identifier);
+//            float percentage = 0F;
+//            if (totalRecords > 0) percentage = (float) ((100*(totalRecords - yet2bePushed))/ totalRecords);
+//            per = Math.round(percentage);
+//        } catch (Exception e) {}
+//        return per;
+//    }
+//
+//    public void batchPushToNDR(Integer id) throws Exception {
+//        //System.out.println(container);
+//        Long facilityId = 0L;
+//        Optional<User> currentUser = this.userService.getUserWithRoles();
+//        if (currentUser.isPresent()) {
+//            facilityId = currentUser.get().getCurrentOrganisationUnitId();
+//        }
+//
+//        if (PingNDRServer().equals("success")) {
+//            System.out.println("successfully ping");
+//            String token = GetJWT();
+//            String identifier = "";
+//            NdrXmlStatus ndrXmlStatus = new NdrXmlStatus();
+//            Optional<NdrXmlStatus> ndrXmlStatusOptional = ndrXmlStatusRepository.findById(id);
+//            if (ndrXmlStatusOptional.isPresent()) {
+//                ndrXmlStatus = ndrXmlStatusOptional.get();
+//                identifier = ndrXmlStatus.getPushIdentifier();
+//
+//                List<NDRMessages> ndrMessagesList = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
+//                Iterator iterator = ndrMessagesList.iterator();
+//                System.out.println("Token gotten " + ndrMessagesList.size());
+//
+//                while (iterator.hasNext()) {
+//                    NDRMessages msg = (NDRMessages) iterator.next();
+//                    List<String> data = new ArrayList<>();
+//                    String patientData = msg.getDeMessage();
+//                    //System.out.println(container2);
+//                    data.add(patientData);
+//                    NDRDataResponseDTO ndrDataResponseDTO = PushData(token, data);
+//                    System.out.println("patientData " + data);
+//                    creatPusher(ndrDataResponseDTO, patientData, facilityId);
+//                    if (ndrDataResponseDTO.getMessage().contains("success")) {
+//                        msg.setIsPushed(Boolean.TRUE);
+//                        msg.setMessageDate(LocalDate.now());
+//                        ndrMessagesRepository.save(msg);
+//
+//
+//                        int percentagePushed = this.getPacentagePushed(ndrXmlStatus.getId());
+//                        ndrXmlStatus.setPercentagePushed(percentagePushed);
+//                        Boolean complete = Boolean.FALSE;
+//                        if (percentagePushed == 100) complete = Boolean.TRUE;
+//                        ndrXmlStatus.setCompletelyPushed(complete);
+//                        ndrXmlStatusRepository.save(ndrXmlStatus);
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
 
     public void batchPushToNDR(Integer id) throws Exception {
         //System.out.println(container);
@@ -282,29 +332,35 @@ public class NDRJSONService {
 
                 List<NDRMessages> ndrMessagesList = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
                 Iterator iterator = ndrMessagesList.iterator();
-                System.out.println("Token gotten " + ndrMessagesList.size());
-
+                int size = ndrMessagesList.size();
+                System.out.println("Token gotten " + size);
+                int batches = 0;
+                int counter = 0;
+                List<String> data = new ArrayList<>();
                 while (iterator.hasNext()) {
                     NDRMessages msg = (NDRMessages) iterator.next();
-                    List<String> data = new ArrayList<>();
-                    String patientData = msg.getDeMessage();
-                    //System.out.println(container2);
-                    data.add(patientData);
-                    NDRDataResponseDTO ndrDataResponseDTO = PushData(token, data);
-                    System.out.println("patientData " + data);
-                    creatPusher(ndrDataResponseDTO, patientData, facilityId);
-                    if (ndrDataResponseDTO.getMessage().contains("success")) {
-                        msg.setIsPushed(Boolean.TRUE);
-                        msg.setMessageDate(LocalDate.now());
-                        ndrMessagesRepository.save(msg);
-
-
-                        int percentagePushed = this.getPacentagePushed(ndrXmlStatus.getId());
-                        ndrXmlStatus.setPercentagePushed(percentagePushed);
-                        Boolean complete = Boolean.FALSE;
-                        if (percentagePushed == 100) complete = Boolean.TRUE;
-                        ndrXmlStatus.setCompletelyPushed(complete);
-                        ndrXmlStatusRepository.save(ndrXmlStatus);
+                    batches++; counter++;
+                    if(batches%BATCHMAX != 0){
+                        data.add(msg.getDeMessage());
+                        continue;
+                    }
+                    else if ( (batches%BATCHMAX == 0) || (counter == size))
+                    {
+                        if(batches == BATCHMAX) data.add(msg.getDeMessage());
+                        NDRDataResponseDTO ndrDataResponseDTO = PushData(token, data);
+                        if (ndrDataResponseDTO.getMessage().contains("success")) {
+                            msg.setIsPushed(Boolean.TRUE);
+                            msg.setMessageDate(LocalDate.now());
+                            ndrMessagesRepository.save(msg);
+                            int percentagePushed = this.getPacentagePushed(ndrXmlStatus.getId());
+                            ndrXmlStatus.setPercentagePushed(percentagePushed);
+                            Boolean complete = Boolean.FALSE;
+                            if (percentagePushed == 100) complete = Boolean.TRUE;
+                            ndrXmlStatus.setCompletelyPushed(complete);
+                            ndrXmlStatusRepository.save(ndrXmlStatus);
+                        }
+                        data = new ArrayList<>();
+                        batches = 0;
                     }
                 }
             }
@@ -312,7 +368,26 @@ public class NDRJSONService {
         }
     }
 
-
+    public int getPacentagePushed(Integer id) {
+        int per = 0;
+        Long facilityId = 0L;
+        Optional<User> currentUser = this.userService.getUserWithRoles();
+        if (currentUser.isPresent()) {
+            facilityId = currentUser.get().getCurrentOrganisationUnitId();
+        }
+        try {
+            String identifier = ndrXmlStatusRepository.findById(id).get().getPushIdentifier();
+            int yet2bePushed = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier).size();
+            int totalRecords = ndrMessagesRepository.getTotalRecordByFacilityAndIdentifier(facilityId, identifier);
+            double percentage = 0.0;
+            if (totalRecords > 0) percentage =  ((100*(totalRecords - yet2bePushed)) / totalRecords);
+            per = (int) Math.ceil(percentage);
+            //Long
+        } catch (Exception e) {
+        }
+       // int per2 = new int(per+"");
+        return per;
+    }
 //hozfIkuo4eE
 // 02_764_hozfIkuo4eE_Major Aminu Urban Health Centre_24022023
 }

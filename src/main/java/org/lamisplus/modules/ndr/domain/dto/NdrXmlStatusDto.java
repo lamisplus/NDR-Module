@@ -2,13 +2,14 @@ package org.lamisplus.modules.ndr.domain.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
+@NoArgsConstructor
 public class NdrXmlStatusDto implements Serializable {
     private  Integer id;
     private  Integer files;
