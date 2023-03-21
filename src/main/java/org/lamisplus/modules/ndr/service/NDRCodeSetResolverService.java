@@ -40,7 +40,7 @@ public class NDRCodeSetResolverService {
     public Optional<CodedSimpleType> getRegimen(String display) {
         Optional<String> regimenResolver = ndrCodeSetRepository.getNDREquivalentRegimenUsingSystemRegimen (display);
         if (regimenResolver.isPresent ()) {
-            System.out.println("NDR REGIMEN 1: "+ regimenResolver.get());
+           // System.out.println("NDR REGIMEN 1: "+ regimenResolver.get());
             Optional<NDRCodeSet> ndrCodeSet = ndrCodeSetRepository.getNDRCodeSetByCodeDescription (regimenResolver.get ());
             if (ndrCodeSet.isPresent ()) {
                 System.out.println("NDR REGIMEN CODE: "+ ndrCodeSet.get().getCode());

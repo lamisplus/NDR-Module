@@ -15,10 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/v1/ndr")
@@ -65,15 +62,21 @@ public class NDRController {
     }
 
     @GetMapping("/generate")
-    public void generateFacilityPatientXmls(
+    public boolean generateFacilityPatientXmls(
             @RequestParam List<Long> facilityIds,
              @RequestParam boolean isInitial
     ){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");
         Stopwatch stopwatch = Stopwatch.createStarted();
-        facilityIds.forEach (facilityId -> ndrService.generateNDRXMLByFacility(facilityId,isInitial));
+        List<Boolean> result = new ArrayList<>();
+        facilityIds.forEach (
+                facilityId -> {
+                    boolean result1 = ndrService.generateNDRXMLByFacility(facilityId, isInitial);
+                    result.add(result1);
+                });
         messagingTemplate.convertAndSend("/topic/ndr-status", "end");
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
+        return result.contains(true);
     }
     
     @GetMapping("/generate/patients")

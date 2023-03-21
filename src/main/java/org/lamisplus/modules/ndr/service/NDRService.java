@@ -356,26 +356,32 @@ public class NDRService {
         return null;
     }
 
-    public void generateNDRXMLByFacility(Long facilityId, boolean isInitial) {
+    public boolean generateNDRXMLByFacility(Long facilityId, boolean isInitial) {
         cleanupFacility(facilityId);
        if(isInitial){
            System.out.println("I am in initial");
            List<String> personUuidsForNDR = nDRCodeSetRepository.getNDREligiblePatientUuidList(facilityId);
+           if(personUuidsForNDR.isEmpty()) return false;
            processAndGenerateNDRFiles(facilityId, personUuidsForNDR);
+           return true;
        }else {
            System.out.println("I am in updated 1");
            Optional<Timestamp> lastGenerateDateTimeByFacilityId =
                    ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
-           lastGenerateDateTimeByFacilityId.ifPresent(status -> {
-               System.out.println("I am in updated 2");
+           if(lastGenerateDateTimeByFacilityId.isPresent()){
+               //System.out.println("I am in updated 2");
                LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
-               System.out.println("I am in updated 2: "+lastModified);
+              // System.out.println("I am in updated 2: "+lastModified);
                List<String> personUuidsForNDR = nDRCodeSetRepository.getNDREligiblePatientUuidUpdatedListByLastModifyDate(lastModified, facilityId);
-               System.out.println("ids: " + personUuidsForNDR);
+               //System.out.println("ids: " + personUuidsForNDR);
+               if(personUuidsForNDR.isEmpty()){
+                   return false;
+               }
                processAndGenerateNDRFiles(facilityId, personUuidsForNDR, lastModified);
-           });
+               return true;
+           }
+           return false;
         }
-
     }
     
     public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
@@ -415,12 +421,14 @@ public class NDRService {
                 personUuidsForNDR.stream ()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated, pushIdentifier))
                         .collect (Collectors.toList ());
-        int filesSize = (int) ndrStatusList
+        Set<NdrMessageLog> messageLogs = ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)
                 .map(ndrStatus -> new NdrMessageLog(ndrStatus.identifier, ndrStatus.getFile(), LocalDateTime.now()))
-                .map(this::saveMessageLog).count();
-        processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize, pushIdentifier);
+                .map(this::saveMessageLog)
+                .collect(Collectors.toSet());
+         System.out.println("message log saved : "+ messageLogs.size());
+        processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, messageLogs.size(), pushIdentifier);
     }
     
     private void processAndZipFacilityNDRXML(Long facilityId, List<String> personUuidsForNDR, int filesSize, String pushIdentifier) {
@@ -438,9 +446,7 @@ public class NDRService {
                 ndrXmlStatus.setLastModified (LocalDateTime.now ());
                 ndrXmlStatus.setPushIdentifier(pushIdentifier);
                 ndrXmlStatus.setCompletelyPushed(Boolean.FALSE);
-                ndrXmlStatus.setPercentagePushed(0);
-
-
+                ndrXmlStatus.setPercentagePushed(0l);
                 ndrXmlStatusRepository.save (ndrXmlStatus);
             }
         }
@@ -707,7 +713,7 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
             ndrXmlStatusDto.setId(ndrXmlStatus.getId());
             try {
                 if (null == ndrXmlStatus.getPercentagePushed()) {
-                    ndrXmlStatusDto.setPercentagePushed(100);
+                    ndrXmlStatusDto.setPercentagePushed(100l);
                     ndrXmlStatusDto.setCompletelyPushed(Boolean.TRUE);
                     ndrXmlStatusDto.setPushIdentifier("Not Linked");
                 } else {
