@@ -63,7 +63,7 @@ public class NDRController {
 
     @GetMapping("/generate")
     public boolean generateFacilityPatientXmls(
-            @RequestParam List<Long> facilityIds,
+             @RequestParam List<Long> facilityIds,
              @RequestParam boolean isInitial
     ){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");

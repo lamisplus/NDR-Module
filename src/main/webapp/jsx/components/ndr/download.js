@@ -187,7 +187,7 @@ export default function DownloadNdr() {
                     },
                     {title: "File Name", field: "fileName", filtering: false},
                     {title: "Date Last Generated", field: "date", type: "date", filtering: false},
-                    {title: "NDR Upload Status", field: "ndrStatus", type: "date", filtering: false},
+                    // {title: "NDR Upload Status", field: "ndrStatus", type: "date", filtering: false},
 
                     {
                         title: "Action",
@@ -211,9 +211,9 @@ export default function DownloadNdr() {
                         <Dropdown.Menu style={{ marginTop:"10px", }}>
                             <Dropdown.Item  onClick={() => downloadFile(row.fileName)}><CloudDownloadIcon color="primary"/> Download File
                             </Dropdown.Item>
-                            {!row.completelyPushed && (<Dropdown.Item  onClick= {() => generateAction(row.id)}><CloudUpload color="primary"/> Upload To NDR
-                            </Dropdown.Item>
-                            )}
+                            {/*{!row.completelyPushed && (<Dropdown.Item  onClick= {() => generateAction(row.id)}><CloudUpload color="primary"/> Upload To NDR*/}
+                            {/*</Dropdown.Item>*/}
+                            {/*)}*/}
                         </Dropdown.Menu>
                     </Dropdown>
                         </Buuton2>

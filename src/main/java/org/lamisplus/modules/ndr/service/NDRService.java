@@ -359,10 +359,13 @@ public class NDRService {
     public boolean generateNDRXMLByFacility(Long facilityId, boolean isInitial) {
         cleanupFacility(facilityId);
        if(isInitial){
-           System.out.println("I am in initial");
+           System.out.println("I am in initial1");
+           System.out.println(facilityId);
            List<String> personUuidsForNDR = nDRCodeSetRepository.getNDREligiblePatientUuidList(facilityId);
+           System.out.println("I am in initial2");
            if(personUuidsForNDR.isEmpty()) return false;
            processAndGenerateNDRFiles(facilityId, personUuidsForNDR);
+           System.out.println("I am in initial3");
            return true;
        }else {
            System.out.println("I am in updated 1");
