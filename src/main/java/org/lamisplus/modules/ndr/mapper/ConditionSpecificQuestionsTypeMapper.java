@@ -49,6 +49,7 @@ public class ConditionSpecificQuestionsTypeMapper {
 // improve performance
 
     public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(PatientDemographics demographics) {
+        log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
         try {
             ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
             HIVQuestionsType hiv = new HIVQuestionsType ();
@@ -80,7 +81,9 @@ public class ConditionSpecificQuestionsTypeMapper {
                 hivQuestions.setHIVQuestions (hiv);
             return hivQuestions;
         } catch (Exception e) {
-            e.printStackTrace ();
+            log.error("An error Generating condition specific questions for patient with uuid {}",
+                    demographics.getPersonUuid());
+           log.error("Error Message: " + e.getMessage());
         }
         return null;
 
@@ -106,12 +109,10 @@ public class ConditionSpecificQuestionsTypeMapper {
     }
 
     private void processAndSetWHOStagingAndFunctionalStatus(HIVQuestionsType hiv, String whoStage, String functionalStatus) {
-       
         if(whoStage != null) {
                 Optional<String> whoStageCodeSet =
                         ndrCodeSetResolverService.getNDRCodeSetCode("WHO_STAGE",whoStage);
                 whoStageCodeSet.ifPresent(hiv::setWHOClinicalStageARTStart);
-            
         }
         if(functionalStatus != null) {
                 Optional<String> functionalStatusCodeSet =

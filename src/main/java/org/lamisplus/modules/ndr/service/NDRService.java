@@ -253,11 +253,13 @@ public class NDRService {
 //    }
 
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, boolean isInitial, String pushIdentifier) {
+        log.info("generating ndr xml of patient with uuid {}" , personUuid);
         try {
+            log.info("fetching patient demographics");
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
-            log.info("I am here");
             if (demographicsOptional.isPresent()) {
+                log.info("found  patient demographics");
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
                 Container container = new Container();
@@ -266,6 +268,7 @@ public class NDRService {
                         patientDemographicsMapper.getPatientDemographics(demographics);
                 if (patientDemographics != null) {
                     IndividualReportType individualReportType = new IndividualReportType();
+                    log.info("fetching treatment details ");
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics);
                     individualReportType.setPatientDemographics(patientDemographics);
                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
@@ -273,6 +276,7 @@ public class NDRService {
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
+                    log.info("done fetching treatment details ");
                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -284,26 +288,30 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
-
+                    log.info("converting treatment details to xml ");
                     NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
                    //====================Dr Karim coding session begins
-                    if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+                   // if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
                     //====================Dr Karim coding session ends
+                    log.info("NDR xml for patient with uuid {}  was created successfully", personUuid);
                     return ndrStatus;
                 }
             }
             } catch(Exception e){
             log.error("error when generating person with uuid {}", personUuid);
-            e.printStackTrace();
+            log.error("error: " + e.getMessage());
             }
         return null;
     }
     
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, LocalDateTime lastUpdated, String pushIdentifier) {
+        log.info("generating ndr xml of patient with uuid {}" , personUuid);
         try {
+            log.info("fetching patient demographics....");
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
             if (demographicsOptional.isPresent()) {
+                log.info("found  patient demographics");
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
                 Container container = new Container();
@@ -311,6 +319,7 @@ public class NDRService {
                 PatientDemographicsType patientDemographics =
                         patientDemographicsMapper.getPatientDemographics(demographics);
                 if (patientDemographics != null) {
+                    log.info("fetching treatment details... ");
                     IndividualReportType individualReportType = new IndividualReportType();
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics, lastUpdated);
                     individualReportType.setPatientDemographics(patientDemographics);
@@ -319,7 +328,7 @@ public class NDRService {
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
-
+                    log.info("done fetching treatment details ");
                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -331,17 +340,19 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
+                    log.info("converting treatment details to xml... ");
                     NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
                     //====================Dr Karim coding session begins
-                    if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+                    //if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
                     //====================Dr Karim coding session ends
+                    log.info("NDR xml for patient with uuid {}  was created successfully", personUuid);
                     return ndrStatus;
                     //return processAndGenerateNDRFile(jaxbMarshaller, container, demographics, identifier, id);
                 }
             }
         } catch(Exception e){
             log.error("error when generating person with uuid {}", personUuid);
-            e.printStackTrace();
+            log.error("error: " + e.getMessage());
         }
         return null;
     }

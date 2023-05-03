@@ -2,6 +2,7 @@ package org.lamisplus.modules.ndr.mapper;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.AddressType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AddressTypeMapper {
 	private final NDRCodeSetResolverService ndrCodeSetResolverService;
 	
@@ -28,15 +30,22 @@ public class AddressTypeMapper {
 	
 	
 	private void processAndSetPatientCurrentAddress(AddressType addressType, PatientDemographics patientDemographics) {
-		if (patientDemographics.getTown() != null) {
-			addressType.setTown(patientDemographics.getTown());
+		log.info("Processing address...");
+		try {
+			if (patientDemographics.getTown() != null) {
+				addressType.setTown(patientDemographics.getTown());
+			}
+			Optional<String> stateCode =
+					ndrCodeSetResolverService.getNDRCodeSetCode("STATES", patientDemographics.getState());
+			Optional<String> lgaCode =
+					ndrCodeSetResolverService.getNDRCodeSetCode("LGA", patientDemographics.getLga());
+			stateCode.ifPresent(addressType::setStateCode);
+			lgaCode.ifPresent(addressType::setLGACode);
+		} catch (Exception e) {
+			log.error("An error occur why processing patient address with uuid {}", patientDemographics.getPersonUuid());
+			log.error("Error message {} ", e.getMessage());
 		}
-		Optional<String> stateCode =
-				ndrCodeSetResolverService.getNDRCodeSetCode("STATES", patientDemographics.getState());
-		Optional<String> lgaCode =
-				ndrCodeSetResolverService.getNDRCodeSetCode("LGA", patientDemographics.getLga());
-		stateCode.ifPresent(addressType::setStateCode);
-		lgaCode.ifPresent(addressType::setLGACode);
+		
 	}
 	
 }
