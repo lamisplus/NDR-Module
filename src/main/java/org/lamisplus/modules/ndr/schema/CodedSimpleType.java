@@ -33,7 +33,14 @@ import javax.xml.bind.annotation.XmlType;
     "codeDescTxt"
 })
 public class CodedSimpleType {
-
+    @Override
+    public String toString() {
+        return "CodedSimpleType{" +
+                "code='" + code + '\'' +
+                ", codeDescTxt='" + codeDescTxt + '\'' +
+                '}';
+    }
+    
     @XmlElement(name = "Code", required = true)
     protected String code;
     @XmlElement(name = "CodeDescTxt")
