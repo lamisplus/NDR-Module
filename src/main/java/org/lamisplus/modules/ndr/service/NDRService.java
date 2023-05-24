@@ -255,17 +255,22 @@ public class NDRService {
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, boolean isInitial, String pushIdentifier) {
         log.info("generating ndr xml of patient with uuid {}" , personUuid);
         try {
+           
             log.info("fetching patient demographics");
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
+            
+            
             if (demographicsOptional.isPresent()) {
                 log.info("found  patient demographics");
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
                 Container container = new Container();
                 JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+                //save this somewhere...
                 PatientDemographicsType patientDemographics =
                         patientDemographicsMapper.getPatientDemographics(demographics);
+                //
                 if (patientDemographics != null) {
                     IndividualReportType individualReportType = new IndividualReportType();
                     log.info("fetching treatment details ");
@@ -316,6 +321,7 @@ public class NDRService {
                 long id = messageId.incrementAndGet();
                 Container container = new Container();
                 JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+                //caching this because is static
                 PatientDemographicsType patientDemographics =
                         patientDemographicsMapper.getPatientDemographics(demographics);
                 if (patientDemographics != null) {
@@ -328,6 +334,7 @@ public class NDRService {
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
+                    
                     log.info("done fetching treatment details ");
                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
