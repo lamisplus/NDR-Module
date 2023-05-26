@@ -20,5 +20,21 @@
                  stripComments="true"/>
     </changeSet>
 
+    <changeSet id="20230524012" author="amos-data-fi">
+        <sql>
+            CREATE TABLE IF NOT EXISTS ndrdata
+            (
+                patient_id    VARCHAR(255) NOT NULL,
+                demorgraphic  JSONB,
+                commencement  JSONB,
+                care_cards    JSONB,
+                labs          JSONB,
+                pharmacies    JSONB,
+                date_modified date,
+                CONSTRAINT pk_ndrdata PRIMARY KEY (patient_id)
+            );
+        </sql>
+    </changeSet>
+
 
 </databaseChangeLog>

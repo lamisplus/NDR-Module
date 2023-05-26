@@ -41,12 +41,11 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXParseException;
-import reactor.core.publisher.Mono;
+
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -99,6 +98,8 @@ public class NDRService {
     private final PersonRepository personRepository;
 
     private final NDRMessagesRepository ndrMessagesRepository;
+    
+    private final BootData bootData;
 
     private final UserService userService;
 
@@ -400,8 +401,11 @@ public class NDRService {
     public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
         cleanupFacility(facilityId);
         if(isInitial){
-            processAndGenerateNDRFiles(facilityId, patientUuidList);
+           // bootData.init(patientUuidList);
+           processAndGenerateNDRFiles(facilityId, patientUuidList);
+           
         }else{
+            //bootData.init(patientUuidList);
             Optional<Timestamp> lastGenerateDateTimeByFacilityId = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
             lastGenerateDateTimeByFacilityId.ifPresent(status -> {
                 LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
@@ -496,14 +500,7 @@ public class NDRService {
            return new NDRStatus(id, identifier, fileName);
        }catch (JAXBException e){
            log.error(" error generating file with uuid {}", demographics.getPersonUuid());
-           Throwable linkedException = e.getCause();
-           if (linkedException instanceof SAXParseException) {
-               int lineNum = ((SAXParseException) linkedException).getLineNumber();
-               int colNum = ((SAXParseException) linkedException).getColumnNumber();
-               log.error("line number {}",lineNum);
-               log.error("line colNum {}",colNum);
-               log.error("container {}", container);
-           }
+           e.printStackTrace();
        }
        return null;
     }
