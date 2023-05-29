@@ -7,6 +7,7 @@ import org.lamisplus.modules.ndr.domain.entities.NDRCodeSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +27,31 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
     List<BiometricDto> getPatientBiometricByPatientUuid(String patientUuid);
     
     
-    @Query(value = "select template_type as templateType, enrollment_date as enrollmentDate, template from biometric where person_uuid = :patientUuid" +
-            " and biometric_type = 'FINGERPRINT' and archived = 0 and version_iso_20 = true  and iso = true", nativeQuery = true)
+    @Query(value = "SELECT template_type as templateType, \n" +
+            "enrollment_date as enrollmentDate,\n" +
+            "recapture as count,\n" +
+            "template,\n" +
+            "image_quality as quality,\n" +
+            "hashed as templateTypeHash\n" +
+            "FROM biometric where person_uuid = ?1 \n" +
+            "AND biometric_type = 'FINGERPRINT' and archived = 0\n" +
+            "AND recapture > 0\n" +
+            "AND version_iso_20 = true  and iso = true\n" +
+            "AND enrollment_date > ?2 \n" +
+            "ORDER BY enrollment_date DESC LIMIT 10;", nativeQuery = true)
+    List<RecaptureBiometricDTO> getPatientRecapturedBiometricByPatientUuid(String patientUuid, LocalDate previousUploadDate);
+    
+    @Query(value = "SELECT template_type as templateType, \n" +
+            "enrollment_date as enrollmentDate,\n" +
+            "recapture as count,\n" +
+            "template,\n" +
+            "image_quality as quality,\n" +
+            "hashed as templateTypeHash\n" +
+            "FROM biometric where person_uuid = ?1 \n" +
+            "AND biometric_type = 'FINGERPRINT' and archived = 0\n" +
+            "AND recapture > 0\n" +
+            "AND version_iso_20 = true  and iso = true\n" +
+            "ORDER BY enrollment_date DESC LIMIT 10 ", nativeQuery = true)
     List<RecaptureBiometricDTO> getPatientRecapturedBiometricByPatientUuid(String patientUuid);
     
    

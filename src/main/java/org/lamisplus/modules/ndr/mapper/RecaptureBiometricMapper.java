@@ -6,7 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.base.module.ModuleService;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.RecaptureBiometricDTO;
+import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
+import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.schema.recapture.*;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class RecaptureBiometricMapper {
+	private final NdrMessageLogRepository ndrMessageLogRepository;
 	
 	private final ModuleService moduleService;
 	
@@ -30,9 +33,9 @@ public class RecaptureBiometricMapper {
 	
 	
 	public Container getRecaptureBiometricMapper(PatientDemographics demographics) {
+		log.info("Start fetching and mapping finger-print for patient with hospital number {}", demographics.getHospitalNumber());
 		ObjectFactory objectFactory  = new ObjectFactory();
-		Container container = new Container();
-		container.setEmrType("LAMISPlus");
+		
 		MessageSendingOrganisationType messageSendingOrganisationType =
 				getMessageSendingOrganisationType(objectFactory.createMessageSendingOrganisationType(),
 				demographics.getFacilityName(), demographics.getDatimId());
@@ -42,12 +45,17 @@ public class RecaptureBiometricMapper {
 		
 		PatientDemographicsType patientDemographicsType = objectFactory.createPatientDemographicsType();
 		patientDemographicsType.setPatientIdentifier(demographics.getDatimId().concat("_").concat(demographics.getPersonUuid()));
-		//addFingerPrintType(patientDemographicsType,)
-		container.setMessageHeader(messageHeaderType);
-		container.setPatientDemographics(patientDemographicsType);
-		
-		return container;
-		
+		boolean fingerPrintsAdded =
+				addFingerPrintType(objectFactory, demographics.getPersonUuid(), patientDemographicsType);
+		if (fingerPrintsAdded) {
+		    log.info("updated finger prints where fetched successfully");
+			Container container = new Container();
+			container.setEmrType("LAMISPlus");
+			container.setMessageHeader(messageHeaderType);
+			container.setPatientDemographics(patientDemographicsType);
+			return container;
+		}
+		return null;
 	}
 	
 	
@@ -79,11 +87,26 @@ public class RecaptureBiometricMapper {
 	public boolean addFingerPrintType(
 			ObjectFactory objectFactory,
 			String patientUuid,
-			FingerPrintType fingerPrintType,
 			PatientDemographicsType patientDemographicsType) {
 		
-		List<RecaptureBiometricDTO> biometricDTOList =
-				ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid);
+		//offset
+		
+		String patientIdentifier = patientDemographicsType.getPatientIdentifier();
+		Optional<NdrMessageLog> messageLog =
+				ndrMessageLogRepository.findFirstByIdentifierAndFileType(patientIdentifier, "recaptured-biometric");
+		List<RecaptureBiometricDTO> biometricDTOList = new ArrayList<>();
+		if(messageLog.isPresent()) {
+			// find the new value;
+			LocalDate lastUpdated =
+					messageLog.get().getLastUpdated().toLocalDate();
+			biometricDTOList =
+					ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid, lastUpdated);
+			
+		}else {
+			biometricDTOList =
+					ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid);
+		}
+		
 		if(biometricDTOList.isEmpty()){
 			log.info("No biometric recapture found for the patient with uuid " + patientUuid);
 			return false;
@@ -94,29 +117,41 @@ public class RecaptureBiometricMapper {
 		}
 		RecaptureBiometricDTO metaData = biometricDTOList.get(0);
 		LocalDate visitDate = metaData.getEnrollmentDate();
-		if(visitDate != null){
+		if(visitDate == null){
 			log.error("Captured date can not be null patient uuid : " + patientUuid);
 			return false;
 		}
 		try {
 			String visitId = visitDate.toEpochDay() + patientUuid;
 			Integer count = metaData.getCount();
+			FingerPrintType fingerPrintType  = objectFactory.createFingerPrintType();
 			fingerPrintType.setVisitId(visitId);
 			fingerPrintType.setVisitDate(DateUtil.getXmlDateTime(java.sql.Date.valueOf(visitDate)));
 			fingerPrintType.setDateCaptured(DateUtil.getXmlDateTime(java.sql.Date.valueOf(visitDate)));
+			if(count  == null) {
+				count = 1;
+			}
 			fingerPrintType.setCaptureCount(count);
+			//get right fingers
 			List<RecaptureBiometricDTO> rightFingers =
 					biometricDTOList.stream().filter(finger -> finger.getTemplateType().contains("Right"))
 					.collect(Collectors.toList());
-			getRightHandType(rightFingers,objectFactory.createRightHandType());
+			RightHandType rightHandType = getRightHandType(rightFingers, objectFactory.createRightHandType());
+			fingerPrintType.setRightHand(rightHandType);
+			
+			//get left fingers
 			List<RecaptureBiometricDTO> leftFingers =
 					biometricDTOList.stream().filter(finger -> finger.getTemplateType().contains("Left"))
 							.collect(Collectors.toList());
-			getLeftHandType(leftFingers, objectFactory.createLeftHandType());
+			LeftHandType leftHandType = getLeftHandType(leftFingers, objectFactory.createLeftHandType());
+			fingerPrintType.setLeftHand(leftHandType);
 			
+			patientDemographicsType.getFingerPrints().add(fingerPrintType);
 		}catch (Exception e){
 			log.error("An exception occurred while trying to print the fingerprint patient uuid {} error {}, ",
 					patientUuid, e.getMessage());
+			//e.printStackTrace();
+			return false;
 		}
 		
 		return true;
@@ -164,7 +199,7 @@ public class RecaptureBiometricMapper {
 			String template = Base64.getEncoder().encodeToString(finger.getTemplate());
 			if (StringUtils.containsIgnoreCase(type, "Thumb")) {
 				rightHandType.setRightThumb(template);
-				rightHandType.setRightIndexQuality(finger.getQuality());
+				rightHandType.setRightThumbQuality(finger.getQuality());
 				rightHandType.setHashedRightThumb(finger.getTemplateTypeHash());
 			} else if (StringUtils.containsIgnoreCase(type, "Index")) {
 				rightHandType.setRightIndex(template);

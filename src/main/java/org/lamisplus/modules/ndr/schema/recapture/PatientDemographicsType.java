@@ -8,6 +8,8 @@
 
 package org.lamisplus.modules.ndr.schema.recapture;
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,6 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "patientIdentifier",
     "fingerPrints"
 })
+@ToString
 public class PatientDemographicsType {
 
     @XmlElement(name = "PatientIdentifier", required = true)

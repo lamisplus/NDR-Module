@@ -8,6 +8,8 @@
 
 package org.lamisplus.modules.ndr.schema.recapture;
 
+import lombok.ToString;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -50,6 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "patientDemographics"
 })
 @XmlRootElement(name = "Container")
+@ToString()
 public class Container {
 
     @XmlElement(name = "EmrType", required = true)
@@ -57,6 +60,7 @@ public class Container {
     @XmlElement(name = "MessageHeader", required = true)
     protected MessageHeaderType messageHeader;
     @XmlElement(name = "PatientDemographics", required = true)
+    
     protected PatientDemographicsType patientDemographics;
 
     /**

@@ -36,5 +36,16 @@
         </sql>
     </changeSet>
 
+    <changeSet failOnError="true"  id="20230527013" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ndr_message_log" columnName="file_type" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE  ndr_message_log
+                ADD file_type VARCHAR(255)
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

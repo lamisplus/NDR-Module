@@ -8,6 +8,8 @@
 
 package org.lamisplus.modules.ndr.schema.recapture;
 
+import lombok.ToString;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -49,6 +51,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "rightHand",
     "leftHand"
 })
+@ToString
 public class FingerPrintType {
 
     @XmlElement(required = true)
