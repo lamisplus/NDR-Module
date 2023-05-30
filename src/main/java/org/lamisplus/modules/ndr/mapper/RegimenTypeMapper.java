@@ -96,6 +96,7 @@ public class RegimenTypeMapper {
 		List<RegimenType> regimenTypeList = conditionType.getRegimen();
 		regimens.forEach(regimen -> {
 			if (regimen.getRegimenType() != null) {
+				log.info("prescribedRegimenType id {}", regimen.getRegimenType().getId());
 				RegimenType regimenType = new RegimenType();
 				processAndSetRegimenStartDate(regimenType, patientRegimens, artVisitDateComparator);
 				regimenType.setVisitID(artPharmacy.getUuid());
@@ -107,6 +108,7 @@ public class RegimenTypeMapper {
 				if (refillPeriod > 180) refillPeriod = 180;
 				regimenType.setPrescribedRegimenDuration(String.valueOf(refillPeriod));
 				Map<Long, String> prescribedRegimenTypeMapper = prescribedRegimenTypeMapper();
+				log.info("prescribedRegimenType Mapper code  {}", prescribedRegimenTypeMapper);
 				String prescribedRegimenType = prescribedRegimenTypeMapper.get(regimen.getRegimenType().getId());
 				regimenType.setPrescribedRegimenTypeCode(prescribedRegimenType);
 				processAndSetPrescribedRegimenDispensedDate(regimenType, artPharmacy.getVisitDate());
@@ -115,15 +117,14 @@ public class RegimenTypeMapper {
 					Optional<String> regimenLine = ndrCodeSetResolverService.getNDRCodeSetCode("REGIMEN_LINE", regimeLineCode);
 					regimenLine.ifPresent(regimenType::setPrescribedRegimenLineCode);
 				}
-				
 				Optional<CodedSimpleType> regimenCodedSimpleType = ndrCodeSetResolverService.getRegimen(regimen.getDescription());
 				regimenCodedSimpleType.ifPresent(regimenType::setPrescribedRegimen);
 				if (prescribedRegimenType != null && prescribedRegimenType.equals("OI")) {
 					String description = regimen.getDescription();
-					log.info("Regimen Cotrimazole: {}", description);
+					log.info("Regimen Cotrimazole {}", description);
 					Optional<CodedSimpleType> regimenOI = ndrCodeSetResolverService.getNDRCodeSet("OI_REGIMEN", description);
 					if (regimenOI.isPresent()) {
-						log.info("Regimen Cotrimazole Code: {}", regimenOI.get().getCode());
+						log.info("Regimen Cotrimazole Code {}", regimenOI.get().getCode());
 						regimenType.setPrescribedRegimen(regimenOI.get());
 					}
 				}

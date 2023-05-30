@@ -14,6 +14,7 @@ public interface NDRMessagesRepository extends JpaRepository<NDRMessages, Long> 
     Page<NDRMessages> findAllNDRMessagesByFacId(String queryParam, Integer archived, Long facilityId, Pageable pageable);
 
    List<NDRMessages> findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(boolean isPushed, Long facilityId, String identifier);
+   
 
     @Query(value = "SELECT count(*) FROM public.ndr_messages where facility_id = ?1 and identifier = ?2", nativeQuery = true)
     int getTotalRecordByFacilityAndIdentifier(Long facilityId, String identifier);

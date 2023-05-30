@@ -45,7 +45,20 @@ import java.util.List;
 })
 @XmlRootElement
 public class ConditionType {
-
+    @Override
+    public String toString() {
+        return "ConditionType{" +
+                "conditionCode='" + conditionCode + '\'' +
+                ", programArea=" + programArea +
+                ", patientAddress=" + patientAddress +
+                ", commonQuestions=" + commonQuestions +
+                ", conditionSpecificQuestions=" + conditionSpecificQuestions +
+                ", encounters=" + encounters +
+                ", laboratoryReport=" + laboratoryReport +
+                ", regimen=" + regimen +
+                '}';
+    }
+    
     @XmlElement(name = "ConditionCode", required = true)
     protected String conditionCode;
     @XmlElement(name = "ProgramArea", required = true)

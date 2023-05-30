@@ -99,7 +99,27 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "dateRegimenEndedYYYY"
 })
 public class RegimenType {
-
+    @Override
+    public String toString() {
+        return "RegimenType{" +
+                "visitID='" + visitID + '\'' +
+                ", visitDate=" + visitDate +
+                ", prescribedRegimen=" + prescribedRegimen +
+                ", prescribedRegimenTypeCode='" + prescribedRegimenTypeCode + '\'' +
+                ", prescribedRegimenLineCode='" + prescribedRegimenLineCode + '\'' +
+                ", prescribedRegimenDuration='" + prescribedRegimenDuration + '\'' +
+                ", prescribedRegimenDispensedDate=" + prescribedRegimenDispensedDate +
+                ", dateRegimenStarted=" + dateRegimenStarted +
+                ", dateRegimenStartedDD='" + dateRegimenStartedDD + '\'' +
+                ", dateRegimenStartedMM='" + dateRegimenStartedMM + '\'' +
+                ", dateRegimenStartedYYYY='" + dateRegimenStartedYYYY + '\'' +
+                ", dateRegimenEnded=" + dateRegimenEnded +
+                ", dateRegimenEndedDD='" + dateRegimenEndedDD + '\'' +
+                ", dateRegimenEndedMM='" + dateRegimenEndedMM + '\'' +
+                ", dateRegimenEndedYYYY='" + dateRegimenEndedYYYY + '\'' +
+                '}';
+    }
+    
     @XmlElement(name = "VisitID", required = true)
     protected String visitID;
     @XmlElement(name = "VisitDate", required = true)
