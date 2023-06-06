@@ -6,7 +6,7 @@ import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenTypeRepository;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionType;
 import org.lamisplus.modules.ndr.schema.RegimenType;
@@ -62,6 +62,29 @@ public class RegimenTypeMapper {
 	}
 	
 	
+	
+	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, List<ArtPharmacy> patientRegimens) {
+		if(demographics != null ){
+			Person person = personRepository.getOne(demographics.getId());
+			Comparator<ArtPharmacy> artVisitDateComparator = Comparator.comparing(ArtPharmacy::getVisitDate);
+			 artPharmacyRepository
+					.findAll()
+					.stream()
+					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
+					.collect(Collectors.toSet());
+			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
+			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));
+			patientRegimens.forEach(artPharmacy -> {
+				Set<Regimen> regimens = artPharmacy.getRegimens()
+						.stream()
+						.filter(r -> regimenTypeIds.contains(r.getRegimenType ().getId ())).collect(Collectors.toSet());
+				log.info(person.getHospitalNumber() + "regimens : {}", regimens.size() );
+				processAndSetPrescribeRegimen(artPharmacy, regimens, artVisitDateComparator, patientRegimens.stream().collect(Collectors.toSet()), condition);
+			});
+		}
+		sortConditionRegimenType(condition);
+		return condition;
+	}
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, LocalDateTime lastUpdate) {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());

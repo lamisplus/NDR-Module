@@ -3,7 +3,7 @@ package org.lamisplus.modules.ndr.mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.service.StatusManagementService;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.CommonQuestionsType;
 import org.lamisplus.modules.ndr.schema.FacilityType;
 import org.lamisplus.modules.ndr.utility.DateUtil;
@@ -57,6 +57,9 @@ public class CommonQuestionsTypeMapper {
 		
 		return null;
 	}
+	
+	
+	
 	
 	private int getAge(LocalDate dateOfBirth) {
 		LocalDate currentDate = LocalDate.now();

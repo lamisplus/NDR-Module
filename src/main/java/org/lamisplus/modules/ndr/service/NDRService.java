@@ -19,7 +19,7 @@ import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
 import org.lamisplus.modules.ndr.domain.entities.NDRMessages;
@@ -37,7 +37,6 @@ import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.ZipUtility;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXParseException;
 
 
 import javax.xml.XMLConstants;
@@ -151,7 +150,7 @@ public class NDRService {
 //        }
 //    }
 
-    private Marshaller getMarshaller(JAXBContext jaxbContext) throws JAXBException {
+    public Marshaller getMarshaller(JAXBContext jaxbContext) throws JAXBException {
         return jaxbContext.createMarshaller ();
     }
 
@@ -399,16 +398,16 @@ public class NDRService {
     public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
         cleanupFacility(facilityId);
         if(isInitial){
-           // bootData.init(patientUuidList);
-           processAndGenerateNDRFiles(facilityId, patientUuidList);
+            bootData.init(patientUuidList);
+          // processAndGenerateNDRFiles(facilityId, patientUuidList);
            
         }else{
-            //bootData.init(patientUuidList);
-            Optional<Timestamp> lastGenerateDateTimeByFacilityId = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
-            lastGenerateDateTimeByFacilityId.ifPresent(status -> {
-                LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
-                processAndGenerateNDRFiles(facilityId, patientUuidList, lastModified);
-            });
+            bootData.init(patientUuidList);
+//            Optional<Timestamp> lastGenerateDateTimeByFacilityId = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
+//            lastGenerateDateTimeByFacilityId.ifPresent(status -> {
+//                LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
+//                processAndGenerateNDRFiles(facilityId, patientUuidList, lastModified);
+          //  });
         }
         
     }

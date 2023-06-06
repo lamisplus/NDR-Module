@@ -1,4 +1,4 @@
-package org.lamisplus.modules.ndr.domain;
+package org.lamisplus.modules.ndr.domain.dto;
 
 import java.time.LocalDate;
 

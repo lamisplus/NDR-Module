@@ -2,34 +2,23 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.lamisplus.modules.base.domain.dto.ApplicationCodesetDTO;
 import org.lamisplus.modules.base.service.ApplicationCodesetService;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusDisplay;
-import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
-import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
-import org.lamisplus.modules.hiv.domain.entity.Regimen;
-import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
-import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenRepository;
-import org.lamisplus.modules.hiv.service.HIVStatusTrackerService;
 import org.lamisplus.modules.hiv.service.StatusManagementService;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ArtCommencementDTO;
 import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
 import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionSpecificQuestionsType;
 import org.lamisplus.modules.ndr.schema.HIVQuestionsType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
-import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.lamisplus.modules.ndr.utility.DateUtil.getXmlDate;
@@ -46,11 +35,8 @@ public class ConditionSpecificQuestionsTypeMapper {
     private final ApplicationCodesetService applicationCodesetService;
     
     private final RegimenRepository regimenRepository;
-
-   // private final HIVStatusTrackerService hivStatusTrackerService;
-    
     private final StatusManagementService statusManagementService;
-// improve performance
+
 
     public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(PatientDemographics demographics) {
         log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
@@ -63,12 +49,7 @@ public class ConditionSpecificQuestionsTypeMapper {
                                 String enrollmentStatus = demographics.getStatusAtRegistration();
                                 processAndHandleARTStatus (hiv, demographics.getId (), enrollmentStatus);
             }
-                
-//                Optional<ARTClinical> artCommencement =
-//                        artClinicalRepository.findByArchivedAndIsCommencementIsTrue(0)
-//                        .stream()
-//                        .filter(artClinical -> artClinical.getPerson().getUuid().equals(demographics.getPersonUuid()))
-//                       .findFirst();
+            
                Optional<ArtCommencementDTO> artCommencement =
                        ndrCodeSetRepository.getArtCommencementByPatientUuid(demographics.getPersonUuid());
             
@@ -93,6 +74,42 @@ public class ConditionSpecificQuestionsTypeMapper {
         }
         return null;
 
+    }
+    
+    
+    public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(
+            PatientDemographics demographics,
+            ArtCommencementDTO artCommencement) {
+        log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
+        try {
+            ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
+            HIVQuestionsType hiv = new HIVQuestionsType ();
+            processAndSetDateOfRegistration (hiv, demographics.getDateOfRegistration(), demographics.getStatusAtRegistration());
+            processAndSetCareEntryPoint (hiv, demographics.getCareEntryPoint());
+            if (demographics.getDateOfRegistration() != null) {
+                String enrollmentStatus = demographics.getStatusAtRegistration();
+                processAndHandleARTStatus (hiv, demographics.getId (), enrollmentStatus);
+            }
+             log.info("ART Commencement: {}", artCommencement);
+                processAndSetArtStartDate (hiv, artCommencement.getArtStartDate());
+                processAndSetWHOStagingAndFunctionalStatus (hiv, artCommencement.getWhoStage(), artCommencement.getFunctionStatus());
+                String regimen = artCommencement.getRegimen();
+                if(regimen != null) {
+                    Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen);
+                    log.info("First ndrRegimen: " + regimen);
+                    simpleCodeSet.ifPresent(hiv::setFirstARTRegimen);
+                }
+                processAndSetCD4 (hiv, demographics.getAge(), artCommencement);
+            
+            hivQuestions.setHIVQuestions (hiv);
+            return hivQuestions;
+        } catch (Exception e) {
+            log.error("An error Generating condition specific questions for patient with uuid {}",
+                    demographics.getPersonUuid());
+            log.error("Error Message: {} " + e.getMessage());
+        }
+        return null;
+        
     }
 
     private void processAndSetHeightAndWeight(HIVQuestionsType hiv, VitalSign vitalSign) {

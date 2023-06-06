@@ -3,8 +3,7 @@ package org.lamisplus.modules.ndr.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
-import org.lamisplus.modules.ndr.domain.dto.RecaptureBiometricDTO;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;
 import org.lamisplus.modules.ndr.mapper.RecaptureBiometricMapper;
@@ -27,10 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
-import static javax.xml.bind.Marshaller.JAXB_ENCODING;
 import static org.lamisplus.modules.ndr.service.NDRService.formulateFileName;
 
 @Service
@@ -47,14 +42,12 @@ public class RecaptureBiometricService {
 	
 	private final NDRCodeSetResolverService ndrCodeSetResolverService;
 	
-	private final  NDRService ndrService;
+	private final NDRService ndrService;
 	
-	
-
 	
 	public boolean generateRecaptureBiometrics(Long facilityId) {
-		String pathname = NDRService.BASE_DIR + "temp/biorecapture/" + facilityId  + "/";
-		ndrService.cleanupFacility(facilityId,pathname);
+		String pathname = NDRService.BASE_DIR + "temp/biorecapture/" + facilityId + "/";
+		ndrService.cleanupFacility(facilityId, pathname);
 		AtomicInteger count = new AtomicInteger(0);
 		log.info("start generating recapture biometrics patients");
 		List<String> patientsIds = nDRCodeSetRepository.getNDREligiblePatientUuidList(facilityId);
@@ -90,13 +83,15 @@ public class RecaptureBiometricService {
 								count.getAndIncrement();
 								demographics.add(d);
 							}
+							
 						} catch (JAXBException | SAXException e) {
 							log.error("An error occurred while marshalling the container for patient with id {}  error {}",
 									id, e.getMessage());
+							//count.decrementAndGet();
 						}
 					});
 				});
-		if(!demographics.isEmpty()) {
+		if (!demographics.isEmpty()) {
 			zipAndSaveTheFilesforDownload(facilityId, pathname, count, demographics);
 		}
 		
@@ -114,17 +109,25 @@ public class RecaptureBiometricService {
 	}
 	
 	
-	private void zipAndSaveTheFilesforDownload(Long facilityId, String pathname, AtomicInteger count, List<PatientDemographics> demographics) {
+	private void zipAndSaveTheFilesforDownload(
+			Long facilityId,
+			String pathname,
+			AtomicInteger count,
+			List<PatientDemographics> demographics) {
+		try {
 		String zipFileName = ndrService.zipFiles(demographics.get(0), pathname);
-		NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
-		ndrXmlStatus.setFacilityId (facilityId);
-		ndrXmlStatus.setFiles (count.get());
-		ndrXmlStatus.setFileName (zipFileName);
-		ndrXmlStatus.setLastModified (LocalDateTime.now ());
+		NdrXmlStatus ndrXmlStatus = new NdrXmlStatus();
+		ndrXmlStatus.setFacilityId(facilityId);
+		ndrXmlStatus.setFiles(count.get());
+		ndrXmlStatus.setFileName(zipFileName);
+		ndrXmlStatus.setLastModified(LocalDateTime.now());
 		ndrXmlStatus.setPushIdentifier(demographics.get(0).getDatimId().concat("_").concat(demographics.get(0).getPersonUuid()));
 		ndrXmlStatus.setCompletelyPushed(Boolean.FALSE);
 		ndrXmlStatus.setPercentagePushed(0L);
-		ndrXmlStatusRepository.save (ndrXmlStatus);
+		ndrXmlStatusRepository.save(ndrXmlStatus);
+		}catch (Exception e){
+			log.error("An error occurred while zipping files error {}", e.getMessage());
+		}
 	}
 	
 	private Marshaller getMarshaller(JAXBContext jaxbContext) throws JAXBException {
@@ -136,11 +139,9 @@ public class RecaptureBiometricService {
 	}
 	
 	
-	private String generateFileName( PatientDemographics demographics, String identifier) {
-		return formulateFileName(demographics, identifier+"_bio_recapture", ndrCodeSetResolverService);
+	private String generateFileName(PatientDemographics demographics, String identifier) {
+		return formulateFileName(demographics, identifier + "_bio_recapture", ndrCodeSetResolverService);
 	}
-	
-	
 	
 	
 }

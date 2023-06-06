@@ -1,4 +1,4 @@
-package org.lamisplus.modules.ndr.domain;
+package org.lamisplus.modules.ndr.domain.entities;
 
 
 import com.fasterxml.jackson.databind.JsonNode;

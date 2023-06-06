@@ -3,10 +3,9 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.AddressType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
-import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

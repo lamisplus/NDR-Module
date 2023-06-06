@@ -1,12 +1,15 @@
 package org.lamisplus.modules.ndr.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Stopwatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
+import org.lamisplus.modules.ndr.domain.entities.NDRDATA;
 import org.lamisplus.modules.ndr.service.NDRService;
+import org.lamisplus.modules.ndr.service.NdrOptmizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import java.util.*;
 @Slf4j
 public class NDRController {
     private final NDRService ndrService;
+    private final NdrOptmizationService ndrOptmizationService;
 
     private final SimpMessageSendingOperations messagingTemplate;
 
@@ -95,6 +99,15 @@ public class NDRController {
     @GetMapping("/patients")
     public ResponseEntity<List<NDREligibleClient>> getNDREligibleClients(@RequestParam Long facilityId, String search){
         return  ResponseEntity.ok(ndrService.getNDRClientList(facilityId, search));
+    }
+    
+    @GetMapping("/optimization")
+    public ResponseEntity<Void> generateWithOptimization(
+            @RequestParam List<Long> facilityIds,
+            @RequestParam String patientId,
+            @RequestParam boolean initial) {
+        facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(patientId, facilityId, true));
+        return ResponseEntity.ok().build();
     }
     
     

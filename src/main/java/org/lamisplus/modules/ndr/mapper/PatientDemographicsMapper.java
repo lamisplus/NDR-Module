@@ -3,7 +3,8 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.FacilityType;
 import org.lamisplus.modules.ndr.schema.FingerPrintType;
 import org.lamisplus.modules.ndr.schema.PatientDemographicsType;
@@ -50,7 +51,7 @@ public class PatientDemographicsMapper {
             }
         return null;
     }
-
+ 
     private void processAndSetDateOFBirth(PatientDemographicsType patientDemographics, LocalDate dateOfBirth)
             throws DatatypeConfigurationException {
         if (dateOfBirth != null) {
