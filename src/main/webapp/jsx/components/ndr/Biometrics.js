@@ -12,6 +12,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import Checkbox from "@material-ui/core/Checkbox";
 import { ToastContainer, toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Biometrics = (props) => {
   const [facilities, setFacilities] = useState([]);
@@ -73,7 +74,7 @@ const Biometrics = (props) => {
         window.setTimeout(() => {
           toast.success(" Generating Biometrics XML Successful!");
           setModal(false);
-          //props.setValue(1);
+          props.setValue(1);
         }, 5000);
 
         //props.history.push("/generate", { state: 'download'});
@@ -112,7 +113,7 @@ const Biometrics = (props) => {
           </span>
         </Button>
         <br />
-
+        {processing ? <CircularProgress /> : ""}
         {facilities.map((value) => {
           //console.log(value)
           const labelId = `checkbox-list-secondary-label-${value.id}`;
