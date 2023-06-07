@@ -3,6 +3,7 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.lamisplus.modules.base.service.OrganisationUnitService;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.FacilityType;
 import org.lamisplus.modules.ndr.schema.MessageHeaderType;
@@ -40,6 +41,15 @@ public class MessageHeaderTypeMapper {
         facility.setFacilityTypeCode ("FAC");
         if(demographics.getFacilityName() != null )facility.setFacilityName (demographics.getFacilityName());
         if(demographics.getDatimId() != null) facility.setFacilityID(demographics.getDatimId());
+        return facility;
+    }
+    
+    
+    public FacilityType getTreatmentFacility(PatientDemographicDTO demographics) {
+        FacilityType facility = new FacilityType ();
+        facility.setFacilityTypeCode ("FAC");
+        if(demographics.getFacilityName() != null )facility.setFacilityName (demographics.getFacilityName());
+        if(demographics.getFacilityId() != null) facility.setFacilityID(demographics.getFacilityId());
         return facility;
     }
     

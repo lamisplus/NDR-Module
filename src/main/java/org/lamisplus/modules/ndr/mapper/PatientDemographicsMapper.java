@@ -51,11 +51,70 @@ public class PatientDemographicsMapper {
             }
         return null;
     }
+    
+    
+   
+    public PatientDemographicsType getPatientDemographics(PatientDemographicDTO demographicDTO) {
+        //@XmlElement(name = "PatientIdentifier", required = true)
+       // @XmlElement(name = "TreatmentFacility", required = true)
+       // @XmlElement(name = "PatientDateOfBirth", required = true)
+        //  @XmlElement(name = "PatientSexCode", required = true)
+        PatientDemographicsType patientDemographicsType = new PatientDemographicsType ();
+        try {
+            if(demographicDTO.getPatientIdentifier() != null && !demographicDTO.getPatientIdentifier().isEmpty() ) {
+                patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
+            }else {
+                throw new IllegalArgumentException("Patient Identifier cannot be null");
+            }
+            FacilityType treatmentFacility =
+                    messageHeaderTypeMapper.getTreatmentFacility (demographicDTO);
+           
+            if(treatmentFacility != null){
+                patientDemographicsType.setTreatmentFacility (treatmentFacility);
+            }else {
+                throw new IllegalArgumentException("Treatment facility cannot be null");
+            }
+            processAndSetDateOFBirth (patientDemographicsType, demographicDTO.getDateOfBirth ());
+            
+            if(demographicDTO.getPatientSexCode()  != null) {
+                patientDemographicsType.setPatientSexCode(demographicDTO.getPatientSexCode());
+            }else {
+                throw new IllegalArgumentException("Sex code cannot be null");
+            }
+            if( demographicDTO.getPatientEducationLevelCode() != null){
+               patientDemographicsType.setPatientEducationLevelCode(demographicDTO.getPatientEducationLevelCode());
+           }
+            if( demographicDTO.getPatientMaritalStatusCode() != null){
+                patientDemographicsType.setPatientMaritalStatusCode(demographicDTO.getPatientMaritalStatusCode());
+            }
+            
+           if(demographicDTO.getPatientOccupationCode() != null){
+               patientDemographicsType.setPatientOccupationCode(demographicDTO.getPatientOccupationCode());
+           }
+           
+           if(demographicDTO.getStateCode() != null){
+                patientDemographicsType.setStateOfNigeriaOriginCode(demographicDTO.getStateCode());
+            }
+           
+            FingerPrintType fingerPrintTypeForPatient =
+                    biometricTemplateMapper.getFingerPrintTypeForPatient (demographicDTO.getPersonUuid ());
+            if(fingerPrintTypeForPatient != null){
+                patientDemographicsType.setFingerPrints (fingerPrintTypeForPatient);
+            }
+            return patientDemographicsType;
+        } catch (Exception e) {
+            log.info("An error occurred while trying to get patient with uuid {} demographics type error: {}",
+                    demographicDTO.getPersonUuid(), e.getMessage());
+        }
+        return null;
+    }
  
     private void processAndSetDateOFBirth(PatientDemographicsType patientDemographics, LocalDate dateOfBirth)
             throws DatatypeConfigurationException {
         if (dateOfBirth != null) {
             patientDemographics.setPatientDateOfBirth (DateUtil.getXmlDate (Date.valueOf (dateOfBirth)));
+        }else {
+            throw new IllegalArgumentException("Birth date cannot be null");
         }
     }
 

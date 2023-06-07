@@ -4,10 +4,14 @@ import java.time.LocalDate;
 
 
 public interface PatientDemographicDTO {
+	Long getPersonId();
 	String getPersonUuid();
-	String getPatientIdentifer();
+	String getPatientIdentifier();
 	LocalDate getDiagnosisDate();
 	String getHospitalNumber();
+	String getStatusAtRegistration();
+	String getCareEntryPoint();
+	
 	Integer getAge();
 	String getPatientSexCode();
 	LocalDate getPatientDateOfBirth();
@@ -17,6 +21,7 @@ public interface PatientDemographicDTO {
 	String getState();
 	String getFacilityId();
 	LocalDate getArtStartDate();
+	LocalDate getDateOfBirth();
 	String getFirstARTRegimenCodeDescTxt();
 	String getFirstARTRegimenCode();
 	String getLgaCode();
@@ -27,5 +32,6 @@ public interface PatientDemographicDTO {
 	String getStateOfNigeriaOriginCode();
 	String getPatientEducationLevelCode();
 	String getFunctionalStatusStartART();
+	String getWHOClinicalStageART();
 	LocalDate getEnrolledInHIVCareDate();
 }    

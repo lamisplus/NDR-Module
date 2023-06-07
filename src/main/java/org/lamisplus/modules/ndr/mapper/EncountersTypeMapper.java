@@ -3,12 +3,15 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.platform.commons.util.StringUtils;
 import org.lamisplus.modules.base.domain.dto.ApplicationCodesetDTO;
 import org.lamisplus.modules.base.service.ApplicationCodesetService;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.domain.entity.RegimenType;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
+import org.lamisplus.modules.ndr.domain.dto.EncounterDTO;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ARTClinicalInfo;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
@@ -77,6 +80,66 @@ public class EncountersTypeMapper {
 			if (hivEncounter.isEmpty()) return null;
 			
 		}
+		return encountersType;
+	}
+	
+	
+	public EncountersType encounterType(List<EncounterDTO> encounterDTOList, PatientDemographicDTO demographicDTO) {
+		    EncountersType encountersType = new EncountersType();
+		   List<HIVEncounterType> hivEncounters = encountersType.getHIVEncounter();
+			log.info("encounter list size {}", encounterDTOList.size());
+			try {
+				encounterDTOList.parallelStream()
+						.forEach( encounterDTO -> {
+									HIVEncounterType hivEncounterType = new HIVEncounterType();
+									if (StringUtils.isNotBlank(encounterDTO.getVisitID())) {
+										hivEncounterType.setVisitID(encounterDTO.getVisitID());
+									} else {
+										throw new IllegalArgumentException("visit id cannot be null");
+									}
+									String visitDate = encounterDTO.getVisitDate();
+									if (StringUtils.isNotBlank(visitDate)) {
+										LocalDate localDate = LocalDate.parse(visitDate);
+										try {
+											hivEncounterType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(localDate)));
+										} catch (DatatypeConfigurationException e) {
+											throw new IllegalArgumentException(e);
+										}
+									} else {
+										throw new IllegalArgumentException("Visit Date cannot be null");
+									}
+									if(StringUtils.isNotBlank(encounterDTO.getNextAppointmentDate())) {
+										LocalDate localDate = LocalDate.parse(encounterDTO.getNextAppointmentDate());
+										try {
+											hivEncounterType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(localDate)));
+										} catch (DatatypeConfigurationException e) {
+											throw new IllegalArgumentException(e);
+										}
+									}
+									if(encounterDTO.getWeight() != null) {
+										hivEncounterType.setWeight(encounterDTO.getWeight());
+									}
+								   if(encounterDTO.getChildHeight()!= null) {
+									hivEncounterType.setChildHeight(encounterDTO.getChildHeight());
+									}
+								    if(encounterDTO.getBloodPressure() != null) {
+										hivEncounterType.setBloodPressure(encounterDTO.getBloodPressure());
+								    }
+									if(StringUtils.isNotBlank(encounterDTO.getTbStatus())){
+								     hivEncounterType.setTBStatus(encounterDTO.getTbStatus());
+									}
+									Map<String, Object> status =
+											pregnancyStatus.getPregnancyStatus(demographicDTO.getPersonUuid());
+									if (demographicDTO.getPatientSexCode() != null && demographicDTO.getPatientSexCode().contains("F")) {
+										hivEncounterType.setEDDandPMTCTLink((String) status.get("status"));
+									}
+									hivEncounters.add(hivEncounterType);
+								});
+			}catch (Exception e) {
+			 log.error("An exception occurred while processing  the patient encounters error {}", e.getMessage());
+			}
+			if (hivEncounters.isEmpty()) return null;
+			
 		return encountersType;
 	}
 	

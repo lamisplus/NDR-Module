@@ -2,11 +2,14 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenTypeRepository;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.RegimenDTO;
 import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionType;
 import org.lamisplus.modules.ndr.schema.RegimenType;
@@ -16,7 +19,10 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,6 +91,68 @@ public class RegimenTypeMapper {
 		sortConditionRegimenType(condition);
 		return condition;
 	}
+	public ConditionType regimenType(PatientDemographicDTO demographics, ConditionType condition, List<RegimenDTO> regimens) {
+		List<RegimenType> regimenTypeList = condition.getRegimen();
+//		@XmlElement(name = "VisitID", required = true) ---- >  done checked
+//		protected String visitID;
+//		@XmlElement(name = "VisitDate", required = true)  ---- >  done checked
+//		@XmlSchemaType(name = "date")
+//		protected XMLGregorianCalendar visitDate;
+//		@XmlElement(name = "PrescribedRegimen", required = true) ---- >  done checked
+//		protected CodedSimpleType prescribedRegimen;
+//		@XmlElement(name = "PrescribedRegimenTypeCode", required = true) ---- >  done checked
+//		@XmlElement(name = "PrescribedRegimenDuration", required = true)  ---- >  done checked
+//		@XmlElement(name = "PrescribedRegimenDispensedDate", required = true)   ---- >  done checked
+		 regimens.parallelStream()
+						 .forEach(regimen -> {
+							 
+							 RegimenType regimentType = new RegimenType();
+							 
+							 
+							  if(StringUtils.isNotBlank(regimen.getVisitDate())){
+								  try{
+								  LocalDate local = LocalDate.parse(regimen.getVisitDate());
+								  regimentType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								  }catch (Exception e) {
+								    log.info("An error occurred parsing the regimen date: error{}" +  e.getMessage());
+								  }
+							 }else {
+								  throw new IllegalArgumentException("Regimen visit date cannot be null");
+								
+							 }
+							 
+							 
+							 if(StringUtils.isNotBlank(regimen.getVisitID())){
+								 regimentType.setVisitID(regimen.getVisitID());
+							 }else {
+								 throw new IllegalArgumentException("Regimen visit Id cannot be null");
+							 }
+							 
+							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenDuration())){
+								regimentType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
+							 }else {
+								 throw new IllegalArgumentException("Regimen duration cannot be null");
+							 }
+							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenTypeCode())){
+								  regimentType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
+							 }else {
+								 throw new IllegalArgumentException("Regimen type code cannot be null");
+							 }
+							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenCode())
+									 && StringUtils.isNotBlank(regimen.getPrescribedRegimenCodeDescTxt())){
+								 CodedSimpleType simpleTypeCode = new CodedSimpleType();
+								 simpleTypeCode.setCode(regimen.getPrescribedRegimenCode());
+								 simpleTypeCode.setCodeDescTxt(regimen.getPrescribedRegimenCodeDescTxt() );
+								 regimentType.setPrescribedRegimen(simpleTypeCode);
+							  }else {
+							      throw new IllegalArgumentException("Regimen type code cannot be null");
+							  }
+						 });
+		
+		sortConditionRegimenType(condition);
+		return condition;
+	}
+	
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, LocalDateTime lastUpdate) {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());

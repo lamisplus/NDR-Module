@@ -6,6 +6,7 @@ import org.lamisplus.modules.base.service.ApplicationCodesetService;
 import org.lamisplus.modules.hiv.domain.dto.HIVStatusDisplay;
 import org.lamisplus.modules.hiv.repositories.RegimenRepository;
 import org.lamisplus.modules.hiv.service.StatusManagementService;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ArtCommencementDTO;
 import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
@@ -111,7 +112,63 @@ public class ConditionSpecificQuestionsTypeMapper {
         return null;
         
     }
+    
+    public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(PatientDemographicDTO demographics) {
+        //@XmlElement(name = "EnrolledInHIVCareDate", required = true)
+        log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
+        try {
+            ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
+            HIVQuestionsType hiv = new HIVQuestionsType ();
+            LocalDate inHIVCareDate = demographics.getEnrolledInHIVCareDate();
+            if(inHIVCareDate != null){
+                hiv.setEnrolledInHIVCareDate(getXmlDate (Date.valueOf (inHIVCareDate)));
+                String statusAtRegistration = demographics.getStatusAtRegistration();
+                if (statusAtRegistration != null) {
+                    if (statusAtRegistration.equalsIgnoreCase ("HIV+ non ART")) {
+                        hiv.setFirstConfirmedHIVTestDate (getXmlDate (Date.valueOf (inHIVCareDate)));
+                    }
+                    if (statusAtRegistration.equalsIgnoreCase ("ART Transfer In")) {
+                        hiv.setTransferredInDate (getXmlDate (Date.valueOf (inHIVCareDate)));
+                    }
+                    processAndHandleARTStatus (hiv, demographics.getPersonId(), statusAtRegistration);
+                }
+            }else {
+                throw new IllegalArgumentException(" Enrolled In HIVCareDate cannot be null");
+            }
+            if(demographics.getCareEntryPoint() != null){
+                hiv.setCareEntryPoint(demographics.getCareEntryPoint());
+            }
+            log.info("art start date {}", demographics.getArtStartDate());
+           
+            if (demographics.getArtStartDate() != null) {
+                hiv.setARTStartDate (getXmlDate (Date.valueOf ((demographics.getArtStartDate()))));
+            }
+            if(demographics.getFirstARTRegimenCode() != null && demographics.getFirstARTRegimenCodeDescTxt() != null) {
+                CodedSimpleType codedSimpleType = new CodedSimpleType();
+                codedSimpleType.setCode(demographics.getFirstARTRegimenCode());
+                codedSimpleType.setCodeDescTxt(demographics.getFirstARTRegimenCodeDescTxt());
+                hiv.setFirstARTRegimen(codedSimpleType);
+            }
+            if(demographics.getFunctionalStatusStartART() != null){
+                hiv.setFunctionalStatusStartART(demographics.getFunctionalStatusStartART());
+            }
+            if(demographics.getWHOClinicalStageART() != null){
+                hiv.setWHOClinicalStageARTStart(demographics.getWHOClinicalStageART());
+            }
+            // need more clarity on CD4
+            hivQuestions.setHIVQuestions (hiv);
+            return hivQuestions;
+        } catch (Exception e) {
+            log.error("An error Generating condition specific questions for patient with uuid {}",
+                    demographics.getPersonUuid());
+            log.error("Error Message: {} " + e.getMessage());
+        }
+        return null;
+        
+    }
 
+    
+    
     private void processAndSetHeightAndWeight(HIVQuestionsType hiv, VitalSign vitalSign) {
         Double bodyWeight = vitalSign.getBodyWeight ();
         if (bodyWeight > 0) {
