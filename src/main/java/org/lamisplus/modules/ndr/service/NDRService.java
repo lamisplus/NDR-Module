@@ -19,9 +19,7 @@ import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
-import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
-import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
-import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
+import org.lamisplus.modules.ndr.domain.dto.*;
 import org.lamisplus.modules.ndr.domain.entities.NDRMessages;
 import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;
@@ -468,9 +466,9 @@ public class NDRService {
     
     
     private  NdrMessageLog  saveMessageLog (NdrMessageLog ndrStatus) {
-       List<NdrMessageLog> list = ndrMessageLogRepository.getNdrMessageLogByIdentifier(ndrStatus.getIdentifier());
-       if (!list.isEmpty()) {
-           NdrMessageLog ndrMessageLog = list.get(0);
+       Optional<NdrMessageLog> list = ndrMessageLogRepository.findFirstByIdentifier(ndrStatus.getIdentifier());
+       if (list.isPresent()) {
+           NdrMessageLog ndrMessageLog = list.get();
            ndrMessageLog.setLastUpdated(LocalDateTime.now());
            ndrMessageLog.setIdentifier(ndrStatus.getIdentifier());
            //coming back here
@@ -500,11 +498,40 @@ public class NDRService {
        }
        return null;
     }
+    
+    public String processAndGenerateNDRFile(
+            long facilityId,
+            Marshaller jaxbMarshaller,
+            Container container,
+            PatientDemographicDTO demographics,
+            Long id, List<NDRErrorDTO> ndrErrors) {
+        try {
+            File dir = new File(BASE_DIR + "temp/"+demographics.getFacilityId()+"/");
+            if (!dir.exists()) {
+                log.info(" directory created => : {}", dir.mkdirs());
+            }
+            String fileName = generateFileName(demographics);
+            File file = new File(BASE_DIR + "temp/" + facilityId + "/" + fileName);
+            jaxbMarshaller.marshal(container, file);
+            return fileName;
+        }catch (JAXBException e){
+            log.error(" An error occur while generating file with patient hospital number {} Error: {}",
+                    demographics.getHospitalNumber(),
+                    e.getMessage());
+            ndrErrors.add(new NDRErrorDTO(demographics.getPersonUuid(), demographics.getHospitalNumber(), e.getMessage()));
+        }
+        return null;
+    }
 
     private String generateFileName( PatientDemographics demographics, String identifier) {
         return formulateFileName(demographics, identifier, ndrCodeSetResolverService);
     }
-
+    
+    private String generateFileName( PatientDemographicDTO demographics) {
+        return formulateFileName(demographics);
+    }
+    
+    
     public String zipFiles(PatientDemographics demographics) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
         String sCode = "";
@@ -752,7 +779,7 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
         List<NdrXmlStatus> ndrXmlStatusList= ndrXmlStatusRepository.getAllFiles ();
         List<NdrXmlStatusDto> ndrXmlStatusDtos = new ArrayList<>();
         Iterator iterator = ndrXmlStatusList.iterator();
-        System.out.println("SIZE = "+ndrXmlStatusList.size());
+        log.info("SIZE = "+ndrXmlStatusList.size());
         while (iterator.hasNext()){
             NdrXmlStatus ndrXmlStatus = (NdrXmlStatus) iterator.next();
             NdrXmlStatusDto ndrXmlStatusDto = new NdrXmlStatusDto();
@@ -797,6 +824,19 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
         String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
                 StringUtils.leftPad (lCode, 3, "0") +
                 "_" + demographics.getDatimId() + "_" + StringUtils.replace (identifier, "/", "-")
+                + "_" +dateFormat.format (date) + ".xml";
+        return RegExUtils.replaceAll (fileName, "/", "-");
+    }
+    
+    static String formulateFileName(
+            PatientDemographicDTO demographics) {
+        String sCode = demographics.getStateCode();
+        String lCode = demographics.getLgaCode();
+        Date date = new Date ();
+        SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad (lCode, 3, "0") +
+                "_" + demographics.getFacilityId() + "_" + StringUtils.replace (demographics.getPatientIdentifier(), "/", "-")
                 + "_" +dateFormat.format (date) + ".xml";
         return RegExUtils.replaceAll (fileName, "/", "-");
     }

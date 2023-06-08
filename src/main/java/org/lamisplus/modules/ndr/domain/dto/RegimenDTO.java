@@ -10,11 +10,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegimenDTO implements Serializable {
-	String  visitID;
-	String  visitDate;
-	String  DateRegimenStarted;
+	String   visitID;
+	String   visitDate;
+	String   dateRegimenStarted;
 	String   prescribedRegimenCode;
-	String   PrescribedRegimenDuration;
-	String  PrescribedRegimenTypeCode;
-	String  prescribedRegimenCodeDescTxt;
+	String   prescribedRegimenDuration;
+	String   prescribedRegimenTypeCode;
+	String   prescribedRegimenCodeDescTxt;
 }

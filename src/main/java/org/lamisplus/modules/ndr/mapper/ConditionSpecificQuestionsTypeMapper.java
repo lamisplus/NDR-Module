@@ -61,7 +61,7 @@ public class ConditionSpecificQuestionsTypeMapper {
                     String regimen = artCommencement.get().getRegimen();
                     if(regimen != null) {
                      Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen);
-                     System.out.println("ndrRegimen: " + regimen);
+                     log.info("ndrRegimen: " + regimen);
                      simpleCodeSet.ifPresent(hiv::setFirstARTRegimen);
                      }
                     processAndSetCD4 (hiv, demographics.getAge(), artCommencement.get());

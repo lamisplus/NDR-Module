@@ -1,8 +1,12 @@
 package org.lamisplus.modules.ndr.domain.entities;
 
+import liquibase.pro.packaged.N;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.codehaus.jackson.JsonNode;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -33,5 +37,8 @@ public class NdrXmlStatus {
     private Long percentagePushed;
 
     private Boolean completelyPushed;
+    @Type(type = "jsonb")
+    @Column(name = "error", columnDefinition = "jsonb")
+    private JsonNode error;
 
 }

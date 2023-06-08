@@ -3,6 +3,7 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.FacilityType;
@@ -60,8 +61,9 @@ public class PatientDemographicsMapper {
        // @XmlElement(name = "PatientDateOfBirth", required = true)
         //  @XmlElement(name = "PatientSexCode", required = true)
         PatientDemographicsType patientDemographicsType = new PatientDemographicsType ();
+        log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
         try {
-            if(demographicDTO.getPatientIdentifier() != null && !demographicDTO.getPatientIdentifier().isEmpty() ) {
+            if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
                 patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
             }else {
                 throw new IllegalArgumentException("Patient Identifier cannot be null");

@@ -8,18 +8,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, Integer> {
     List<NdrMessageLog> getNdrMessageLogByIdentifier(String identifier);
+    
+    Optional<NdrMessageLog> findFirstByIdentifier(String identifier);
+    
     Optional<NdrMessageLog> findFirstByIdentifierAndFileType(String identifier, String fileType);
     @Query(value="SELECT\n" +
             "                    DISTINCT (p.uuid) AS personUuid, p.date_of_registration AS diagnosisDate,\n" +
             "                             p.date_of_birth AS dateOfBirth,\n" +
             "                             p.id AS personId,\n" +
             "                             p.hospital_number AS hospitalNumber,\n" +
-            "             concat( boui.code, '_', p.uuid) as patientIdentifer,\n" +
+            "             concat( boui.code, '_', p.uuid) as patientIdentifier,\n" +
             "                            EXTRACT(YEAR FROM AGE(NOW(), date_of_birth)) AS age,\n" +
             "                             (CASE WHEN INITCAP(p.sex)='Female' THEN 'F' ELSE 'M' END) AS patientSexCode,\n" +
             "                             p.date_of_birth AS patientDateOfBirth, 'FAC' AS facilityTypeCode,\n" +
@@ -65,11 +69,9 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "               WHERE h.archived = 0\n" +
             "             AND p.uuid = ?1\n" +
             "               AND h.facility_id = ?2\n" +
-            "               AND hac.is_commencement = TRUE\n" +
-            "               AND hac.visit_date >= ?3 \n" +
-            "               AND hac.visit_date < ?4",
+            "               AND hac.is_commencement = TRUE\n" ,
             nativeQuery = true)
-    Optional<PatientDemographicDTO> getPatientDemographics(String identifier, Long facilityId, LocalDate start, LocalDate end);
+    Optional<PatientDemographicDTO> getPatientDemographics(String identifier, Long facilityId);
     
     @Query(value = "SELECT hac.person_uuid as patientUuid, cast( json_agg(distinct  jsonb_build_object('visitID', hac.uuid,\n" +
             "\t\t\t\t\t\t\t\t\t  'visitDate', CAST(hac.visit_date AS DATE),\n" +
@@ -97,9 +99,9 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
            "\t\t\t\t\t\t\t\t\t  'visitDate', phar.visitDate,\n" +
            "\t\t\t\t\t\t\t\t\t  'prescribedRegimenCode',  phar.prescribedRegimenCode,\n" +
            "\t\t\t\t\t\t\t\t\t  'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
-           "\t\t\t\t\t\t\t\t\t   'PrescribedRegimenTypeCode', (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END),\n" +
-           "\t\t\t\t\t\t\t \t\t\t'PrescribedRegimenDuration', phar.duration,\n" +
-           "  'DateRegimenStarted', phar.visitDate))as varchar) AS regimens\n" +
+           "\t\t\t\t\t\t\t\t\t   'prescribedRegimenTypeCode', (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END),\n" +
+           "\t\t\t\t\t\t\t \t\t\t'prescribedRegimenDuration', phar.duration,\n" +
+           "  'dateRegimenStarted', phar.visitDate))as varchar) AS regimens\n" +
            "FROM (SELECT DISTINCT pharmacy.person_uuid, pharmacy.uuid, pharmacy.visit_date AS visitDate,\n" +
            "pharmacy_object ->> 'name' as name, cast(pharmacy_object ->> 'duration' as VARCHAR) as duration,\n" +
            "hr.regimen_type_id, (CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END) AS prescribedRegimenCodeDescTxt, \n" +
@@ -121,4 +123,11 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
            "\t ) phar\n" +
            "\tGROUP BY person_uuid", nativeQuery = true)
    Optional<PatientPharmacyEncounterDTO> getPatientPharmacyEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
+   
+   @Query(value = "SELECT DISTINCT person_uuid FROM hiv_art_pharmacy ph\n" +
+           "INNER Join patient_person p ON p.uuid = ph.person_uuid\n" +
+           "WHERE ph.archived = 0 AND p.archived = 0\n" +
+           "AND ph.last_modified_date >= ?1 \n" +
+           "AND ph.facility_id = ?2", nativeQuery = true)
+   List<String> getPatientIdsEligibleForNDR(LocalDateTime start, long facilityId);
 }

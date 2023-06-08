@@ -18,11 +18,7 @@ import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -106,13 +102,14 @@ public class RegimenTypeMapper {
 		 regimens.parallelStream()
 						 .forEach(regimen -> {
 							 
-							 RegimenType regimentType = new RegimenType();
+							 RegimenType regimenType = new RegimenType();
 							 
 							 
 							  if(StringUtils.isNotBlank(regimen.getVisitDate())){
 								  try{
 								  LocalDate local = LocalDate.parse(regimen.getVisitDate());
-								  regimentType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								  regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								  regimenType.setPrescribedRegimenDispensedDate(DateUtil.getXmlDate(Date.valueOf(local)));
 								  }catch (Exception e) {
 								    log.info("An error occurred parsing the regimen date: error{}" +  e.getMessage());
 								  }
@@ -123,18 +120,19 @@ public class RegimenTypeMapper {
 							 
 							 
 							 if(StringUtils.isNotBlank(regimen.getVisitID())){
-								 regimentType.setVisitID(regimen.getVisitID());
+								 regimenType.setVisitID(regimen.getVisitID());
 							 }else {
 								 throw new IllegalArgumentException("Regimen visit Id cannot be null");
 							 }
 							 
 							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenDuration())){
-								regimentType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
+								regimenType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
 							 }else {
 								 throw new IllegalArgumentException("Regimen duration cannot be null");
 							 }
+							 
 							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenTypeCode())){
-								  regimentType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
+								  regimenType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
 							 }else {
 								 throw new IllegalArgumentException("Regimen type code cannot be null");
 							 }
@@ -143,13 +141,25 @@ public class RegimenTypeMapper {
 								 CodedSimpleType simpleTypeCode = new CodedSimpleType();
 								 simpleTypeCode.setCode(regimen.getPrescribedRegimenCode());
 								 simpleTypeCode.setCodeDescTxt(regimen.getPrescribedRegimenCodeDescTxt() );
-								 regimentType.setPrescribedRegimen(simpleTypeCode);
+								 regimenType.setPrescribedRegimen(simpleTypeCode);
 							  }else {
 							      throw new IllegalArgumentException("Regimen type code cannot be null");
 							  }
+							if(StringUtils.isNotBlank(regimen.getDateRegimenStarted())){
+								 try{
+									 LocalDate local = LocalDate.parse(regimen.getDateRegimenStarted());
+									 regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+									 regimenType.setDateRegimenStarted(DateUtil.getXmlDate(Date.valueOf(local)));
+								 }catch (Exception e) {
+									 log.info("An error occurred parsing the Date Regimen Started date: error{}" +  e.getMessage());
+								 }
+							 }
+							  regimenTypeList.add(regimenType);
 						 });
 		
-		sortConditionRegimenType(condition);
+		 if(!condition.getRegimen().isEmpty()) {
+			 sortConditionRegimenType(condition);
+		 }
 		return condition;
 	}
 	
@@ -232,7 +242,6 @@ public class RegimenTypeMapper {
 		List<RegimenType> regimenTypes = regimenTypeSet.stream()
 				.filter(Objects::nonNull)
 				.sorted(Comparator.comparing(RegimenType::getPrescribedRegimenDuration))
-				//.sorted((r1, r2) -> r2.getPrescribedRegimenTypeCode().compareTo(r1.getPrescribedRegimenTypeCode()))
 				.sorted((r1, r2) -> r1.getVisitDate().compare(r2.getVisitDate()))
 				.collect(Collectors.toList());
 		condition.getRegimen().clear();

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Optional;
 
 
 @Service
@@ -31,6 +30,20 @@ public class MessageHeaderTypeMapper {
                 return header;
             } catch (Exception exception) {
                 exception.printStackTrace ();
+        }
+        return null;
+    }
+    
+    public MessageHeaderType getMessageHeader(PatientDemographicDTO  demographics) {
+        MessageHeaderType header = new MessageHeaderType ();
+        try {
+            header.setMessageCreationDateTime (DateUtil.getXmlDateTime (new Date ()));
+            header.setMessageSchemaVersion (new BigDecimal ("1.6"));
+            FacilityType sendingOrganization = getTreatmentFacility (demographics);
+            header.setMessageSendingOrganization (sendingOrganization);
+            return header;
+        } catch (Exception exception) {
+            exception.printStackTrace ();
         }
         return null;
     }
