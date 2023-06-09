@@ -102,7 +102,6 @@ public class NDRController {
     @GetMapping("/optimization")
     public ResponseEntity<Void> generateWithOptimization(
             @RequestParam List<Long> facilityIds,
-            @RequestParam String patientId,
             @RequestParam boolean initial) {
         facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, true));
         return ResponseEntity.ok().build();

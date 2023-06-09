@@ -506,7 +506,7 @@ public class NDRService {
             PatientDemographicDTO demographics,
             Long id, List<NDRErrorDTO> ndrErrors) {
         try {
-            File dir = new File(BASE_DIR + "temp/"+demographics.getFacilityId()+"/");
+            File dir = new File(BASE_DIR + "temp/"+facilityId+"/");
             if (!dir.exists()) {
                 log.info(" directory created => : {}", dir.mkdirs());
             }
@@ -514,7 +514,7 @@ public class NDRService {
             File file = new File(BASE_DIR + "temp/" + facilityId + "/" + fileName);
             jaxbMarshaller.marshal(container, file);
             return fileName;
-        }catch (JAXBException e){
+        }catch (Exception e){
             log.error(" An error occur while generating file with patient hospital number {} Error: {}",
                     demographics.getHospitalNumber(),
                     e.getMessage());
@@ -604,7 +604,7 @@ public class NDRService {
         return null;
     }
 
-    private List<File> getFiles(String sourceFolder, List<File> files) {
+    public List<File> getFiles(String sourceFolder, List<File> files) {
         try (Stream<Path> walk = Files.walk (Paths.get (sourceFolder))) {
             files = walk.filter (Files::isRegularFile)
                     .map (Path::toFile)
