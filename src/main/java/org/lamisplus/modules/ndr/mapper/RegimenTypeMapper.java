@@ -11,6 +11,7 @@ import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionType;
 import org.lamisplus.modules.ndr.schema.RegimenType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
+import org.lamisplus.modules.ndr.service.NDRService;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
@@ -37,16 +38,23 @@ public class RegimenTypeMapper {
 	
 	private final NDRCodeSetResolverService ndrCodeSetResolverService;
 	
+	private Set<ArtPharmacy> patientRegimens;
+	
 	
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition) {
+		try {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());
 			Comparator<ArtPharmacy> artVisitDateComparator = Comparator.comparing(ArtPharmacy::getVisitDate);
-			Set<ArtPharmacy> patientRegimens = artPharmacyRepository
+			if(patientRegimens == null) {
+				log.info("Creating a new collection instance");
+			patientRegimens = artPharmacyRepository
 					.findAll()
 					.stream()
 					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
-					.collect(Collectors.toSet());
+					.collect(Collectors.toSet());}
+			else
+				log.info("Re-using existing collection");
 			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
 			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));
 			patientRegimens.forEach(artPharmacy -> {
@@ -58,6 +66,12 @@ public class RegimenTypeMapper {
 			});
 		}
 		sortConditionRegimenType(condition);
+		}
+		catch(Exception ignore)
+		{
+			ignore.printStackTrace();
+			log.error("Error retrieving regimen type : {}",ignore.getMessage());
+		}
 		return condition;
 	}
 	
@@ -66,12 +80,15 @@ public class RegimenTypeMapper {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());
 			Comparator<ArtPharmacy> artVisitDateComparator = Comparator.comparing(ArtPharmacy::getVisitDate);
-			Set<ArtPharmacy> patientRegimens = artPharmacyRepository
+			if(this.patientRegimens == null) {
+			this.patientRegimens = artPharmacyRepository
 					.findAll()
 					.stream()
 					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
 					.filter(artPharmacy -> artPharmacy.getLastModifiedDate().isAfter(lastUpdate))
 					.collect(Collectors.toSet());
+			}
+			else log.info("Re-using existing collection");
 			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
 			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));
 			patientRegimens.forEach(artPharmacy -> {

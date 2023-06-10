@@ -16,6 +16,7 @@ import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.EncountersType;
 import org.lamisplus.modules.ndr.schema.HIVEncounterType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
+import org.lamisplus.modules.ndr.service.NDRService;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
@@ -44,14 +45,32 @@ public class EncountersTypeMapper {
     private final ApplicationCodesetService applicationCodesetService;
     
     private final  PregnancyStatus pregnancyStatus;
+    List<ARTClinicalInfo> clinicalInfoList;
+    List<ARTClinicalInfo> clinicalInfos;
+    
+    private List<ARTClinicalInfo> getClinicalInforUUID(String personUuid)
+    {
+    	List<ARTClinicalInfo> clinicalInfos = new ArrayList<>();
+    	clinicalInfos.forEach(clinicalInfo -> {
+    		if(clinicalInfo.getpersonUuid() == personUuid) clinicalInfos.add(clinicalInfo);
+     });
+    	return clinicalInfos;
+    }
     
 
     public EncountersType encounterType(PatientDemographics demographics) {
+    	//fetch clinical data for all clients
+    	if(clinicalInfos == null)
+    	{
+    		log.info("Retrieving clinical data for all eligibles");
+    		clinicalInfos = ndrXmlStatusRepository.getClinicalInfoByUUIDIn(NDRService.personUuids);
+    	}
+    	else log.info("Re-using existing clinical data");
         EncountersType encountersType = new EncountersType ();
           if(demographics != null){
               Optional<Person> person = personRepository.findById(demographics.getId());
               List<HIVEncounterType> hivEncounter = encountersType.getHIVEncounter ();
-              List<ARTClinicalInfo> clinicalInfoList =
+              clinicalInfoList = clinicalInfos.size() > 0 ? getClinicalInforUUID(demographics.getPersonUuid()) :
                       ndrXmlStatusRepository.getClinicalInfoByPersonUuid(demographics.getPersonUuid());
               log.info ("encounter list size {}",  clinicalInfoList.size());
               
@@ -81,12 +100,20 @@ public class EncountersTypeMapper {
     
     
     public EncountersType encounterType(PatientDemographics demographics, LocalDateTime lastDateTime) {
+    	if(this.clinicalInfos == null)
+    	{
+    		log.info("Retrieving clinical data for all eligibles");
+    		clinicalInfos = ndrXmlStatusRepository.getClinicalInfoByUUIDIn(NDRService.personUuids);
+    	}
+    	else log.info("Re-using existing clinical data");
         EncountersType encountersType = new EncountersType ();
         if(demographics != null){
             Optional<Person> person = personRepository.findById(demographics.getId());
             List<HIVEncounterType> hivEncounter = encountersType.getHIVEncounter ();
-            List<ARTClinicalInfo> clinicalInfoList =
-                    ndrXmlStatusRepository.getClinicalInfoByPersonUuidByLastModifiedDate(demographics.getPersonUuid(), lastDateTime);
+           // List<ARTClinicalInfo> clinicalInfoList =
+                 //   ndrXmlStatusRepository.getClinicalInfoByPersonUuidByLastModifiedDate(demographics.getPersonUuid(), lastDateTime);
+            this.clinicalInfoList = this.clinicalInfos.size() > 0 ? getClinicalInforUUID(demographics.getPersonUuid()) :
+                ndrXmlStatusRepository.getClinicalInfoByPersonUuidByLastModifiedDate(demographics.getPersonUuid(),lastDateTime);
             log.info ("encounter list size {}",  clinicalInfoList.size());
             clinicalInfoList.forEach (
                     artClinical -> {

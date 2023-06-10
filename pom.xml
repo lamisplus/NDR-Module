@@ -200,7 +200,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.16</version>
+			<version>1.18.20</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -279,7 +279,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.4</version>
+							<version>1.18.20</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
@@ -307,7 +307,7 @@
 <!--									<configuration>-->
 <!--										<arguments>install &#45;&#45;legacy-peer-deps</arguments>-->
 <!--									</configuration>-->
-<!--								</execution>-->
+<!--								</execution>
 								<execution>
 									<id>npm run build</id>
 									<goals>
@@ -316,7 +316,7 @@
 									<configuration>
 										<arguments>run build</arguments>
 									</configuration>
-								</execution>
+								</execution>-->
 							</executions>
 						</plugin>
 			            <plugin>

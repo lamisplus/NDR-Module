@@ -18,9 +18,11 @@ import org.lamisplus.modules.base.domain.repositories.OrganisationUnitRepository
 import org.lamisplus.modules.base.service.OrganisationUnitService;
 import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
+import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.ARTClinicalInfo;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
 import org.lamisplus.modules.ndr.domain.entities.NDRMessages;
@@ -107,6 +109,8 @@ public class NDRService {
     private static final String XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION = "\n<!-- This XML was generated from LAMISPlus application -->";
     private static final String HEADER_BIND_COMMENT = "com.sun.xml.bind.xmlHeaders";
     private final AtomicLong messageId = new AtomicLong (0);
+    List<ARTClinicalInfo> clinicalInfos;
+    public static  List<String> personUuids;
 
 //    public void shouldPrintMessageHeaderTypeXml(Long id) {
 //        try {
@@ -154,106 +158,127 @@ public class NDRService {
     }
 
 
-//    public void shouldPrintPatientAddressTypeXml(Long personId) {
-//        try {
-//            new AddressType ();
-//            AddressType addressType;
-//            JAXBContext jaxbContext = JAXBContext.newInstance (AddressType.class);
-//            addressType = addressTypeMapper.getPatientAddress (personId);
-//            Marshaller jaxbMarshaller = getMarshaller (jaxbContext);
-//            jaxbMarshaller.setProperty (HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_ENCODING, JAXB_ENCODING);
-//            String currentPath = System.getProperty (USER_DIR);
-//            String fileName = "patient_address.xml";
-//            File file = new File (String.format ("%s/temp/%d/%s", currentPath, personId, fileName));
-//            jaxbMarshaller.marshal (addressType, file);
-//        } catch (Exception ignore) {
-//            ignore.printStackTrace ();
-//        }
-//    }
+  public List<NDRStatus> shouldPrintPatientContainerXmlExtended(List<String> personUuids,Long facilityId,boolean isInitial,String pushIdentifier)
+  {
+	 List<NDRStatus> NDRStatuses = new ArrayList<>();
+	  try 
+	 { 
+		  NDRService.personUuids  = personUuids;
+		  List<PatientDemographics> personsDemographics;
+		  personsDemographics = ndrXmlStatusRepository.getPatientDemographicsByUUIDIn(personUuids);
+	      if(personsDemographics!= null && personsDemographics.size() > 0)
+	      {
+	    	  //List<PatientDemographics> patientsDemographic = demographicsOptionals.get();
+	    	  log.info("Number of patient demographics retrieved is {}",personsDemographics.size());
+	    	  for(PatientDemographics demographics : personsDemographics)
+	    	  {
+	    		    long id = messageId.incrementAndGet();
+	                Container container = new Container();
+	                JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+	                PatientDemographicsType patientDemographics = patientDemographicsMapper.getPatientDemographics(demographics);
+	                if(patientDemographics != null)
+	                {
+	                	 IndividualReportType individualReportType = new IndividualReportType();
+	                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics);
+	                     individualReportType.setPatientDemographics(patientDemographics);
+	                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
+	                     messageHeader.setMessageStatusCode("INITIAL");
+	                     messageHeader.setMessageUniqueID(Long.toString(id));
+	                     container.setMessageHeader(messageHeader);
+	                     container.setIndividualReport(individualReportType);
+	                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
+	                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
+	                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	                     jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
+	                     SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	                     Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR 1.6.2.xsd"));
+	                     jaxbMarshaller.setSchema(schema);
+	                     String identifier = patientDemographics.getPatientIdentifier();
+	                     if (conditionType != null) {
+	                         individualReportType.getCondition().add(conditionType);
+	                     }
 
-//    public void shouldPrintPatientCommonQuestionsTypeXml(Long personId) {
-//        try {
-//            new AddressType ();
-//            CommonQuestionsType commonQuestionsType;
-//            JAXBContext jaxbContext = JAXBContext.newInstance (CommonQuestionsType.class);
-//            commonQuestionsType = commonQuestionsTypeMapper.getPatientCommonQuestion (personId);
-//            Marshaller jaxbMarshaller = getMarshaller (jaxbContext);
-//            jaxbMarshaller.setProperty (HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_ENCODING, JAXB_ENCODING);
-//            String currentPath = System.getProperty (USER_DIR);
-//            String fileName = "patient_common_question.xml";
-//            File file = new File (String.format ("%s/temp/%d/%s", currentPath, personId, fileName));
-//            jaxbMarshaller.marshal (commonQuestionsType, file);
-//        } catch (Exception ignore) {
-//            ignore.printStackTrace ();
-//        }
-//    }
+	                     NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
+	                    //====================Dr Karim coding session begins
+	                     if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+	                     //====================Dr Karim coding session ends
+	                     NDRStatuses.add(ndrStatus);
+	                }
+	    	  }
+	      }
+	      return NDRStatuses;
+	 }
+	 catch(Exception Ignore)
+	 {
+		 Ignore.printStackTrace();
+		 log.error("error when generating NDR file : {}",Ignore.getMessage());
+	 }
+	  return NDRStatuses;
 
-//    public void shouldPrintPatientConditionSpecificQuestionsTypeXml(Long personId) {
-//        try {
-//            new AddressType ();
-//            ConditionSpecificQuestionsType conditionSpecificQuestionsType;
-//            JAXBContext jaxbContext = JAXBContext.newInstance (ConditionSpecificQuestionsType.class);
-//            conditionSpecificQuestionsType = specificQuestionsTypeMapper.getConditionSpecificQuestionsType (personId);
-//            Marshaller jaxbMarshaller = getMarshaller (jaxbContext);
-//            jaxbMarshaller.setProperty (HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_ENCODING, JAXB_ENCODING);
-//            String currentPath = System.getProperty (USER_DIR);
-//            String fileName = "patient_specific_hiv_questions.xml";
-//            File file = new File (String.format ("%s/temp/%d/%s", currentPath, personId, fileName));
-//            jaxbMarshaller.marshal (conditionSpecificQuestionsType, file);
-//        } catch (Exception ignore) {
-//            ignore.printStackTrace ();
-//        }
-//    }
+  }
+  public List<NDRStatus> shouldPrintPatientContainerXmlUpdated(List<String> personUuids,Long facilityId,LocalDateTime lastUpdated,String pushIdentifier)
+  {
+	 List<NDRStatus> NDRStatuses = new ArrayList<>();
+	  try 
+	 { 
+		  NDRService.personUuids  = personUuids;
+		  List<PatientDemographics> personsDemographics;
+		  personsDemographics = ndrXmlStatusRepository.getPatientDemographicsByUUIDIn(personUuids);
+	      if(personsDemographics!= null && personsDemographics.size() > 0)
+	      {
+	    	  //List<PatientDemographics> patientsDemographic = demographicsOptionals.get();
+	    	  log.info("Number of patient demographics retrieved is {}",personsDemographics.size());
+	    	  for(PatientDemographics demographics : personsDemographics)
+	    	  {
+	    		    long id = messageId.incrementAndGet();
+	                Container container = new Container();
+	                JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+	                PatientDemographicsType patientDemographics = patientDemographicsMapper.getPatientDemographics(demographics);
+	                if(patientDemographics != null)
+	                {
+	                	 IndividualReportType individualReportType = new IndividualReportType();
+	                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics,lastUpdated);
+	                     individualReportType.setPatientDemographics(patientDemographics);
+	                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
+	                     messageHeader.setMessageStatusCode("INITIAL");
+	                     messageHeader.setMessageUniqueID(Long.toString(id));
+	                     container.setMessageHeader(messageHeader);
+	                     container.setIndividualReport(individualReportType);
+	                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
+	                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
+	                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	                     jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
+	                     SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	                     Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR 1.6.2.xsd"));
+	                     jaxbMarshaller.setSchema(schema);
+	                     String identifier = patientDemographics.getPatientIdentifier();
+	                     if (conditionType != null) {
+	                         individualReportType.getCondition().add(conditionType);
+	                     }
 
-//    public void shouldPrintPatientConditionEncountersTypeXml(Long personId) {
-//        try {
-//            new EncountersType ();
-//            EncountersType encountersType;
-//            JAXBContext jaxbContext = JAXBContext.newInstance (EncountersType.class);
-//            encountersType = encountersTypeMapper.encounterType (personId);
-//            Marshaller jaxbMarshaller = getMarshaller (jaxbContext);
-//            jaxbMarshaller.setProperty (HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_ENCODING, JAXB_ENCODING);
-//            String currentPath = System.getProperty (USER_DIR);
-//            String fileName = "patient_encounters.xml";
-//            File file = new File (String.format ("%s/temp/%d/%s", currentPath, personId, fileName));
-//            jaxbMarshaller.marshal (encountersType, file);
-//        } catch (Exception ignore) {
-//            ignore.printStackTrace ();
-//        }
-//    }
+	                     NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
+	                    //====================Dr Karim coding session begins
+	                     if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+	                     //====================Dr Karim coding session ends
+	                     NDRStatuses.add(ndrStatus);
+	                }
+	    	  }
+	      }
+	      return NDRStatuses;
+	 }
+	 catch(Exception Ignore)
+	 {
+		 Ignore.printStackTrace();
+		 log.error("error when generating NDR file : {}",Ignore.getMessage());
+	 }
+	  return NDRStatuses;
 
-//    public void shouldPrintPatientConditionTypeXml(Long personId) {
-//        try {
-//            new ConditionType ();
-//            ConditionType conditionType;
-//            JAXBContext jaxbContext = JAXBContext.newInstance (ConditionType.class);
-//            conditionType = conditionTypeMapper.getConditionType (personId);
-//            Marshaller jaxbMarshaller = getMarshaller (jaxbContext);
-//            jaxbMarshaller.setProperty (HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            jaxbMarshaller.setProperty (Marshaller.JAXB_ENCODING, JAXB_ENCODING);
-//            String currentPath = System.getProperty (USER_DIR);
-//            String fileName = "patient.xml";
-//            File file = new File (String.format ("%s/temp/%s", currentPath, fileName));
-//            jaxbMarshaller.marshal (conditionType, file);
-//        } catch (Exception ignore) {
-//            ignore.printStackTrace ();
-//        }
-//    }
-
+  }
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, boolean isInitial, String pushIdentifier) {
         try {
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
-            System.out.println("I am here");
+           // System.out.println("I am here");
             if (demographicsOptional.isPresent()) {
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
@@ -296,7 +321,8 @@ public class NDRService {
                 }
             }
             } catch(Exception ignore){
-                ignore.printStackTrace();
+                //ignore.printStackTrace();
+            	ignore.getCause().getStackTrace();
                 log.error("error when generating: {}", personUuid + ignore.getMessage());
             }
         return null;
@@ -306,7 +332,6 @@ public class NDRService {
         try {
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
-            System.out.println("I am here");
             if (demographicsOptional.isPresent()) {
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
@@ -314,17 +339,11 @@ public class NDRService {
                 JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
                 PatientDemographicsType patientDemographics =
                         patientDemographicsMapper.getPatientDemographics(demographics);
-                if (patientDemographics != null) {
+              if (patientDemographics != null) {
                     IndividualReportType individualReportType = new IndividualReportType();
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics, lastUpdated);
                     individualReportType.setPatientDemographics(patientDemographics);
                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
-//                    String messageStatusCode = "INITIAL";
-//                    List<NdrMessageLog> ndrMessageLogByIdentifier =
-//                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
-//                    if (!ndrMessageLogByIdentifier.isEmpty()) {
-//                        messageStatusCode = "UPDATED";
-//                    }
                     messageHeader.setMessageStatusCode("UPDATED");
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
@@ -404,11 +423,11 @@ public class NDRService {
    
     private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR) {
         String pushIdentifier = UUID.randomUUID().toString();
-        List<NDRStatus> ndrStatusList =
-                personUuidsForNDR.parallelStream ()
-                        .parallel()
-                        .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true, pushIdentifier))
-                        .collect (Collectors.toList ());
+        List<NDRStatus> ndrStatusList = shouldPrintPatientContainerXmlExtended(personUuidsForNDR,facilityId,true,pushIdentifier);
+             //personUuidsForNDR.parallelStream ()
+                     //.parallel()
+                 //.map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true, pushIdentifier))
+               // .collect (Collectors.toList ());
        
         int filesSize = (int) ndrStatusList
                 .stream()
@@ -420,10 +439,10 @@ public class NDRService {
     
     private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR, LocalDateTime lastUpdated) {
         String pushIdentifier = UUID.randomUUID().toString();
-        List<NDRStatus> ndrStatusList =
-                personUuidsForNDR.stream ()
-                        .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated, pushIdentifier))
-                        .collect (Collectors.toList ());
+        List<NDRStatus> ndrStatusList = shouldPrintPatientContainerXmlUpdated(personUuidsForNDR,facilityId,lastUpdated,pushIdentifier);
+                //personUuidsForNDR.stream ()
+                    //    .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated, pushIdentifier))
+                      //  .collect (Collectors.toList ());
         Set<NdrMessageLog> messageLogs = ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)
