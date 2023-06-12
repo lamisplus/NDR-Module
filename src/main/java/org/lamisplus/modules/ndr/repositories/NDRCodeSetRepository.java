@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> {
     Optional<NDRCodeSet> getNDRCodeSetByCodeSetNmAndSysDescription(String codeSetNm, String sysDescription);
+    
     Optional<NDRCodeSet> getNDRCodeSetBySysDescription(String sysDescription);
 
     Optional<NDRCodeSet> getNDRCodeSetByCodeDescription(String codeDescription);
@@ -26,23 +27,24 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
    
    @Query(value = "SELECT cd_4 as cd4, cd_4_percentage as cd4Percentage, arc.visit_date AS artStartDate,sgn.body_weight AS bodyWeight,\n" +
            "sgn.height, who.display AS whoStage, funstatus.display AS functionStatus, \n" +
-           "reg.description AS regimen\n" +
+           "reg.description AS regimen \n" +
            "FROM  hiv_art_clinical arc \n" +
-           "INNER JOIN triage_vital_sign sgn ON arc.visit_id = sgn.visit_id\n" +
-           "LEFT JOIN base_application_codeset who ON who.id = arc.who_staging_id\n" +
-           "LEFT JOIN base_application_codeset funstatus ON  funstatus.id = arc.functional_status_id\n" +
+           "INNER JOIN triage_vital_sign sgn ON arc.visit_id = sgn.visit_id \n" +
+           "LEFT JOIN base_application_codeset who ON who.id = arc.who_staging_id \n" +
+           "LEFT JOIN base_application_codeset funstatus ON  funstatus.id = arc.functional_status_id \n" +
            "LEFT JOIN hiv_regimen reg ON reg.id = arc.regimen_id\n" +
-           "WHERE is_commencement IS TRUE\n" +
+           "WHERE is_commencement IS TRUE \n" +
            "AND arc.archived = 0 "+
-           "AND  arc.person_uuid = ?1", nativeQuery = true)
+           "AND  arc.person_uuid = ?1 ORDER BY arc.visit_date DESC LIMIT 1", nativeQuery = true)
    Optional<ArtCommencementDTO> getArtCommencementByPatientUuid(String patientUuid);
    
-   @Query(value = "SELECT  arc.person_uuid as personUuid\n" +
+   @Query(value = "SELECT  arc.person_uuid as personUuid \n" +
            "FROM  hiv_art_clinical arc \n" +
-           "INNER JOIN patient_person p ON arc.person_uuid = p.uuid\n" +
-           "WHERE is_commencement IS TRUE\n" +
-           "AND facility_id = ?1"+
-           "AND p.archived = 0", nativeQuery = true)
+           "INNER JOIN patient_person p ON arc.person_uuid = p.uuid \n" +
+           "WHERE is_commencement IS TRUE \n" +
+           "AND p.facility_id = ?1 "+
+           "AND arc.archived = 0  "+
+           "AND p.archived = 0 ", nativeQuery = true)
    List<String> getNDREligiblePatientUuidList(Long facilityId);
    
    @Query(value = "select person_uuid from hiv_art_pharmacy \n" +

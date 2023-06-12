@@ -28,9 +28,12 @@ public class ConditionTypeMapper {
     private final RegimenTypeMapper regimenTypeMapper;
     
     private final LaboratoryReportTypeMapper laboratoryReportTypeMapper;
+    
+    
 
 
     public ConditionType getConditionType(PatientDemographics demographics) {
+       //List code Sets
         ConditionType condition = new ConditionType ();
         Optional<String> conditionCode = ndrCodeSetResolverService.getNDRCodeSetCode ("CONDITION_CODE", "HIV_CODE");
         conditionCode.ifPresent (condition::setConditionCode);
@@ -40,19 +43,26 @@ public class ConditionTypeMapper {
         condition.setProgramArea (programArea);
 
         //Address
+        // consider saving address somewhere
         AddressType address = addressTypeMapper.getPatientAddress (demographics);
         if (address.getStateCode () != null && address.getLGACode () != null) {
             condition.setPatientAddress (address);
         }
+        
+        
         //common questions
         CommonQuestionsType common = commonQuestionsTypeMapper.getPatientCommonQuestion (demographics);
         if (common != null) {
             condition.setCommonQuestions (common);
         }
+        
+        
         //specific questions
-        ConditionSpecificQuestionsType disease = specificQuestionsTypeMapper.getConditionSpecificQuestionsType (demographics);
+        ConditionSpecificQuestionsType disease =
+                specificQuestionsTypeMapper.getConditionSpecificQuestionsType (demographics);
         if (disease != null) {
             condition.setConditionSpecificQuestions (disease);
+            
         }
         //encounter
         EncountersType encounter = encountersTypeMapper.encounterType (demographics);
@@ -62,12 +72,15 @@ public class ConditionTypeMapper {
         //
         regimenTypeMapper.regimenType (demographics, condition);
         LocalDateTime lastUpdated = LocalDateTime.of(1990, 1, 1, 0, 0);
+        
         laboratoryReportTypeMapper.laboratoryReportType(demographics.getPersonUuid(), lastUpdated, condition);
         return condition;
     }
     
     public ConditionType getConditionType(PatientDemographics demographics, LocalDateTime lastUpdate) {
         ConditionType condition = new ConditionType ();
+        //List of applications code set
+        
         Optional<String> conditionCode = ndrCodeSetResolverService.getNDRCodeSetCode ("CONDITION_CODE", "HIV_CODE");
         conditionCode.ifPresent (condition::setConditionCode);
         Optional<String> programAreaCode = ndrCodeSetResolverService.getNDRCodeSetCode ("PROGRAM_AREA", "HIV");

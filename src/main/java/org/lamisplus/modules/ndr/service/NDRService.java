@@ -40,10 +40,13 @@ import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXParseException;
+import reactor.core.publisher.Mono;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -250,32 +253,35 @@ public class NDRService {
 //    }
 
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, boolean isInitial, String pushIdentifier) {
+        log.info("generating ndr xml of patient with uuid {}" , personUuid);
         try {
+           
+            log.info("fetching patient demographics");
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
-            System.out.println("I am here");
+            
+            
             if (demographicsOptional.isPresent()) {
+                log.info("found  patient demographics");
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
                 Container container = new Container();
                 JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+                //save this somewhere...
                 PatientDemographicsType patientDemographics =
                         patientDemographicsMapper.getPatientDemographics(demographics);
+                //
                 if (patientDemographics != null) {
                     IndividualReportType individualReportType = new IndividualReportType();
+                    log.info("fetching treatment details ");
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics);
                     individualReportType.setPatientDemographics(patientDemographics);
                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
-//                    String messageStatusCode = "INITIAL";
-//                    List<NdrMessageLog> ndrMessageLogByIdentifier =
-//                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
-//                    if (!ndrMessageLogByIdentifier.isEmpty()) {
-//                        messageStatusCode = "UPDATED";
-//                    }
                     messageHeader.setMessageStatusCode("INITIAL");
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
+                    log.info("done fetching treatment details ");
                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -287,49 +293,49 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
-
+                    log.info("converting treatment details to xml ");
                     NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
                    //====================Dr Karim coding session begins
-                    if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+                   // if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
                     //====================Dr Karim coding session ends
+                    log.info("NDR xml for patient with uuid {}  was created successfully", personUuid);
                     return ndrStatus;
                 }
             }
-            } catch(Exception ignore){
-                ignore.printStackTrace();
-                log.error("error when generating: {}", personUuid + ignore.getMessage());
+            } catch(Exception e){
+            log.error("error when generating person with uuid {}", personUuid);
+            log.error("error: " + e.getMessage());
             }
         return null;
     }
     
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, LocalDateTime lastUpdated, String pushIdentifier) {
+        log.info("generating ndr xml of patient with uuid {}" , personUuid);
         try {
+            log.info("fetching patient demographics....");
             Optional<PatientDemographics> demographicsOptional =
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personUuid);
-            System.out.println("I am here");
             if (demographicsOptional.isPresent()) {
+                log.info("found  patient demographics");
                 PatientDemographics demographics = demographicsOptional.get();
                 long id = messageId.incrementAndGet();
                 Container container = new Container();
                 JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+                //caching this because is static
                 PatientDemographicsType patientDemographics =
                         patientDemographicsMapper.getPatientDemographics(demographics);
                 if (patientDemographics != null) {
+                    log.info("fetching treatment details... ");
                     IndividualReportType individualReportType = new IndividualReportType();
                     ConditionType conditionType = conditionTypeMapper.getConditionType(demographics, lastUpdated);
                     individualReportType.setPatientDemographics(patientDemographics);
                     MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(demographics);
-//                    String messageStatusCode = "INITIAL";
-//                    List<NdrMessageLog> ndrMessageLogByIdentifier =
-//                            ndrMessageLogRepository.getNdrMessageLogByIdentifier(patientDemographics.getPatientIdentifier());
-//                    if (!ndrMessageLogByIdentifier.isEmpty()) {
-//                        messageStatusCode = "UPDATED";
-//                    }
                     messageHeader.setMessageStatusCode("UPDATED");
                     messageHeader.setMessageUniqueID(Long.toString(id));
                     container.setMessageHeader(messageHeader);
                     container.setIndividualReport(individualReportType);
-
+                    
+                    log.info("done fetching treatment details ");
                     Marshaller jaxbMarshaller = getMarshaller(jaxbContext);
                     jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
                     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -341,41 +347,54 @@ public class NDRService {
                     if (conditionType != null) {
                         individualReportType.getCondition().add(conditionType);
                     }
+                    log.info("converting treatment details to xml... ");
                     NDRStatus ndrStatus = processAndGenerateNDRFile(jaxbMarshaller, container,demographics, identifier, id);
                     //====================Dr Karim coding session begins
-                    if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
+                    //if(ndrStatus != null) creatNDRMessages(container, pushIdentifier);
                     //====================Dr Karim coding session ends
+                    log.info("NDR xml for patient with uuid {}  was created successfully", personUuid);
                     return ndrStatus;
                     //return processAndGenerateNDRFile(jaxbMarshaller, container, demographics, identifier, id);
                 }
             }
-        } catch(Exception ignore){
-            ignore.printStackTrace();
-            log.error("error when generating: {}", personUuid + ignore.getMessage());
+        } catch(Exception e){
+            log.error("error when generating person with uuid {}", personUuid);
+            log.error("error: " + e.getMessage());
         }
         return null;
     }
 
-    public void generateNDRXMLByFacility(Long facilityId, boolean isInitial) {
+    public boolean generateNDRXMLByFacility(Long facilityId, boolean isInitial) {
         cleanupFacility(facilityId);
        if(isInitial){
-           System.out.println("I am in initial");
+           log.info("start generating NDR file from initial");
+           System.out.println(facilityId);
            List<String> personUuidsForNDR = nDRCodeSetRepository.getNDREligiblePatientUuidList(facilityId);
+           log.info("about {} patients are identified for generating NDR file", personUuidsForNDR.size());
+           if(personUuidsForNDR.isEmpty()) return false;
+           log.info("generating NDR file ....");
            processAndGenerateNDRFiles(facilityId, personUuidsForNDR);
+           log.info("NDR generated successful");
+           return true;
        }else {
-           System.out.println("I am in updated 1");
+           log.info("start generating NDR file from updated");
            Optional<Timestamp> lastGenerateDateTimeByFacilityId =
                    ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
-           lastGenerateDateTimeByFacilityId.ifPresent(status -> {
-               System.out.println("I am in updated 2");
-               LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
-               System.out.println("I am in updated 2: "+lastModified);
-               List<String> personUuidsForNDR = nDRCodeSetRepository.getNDREligiblePatientUuidUpdatedListByLastModifyDate(lastModified, facilityId);
-               System.out.println("ids: " + personUuidsForNDR);
+           if(lastGenerateDateTimeByFacilityId.isPresent()){
+               LocalDateTime lastModified =
+                       lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
+               List<String> personUuidsForNDR =
+                       nDRCodeSetRepository.getNDREligiblePatientUuidUpdatedListByLastModifyDate(lastModified, facilityId);
+               log.info("about {} patients are identified for generating NDR file", personUuidsForNDR.size());
+               if(personUuidsForNDR.isEmpty()){
+                   return false;
+               }
                processAndGenerateNDRFiles(facilityId, personUuidsForNDR, lastModified);
-           });
+               log.info("NDR generated successful");
+               return true;
+           }
+           return false;
         }
-
     }
     
     public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
@@ -396,9 +415,11 @@ public class NDRService {
     private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR) {
         String pushIdentifier = UUID.randomUUID().toString();
         List<NDRStatus> ndrStatusList =
-                personUuidsForNDR.stream ()
+                personUuidsForNDR.parallelStream ()
+                        .parallel()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true, pushIdentifier))
                         .collect (Collectors.toList ());
+       
         int filesSize = (int) ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)
@@ -413,12 +434,15 @@ public class NDRService {
                 personUuidsForNDR.stream ()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, lastUpdated, pushIdentifier))
                         .collect (Collectors.toList ());
-        int filesSize = (int) ndrStatusList
+        log.info("xml generated about {} files ", ndrStatusList.size());
+        Set<NdrMessageLog> messageLogs = ndrStatusList
                 .stream()
                 .filter(Objects::nonNull)
                 .map(ndrStatus -> new NdrMessageLog(ndrStatus.identifier, ndrStatus.getFile(), LocalDateTime.now()))
-                .map(this::saveMessageLog).count();
-        processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, filesSize, pushIdentifier);
+                .map(this::saveMessageLog)
+                .collect(Collectors.toSet());
+         log.info("message log saved {} ", messageLogs.size());
+        processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, messageLogs.size(), pushIdentifier);
     }
     
     private void processAndZipFacilityNDRXML(Long facilityId, List<String> personUuidsForNDR, int filesSize, String pushIdentifier) {
@@ -436,9 +460,7 @@ public class NDRService {
                 ndrXmlStatus.setLastModified (LocalDateTime.now ());
                 ndrXmlStatus.setPushIdentifier(pushIdentifier);
                 ndrXmlStatus.setCompletelyPushed(Boolean.FALSE);
-                ndrXmlStatus.setPercentagePushed(0);
-
-
+                ndrXmlStatus.setPercentagePushed(0l);
                 ndrXmlStatusRepository.save (ndrXmlStatus);
             }
         }
@@ -472,9 +494,16 @@ public class NDRService {
            File file = new File(BASE_DIR + "temp/" + demographics.getFacilityId() + "/" + fileName);
            jaxbMarshaller.marshal(container, file);
            return new NDRStatus(id, identifier, fileName);
-       }catch (Exception ignore){
-           ignore.printStackTrace();
-           log.error(" error generating file {}", identifier + ": " + ignore.getMessage());
+       }catch (JAXBException e){
+           log.error(" error generating file with uuid {}", demographics.getPersonUuid());
+           Throwable linkedException = e.getCause();
+           if (linkedException instanceof SAXParseException) {
+               int lineNum = ((SAXParseException) linkedException).getLineNumber();
+               int colNum = ((SAXParseException) linkedException).getColumnNumber();
+               log.error("line number {}",lineNum);
+               log.error("line colNum {}",colNum);
+               log.error("container {}", container);
+           }
        }
        return null;
     }
@@ -512,9 +541,13 @@ public class NDRService {
                 "_" + demographics.getFacilityName()+ "_" + dateFormat.format (new Date());
         
         fileName = RegExUtils.replaceAll (fileName, "/", "-");
+        log.info ("file name for download 1 {}", fileName);
+        String finalFileName = fileName.replace(" ", "").replace(",", "")
+                .replace(".", "");
+        log.info ("file name for download {}", finalFileName);
         try {
             String sourceFolder = BASE_DIR + "temp/" + demographics.getFacilityId() + "/";
-            String outputZipFile = BASE_DIR + "ndr/" + fileName;
+            String outputZipFile = BASE_DIR + "ndr/" + finalFileName;
             new File (BASE_DIR + "ndr").mkdirs ();
             new File (Paths.get (outputZipFile).toAbsolutePath ().toString ()).createNewFile ();
             List<File> files = new ArrayList<> ();
@@ -522,7 +555,7 @@ public class NDRService {
             log.info ("Files: {}", files);
             long fifteenMB = FileUtils.ONE_MB * 15;
             ZipUtility.zip (files, Paths.get (outputZipFile).toAbsolutePath ().toString (), fifteenMB);
-            return fileName;
+            return finalFileName;
         } catch (Exception exception) {
             exception.printStackTrace ();
         }
@@ -551,6 +584,7 @@ public class NDRService {
             try (InputStream is = new FileInputStream (folder + s)) {
                 IOUtils.copy (is, baos);
             } catch (IOException ignored) {
+            
             }
         });
         return baos;
@@ -597,25 +631,25 @@ public class NDRService {
         return listFilesUsingDirectoryStream (folder);
     }
 
-    @SneakyThrows
-    public List<NdrXmlStatusDto> getNdrStatus() {
-        return ndrXmlStatusRepository.findAll ()
-                .stream ()
-                .map (ndrXmlStatus -> NdrXmlStatusDto
-                        .builder ()
-                        .facility (organisationUnitService.getOrganizationUnit (ndrXmlStatus.getFacilityId ()).getName ())
-                        .fileName (ndrXmlStatus.getFileName ())
-                        .files (ndrXmlStatus.getFiles ())
-                        .lastModified (ndrXmlStatus.getLastModified ())
-                        .id (ndrXmlStatus.getId ())
-                        .percentagePushed (ndrXmlStatus.getPercentagePushed())
-                        .completelyPushed (ndrXmlStatus.getCompletelyPushed())
-                        .pushIdentifier (ndrXmlStatus.getPushIdentifier())
-                        .build ()
-                )
-                .sorted(Comparator.comparing(NdrXmlStatusDto::getLastModified).reversed())
-                .collect (Collectors.toList ());
-    }
+//    @SneakyThrows
+//    public List<NdrXmlStatusDto> getNdrStatus() {
+//        return ndrXmlStatusRepository.findAll ()
+//                .stream ()
+//                .map (ndrXmlStatus -> NdrXmlStatusDto
+//                        .builder ()
+//                        .facility (organisationUnitService.getOrganizationUnit (ndrXmlStatus.getFacilityId ()).getName ())
+//                        .fileName (ndrXmlStatus.getFileName ())
+//                        .files (ndrXmlStatus.getFiles ())
+//                        .lastModified (ndrXmlStatus.getLastModified ())
+//                        .id (ndrXmlStatus.getId ())
+//                        .percentagePushed (ndrXmlStatus.getPercentagePushed())
+//                        .completelyPushed (ndrXmlStatus.getCompletelyPushed())
+//                        .pushIdentifier (ndrXmlStatus.getPushIdentifier())
+//                        .build ()
+//                )
+//                .sorted(Comparator.comparing(NdrXmlStatusDto::getLastModified).reversed())
+//                .collect (Collectors.toList ());
+//    }
 
 
     public String getLga(OrganisationUnit facility) {
@@ -687,4 +721,42 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
         }catch (Exception e){}
 
     }
+
+
+    @SneakyThrows
+    public List<NdrXmlStatusDto> getNdrStatus() {
+        List<NdrXmlStatus> ndrXmlStatusList= ndrXmlStatusRepository.getAllFiles ();
+        List<NdrXmlStatusDto> ndrXmlStatusDtos = new ArrayList<>();
+        Iterator iterator = ndrXmlStatusList.iterator();
+        System.out.println("SIZE = "+ndrXmlStatusList.size());
+        while (iterator.hasNext()){
+            NdrXmlStatus ndrXmlStatus = (NdrXmlStatus) iterator.next();
+            NdrXmlStatusDto ndrXmlStatusDto = new NdrXmlStatusDto();
+            ndrXmlStatusDto.setFacility((organisationUnitService.getOrganizationUnit (ndrXmlStatus.getFacilityId ()).getName ()));
+            ndrXmlStatusDto.setFileName(ndrXmlStatus.getFileName());
+            ndrXmlStatusDto.setFiles(ndrXmlStatus.getFiles());
+            ndrXmlStatusDto.setLastModified(ndrXmlStatus.getLastModified());
+            ndrXmlStatusDto.setId(ndrXmlStatus.getId());
+            try {
+                if (null == ndrXmlStatus.getPercentagePushed()) {
+                    ndrXmlStatusDto.setPercentagePushed(100l);
+                    ndrXmlStatusDto.setCompletelyPushed(Boolean.TRUE);
+                    ndrXmlStatusDto.setPushIdentifier("Not Linked");
+                } else {
+                    ndrXmlStatusDto.setPercentagePushed(ndrXmlStatus.getPercentagePushed());
+                    ndrXmlStatusDto.setCompletelyPushed(ndrXmlStatus.getCompletelyPushed());
+                    ndrXmlStatusDto.setPushIdentifier(ndrXmlStatus.getPushIdentifier());
+
+                }
+            }catch (Exception e){
+                System.out.println("Doc here is within here");
+            }
+            ndrXmlStatusDtos.add(ndrXmlStatusDto);
+
+
+
+        }
+        return ndrXmlStatusDtos;
+    }
+
 }
