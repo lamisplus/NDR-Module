@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> {
     Optional<NDRCodeSet> getNDRCodeSetByCodeSetNmAndSysDescription(String codeSetNm, String sysDescription);
+    
     Optional<NDRCodeSet> getNDRCodeSetBySysDescription(String sysDescription);
 
     Optional<NDRCodeSet> getNDRCodeSetByCodeDescription(String codeDescription);
