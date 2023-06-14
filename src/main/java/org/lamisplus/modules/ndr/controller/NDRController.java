@@ -5,6 +5,7 @@ import com.google.common.base.Stopwatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
+import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
 import org.lamisplus.modules.ndr.service.NDRService;
 import org.lamisplus.modules.ndr.service.NdrOptimizationService;
@@ -126,6 +127,12 @@ public class NDRController {
     @GetMapping("/files")
     public Collection<NdrXmlStatusDto> listFiles() {
         return ndrService.getNdrStatus ();
+    }
+    
+    
+    @GetMapping("/file/error/{id}")
+    public List<NDRErrorDTO> getErrorsByFileId(@PathVariable("id")  int id) throws IOException {
+        return  ndrService.getNDRXmlFileErrors(id);
     }
 
 }

@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import java.io.File;
+import java.io.*;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -39,7 +39,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 
 @Service
@@ -119,12 +120,7 @@ public class NdrOptimizationService {
 		log.error("error list {}", ndrErrors);
 	}
 	
-	private static void createXMLFolder(String path) {
-		File dir = new File(path);
-		if (!dir.exists()) {
-			log.info(" directory created => : {}", dir.mkdirs());
-		}
-	}
+	
 	
 	
 	private boolean getPatientNDRXml(String patientId, long facilityId, boolean initial, List<NDRErrorDTO> ndrErrors) {
@@ -231,7 +227,7 @@ public class NdrOptimizationService {
 				return patientRegimenList;
 			}
 		} catch (Exception e) {
-			log.error("An error occurred while getting patient regimen list", e.getMessage());
+			log.error("An error occurred while getting patient regimen list error {}", e.getMessage());
 			ndrErrors.add(new NDRErrorDTO(patientId, "", e.getMessage()));
 		}
 		return null;
@@ -243,15 +239,15 @@ public class NdrOptimizationService {
 				data.getPatientEncounter(patientId, facilityId, start, end);
 		if (patientEncounter.isPresent()) {
 			patientEncounterDTO = patientEncounter.get();
-			//log.info("patient encounter data {}", patientEncounterDTO.getEncounters());
 			List<EncounterDTO> patientEncounterDTOList =
 					getPatientEncounterDTOList(patientEncounterDTO, objectMapper, ndrErrors);
-			//log.info("patientEncounterDTOList {}", patientEncounterDTOList);
 			return patientEncounterDTOList;
 		}
 		
 		return null;
 	}
+	
+	
 	
 	private PatientDemographicDTO getPatientDemographic(String patientId, long facilityId, List<NDRErrorDTO> ndrErrors) {
 		try {
@@ -261,8 +257,6 @@ public class NdrOptimizationService {
 			if (patientDemographicDTOOptional.isPresent()) {
 				log.info("patient demographic information were retrieved successfully");
 				patientDemographicDTO = patientDemographicDTOOptional.get();
-				//log.info("demographic data {}", patientDemographicDTO.toString());
-				//log.info("functional status {}", patientDemographicDTO.getFunctionalStatusStartART());
 				return patientDemographicDTO;
 			}
 		} catch (Exception e) {
@@ -322,7 +316,6 @@ public class NdrOptimizationService {
 				JsonNode node = getNode(ndrErrors);
 				ndrXmlStatus.setError(node);
 			}
-			
 			ndrXmlStatus.setFacilityId(facilityId);
 			ndrXmlStatus.setFiles(count.get());
 			ndrXmlStatus.setFileName(zipFileName);
@@ -348,14 +341,19 @@ public class NdrOptimizationService {
 		return null;
 	}
 	
-	public String zipFiles(PatientDemographicDTO demographic, long facilityId, String sourceFolder, List<NDRErrorDTO> ndrErrors) {
+	
+
+	
+	public String zipFiles(PatientDemographicDTO demographic,
+	                       long facilityId,
+	                       String sourceFolder,
+	                       List<NDRErrorDTO> ndrErrors) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");
 		String sCode = demographic.getStateCode();
 		String lCode = demographic.getLgaCode();
 		String fileName = StringUtils.leftPad(sCode, 2, "0") + "_" +
 				StringUtils.leftPad(lCode, 3, "0") + "_" + demographic.getFacilityId() +
 				"_" + demographic.getFacilityName() + "_" + dateFormat.format(new Date());
-		
 		fileName = RegExUtils.replaceAll(fileName, "/", "-");
 		log.info("file name for download {}", fileName);
 		String finalFileName = fileName.replace(" ", "").replace(",", "")
@@ -369,13 +367,63 @@ public class NdrOptimizationService {
 			files = ndrService.getFiles(sourceFolder, files);
 			//log.info("Files: {}", files);
 			long fifteenMB = FileUtils.ONE_MB * 15;
-			ZipUtility.zip(files, Paths.get(outputZipFile).toAbsolutePath().toString(), fifteenMB);
-			return finalFileName;
+			File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
+			if (ZipUtility.getFolderSize(folder) > fifteenMB) {
+				List<List<File>> splitFiles = split(files, fifteenMB);
+				for (int i = 0; i < splitFiles.size(); i++) {
+					String splitFileName = finalFileName + "_" + (i + 1);
+					String splitOutputZipFile = BASE_DIR + "ndr/" + splitFileName;
+					new File(Paths.get(splitOutputZipFile).toAbsolutePath().toString()).createNewFile();
+					zip(splitFiles.get(i), Paths.get(splitOutputZipFile).toAbsolutePath().toString());
+				}
+				return finalFileName + "_1";
+			} else {
+				ZipUtility.zip(files, Paths.get(outputZipFile).toAbsolutePath().toString(), fifteenMB);
+				return finalFileName;
+			}
 		} catch (Exception exception) {
-			log.error("An error occurred while creating temporary file " + outputZipFile);
 			ndrErrors.add(new NDRErrorDTO(demographic.getPersonUuid(), demographic.getHospitalNumber(), exception.getMessage()));
+			log.error("An error occurred while creating temporary file " + outputZipFile);
 		}
 		return null;
+	}
+	
+	public static List<List<File>> split(List<File> files, long sizeLimit) {
+		List<List<File>> splitFiles = new ArrayList<>();
+		List<File> currentSplit = new ArrayList<>();
+		long currentSize = 0;
+		for (File file : files) {
+			long fileSize = file.length();
+			if (currentSize + fileSize > sizeLimit) {
+				splitFiles.add(currentSplit);
+				currentSplit = new ArrayList<>();
+				currentSize = 0;
+			}
+			currentSplit.add(file);
+			currentSize += fileSize;
+		}
+		splitFiles.add(currentSplit);
+		return splitFiles;
+	}
+	
+	public static void zip(List<File> files, String outputZipFile) throws IOException {
+		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(outputZipFile))) {
+			for (File file : files) {
+				try (FileInputStream fileIn = new FileInputStream(file)) {
+					ZipEntry zipEntry = new ZipEntry(file.getName());
+					zipOut.putNextEntry(zipEntry);
+					byte[] bytes = new byte[1024];
+					int length;
+					while ((length = fileIn.read(bytes)) >= 0) {
+						zipOut.write(bytes, 0, length);
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 }

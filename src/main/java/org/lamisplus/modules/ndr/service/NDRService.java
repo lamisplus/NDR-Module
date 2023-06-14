@@ -3,6 +3,7 @@ package org.lamisplus.modules.ndr.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -11,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.domain.entities.OrganisationUnit;
 import org.lamisplus.modules.base.domain.entities.User;
 import org.lamisplus.modules.base.domain.repositories.OrganisationUnitRepository;
@@ -33,6 +35,7 @@ import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.ZipUtility;
+import org.lamisplus.modules.patient.domain.Patient;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
@@ -793,6 +796,11 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
             ndrXmlStatusDto.setLastModified(ndrXmlStatus.getLastModified());
             ndrXmlStatusDto.setId(ndrXmlStatus.getId());
             try {
+                if(ndrXmlStatus.getError() != null){
+                    ndrXmlStatusDto.setError(true);
+                }else {
+                    ndrXmlStatusDto.setError(false );
+                }
                 if (null == ndrXmlStatus.getPercentagePushed()) {
                     ndrXmlStatusDto.setPercentagePushed(100l);
                     ndrXmlStatusDto.setCompletelyPushed(Boolean.TRUE);
@@ -804,7 +812,6 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
 
                 }
             }catch (Exception e){
-                System.out.println("Doc here is within here");
             }
             ndrXmlStatusDtos.add(ndrXmlStatusDto);
 
@@ -812,6 +819,18 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
 
         }
         return ndrXmlStatusDtos;
+    }
+    
+    public List<NDRErrorDTO> getNDRXmlFileErrors(int fileId) throws IOException {
+        NdrXmlStatus xmlStatus = ndrXmlStatusRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException(NdrXmlStatus.class, "id", fileId + " not found"));
+        JsonNode error = xmlStatus.getError();
+        if(error != null) {
+                ObjectMapper mapper = new ObjectMapper();
+            return mapper.readerForListOf(NDRErrorDTO.class)
+                .readValue(error);
+        }
+        return new ArrayList<>();
     }
     
     static String formulateFileName(PatientDemographics demographics, String identifier, NDRCodeSetResolverService ndrCodeSetResolverService) {
