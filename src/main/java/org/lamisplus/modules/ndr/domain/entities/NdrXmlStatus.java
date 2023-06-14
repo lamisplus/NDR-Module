@@ -1,10 +1,10 @@
 package org.lamisplus.modules.ndr.domain.entities;
 
-import liquibase.pro.packaged.N;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.codehaus.jackson.JsonNode;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;

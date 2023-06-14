@@ -47,5 +47,16 @@
                 ADD file_type VARCHAR(255)
         </sql>
     </changeSet>
+    <changeSet failOnError="true"  id="20230609014" author="amos-data-fi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ndr_xml_status" columnName="error" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE  ndr_xml_status
+                ADD  error JSONB ;
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

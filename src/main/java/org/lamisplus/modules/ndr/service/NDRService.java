@@ -505,22 +505,26 @@ public class NDRService {
             Container container,
             PatientDemographicDTO demographics,
             Long id, List<NDRErrorDTO> ndrErrors) {
+        String fileName = null;
         try {
-            File dir = new File(BASE_DIR + "temp/"+facilityId+"/");
+            //creating file
+            String path = BASE_DIR + "temp/" + facilityId + "/";
+            File dir = new File(path);
             if (!dir.exists()) {
-                log.info(" directory created => : {}", dir.mkdirs());
+                log.info("directory created => : {}", dir.mkdirs());
             }
-            String fileName = generateFileName(demographics);
-            File file = new File(BASE_DIR + "temp/" + facilityId + "/" + fileName);
+            fileName = generateFileName(demographics);
+            File file = new File(path + fileName);
             jaxbMarshaller.marshal(container, file);
-            return fileName;
+            log.info("file generated: {}", fileName);
         }catch (Exception e){
             log.error(" An error occur while generating file with patient hospital number {} Error: {}",
                     demographics.getHospitalNumber(),
                     e.getMessage());
+            e.printStackTrace();
             ndrErrors.add(new NDRErrorDTO(demographics.getPersonUuid(), demographics.getHospitalNumber(), e.getMessage()));
         }
-        return null;
+        return fileName;
     }
 
     private String generateFileName( PatientDemographics demographics, String identifier) {
