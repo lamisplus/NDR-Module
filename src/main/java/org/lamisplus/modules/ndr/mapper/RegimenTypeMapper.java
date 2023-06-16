@@ -99,68 +99,70 @@ public class RegimenTypeMapper {
 //		@XmlElement(name = "PrescribedRegimenTypeCode", required = true) ---- >  done checked
 //		@XmlElement(name = "PrescribedRegimenDuration", required = true)  ---- >  done checked
 //		@XmlElement(name = "PrescribedRegimenDispensedDate", required = true)   ---- >  done checked
-		 regimens.parallelStream()
-						 .forEach(regimen -> {
-							 
-							 RegimenType regimenType = new RegimenType();
-							 
-							 
-							  if(StringUtils.isNotBlank(regimen.getVisitDate())){
-								  try{
-								  LocalDate local = LocalDate.parse(regimen.getVisitDate());
-								  regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
-								  regimenType.setPrescribedRegimenDispensedDate(DateUtil.getXmlDate(Date.valueOf(local)));
-								  }catch (Exception e) {
-								    log.info("An error occurred parsing the regimen date: error{}" +  e.getMessage());
-								  }
-							 }else {
-								  throw new IllegalArgumentException("Regimen visit date cannot be null");
-								
-							 }
-							 
-							 
-							 if(StringUtils.isNotBlank(regimen.getVisitID())){
-								 regimenType.setVisitID(regimen.getVisitID());
-							 }else {
-								 throw new IllegalArgumentException("Regimen visit Id cannot be null");
-							 }
-							 
-							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenDuration())){
-								regimenType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
-							 }else {
-								 throw new IllegalArgumentException("Regimen duration cannot be null");
-							 }
-							 
-							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenTypeCode())){
-								  regimenType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
-							 }else {
-								 throw new IllegalArgumentException("Regimen type code cannot be null");
-							 }
-							 if(StringUtils.isNotBlank(regimen.getPrescribedRegimenCode())
-									 && StringUtils.isNotBlank(regimen.getPrescribedRegimenCodeDescTxt())){
-								 CodedSimpleType simpleTypeCode = new CodedSimpleType();
-								 simpleTypeCode.setCode(regimen.getPrescribedRegimenCode());
-								 simpleTypeCode.setCodeDescTxt(regimen.getPrescribedRegimenCodeDescTxt() );
-								 regimenType.setPrescribedRegimen(simpleTypeCode);
-							  }else {
-							      throw new IllegalArgumentException("Regimen type code cannot be null");
-							  }
-							if(StringUtils.isNotBlank(regimen.getDateRegimenStarted())){
-								 try{
-									 LocalDate local = LocalDate.parse(regimen.getDateRegimenStarted());
-									 regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
-									 regimenType.setDateRegimenStarted(DateUtil.getXmlDate(Date.valueOf(local)));
-								 }catch (Exception e) {
-									 log.info("An error occurred parsing the Date Regimen Started date: error{}" +  e.getMessage());
-								 }
-							 }
-							  regimenTypeList.add(regimenType);
-						 });
-		
-		 if(!condition.getRegimen().isEmpty()) {
-			 sortConditionRegimenType(condition);
-		 }
-		return condition;
+		if(regimens != null ) {
+			regimens.parallelStream()
+					.forEach(regimen -> {
+						
+						RegimenType regimenType = new RegimenType();
+						
+						
+						if (StringUtils.isNotBlank(regimen.getVisitDate())) {
+							try {
+								LocalDate local = LocalDate.parse(regimen.getVisitDate());
+								regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								regimenType.setPrescribedRegimenDispensedDate(DateUtil.getXmlDate(Date.valueOf(local)));
+							} catch (Exception e) {
+								log.info("An error occurred parsing the regimen date: error{}" + e.getMessage());
+							}
+						} else {
+							throw new IllegalArgumentException("Regimen visit date cannot be null");
+							
+						}
+						
+						
+						if (StringUtils.isNotBlank(regimen.getVisitID())) {
+							regimenType.setVisitID(regimen.getVisitID());
+						} else {
+							throw new IllegalArgumentException("Regimen visit Id cannot be null");
+						}
+						
+						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenDuration())) {
+							regimenType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
+						} else {
+							throw new IllegalArgumentException("Regimen duration cannot be null");
+						}
+						
+						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenTypeCode())) {
+							regimenType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
+						} else {
+							throw new IllegalArgumentException("Regimen type code cannot be null");
+						}
+						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenCode())
+								&& StringUtils.isNotBlank(regimen.getPrescribedRegimenCodeDescTxt())) {
+							CodedSimpleType simpleTypeCode = new CodedSimpleType();
+							simpleTypeCode.setCode(regimen.getPrescribedRegimenCode());
+							simpleTypeCode.setCodeDescTxt(regimen.getPrescribedRegimenCodeDescTxt());
+							regimenType.setPrescribedRegimen(simpleTypeCode);
+						} else {
+							throw new IllegalArgumentException("Regimen type code cannot be null");
+						}
+						if (StringUtils.isNotBlank(regimen.getDateRegimenStarted())) {
+							try {
+								LocalDate local = LocalDate.parse(regimen.getDateRegimenStarted());
+								regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								regimenType.setDateRegimenStarted(DateUtil.getXmlDate(Date.valueOf(local)));
+							} catch (Exception e) {
+								log.info("An error occurred parsing the Date Regimen Started date: error{}" + e.getMessage());
+							}
+						}
+						regimenTypeList.add(regimenType);
+					});
+			
+			if (!condition.getRegimen().isEmpty()) {
+				sortConditionRegimenType(condition);
+			}
+		}
+			return condition;
 	}
 	
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, LocalDateTime lastUpdate) {
@@ -238,7 +240,7 @@ public class RegimenTypeMapper {
 	
 	private void sortConditionRegimenType(ConditionType condition) {
 		List<RegimenType> regimenTypeSet = new ArrayList<>(condition.getRegimen());
-		log.info("regimen  type {}", regimenTypeSet);
+		//log.info("regimen  type {}", regimenTypeSet);
 		List<RegimenType> regimenTypes = regimenTypeSet.stream()
 				.filter(Objects::nonNull)
 				.sorted(Comparator.comparing(RegimenType::getPrescribedRegimenDuration))

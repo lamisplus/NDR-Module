@@ -1,8 +1,6 @@
 package org.lamisplus.modules.ndr.repositories;
 
-import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
-import org.lamisplus.modules.ndr.domain.dto.PatientEncounterDTO;
-import org.lamisplus.modules.ndr.domain.dto.PatientPharmacyEncounterDTO;
+import org.lamisplus.modules.ndr.domain.dto.*;
 import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -125,9 +123,62 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
    Optional<PatientPharmacyEncounterDTO> getPatientPharmacyEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
    
    @Query(value = "SELECT DISTINCT person_uuid FROM hiv_art_pharmacy ph\n" +
-           "INNER Join patient_person p ON p.uuid = ph.person_uuid\n" +
+           "INNER JOIN patient_person p ON p.uuid = ph.person_uuid\n" +
+           "LEFT JOIN laboratory_result lr ON lr.patient_uuid = ph.person_uuid\n" +
            "WHERE ph.archived = 0 AND p.archived = 0\n" +
            "AND ph.last_modified_date >= ?1 \n" +
+           "OR lr.date_result_reported >= ?1 \n" +
            "AND ph.facility_id = ?2", nativeQuery = true)
    List<String> getPatientIdsEligibleForNDR(LocalDateTime start, long facilityId);
+   
+  @Query(value = "SELECT lo.patient_uuid, CAST(json_agg(distinct  jsonb_build_object(\n" +
+          "\t'visitId', lo.visitid,\n" +
+          "\t'visitDate', lo.visitdate,\n" +
+          "\t'collectionDate', ls.collectiondate,\n" +
+          "\t'laboratoryTestIdentifier', lt.laboratorytestidentifier,\n" +
+          "\t'laboratoryTestTypeCode', lt.laboratorytesttypecode,\n" +
+          "\t'orderedTestDate', lo.orderedtestdate,\n" +
+          "\t'laboratoryResultedTestCode', lt.laboratoryresultedtestcode,\n" +
+          "\t'laboratoryResultedTestCodeDescTxt', lt.laboratoryresultedtestcodedesctxt,\n" +
+          "\t'laboratoryResultAnswerNumeric', lr.laboratoryresultanswernumeric,\n" +
+          "\t'resultedTestDate', lr.resultedtestdate\t\n" +
+          "\t\n" +
+          "\t)) AS VARCHAR) as labs\n" +
+          "\n" +
+          "FROM (\n" +
+          "\tSELECT uuid AS VisitID, id, CAST(lo.order_date AS DATE) AS OrderedTestDate, \n" +
+          "\tCAST(lo.order_date AS DATE) AS VisitDate, lo.patient_uuid FROM laboratory_order lo\n" +
+          "\tWHERE lo.order_date IS NOT NULL AND lo.archived=0 AND lo.facility_id=?2\n" +
+          "\tAND lo.order_date >= ?3 \n" +
+          "\tAND lo.order_date <= ?4 \n" +
+          "\tAND lo.patient_uuid = ?1 \n" +
+          "\t)lo\n" +
+          "INNER JOIN (\n" +
+          "\t\t\tSELECT lt.id, lt.lab_order_id, lt.lab_test_id, lt.lab_test_group_id, lt.patient_uuid,\n" +
+          "\t\t\t'0000001' AS LaboratoryTestIdentifier, '00001' AS LaboratoryTestTypeCode,\n" +
+          "\t\t\ttestncs.code AS LaboratoryResultedTestCode, testncs.code_description AS LaboratoryResultedTestCodeDescTxt\n" +
+          "\t\t\tFROM laboratory_test lt \n" +
+          "\t\t\tINNER JOIN laboratory_labtest llt ON llt.id=lt.lab_test_id\n" +
+          "\t\t\tINNER JOIN ndr_code_set testncs ON testncs.code_description=llt.lab_test_name\n" +
+          "\t\t\tWHERE lt.archived=0 AND lt.facility_id=?2 --5652\n" +
+          "\t)lt ON lt.lab_order_id=lo.id AND lt.patient_uuid=lo.patient_uuid\n" +
+          "INNER JOIN (\n" +
+          "\t\tSELECT DISTINCT CAST(ls.date_sample_collected AS DATE) AS CollectionDate, ls.patient_uuid, test_id\n" +
+          "\t\t\tFROM laboratory_sample ls\n" +
+          "\t\t   WHERE ls.archived=0 AND ls.facility_id=?2 AND ls.date_sample_collected IS NOT NULL\n" +
+          "\t       AND ls.date_sample_collected >= ?3 AND ls.date_sample_collected <=  ?4 \n" +
+          "\t      AND ls.patient_uuid = ?1\n" +
+          "\t\t   )ls ON ls.test_id=lt.id AND ls.patient_uuid=lo.patient_uuid\n" +
+          "INNER JOIN (\n" +
+          "\t\t\tSELECT DISTINCT CAST(lr.date_result_reported AS DATE) AS resultedTestDate, \n" +
+          "\t\t\tlr.patient_uuid, lr.result_reported AS LaboratoryResultAnswerNumeric, lr.test_id\n" +
+          "\t\t\tFROM laboratory_result lr\n" +
+          "\t\t   WHERE lr.archived=0 AND lr.facility_id=?2 AND lr.date_result_reported IS NOT NULL\n" +
+          "\t\t\t AND lr.result_reported IS NOT NULL\n" +
+          "\t    AND  lr.date_result_reported >= ?3 AND  lr.date_result_reported <= ?4 \n" +
+          "\t   AND lr.patient_uuid = ?1 \n" +
+          "\t\t   )lr ON lr.test_id=lt.id AND lr.patient_uuid=lt.patient_uuid\n" +
+          "\t\t   \n" +
+          "\t\t   GROUP BY lo.patient_uuid", nativeQuery = true)
+  Optional<PatientLabEncounterDTO> getPatientLabEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
 }

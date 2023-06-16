@@ -182,7 +182,9 @@ public class ConditionTypeMapper {
     
     public ConditionType getConditionType(PatientDemographicDTO demographics,
           List<EncounterDTO> patientEncounters,
-           List<RegimenDTO> patientRegimens) {
+           List<RegimenDTO> patientRegimens,
+           List<LaboratoryEncounterDTO> patientLabEncounters) {
+      
         ConditionType condition = new ConditionType();
         //List of applications code set
         
@@ -213,10 +215,12 @@ public class ConditionTypeMapper {
         if (encounter != null) {
             condition.setEncounters(encounter);
         }
-        regimenTypeMapper.regimenType(demographics, condition,  patientRegimens);
-        
+    
+        regimenTypeMapper.regimenType(demographics, condition, patientRegimens);
+    
         //Lab
-       // laboratoryReportTypeMapper.laboratoryReportType(demographics.getPersonUuid());
+        log.info("Lab: in patient "+ demographics.getPersonUuid()+" "+ patientLabEncounters);
+        laboratoryReportTypeMapper.laboratoryReportType(demographics.getPersonUuid(), condition, patientLabEncounters);
         
         return condition;
     }
