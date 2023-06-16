@@ -219,7 +219,6 @@ public class ConditionTypeMapper {
         regimenTypeMapper.regimenType(demographics, condition, patientRegimens);
     
         //Lab
-        log.info("Lab: in patient "+ demographics.getPersonUuid()+" "+ patientLabEncounters);
         laboratoryReportTypeMapper.laboratoryReportType(demographics.getPersonUuid(), condition, patientLabEncounters);
         
         return condition;
