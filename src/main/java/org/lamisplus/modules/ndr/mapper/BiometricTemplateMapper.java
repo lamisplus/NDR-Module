@@ -89,6 +89,7 @@ public class BiometricTemplateMapper {
         }catch (Exception e) {
           log.error("An error occurred while creating the fingerPrint");
           log.error("Error message {}",e.getMessage());
+          throw new IllegalArgumentException(e.toString());
         }
         return null;
     }

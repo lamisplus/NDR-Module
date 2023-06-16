@@ -4,6 +4,7 @@ package org.lamisplus.modules.ndr.mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.FacilityType;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -107,8 +109,8 @@ public class PatientDemographicsMapper {
         } catch (Exception e) {
             log.info("An error occurred while trying to get patient with uuid {} demographics type error: {}",
                     demographicDTO.getPersonUuid(), e.getMessage());
+            throw new IllegalStateException(e.toString());
         }
-        return null;
     }
  
     private void processAndSetDateOFBirth(PatientDemographicsType patientDemographics, LocalDate dateOfBirth)
