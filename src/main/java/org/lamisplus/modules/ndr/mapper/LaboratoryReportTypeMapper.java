@@ -91,7 +91,7 @@ public class LaboratoryReportTypeMapper {
 									answer.setAnswerNumeric(numeric);
 								} else {
 									if (labDTO.getLabTestName().equals("Viral Load")) {
-										numeric.setValue1(0);  //if lab test is a viralLoad set the value to 0
+										numeric.setValue1(0);   //if lab test is a viralLoad set the value to 0
 										answer.setAnswerNumeric(numeric);
 									} else {
 										answer.setAnswerText(result);
@@ -264,7 +264,7 @@ public class LaboratoryReportTypeMapper {
 								&& labDTO.getLaboratoryResultedTestCodeDescTxt() != null) {
 							CodedSimpleType codedSimpleType = new CodedSimpleType();
 							codedSimpleType.setCode(labDTO.getLaboratoryResultedTestCode());
-							codedSimpleType.setCode(labDTO.getLaboratoryResultedTestCodeDescTxt());
+							codedSimpleType.setCodeDescTxt(labDTO.getLaboratoryResultedTestCodeDescTxt());
 							labResult.setLaboratoryResultedTest(codedSimpleType);
 						} else {
 							throw new IllegalArgumentException("Result code cannot be null");
