@@ -111,7 +111,7 @@ public class EncountersTypeMapper {
 									if(StringUtils.isNotBlank(encounterDTO.getNextAppointmentDate())) {
 										LocalDate localDate = LocalDate.parse(encounterDTO.getNextAppointmentDate());
 										try {
-											hivEncounterType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(localDate)));
+											hivEncounterType.setNextAppointmentDate(DateUtil.getXmlDate(Date.valueOf(localDate)));
 										} catch (DatatypeConfigurationException e) {
 											throw new IllegalArgumentException(e);
 										}
