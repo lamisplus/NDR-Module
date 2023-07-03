@@ -16,6 +16,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -39,6 +40,14 @@ public class BiometricTemplateMapper {
                     FingerPrintType fingerPrintType = new FingerPrintType();
                     RightHandType rightHandType = new RightHandType();
                     LeftHandType leftHandType = new LeftHandType();
+                    List<BiometricDto> rights = biometrics.stream().filter(finger -> finger.getTemplateType().contains("Right"))
+                            .collect(Collectors.toList());
+                    List<BiometricDto> lefts = biometrics.stream().filter(finger -> finger.getTemplateType().contains("Left"))
+                            .collect(Collectors.toList());
+                    
+                    if(rights.isEmpty() || lefts.isEmpty()){
+                         throw new IllegalArgumentException("At least one right finger or left finger must be captured");
+                    }
                     biometrics.forEach(biometricDto -> {
                         setEnrollmentDate(biometricDto, fingerPrintType);
                         String type = biometricDto.getTemplateType();

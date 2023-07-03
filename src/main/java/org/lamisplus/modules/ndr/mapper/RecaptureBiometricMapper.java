@@ -136,9 +136,9 @@ public class RecaptureBiometricMapper {
 			List<RecaptureBiometricDTO> rightFingers =
 					biometricDTOList.stream().filter(finger -> finger.getTemplateType().contains("Right"))
 					.collect(Collectors.toList());
+			
 			RightHandType rightHandType = getRightHandType(rightFingers, objectFactory.createRightHandType());
 			fingerPrintType.setRightHand(rightHandType);
-			
 			//get left fingers
 			List<RecaptureBiometricDTO> leftFingers =
 					biometricDTOList.stream().filter(finger -> finger.getTemplateType().contains("Left"))
