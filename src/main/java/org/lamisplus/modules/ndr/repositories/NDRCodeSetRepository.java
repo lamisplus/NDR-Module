@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +24,7 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
     
  
 
-    @Query(value = "select template_type as templateType, enrollment_date as enrollmentDate, template from biometric where person_uuid = :patientUuid" +
+    @Query(value = "select template_type as templateType, enrollment_date as enrollmentDate, template, image_quality as quality from biometric where person_uuid = :patientUuid" +
             " and biometric_type = 'FINGERPRINT' and archived = 0  and recapture = 0 and version_iso_20 = true  and iso = true", nativeQuery = true)
     List<BiometricDto> getPatientBiometricByPatientUuid(String patientUuid);
     

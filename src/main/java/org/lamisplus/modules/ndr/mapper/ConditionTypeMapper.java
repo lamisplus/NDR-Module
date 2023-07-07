@@ -87,13 +87,8 @@ public class ConditionTypeMapper {
             List<LabDTO> labs) {
         //List code Sets
         ConditionType condition = new ConditionType();
-        Optional<String> conditionCode = ndrCodeSetResolverService.getNDRCodeSetCode("CONDITION_CODE", "HIV_CODE");
-        conditionCode.ifPresent(condition::setConditionCode);
-        Optional<String> programAreaCode = ndrCodeSetResolverService.getNDRCodeSetCode("PROGRAM_AREA", "HIV");
-        ProgramAreaType programArea = new ProgramAreaType();
-        programAreaCode.ifPresent(programArea::setProgramAreaCode);
-        condition.setProgramArea(programArea);
-        
+        setProgramCodeAndArea(condition);
+    
         //Address
         // consider saving address somewhere
         if (demographics != null) {
@@ -141,17 +136,17 @@ public class ConditionTypeMapper {
         return condition;
     }
     
+    private static void setProgramCodeAndArea(ConditionType condition) {
+        condition.setConditionCode("86406008");
+        ProgramAreaType programArea = new ProgramAreaType();
+        programArea.setProgramAreaCode("HIV");
+        condition.setProgramArea(programArea);
+    }
+    
     public ConditionType getConditionType(PatientDemographics demographics, LocalDateTime lastUpdate) {
         ConditionType condition = new ConditionType();
         //List of applications code set
-        
-        Optional<String> conditionCode = ndrCodeSetResolverService.getNDRCodeSetCode("CONDITION_CODE", "HIV_CODE");
-        conditionCode.ifPresent(condition::setConditionCode);
-        Optional<String> programAreaCode = ndrCodeSetResolverService.getNDRCodeSetCode("PROGRAM_AREA", "HIV");
-        ProgramAreaType programArea = new ProgramAreaType();
-        programAreaCode.ifPresent(programArea::setProgramAreaCode);
-        condition.setProgramArea(programArea);
-        
+        setProgramCodeAndArea(condition);
         //Address
         AddressType address = addressTypeMapper.getPatientAddress(demographics);
         if (address.getStateCode() != null && address.getLGACode() != null) {
@@ -187,14 +182,7 @@ public class ConditionTypeMapper {
       
         ConditionType condition = new ConditionType();
         //List of applications code set
-        
-        Optional<String> conditionCode = ndrCodeSetResolverService.getNDRCodeSetCode("CONDITION_CODE", "HIV_CODE");
-        conditionCode.ifPresent(condition::setConditionCode);
-        Optional<String> programAreaCode = ndrCodeSetResolverService.getNDRCodeSetCode("PROGRAM_AREA", "HIV");
-        ProgramAreaType programArea = new ProgramAreaType();
-        programAreaCode.ifPresent(programArea::setProgramAreaCode);
-        condition.setProgramArea(programArea);
-        
+        setProgramCodeAndArea(condition);
         //Address
         AddressType address = addressTypeMapper.getPatientAddress(demographics);
         if (address.getStateCode() != null && address.getLGACode() != null) {

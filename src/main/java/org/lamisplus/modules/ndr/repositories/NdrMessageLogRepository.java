@@ -54,12 +54,12 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "                        INNER JOIN hiv_regimen_type hrt ON hrt.id = hac.regimen_type_id\n" +
             "            INNER JOIN hiv_regimen_resolver hrr ON hrr.regimensys=hr.description\n" +
             "            INNER JOIN ndr_code_set ncs ON ncs.code_description=hrr.regimen\n" +
-            "           LEFT JOIN ndr_code_set lgaCode ON lgaCode.code_description=facility_lga.name and lgaCode.code_set_nm = 'LGA'\n" +
+            "           LEFT JOIN ndr_code_set lgaCode ON replace(lgaCode.code_description,' ','')=facility_lga.name and lgaCode.code_set_nm = 'LGA'\n" +
             "            LEFT JOIN base_application_codeset enrollStatus ON enrollStatus.id= h.status_at_registration_id\n" +
-            "            LEFT JOIN ndr_code_set stateCode ON stateCode.code_description=facility_state.name and  stateCode.code_set_nm = 'STATES'\n" +
+            "            LEFT JOIN ndr_code_set stateCode ON replace(stateCode.code_description,' ','')=facility_state.name and  stateCode.code_set_nm = 'STATES'\n" +
             "            LEFT JOIN ndr_code_set emplCode ON emplCode.code_description=p.employment_status->>'display' and emplCode.code_set_nm = 'OCCUPATION_STATUS'\n" +
             "            LEFT JOIN ndr_code_set mariCode ON mariCode.code_description=p.marital_status->>'display' and mariCode.code_set_nm = 'MARITAL_STATUS'\n" +
-            "            LEFT JOIN ndr_code_set eduCode ON eduCode.code_description=p.education->>'display' and eduCode.code_set_nm = 'EDUCATIONAL_LEVEL'\n" +
+            "            LEFT JOIN ndr_code_set eduCode ON  eduCode.code_description=p.education->>'display' and eduCode.code_set_nm = 'EDUCATIONAL_LEVEL'\n" +
             "           LEFT JOIN base_application_codeset fsCodeset ON fsCodeset.id=hac.functional_status_id\n" +
             "            LEFT JOIN base_application_codeset csCodeset ON csCodeset.id=hac.clinical_stage_id\n" +
             "            LEFT JOIN ndr_code_set ndrFuncStatCodestatus ON ndrFuncStatCodestatus.code_description=fsCodeset.display\n" +
