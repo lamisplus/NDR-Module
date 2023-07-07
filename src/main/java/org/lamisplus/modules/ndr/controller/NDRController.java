@@ -29,33 +29,7 @@ public class NDRController {
 
     private final SimpMessageSendingOperations messagingTemplate;
 
-    //    @GetMapping("/message-header/{personId}")
-//    public void generateMessageHeaderType(@PathVariable("personId") Long personId){
-//        xmlTestService.shouldPrintMessageHeaderTypeXml (personId);
-//    }
-//
-//    @GetMapping("/patient-demographic/{personId}")
-//    public void generatePrintPatientDemographicsTypeXml(@PathVariable("personId") Long personId) {
-//        xmlTestService.shouldPrintPatientDemographicsTypeXml (personId);
-//    }
-//
-//    @GetMapping("/patient-address/{personId}")
-//    public void generatePatientAddressTypeXml(@PathVariable("personId") Long personId){
-//        xmlTestService.shouldPrintPatientAddressTypeXml (personId);
-//    }
-//
-//    @GetMapping("/patient-common-question/{personId}")
-//    public void generatePatientCommonQuestionXml(@PathVariable("personId") Long personId){
-//        xmlTestService.shouldPrintPatientCommonQuestionsTypeXml (personId);
-//    }
-//@GetMapping("/patient-specific-question/{personId}")
-//    public void generatePatientSpecificQuestionXml(@PathVariable("personId") Long personId){
-//        xmlTestService.shouldPrintPatientConditionSpecificQuestionsTypeXml (personId);
-//    }
-//    @GetMapping("/patient-clinical_encouters/{personId}")
-//    public void generatePatientClinicalEncounterXml(@PathVariable("personId") Long personId){
-//        xmlTestService.shouldPrintPatientConditionEncountersTypeXml (personId);
-//    }
+
     @GetMapping("/generate/{personId}")
     public void generatePatientXml(@PathVariable("personId") String personId, @RequestParam("facility") Long facility) {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -65,10 +39,7 @@ public class NDRController {
     }
 
     @GetMapping("/generate")
-    public boolean generateFacilityPatientXmls(
-             @RequestParam List<Long> facilityIds,
-             @RequestParam boolean isInitial
-    ){
+    public boolean generateFacilityPatientXmls(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial ){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<Boolean> result = new ArrayList<>();
@@ -86,11 +57,10 @@ public class NDRController {
     public void generateFacilitySelectedPatientXmls(
             @RequestParam List<Long> facilityIds,
             @RequestParam boolean initial,
-            @RequestParam List<String> patientIds
-    ){
+            @RequestParam List<String> patientIds){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");
         Stopwatch stopwatch = Stopwatch.createStarted();
-        facilityIds.forEach (facilityId -> ndrService.generateNDRXMLByFacilityAndListOfPatient(facilityId,initial,patientIds));
+        facilityIds.forEach (facilityId -> ndrOptmizationService.generateNDRXMLByFacilityAndListOfPatient(facilityId,initial,patientIds));
         messagingTemplate.convertAndSend("/topic/ndr-status", "end");
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
     }
@@ -101,9 +71,7 @@ public class NDRController {
     }
     
     @GetMapping("/optimization")
-    public ResponseEntity<Void> generateWithOptimization(
-            @RequestParam List<Long> facilityIds,
-            @RequestParam boolean isInitial) {
+    public ResponseEntity<Void> generateWithOptimization(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, isInitial));
         log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());

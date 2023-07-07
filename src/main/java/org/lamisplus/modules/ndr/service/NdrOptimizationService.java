@@ -119,7 +119,42 @@ public class NdrOptimizationService {
 		log.error("error list size {}", ndrErrors.size());
 	}
 	
-	
+	public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean initial, List<String> patientUuidList) {
+		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
+		log.info("folder -> "+ pathname);
+		ndrService.cleanupFacility(facilityId, pathname);
+		AtomicInteger generatedCount = new AtomicInteger();
+		AtomicInteger errorCount = new AtomicInteger();
+		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
+		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
+		log.info("patient size -> "+ patientUuidList.size());
+		patientUuidList.parallelStream()
+				.forEach(id -> {
+					if (getPatientNDRXml(id, facilityId, initial, ndrErrors)) {
+						generatedCount.getAndIncrement();
+						patientDemographicDTO[0] = data.getPatientDemographics(id, facilityId).get();
+					} else {
+						errorCount.getAndIncrement();
+					}
+				});
+		log.info("generated  {}/{}", generatedCount.get(), patientUuidList.size());
+		log.info("files not generated  {}/{}", errorCount.get(), patientUuidList.size());
+		File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
+		log.info("fileSize {} bytes ", ZipUtility.getFolderSize(folder));
+		if (ZipUtility.getFolderSize(folder) >= 15_000_000) {
+			log.info(BASE_DIR + "temp/" + facilityId + "/" + " will be split into two");
+		}
+		if (generatedCount.get() > 0) {
+			zipAndSaveTheFilesforDownload(
+					facilityId,
+					pathname,
+					generatedCount,
+					patientDemographicDTO[0],
+					ndrErrors
+			);
+		}
+		log.error("error list size {}", ndrErrors.size());
+	}
 	
 	
 	private boolean getPatientNDRXml(String patientId, long facilityId, boolean initial, List<NDRErrorDTO> ndrErrors) {

@@ -396,22 +396,7 @@ public class NDRService {
         }
     }
     
-    public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
-        cleanupFacility(facilityId);
-        if(isInitial){
-            bootData.init(patientUuidList);
-          // processAndGenerateNDRFiles(facilityId, patientUuidList);
-           
-        }else{
-            bootData.init(patientUuidList);
-//            Optional<Timestamp> lastGenerateDateTimeByFacilityId = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
-//            lastGenerateDateTimeByFacilityId.ifPresent(status -> {
-//                LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
-//                processAndGenerateNDRFiles(facilityId, patientUuidList, lastModified);
-          //  });
-        }
-        
-    }
+   
     
    
     private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR) {
