@@ -91,6 +91,36 @@ public class CommonQuestionsTypeMapper {
 		return null;
 	}
 	
+	public CommonQuestionsType getPatientCommonQuestion(PatientDemographicDTO demographics, boolean isHts) {
+//		  @XmlElement(name = "DiagnosisDate", required = true)
+		log.info("Generating common questions for patient with uuid {}", demographics.getPersonUuid());
+		try {
+			CommonQuestionsType common = new CommonQuestionsType();
+			FacilityType treatmentFacility = messageHeaderTypeMapper.getTreatmentFacility(demographics);
+			common.setDiagnosisFacility(treatmentFacility);
+			common.setHospitalNumber(demographics.getHospitalNumber());
+			common.setPatientAge(demographics.getAge());
+			if (demographics.getPatientSexCode() != null) {
+				if (demographics.getPatientSexCode().contains("F")) {
+					Map<String, Object> pStatus =
+							pregnancyStatus.getPregnancyStatus(demographics.getPersonUuid());
+					common.setPatientPregnancyStatusCode((String) pStatus.get("status"));
+				}
+			}
+			if (demographics.getDiagnosisDate() != null) {
+				common.setDiagnosisDate(DateUtil.getXmlDate(Date.valueOf(demographics.getDiagnosisDate())));
+			}else {
+				throw  new IllegalArgumentException("Diagnosis date cannot be null");
+			}
+			return common;
+		} catch (Exception e) {
+			log.error("An error occurred while Generating common questions for patient with uuid {}",
+					demographics.getPersonUuid());
+			log.error("Error Message: {}", e.getMessage());
+		}
+		return null;
+	}
+	
 	
 	
 	

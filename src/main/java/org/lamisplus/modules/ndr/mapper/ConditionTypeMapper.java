@@ -211,5 +211,13 @@ public class ConditionTypeMapper {
         
         return condition;
     }
+    
+    public ConditionType getConditionType(PatientDemographicDTO demographics, boolean isHts) {
+        ConditionType condition = new ConditionType();
+        //List of applications code set
+        setProgramCodeAndArea(condition);
+        
+        return condition;
+    }
 
 }

@@ -50,4 +50,12 @@ public interface HtsDto {
 //	protected String completedBy;
 
 //	protected String dateCompleted;
+	
+	String getHivRiskAssessment();
+	String getKnowledgeAssessment();
+	String getPostTestCounselling();
+	String getTestResult();
+	String getRecency();
+	String getSyndromicStiScreening();
+	
 }

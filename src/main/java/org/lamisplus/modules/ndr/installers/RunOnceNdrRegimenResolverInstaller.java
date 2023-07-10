@@ -6,7 +6,7 @@ import org.springframework.core.annotation.Order;
 
 @Order(1)
 @Installer(name = "run-once-ndr-regimen-resolver-installer",
-		description = "clean up NDR code set and regimens", version = 1)
+		description = "clean up NDR code set and regimens", version = 2)
 public class RunOnceNdrRegimenResolverInstaller extends AcrossLiquibaseInstaller {
 	public RunOnceNdrRegimenResolverInstaller() {
 		super("classpath:installers/ndr/schema/regimen-resolver.xml");

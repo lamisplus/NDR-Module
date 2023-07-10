@@ -513,3 +513,12 @@ VALUES( 'ABC(60mg)+3TC(30mg)+AZT(60mg)', 'ABC-3TC-AZT' );
 /* INSERT QUERY NO: 79 */
 INSERT INTO hiv_regimen_resolver(regimensys, regimen)
 VALUES( 'ABC(60mg)+3TC(30mg)+LPV/r(80/20mg/ml)', 'ABC-3TC-AZT' );
+
+INSERT INTO hiv_regimen_resolver(regimensys, regimen)
+VALUES( 'ABC/3TC/DTG10mg', 'ABC-3TC-DTG' );
+
+INSERT INTO hiv_regimen_resolver(regimensys, regimen)
+VALUES( 'TDF(300mg)+3TC', 'TDF-3TC-DTG');
+
+
+
