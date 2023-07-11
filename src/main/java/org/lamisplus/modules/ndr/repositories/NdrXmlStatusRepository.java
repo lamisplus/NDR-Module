@@ -1,5 +1,5 @@
 package org.lamisplus.modules.ndr.repositories;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ARTClinicalInfo;
 import org.lamisplus.modules.ndr.domain.dto.LabDTO;
 import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;

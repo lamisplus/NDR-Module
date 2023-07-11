@@ -3,8 +3,8 @@ package org.lamisplus.modules.ndr.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import liquibase.pro.packaged.L;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
 import org.lamisplus.modules.base.domain.entities.OrganisationUnit;
 import org.lamisplus.modules.base.domain.entities.User;
 import org.lamisplus.modules.base.domain.repositories.OrganisationUnitRepository;
@@ -20,9 +21,7 @@ import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
 import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
-import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
-import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
+import org.lamisplus.modules.ndr.domain.dto.*;
 import org.lamisplus.modules.ndr.domain.entities.NDRMessages;
 import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;
@@ -36,17 +35,14 @@ import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.ZipUtility;
-import org.lamisplus.modules.patient.domain.dto.PersonResponseDto;
-import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.Patient;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXParseException;
-import reactor.core.publisher.Mono;
+
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -64,6 +60,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 
 @Service
 @RequiredArgsConstructor
@@ -99,17 +96,19 @@ public class NDRService {
     private final PersonRepository personRepository;
 
     private final NDRMessagesRepository ndrMessagesRepository;
+    
+    private final BootData bootData;
 
     private final UserService userService;
 
-    private static final String BASE_DIR = "runtime/ndr/transfer/";
+    public static final String BASE_DIR = "runtime/ndr/transfer/";
 
-    private static final String   USER_DIR = "user.dir";
+    public static final String   USER_DIR = "user.dir";
 
-    private static final String JAXB_ENCODING = "UTF-8";
-    private static final String XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION = "\n<!-- This XML was generated from LAMISPlus application -->";
-    private static final String HEADER_BIND_COMMENT = "com.sun.xml.bind.xmlHeaders";
-    private final AtomicLong messageId = new AtomicLong (0);
+    public static final String JAXB_ENCODING = "UTF-8";
+    public static final String XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION = "\n<!-- This XML was generated from LAMISPlus application -->";
+    public static final String HEADER_BIND_COMMENT = "com.sun.xml.bind.xmlHeaders";
+    public final AtomicLong messageId = new AtomicLong (0);
 
 //    public void shouldPrintMessageHeaderTypeXml(Long id) {
 //        try {
@@ -152,7 +151,7 @@ public class NDRService {
 //        }
 //    }
 
-    private Marshaller getMarshaller(JAXBContext jaxbContext) throws JAXBException {
+    public Marshaller getMarshaller(JAXBContext jaxbContext) throws JAXBException {
         return jaxbContext.createMarshaller ();
     }
 
@@ -397,26 +396,13 @@ public class NDRService {
         }
     }
     
-    public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean isInitial, List<String> patientUuidList) {
-        cleanupFacility(facilityId);
-        if(isInitial){
-            processAndGenerateNDRFiles(facilityId, patientUuidList);
-        }else{
-            Optional<Timestamp> lastGenerateDateTimeByFacilityId = ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
-            lastGenerateDateTimeByFacilityId.ifPresent(status -> {
-                LocalDateTime lastModified = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
-                processAndGenerateNDRFiles(facilityId, patientUuidList, lastModified);
-            });
-        }
-        
-    }
+   
     
    
     private void processAndGenerateNDRFiles(Long facilityId, List<String> personUuidsForNDR) {
         String pushIdentifier = UUID.randomUUID().toString();
         List<NDRStatus> ndrStatusList =
                 personUuidsForNDR.parallelStream ()
-                        .parallel()
                         .map (patientId -> shouldPrintPatientContainerXml (patientId, facilityId, true, pushIdentifier))
                         .collect (Collectors.toList ());
        
@@ -445,7 +431,7 @@ public class NDRService {
         processAndZipFacilityNDRXML(facilityId, personUuidsForNDR, messageLogs.size(), pushIdentifier);
     }
     
-    private void processAndZipFacilityNDRXML(Long facilityId, List<String> personUuidsForNDR, int filesSize, String pushIdentifier) {
+    public void processAndZipFacilityNDRXML(Long facilityId, List<String> personUuidsForNDR, int filesSize, String pushIdentifier) {
         Optional<String> personId = personUuidsForNDR.stream().findFirst();
         if(personId.isPresent()) {
             Optional<PatientDemographics> patientDemographicsOptional=
@@ -468,9 +454,9 @@ public class NDRService {
     
     
     private  NdrMessageLog  saveMessageLog (NdrMessageLog ndrStatus) {
-       List<NdrMessageLog> list = ndrMessageLogRepository.getNdrMessageLogByIdentifier(ndrStatus.getIdentifier());
-       if (!list.isEmpty()) {
-           NdrMessageLog ndrMessageLog = list.get(0);
+       Optional<NdrMessageLog> list = ndrMessageLogRepository.findFirstByIdentifier(ndrStatus.getIdentifier());
+       if (list.isPresent()) {
+           NdrMessageLog ndrMessageLog = list.get();
            ndrMessageLog.setLastUpdated(LocalDateTime.now());
            ndrMessageLog.setIdentifier(ndrStatus.getIdentifier());
            //coming back here
@@ -496,37 +482,49 @@ public class NDRService {
            return new NDRStatus(id, identifier, fileName);
        }catch (JAXBException e){
            log.error(" error generating file with uuid {}", demographics.getPersonUuid());
-           Throwable linkedException = e.getCause();
-           if (linkedException instanceof SAXParseException) {
-               int lineNum = ((SAXParseException) linkedException).getLineNumber();
-               int colNum = ((SAXParseException) linkedException).getColumnNumber();
-               log.error("line number {}",lineNum);
-               log.error("line colNum {}",colNum);
-               log.error("container {}", container);
-           }
+           e.printStackTrace();
        }
        return null;
     }
-
-    private String generateFileName( PatientDemographics demographics, String identifier) {
-        String sCode = "";
-        String lCode = "";
-        Optional<String> stateCode =
-                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
-        if(stateCode.isPresent()) sCode = stateCode.get();
-        Optional<String> lgaCode =
-                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
-        if(lgaCode.isPresent()) lCode = lgaCode.get();
-        Date date = new Date ();
-        SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
-        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
-                StringUtils.leftPad (lCode, 3, "0") +
-                "_" + demographics.getDatimId() + "_" + StringUtils.replace (identifier, "/", "-")
-                + "_" + dateFormat.format (date) + ".xml";
-        return RegExUtils.replaceAll (fileName, "/", "-");
+    
+    public String processAndGenerateNDRFile(
+            long facilityId,
+            Marshaller jaxbMarshaller,
+            Container container,
+            PatientDemographicDTO demographics,
+            Long id, List<NDRErrorDTO> ndrErrors) {
+        String fileName = null;
+        try {
+            //creating file
+            String path = BASE_DIR + "temp/" + facilityId + "/";
+            File dir = new File(path);
+            if (!dir.exists()) {
+                log.info("directory created => : {}", dir.mkdirs());
+            }
+            fileName = generateFileName(demographics);
+            File file = new File(path + fileName);
+            jaxbMarshaller.marshal(container, file);
+            log.info("file generated: {}", fileName);
+        }catch (Exception e){
+            log.error(" An error occur while generating file with patient hospital number {} Error: {}",
+                    demographics.getHospitalNumber(),
+                    e.getMessage());
+            e.printStackTrace();
+            ndrErrors.add(new NDRErrorDTO(demographics.getPersonUuid(), demographics.getHospitalNumber(), e.getMessage()));
+        }
+        return fileName;
     }
 
-    private String zipFiles(PatientDemographics demographics) {
+    private String generateFileName( PatientDemographics demographics, String identifier) {
+        return formulateFileName(demographics, identifier, ndrCodeSetResolverService);
+    }
+    
+    private String generateFileName( PatientDemographicDTO demographics) {
+        return formulateFileName(demographics);
+    }
+    
+    
+    public String zipFiles(PatientDemographics demographics) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
         String sCode = "";
         String lCode = "";
@@ -545,9 +543,10 @@ public class NDRService {
         String finalFileName = fileName.replace(" ", "").replace(",", "")
                 .replace(".", "");
         log.info ("file name for download {}", finalFileName);
+        String outputZipFile = null;
         try {
             String sourceFolder = BASE_DIR + "temp/" + demographics.getFacilityId() + "/";
-            String outputZipFile = BASE_DIR + "ndr/" + finalFileName;
+            outputZipFile = BASE_DIR + "ndr/" + finalFileName;
             new File (BASE_DIR + "ndr").mkdirs ();
             new File (Paths.get (outputZipFile).toAbsolutePath ().toString ()).createNewFile ();
             List<File> files = new ArrayList<> ();
@@ -557,12 +556,47 @@ public class NDRService {
             ZipUtility.zip (files, Paths.get (outputZipFile).toAbsolutePath ().toString (), fifteenMB);
             return finalFileName;
         } catch (Exception exception) {
-            exception.printStackTrace ();
+            log.error ("An error occurred while creating temporary file " + outputZipFile);
+        }
+        return null;
+    }
+    
+    public String zipFiles(PatientDemographics demographics, String sourceFolder) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
+        String sCode = "";
+        String lCode = "";
+        Optional<String> stateCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
+        if(stateCode.isPresent()) sCode = stateCode.get();
+        Optional<String> lgaCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
+        if(lgaCode.isPresent()) lCode = lgaCode.get();
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad ( lCode, 3, "0") + "_" + demographics.getDatimId() +
+                "_" + demographics.getFacilityName()+"bio_recapture"+ "_" + dateFormat.format (new Date());
+        
+        fileName = RegExUtils.replaceAll (fileName, "/", "-");
+        log.info ("file name for download {}", fileName);
+        String finalFileName = fileName.replace(" ", "").replace(",", "")
+                .replace(".", "");
+        String outputZipFile = null;
+        try {
+            outputZipFile = BASE_DIR + "ndr/" + finalFileName;
+            new File (BASE_DIR + "ndr").mkdirs ();
+            new File (Paths.get (outputZipFile).toAbsolutePath ().toString ()).createNewFile ();
+            List<File> files = new ArrayList<> ();
+            files = getFiles (sourceFolder, files);
+            log.info ("Files: {}", files);
+            long fifteenMB = FileUtils.ONE_MB * 15;
+            ZipUtility.zip (files, Paths.get (outputZipFile).toAbsolutePath ().toString (), fifteenMB);
+            return finalFileName;
+        } catch (Exception exception) {
+            log.error ("An error occurred while creating temporary file " + outputZipFile);
         }
         return null;
     }
 
-    private List<File> getFiles(String sourceFolder, List<File> files) {
+    public List<File> getFiles(String sourceFolder, List<File> files) {
         try (Stream<Path> walk = Files.walk (Paths.get (sourceFolder))) {
             files = walk.filter (Files::isRegularFile)
                     .map (Path::toFile)
@@ -591,13 +625,22 @@ public class NDRService {
     }
 
 
-    private void cleanupFacility(Long facilityId) {
+    public void cleanupFacility(Long facilityId) {
         String folder = BASE_DIR + "temp/" + facilityId + "/";
         try {
-            if (Files.isDirectory (Paths.get (folder))) {
-                FileUtils.deleteDirectory (new File (folder));
+            if (Files.isDirectory(Paths.get(folder))) {
+                FileUtils.deleteDirectory(new File(folder));
             }
         } catch (IOException ignored) {
+        }
+    }
+        public void cleanupFacility(Long facilityId, String folder) {
+            try {
+                if (Files.isDirectory(Paths.get(folder))) {
+                    FileUtils.deleteDirectory(new File(folder));
+                }
+            } catch (IOException ignored) {
+            }
         }
 //        String file = BASE_DIR + "ndr/";
 //        try (Stream<Path> list = Files.list (Paths.get (BASE_DIR + "ndr/"))) {
@@ -611,9 +654,9 @@ public class NDRService {
 //                    });
 //        } catch (IOException e) {
 //        }
-    }
+    
 
-    private Set<String> listFilesUsingDirectoryStream(String dir) throws IOException {
+    public Set<String> listFilesUsingDirectoryStream(String dir) throws IOException {
         Set<String> fileList = new HashSet<> ();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream (Paths.get (dir))) {
             for (Path path : stream) {
@@ -728,7 +771,7 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
         List<NdrXmlStatus> ndrXmlStatusList= ndrXmlStatusRepository.getAllFiles ();
         List<NdrXmlStatusDto> ndrXmlStatusDtos = new ArrayList<>();
         Iterator iterator = ndrXmlStatusList.iterator();
-        System.out.println("SIZE = "+ndrXmlStatusList.size());
+        log.info("SIZE = "+ndrXmlStatusList.size());
         while (iterator.hasNext()){
             NdrXmlStatus ndrXmlStatus = (NdrXmlStatus) iterator.next();
             NdrXmlStatusDto ndrXmlStatusDto = new NdrXmlStatusDto();
@@ -738,6 +781,11 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
             ndrXmlStatusDto.setLastModified(ndrXmlStatus.getLastModified());
             ndrXmlStatusDto.setId(ndrXmlStatus.getId());
             try {
+                if(ndrXmlStatus.getError() != null){
+                    ndrXmlStatusDto.setError(true);
+                }else {
+                    ndrXmlStatusDto.setError(false );
+                }
                 if (null == ndrXmlStatus.getPercentagePushed()) {
                     ndrXmlStatusDto.setPercentagePushed(100l);
                     ndrXmlStatusDto.setCompletelyPushed(Boolean.TRUE);
@@ -749,7 +797,6 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
 
                 }
             }catch (Exception e){
-                System.out.println("Doc here is within here");
             }
             ndrXmlStatusDtos.add(ndrXmlStatusDto);
 
@@ -757,6 +804,49 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
 
         }
         return ndrXmlStatusDtos;
+    }
+    
+    public List<NDRErrorDTO> getNDRXmlFileErrors(int fileId) throws IOException {
+        NdrXmlStatus xmlStatus = ndrXmlStatusRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException(NdrXmlStatus.class, "id", fileId + " not found"));
+        JsonNode error = xmlStatus.getError();
+        if(error != null) {
+                ObjectMapper mapper = new ObjectMapper();
+            return mapper.readerForListOf(NDRErrorDTO.class)
+                .readValue(error);
+        }
+        return new ArrayList<>();
+    }
+    
+    static String formulateFileName(PatientDemographics demographics, String identifier, NDRCodeSetResolverService ndrCodeSetResolverService) {
+        String sCode = "";
+        String lCode = "";
+        Optional<String> stateCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("STATES", demographics.getState());
+        if(stateCode.isPresent()) sCode = stateCode.get();
+        Optional<String> lgaCode =
+                ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
+        if(lgaCode.isPresent()) lCode = lgaCode.get();
+        Date date = new Date ();
+        SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad (lCode, 3, "0") +
+                "_" + demographics.getDatimId() + "_" + StringUtils.replace (identifier, "/", "-")
+                + "_" +dateFormat.format (date) + ".xml";
+        return RegExUtils.replaceAll (fileName, "/", "-");
+    }
+    
+    static String formulateFileName(
+            PatientDemographicDTO demographics) {
+        String sCode = demographics.getStateCode();
+        String lCode = demographics.getLgaCode();
+        Date date = new Date ();
+        SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+                StringUtils.leftPad (lCode, 3, "0") +
+                "_" + demographics.getFacilityId() + "_" + StringUtils.replace (demographics.getPatientIdentifier(), "/", "-")
+                + "_" +dateFormat.format (date) + ".xml";
+        return RegExUtils.replaceAll (fileName, "/", "-");
     }
 
 }

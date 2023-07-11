@@ -16,6 +16,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -39,6 +40,14 @@ public class BiometricTemplateMapper {
                     FingerPrintType fingerPrintType = new FingerPrintType();
                     RightHandType rightHandType = new RightHandType();
                     LeftHandType leftHandType = new LeftHandType();
+                    List<BiometricDto> rights = biometrics.stream().filter(finger -> finger.getTemplateType().contains("Right"))
+                            .collect(Collectors.toList());
+                    List<BiometricDto> lefts = biometrics.stream().filter(finger -> finger.getTemplateType().contains("Left"))
+                            .collect(Collectors.toList());
+                    
+                    if(rights.isEmpty() || lefts.isEmpty()){
+                         throw new IllegalArgumentException("At least one right finger or left finger must be captured");
+                    }
                     biometrics.forEach(biometricDto -> {
                         setEnrollmentDate(biometricDto, fingerPrintType);
                         String type = biometricDto.getTemplateType();
@@ -46,37 +55,37 @@ public class BiometricTemplateMapper {
                         if (StringUtils.containsIgnoreCase(type, "RIGHT")) {
                             if (StringUtils.containsIgnoreCase(type, "Thumb")) {
                                 rightHandType.setRightThumb(template);
-                                rightHandType.setRightIndexQuality(null);
+                                rightHandType.setRightIndexQuality(biometricDto.getQuality());
                             } else if (StringUtils.containsIgnoreCase(type, "Index")) {
                                 rightHandType.setRightIndex(template);
-                                rightHandType.setRightIndexQuality(null);
+                                rightHandType.setRightIndexQuality(biometricDto.getQuality());
                             } else if (StringUtils.containsIgnoreCase(type, "Middle")) {
                                 rightHandType.setRightMiddle(template);
-                                rightHandType.setRightMiddleQuality(null);
+                                rightHandType.setRightMiddleQuality(biometricDto.getQuality());
                             } else if (StringUtils.containsIgnoreCase(type, "Little")) {
                                 rightHandType.setRightSmall(template);
-                                rightHandType.setRightSmallQuality(null);
+                                rightHandType.setRightSmallQuality(biometricDto.getQuality());
                             } else {
                                 rightHandType.setRightWedding(template);
-                                rightHandType.setRightWeddingQuality(null);
+                                rightHandType.setRightWeddingQuality(biometricDto.getQuality());
                             }
                             fingerPrintType.setRightHand(rightHandType);
                         } else {
                             if (StringUtils.containsIgnoreCase(type, "Thumb")) {
                                 leftHandType.setLeftThumb(template);
-                                leftHandType.setLeftThumbQuality(null);
+                                leftHandType.setLeftThumbQuality(biometricDto.getQuality());
                             } else if (StringUtils.containsIgnoreCase(type, "Index")) {
                                 leftHandType.setLeftIndex(template);
-                                leftHandType.setLeftIndexQuality(null);
+                                leftHandType.setLeftIndexQuality(biometricDto.getQuality());
                             } else if (StringUtils.containsIgnoreCase(type, "Middle")) {
                                 leftHandType.setLeftMiddle(template);
-                                leftHandType.setLeftMiddleQuality(null);
+                                leftHandType.setLeftMiddleQuality(biometricDto.getQuality());
                             } else if (StringUtils.containsIgnoreCase(type, "Little")) {
                                 leftHandType.setLeftSmall(template);
-                                leftHandType.setLeftSmallQuality(null);
+                                leftHandType.setLeftSmallQuality(biometricDto.getQuality());
                             } else {
                                 leftHandType.setLeftWedding(template);
-                                leftHandType.setLeftWeddingQuality(null);
+                                leftHandType.setLeftWeddingQuality(biometricDto.getQuality());
                             }
                             fingerPrintType.setLeftHand(leftHandType);
                         }
@@ -89,6 +98,7 @@ public class BiometricTemplateMapper {
         }catch (Exception e) {
           log.error("An error occurred while creating the fingerPrint");
           log.error("Error message {}",e.getMessage());
+          throw new IllegalArgumentException(e.toString());
         }
         return null;
     }
