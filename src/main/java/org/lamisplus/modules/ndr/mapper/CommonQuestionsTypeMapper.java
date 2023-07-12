@@ -1,6 +1,7 @@
 package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.service.StatusManagementService;
 import org.lamisplus.modules.ndr.domain.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.CommonQuestionsType;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommonQuestionsTypeMapper {
 	
 	private final MessageHeaderTypeMapper messageHeaderTypeMapper;
@@ -27,13 +29,13 @@ public class CommonQuestionsTypeMapper {
 	
 	
 	public CommonQuestionsType getPatientCommonQuestion(PatientDemographics demographics) {
+		log.info("Generating common questions for patient with uuid {}", demographics.getPersonUuid());
 		try {
 			CommonQuestionsType common = new CommonQuestionsType();
 			FacilityType treatmentFacility = messageHeaderTypeMapper.getTreatmentFacility(demographics);
 			common.setDiagnosisFacility(treatmentFacility);
 			common.setHospitalNumber(demographics.getHospitalNumber());
 			common.setPatientAge(demographics.getAge());
-			
 			if (demographics.getSex() != null) {
 				if (demographics.getSex().contains("F")) {
 					Map<String, Object> pStatus =
@@ -48,7 +50,9 @@ public class CommonQuestionsTypeMapper {
 			}
 			return common;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("An error occurred while Generating common questions for patient with uuid {}",
+					demographics.getPersonUuid());
+			log.error("Error Message: {}", e.getMessage());
 		}
 		
 		return null;
