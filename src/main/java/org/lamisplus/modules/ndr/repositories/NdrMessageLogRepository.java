@@ -181,4 +181,10 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\t\t   \n" +
           "\t\t   GROUP BY lo.patient_uuid", nativeQuery = true)
   Optional<PatientLabEncounterDTO> getPatientLabEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
+
+  @Query(value = "SELECT client_code from hts_client where facility_id=?1 AND date_visit > ?2 AND archived = 0 ", nativeQuery = true)
+  List<String>getHtsClientCode(Long facilityId, LocalDate lastModified);
+
+  @Query(value = "", nativeQuery = true)
+  Optional<PatientDemographicDTO> getHtsPatientDemographics(String clientCode, LocalDate lastModified);
 }
