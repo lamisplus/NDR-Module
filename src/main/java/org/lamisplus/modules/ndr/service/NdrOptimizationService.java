@@ -193,7 +193,7 @@ public class NdrOptimizationService {
 				initial,
 				ndrErrors);
 		if (fileName != null) {
-			saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName);
+			saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName,"treatment");
 		}
 		return fileName != null;
 	}
@@ -380,16 +380,16 @@ public class NdrOptimizationService {
 		return new ArrayList<>();
 	}
 	
-	private void saveTheXmlFile(String identifier, String fileName) {
+	public void saveTheXmlFile(String identifier, String fileName, String fileTye) {
 		NdrMessageLog ndrMessageLog = new NdrMessageLog();
 		ndrMessageLog.setIdentifier(identifier);
 		ndrMessageLog.setFile(fileName);
 		ndrMessageLog.setLastUpdated(LocalDateTime.now());
-		ndrMessageLog.setFileType("treatment");
+		ndrMessageLog.setFileType(fileTye);
 		data.save(ndrMessageLog);
 	}
 	
-	private void zipAndSaveTheFilesforDownload(
+	public void zipAndSaveTheFilesforDownload(
 			Long facilityId,
 			String pathname,
 			AtomicInteger count,
@@ -402,7 +402,7 @@ public class NdrOptimizationService {
 		}
 	}
 	
-	private void storeTheFileInBD(Long facilityId, AtomicInteger count, PatientDemographicDTO patient, List<NDRErrorDTO> ndrErrors, String zipFileName) {
+	public void storeTheFileInBD(Long facilityId, AtomicInteger count, PatientDemographicDTO patient, List<NDRErrorDTO> ndrErrors, String zipFileName) {
 		NdrXmlStatus ndrXmlStatus = new NdrXmlStatus();
 		if(ndrErrors.size() > 0){
 			JsonNode node = getNode(ndrErrors);
