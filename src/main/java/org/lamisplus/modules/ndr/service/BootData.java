@@ -1,12 +1,11 @@
 package org.lamisplus.modules.ndr.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
-import org.lamisplus.modules.ndr.domain.NDRDATA;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.entities.NDRDATA;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ARTClinicalInfo;
 import org.lamisplus.modules.ndr.domain.dto.ArtCommencementDTO;
 import org.lamisplus.modules.ndr.domain.dto.LabDTO;
@@ -51,6 +50,7 @@ public class BootData {
 						log.info("demographic is present {}", demographic.isPresent());
 						demographic.ifPresent(person -> {
 							log.info("start processing {} out {}", count[0], patientIds.size());
+							
 							List<ARTClinicalInfo> clinicalInfos =
 									ndrXmlStatusRepository.getClinicalInfoByPersonUuid(patientId);
 							
@@ -66,7 +66,7 @@ public class BootData {
 							Optional<ArtCommencementDTO> commencement =
 									nDRCodeSetRepository.getArtCommencementByPatientUuid(patientId);
 							NDRDATA ndrdata =
-									buildData(map, person, clinicalInfos, labs, pharmacies, commencement);
+									buildData(map, person, clinicalInfos, labs, pharmacies, commencement.get());
 							nDRDATARepository.save(ndrdata);
 							log.info("done processing {} out {}", count[0], patientIds.size());
 							count[0]++;
@@ -86,7 +86,7 @@ public class BootData {
 			PatientDemographics person,
 			List<ARTClinicalInfo> clinicalInfos,
 			List<LabDTO> labs, List<ArtPharmacy> pharmacies,
-			Optional<ArtCommencementDTO> commencement) {
+			ArtCommencementDTO commencement) {
 		return NDRDATA.builder()
 				.patientId(person.getPersonUuid())
 				.commencement(map.valueToTree(commencement))

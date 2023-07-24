@@ -51,10 +51,12 @@ public class IndividualReportType {
     
     @XmlElement(name = "PatientDemographics", required = true)
     protected PatientDemographicsType patientDemographics;
+   
     @XmlElement(name = "Condition", required = true)
     protected List<ConditionType> condition;
     @XmlElement(name = "HIVTestingReport")
     protected List<HIVTestingReportType> hivTestingReport;
+   
     @XmlElement(name = "PMTCT")
     protected PMTCTType pmtct;
 
