@@ -21,7 +21,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "                             p.date_of_birth AS dateOfBirth,\n" +
             "                             p.id AS personId,\n" +
             "                             p.hospital_number AS hospitalNumber,\n" +
-            "             concat( boui.code, '_', p.uuid) as patientIdentifier,\n" +
+            "             concat( boui.code,'_', p.uuid) as patientIdentifier,\n" +
             "                            EXTRACT(YEAR FROM AGE(NOW(), date_of_birth)) AS age,\n" +
             "                             (CASE WHEN INITCAP(p.sex)='Female' THEN 'F' ELSE 'M' END) AS patientSexCode,\n" +
             "                             p.date_of_birth AS patientDateOfBirth, 'FAC' AS facilityTypeCode,\n" +
@@ -187,7 +187,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
 
   @Query(value = "SELECT DISTINCT ON (hc.uuid) hc.uuid as uuid, hc.client_code AS clientCode,\n" +
           "             (CASE WHEN hc.person_uuid IS NULL THEN INITCAP(hc.extra->>'gender') ELSE INITCAP(pp.sex) END) AS sex, \n" +
-          "        (CASE WHEN hc.person_uuid IS NULL THEN sexMigrated.code ELSE sex.code END) AS patientSexCode, \n" +
+          "        (CASE WHEN sex IS NULL THEN sexMigrated.code ELSE sex.code END) AS patientSexCode, \n" +
           "             (CASE WHEN hc.person_uuid IS NOT NULL THEN pp.date_of_birth       \n" +
           "             WHEN hc.person_uuid IS NULL AND LENGTH(hc.extra->>'date_of_birth') > 0    \n" +
           "                         AND hc.extra->>'date_of_birth' != '' THEN CAST(NULLIF(hc.extra->>'date_of_birth', '') AS DATE)        \n" +
@@ -206,7 +206,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\n" +
           "              'NGN' AS countryCode,\n" +
           "              'FAC' AS facilityCode,\n" +
-          "              facility.name AS treatmentfacility,       \n" +
+          "              facility.name AS facilityName,       \n" +
           "              state.name AS state,   \n" +
           "              facilityState.code AS stateCode,\n" +
           "              lga.name AS lga,    \n" +
@@ -219,7 +219,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "             edu.code AS patientEducationLevelCode,        \n" +
           "             pp.employment_status->>'display' as occup, \n" +
           "             occupation.code AS patientOccupationCode,\n" +
-          "             boui.code as datimCode,       \n" +
+          "             boui.code as facilityId,       \n" +
           "             hc.others->>'latitude' AS HTSLatitude,       \n" +
           "             hc.others->>'longitude' AS HTSLongitude,         \n" +
           "             (CASE WHEN hc.person_uuid IS NULL THEN hc.extra->>'client_address' ELSE null END) AS clientAddress,       \n" +
@@ -245,76 +245,203 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "             WHERE hc.archived=0 AND hc.facility_id =?1 and hc.client_code =?2\n" +
           "\t\t\t AND hc.date_modified > ?3", nativeQuery = true)
   Optional<PatientDemographicDTO> getHtsPatientDemographics(long facilityId,  String clientCode, LocalDateTime lastModified);
+//
+//  @Query(value = "SELECT hc.person_uuid AS personUuid, hc.uuid as visitId, hc.testing_setting as setting, 'YES' as firstTimeVisit, hc.client_code AS clientCode, hc.date_visit  as visitDate, \n" +
+//          "tr.screeningTestResult,\n" +
+//          "tr.screeningTestResultDate, tr.confirmatoryTestResult, \n" +
+//          "tr.confirmatoryTestResultDate, \n" +
+//          "(CASE WHEN tr.tieBreakerTestResult IS NULL OR tr.tieBreakerTestResult='' THEN tr.confirmatoryTestResult\n" +
+//          "ELSE tr.tieBreakerTestResult END) AS tieBreakerTestResult,\n" +
+//          "(CASE WHEN tr.tieBreakerTestResult IS NULL OR tr.tieBreakerTestResult='' THEN tr.confirmatoryTestResultDate\n" +
+//          "ELSE tr.tieBreakerTestResultDate END) AS tieBreakerTestResultDate,\n" +
+//          "CAST(risk_assessment ->> 'everHadSexualIntercourse' AS BOOLEAN) AS \teverHadSexualIntercourse,\n" +
+//          "CAST(risk_assessment ->> 'bloodTransfusionInLast3Months' AS BOOLEAN) AS bloodTransfussionInLast3Months,\n" +
+//          "CAST(risk_assessment ->> 'unprotectedSexWithCasualPartnerInLast3Months' AS BOOLEAN) AS unprotectedSexWithCasualPartnerinLast3Months,\n" +
+//          "CAST(risk_assessment ->> 'moreThan1SexPartnerDuringLast3Months' AS BOOLEAN) AS moreThan1SexPartnerDuringLast3Months,\n" +
+//          "CAST(risk_assessment ->> 'stiInLast3Months' AS BOOLEAN) AS stiInLast3Months,\n" +
+//          "\n" +
+//          "--ClinicalTBScreeningType\n" +
+//          "CAST(tb_screening ->> 'currentlyCough' AS BOOLEAN) AS currentlyCough,\n" +
+//          "CAST(tb_screening ->> 'weightLoss' AS BOOLEAN) AS weightLoss,\n" +
+//          "CAST(tb_screening ->> 'fever' AS BOOLEAN) AS fever,\n" +
+//          "CAST(tb_screening ->> 'nightSweats' AS BOOLEAN) AS nightSweats,\n" +
+//          "--SyndromicSTIScreeningType\n" +
+////          "CAST(tb_screening ->> 'currentlyCough' AS BOOLEAN) AS currentlyCough,\n" +
+////          "CAST(tb_screening ->> 'weightLoss' AS BOOLEAN) AS weightLoss,\n" +
+////          "CAST(tb_screening ->> 'fever' AS BOOLEAN) AS fever,\n" +
+////          "CAST(tb_screening ->> 'nightSweats' AS BOOLEAN) AS nightSweats, \n" +
+//          "--PostTesting\n" +
+//          "CASE WHEN CAST(post_test_counseling ->> 'hivTestBefore' AS VARCHAR) ILIKE '%Not%' THEN false\n" +
+//          "\t ELSE true END AS testedForHIVBeforeWithinThisYear,\n" +
+//          "CASE WHEN post_test_counseling ->> 'hivRequestResult'='' \n" +
+//          "\t  OR post_test_counseling ->> 'hivRequestResult' ILIKE 'false' THEN FALSE ELSE true END AS hivRequestAndResultFormSignedByTester,\n" +
+//          "CASE WHEN post_test_counseling ->> 'hivRequestResultCt'='' \n" +
+//          "\t\tOR post_test_counseling ->> 'hivRequestResultCt' ILIKE 'false' THEN FALSE ELSE TRUE END AS hivRequestAndResultFormFilledWithCTIForm,\n" +
+//          "CASE WHEN post_test_counseling ->> 'clientReceivedHivTestResult'=''\n" +
+//          "\tOR post_test_counseling ->> 'clientReceivedHivTestResult' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientRecievedHIVTestResult,\n" +
+//          "CASE WHEN post_test_counseling ->> 'postTestCounseling' = ''\n" +
+//          "OR post_test_counseling ->> 'postTestCounseling' ILIKE 'false' THEN FALSE ELSE TRUE END  AS postTestCounsellingDone,\n" +
+//          "CASE WHEN post_test_counseling ->> 'riskReduction'=''\n" +
+//          "OR post_test_counseling ->> 'riskReduction' ILIKE 'false' THEN  FALSE ELSE TRUE  END AS riskReductionPlanDeveloped,\n" +
+//          "CASE WHEN post_test_counseling ->> 'postTestDisclosure' = ''\n" +
+//          "OR post_test_counseling ->> 'postTestDisclosure' ='false' THEN FALSE ELSE TRUE  END AS postTestDisclosurePlanDeveloped,\n" +
+//          "CASE WHEN post_test_counseling ->> 'bringPartnerHivtesting' =''\n" +
+//          "OR post_test_counseling ->> 'bringPartnerHivtesting' ILIKE 'false'THEN FALSE ELSE TRUE  END AS willBringPartnerForHIVTesting,\n" +
+//          "CASE WHEN post_test_counseling ->> 'childrenHivtesting' =''\n" +
+//          "OR post_test_counseling ->> 'childrenHivtesting' ILIKE 'false' THEN FALSE ELSE TRUE  END AS willBringOwnChildrenForHIVTesting,\n" +
+//          "CASE WHEN post_test_counseling ->> 'informationFp' = ''\n" +
+//          "OR post_test_counseling ->> 'informationFp' ILIKE 'false' THEN FALSE ELSE TRUE  END AS providedWithInformationOnFPandDualContraception,\n" +
+//          "CASE WHEN post_test_counseling ->> 'partnerFpThanCondom' =''\n" +
+//          "OR post_test_counseling ->> 'partnerFpThanCondom' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientOrPartnerUseFPMethodsOtherThanCondoms,\n" +
+//          "CASE WHEN post_test_counseling ->> 'partnerFpUseCondom' =''\n" +
+//          "OR post_test_counseling ->> 'partnerFpUseCondom'ILIKE 'false' THEN FALSE ELSE TRUE END  AS clientOrPartnerUseCondomsAsOneFPMethods,\n" +
+//          "CASE WHEN post_test_counseling ->> 'correctCondomUse' =''\n" +
+//          "OR post_test_counseling ->> 'correctCondomUse' ILIKE 'false' THEN FALSE ELSE TRUE END AS correctCondomUseDemonstrated,\n" +
+//          "CASE WHEN post_test_counseling ->> 'condomProvidedToClient' =''\n" +
+//          "OR  post_test_counseling ->> 'condomProvidedToClient' ILIKE 'false' THEN FALSE ELSE TRUE END  AS condomsProvidedToClient,\n" +
+//          "CASE WHEN post_test_counseling ->> 'referredToServices'=''\n" +
+//          "OR post_test_counseling ->> 'referredToServices' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientReferredToOtherServices\n" +
+//          "from hts_client hc\n" +
+//          "INNER JOIN \n" +
+//          "(SELECT person_uuid AS personUuid, uuid, client_code AS clientCode, \n" +
+//          "CASE WHEN test1 ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS screeningTestResult,\n" +
+//          "(CASE WHEN (test1 ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
+//          "\tELSE CAST(test1 ->> 'date' AS DATE) END) AS screeningTestResultDate,\n" +
+//          "CASE WHEN confirmatory_test ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS confirmatoryTestResult,\n" +
+//          "(CASE WHEN (confirmatory_test ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
+//          "\tELSE CAST(confirmatory_test ->> 'date' AS DATE) END) AS confirmatoryTestResultDate,\n" +
+//          "CASE WHEN tie_breaker_test ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS tieBreakerTestResult,\n" +
+//          "(CASE WHEN (tie_breaker_test ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
+//          "\tELSE CAST(tie_breaker_test ->> 'date' AS DATE) END)AS tieBreakerTestResultDate\n" +
+//          "from hts_client) tr ON tr.clientcode=hc.client_code \n" +
+//          "WHERE hc.facility_id= ?1 AND hc.client_code = ?2\n" +
+//          "AND hc.date_modified > ?3 AND hc.archived = 0",nativeQuery = true)
 
-  @Query(value = "SELECT hc.person_uuid AS personUuid, hc.uuid, hc.client_code AS clientCode, hc.date_visit  as visitDate, \n" +
-          "tr.screeningTestResult,\n" +
-          "tr.screeningTestResultDate, tr.confirmatoryTestResult, \n" +
-          "tr.confirmatoryTestResultDate, \n" +
-          "(CASE WHEN tr.tieBreakerTestResult IS NULL OR tr.tieBreakerTestResult='' THEN tr.confirmatoryTestResult\n" +
-          "ELSE tr.tieBreakerTestResult END) AS tieBreakerTestResult,\n" +
-          "(CASE WHEN tr.tieBreakerTestResult IS NULL OR tr.tieBreakerTestResult='' THEN tr.confirmatoryTestResultDate\n" +
-          "ELSE tr.tieBreakerTestResultDate END) AS tieBreakerTestResultDate,\n" +
-          "CAST(risk_assessment ->> 'everHadSexualIntercourse' AS BOOLEAN) AS \teverHadSexualIntercourse,\n" +
-          "CAST(risk_assessment ->> 'bloodTransfusionInLast3Months' AS BOOLEAN) AS bloodTransfussionInLast3Months,\n" +
-          "CAST(risk_assessment ->> 'unprotectedSexWithCasualPartnerInLast3Months' AS BOOLEAN) AS unprotectedSexWithCasualPartnerinLast3Months,\n" +
-          "CAST(risk_assessment ->> 'moreThan1SexPartnerDuringLast3Months' AS BOOLEAN) AS moreThan1SexPartnerDuringLast3Months,\n" +
-          "CAST(risk_assessment ->> 'stiInLast3Months' AS BOOLEAN) AS stiInLast3Months,\n" +
-          "\n" +
-          "--ClinicalTBScreeningType\n" +
-          "CAST(tb_screening ->> 'currentlyCough' AS BOOLEAN) AS currentlyCough,\n" +
-          "CAST(tb_screening ->> 'weightLoss' AS BOOLEAN) AS weightLoss,\n" +
-          "CAST(tb_screening ->> 'fever' AS BOOLEAN) AS fever,\n" +
-          "CAST(tb_screening ->> 'nightSweats' AS BOOLEAN) AS nightSweats,\n" +
-          "--SyndromicSTIScreeningType\n" +
-          "CAST(tb_screening ->> 'currentlyCough' AS BOOLEAN) AS currentlyCough,\n" +
-          "CAST(tb_screening ->> 'weightLoss' AS BOOLEAN) AS weightLoss,\n" +
-          "CAST(tb_screening ->> 'fever' AS BOOLEAN) AS fever,\n" +
-          "CAST(tb_screening ->> 'nightSweats' AS BOOLEAN) AS nightSweats, \n" +
-          "--PostTesting\n" +
-          "CASE WHEN CAST(post_test_counseling ->> 'hivTestBefore' AS VARCHAR) ILIKE '%Not%' THEN false\n" +
-          "\t ELSE true END AS testedForHIVBeforeWithinThisYear,\n" +
-          "CASE WHEN post_test_counseling ->> 'hivRequestResult'='' \n" +
-          "\t  OR post_test_counseling ->> 'hivRequestResult' ILIKE 'false' THEN FALSE ELSE true END AS hivRequestAndResultFormSignedByTester,\n" +
-          "CASE WHEN post_test_counseling ->> 'hivRequestResultCt'='' \n" +
-          "\t\tOR post_test_counseling ->> 'hivRequestResultCt' ILIKE 'false' THEN FALSE ELSE TRUE END AS hivRequestAndResultFormFilledWithCTIForm,\n" +
-          "CASE WHEN post_test_counseling ->> 'clientReceivedHivTestResult'=''\n" +
-          "\tOR post_test_counseling ->> 'clientReceivedHivTestResult' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientRecievedHIVTestResult,\n" +
-          "CASE WHEN post_test_counseling ->> 'postTestCounseling' = ''\n" +
-          "OR post_test_counseling ->> 'postTestCounseling' ILIKE 'false' THEN FALSE ELSE TRUE END  AS postTestCounsellingDone,\n" +
-          "CASE WHEN post_test_counseling ->> 'riskReduction'=''\n" +
-          "OR post_test_counseling ->> 'riskReduction' ILIKE 'false' THEN  FALSE ELSE TRUE  END AS riskReductionPlanDeveloped,\n" +
-          "CASE WHEN post_test_counseling ->> 'postTestDisclosure' = ''\n" +
-          "OR post_test_counseling ->> 'postTestDisclosure' ='false' THEN FALSE ELSE TRUE  END AS postTestDisclosurePlanDeveloped,\n" +
-          "CASE WHEN post_test_counseling ->> 'bringPartnerHivtesting' =''\n" +
-          "OR post_test_counseling ->> 'bringPartnerHivtesting' ILIKE 'false'THEN FALSE ELSE TRUE  END AS willBringPartnerForHIVTesting,\n" +
-          "CASE WHEN post_test_counseling ->> 'childrenHivtesting' =''\n" +
-          "OR post_test_counseling ->> 'childrenHivtesting' ILIKE 'false' THEN FALSE ELSE TRUE  END AS willBringOwnChildrenForHIVTesting,\n" +
-          "CASE WHEN post_test_counseling ->> 'informationFp' = ''\n" +
-          "OR post_test_counseling ->> 'informationFp' ILIKE 'false' THEN FALSE ELSE TRUE  END AS providedWithInformationOnFPandDualContraception,\n" +
-          "CASE WHEN post_test_counseling ->> 'partnerFpThanCondom' =''\n" +
-          "OR post_test_counseling ->> 'partnerFpThanCondom' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientOrPartnerUseFPMethodsOtherThanCondoms,\n" +
-          "CASE WHEN post_test_counseling ->> 'partnerFpUseCondom' =''\n" +
-          "OR post_test_counseling ->> 'partnerFpUseCondom'ILIKE 'false' THEN FALSE ELSE TRUE END  AS clientOrPartnerUseCondomsAsOneFPMethods,\n" +
-          "CASE WHEN post_test_counseling ->> 'correctCondomUse' =''\n" +
-          "OR post_test_counseling ->> 'correctCondomUse' ILIKE 'false' THEN FALSE ELSE TRUE END AS correctCondomUseDemonstrated,\n" +
-          "CASE WHEN post_test_counseling ->> 'condomProvidedToClient' =''\n" +
-          "OR  post_test_counseling ->> 'condomProvidedToClient' ILIKE 'false' THEN FALSE ELSE TRUE END  AS condomsProvidedToClient,\n" +
-          "CASE WHEN post_test_counseling ->> 'referredToServices'=''\n" +
-          "OR post_test_counseling ->> 'referredToServices' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientReferredToOtherServices\n" +
-          "from hts_client hc\n" +
-          "INNER JOIN \n" +
-          "(SELECT person_uuid AS personUuid, uuid, client_code AS clientCode, \n" +
-          "CASE WHEN test1 ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS screeningTestResult,\n" +
-          "(CASE WHEN (test1 ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
-          "\tELSE CAST(test1 ->> 'date' AS DATE) END) AS screeningTestResultDate,\n" +
-          "CASE WHEN confirmatory_test ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS confirmatoryTestResult,\n" +
-          "(CASE WHEN (confirmatory_test ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
-          "\tELSE CAST(confirmatory_test ->> 'date' AS DATE) END) AS confirmatoryTestResultDate,\n" +
-          "CASE WHEN tie_breaker_test ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS tieBreakerTestResult,\n" +
-          "(CASE WHEN (tie_breaker_test ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
-          "\tELSE CAST(tie_breaker_test ->> 'date' AS DATE) END)AS tieBreakerTestResultDate\n" +
-          "from hts_client) tr ON tr.clientcode=hc.client_code \n" +
-          "WHERE hc.facility_id= ?1 AND hc.client_code = ?2\n" +
-          "AND hc.date_modified > ?3 AND hc.archived = 0",nativeQuery = true)
-  List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
+
+  @Query(value = " SELECT hc.person_uuid AS personUuid,\n" +
+          "rc.consent,\n" +
+          "rc.recencyNumber, \n" +
+          "rc.sampleType, \n" +
+          "rc.controlLine, \n" +
+          "rc.viralLoadRequest, \n" +
+          "rc.longTermLine,   \n" +
+          "rc.pcrLab, \n" +
+          "rc.verificationLine,  \n" +
+          "rc.finalRecencyTestResult, \t\t\t \n" +
+          "rc.testDate, \n" +
+          "rc.testName,\n" +
+          "rc.dateSampleCollected, \n" +
+          "rc.sampleReferenceNumber,\n" +
+          "rc.dateSampleSent, \n" +
+          "rc.recencyInterpretation, \n" +
+          "rc.viralLoadConfirmationResult, \n" +
+          "rc.viralLoadClassification,\n" +
+          "hc.uuid as visitId, hc.testing_setting as setting, \n" +
+          "'YES' as firstTimeVisit, hc.client_code AS clientCode,\n" +
+          " hc.date_visit  as visitDate, \n" +
+          "          tr.screeningTestResult,\n" +
+          "          tr.screeningTestResultDate, tr.confirmatoryTestResult, \n" +
+          "          tr.confirmatoryTestResultDate, \n" +
+          "          (CASE WHEN tr.tieBreakerTestResult IS NULL OR tr.tieBreakerTestResult='' THEN tr.confirmatoryTestResult\n" +
+          "          ELSE tr.tieBreakerTestResult END) AS tieBreakerTestResult,\n" +
+          "          (CASE WHEN tr.tieBreakerTestResult IS NULL OR tr.tieBreakerTestResult='' THEN tr.confirmatoryTestResultDate\n" +
+          "          ELSE tr.tieBreakerTestResultDate END) AS tieBreakerTestResultDate,\n" +
+          "          CASE WHEN risk_assessment ->> 'everHadSexualIntercourse' = '' then false else\n" +
+          "\t\t    CAST(risk_assessment ->> 'everHadSexualIntercourse' AS BOOLEAN) end AS teverHadSexualIntercourse,\n" +
+          "          CASE WHEN risk_assessment ->> 'bloodTransfusionInLast3Months' = '' then false else\n" +
+          "\t\t      CAST(risk_assessment ->> 'bloodTransfusionInLast3Months' AS BOOLEAN) end AS bloodTransfussionInLast3Months,\n" +
+          "          CASE WHEN risk_assessment ->> 'unprotectedSexWithCasualPartnerInLast3Months'= '' then false else\n" +
+          "\t\t      CAST(risk_assessment ->> 'unprotectedSexWithCasualPartnerInLast3Months' AS BOOLEAN)end AS unprotectedSexWithCasualPartnerinLast3Months,\n" +
+          "          CASE WHEN risk_assessment ->> 'moreThan1SexPartnerDuringLast3Months'= '' then false else\n" +
+          "\t\t      CAST(risk_assessment ->> 'moreThan1SexPartnerDuringLast3Months' AS BOOLEAN)end AS moreThan1SexPartnerDuringLast3Months,\n" +
+          "          CASE WHEN risk_assessment ->> 'stiInLast3Months'= '' then false else\n" +
+          "\t\t     CAST(risk_assessment ->> 'stiInLast3Months' AS BOOLEAN) end AS stiInLast3Months,\n" +
+          "          \n" +
+          "          --ClinicalTBScreeningType\n" +
+          "          CASE WHEN tb_screening ->> 'currentlyCough' = '' then false else \n" +
+          "\t\t    CAST( tb_screening ->> 'currentlyCough' AS BOOLEAN) end  AS currentlyCough,\n" +
+          "          CASE WHEN tb_screening ->> 'weightLoss' = '' then false else\n" +
+          "\t\t    CAST(tb_screening ->> 'weightLoss' AS BOOLEAN) end AS weightLoss,\n" +
+          "          CASE WHEN tb_screening ->> 'fever' = '' then false else\n" +
+          "\t\t     CAST(tb_screening ->> 'fever' AS BOOLEAN) end AS fever,\n" +
+          "          CASE WHEN tb_screening ->> 'nightSweats' = '' then false else\n" +
+          "\t\t    CAST(tb_screening ->> 'nightSweats' AS BOOLEAN) end AS nightSweats,\n" +
+          "          CASE WHEN CAST(post_test_counseling ->> 'hivTestBefore' AS VARCHAR) ILIKE '%Not%' THEN false\n" +
+          "           ELSE true END AS testedForHIVBeforeWithinThisYear,\n" +
+          "          CASE WHEN post_test_counseling ->> 'hivRequestResult'='' \n" +
+          "            OR post_test_counseling ->> 'hivRequestResult' ILIKE 'false' THEN FALSE ELSE true END AS hivRequestAndResultFormSignedByTester,\n" +
+          "          CASE WHEN post_test_counseling ->> 'hivRequestResultCt'='' \n" +
+          "          OR post_test_counseling ->> 'hivRequestResultCt' ILIKE 'false' THEN FALSE ELSE TRUE END AS hivRequestAndResultFormFilledWithCTIForm,\n" +
+          "          CASE WHEN post_test_counseling ->> 'clientReceivedHivTestResult'=''\n" +
+          "          OR post_test_counseling ->> 'clientReceivedHivTestResult' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientRecievedHIVTestResult,\n" +
+          "          CASE WHEN post_test_counseling ->> 'postTestCounseling' = ''\n" +
+          "          OR post_test_counseling ->> 'postTestCounseling' ILIKE 'false' THEN FALSE ELSE TRUE END  AS postTestCounsellingDone,\n" +
+          "          CASE WHEN post_test_counseling ->> 'riskReduction'=''\n" +
+          "          OR post_test_counseling ->> 'riskReduction' ILIKE 'false' THEN  FALSE ELSE TRUE  END AS riskReductionPlanDeveloped,\n" +
+          "          CASE WHEN post_test_counseling ->> 'postTestDisclosure' = ''\n" +
+          "          OR post_test_counseling ->> 'postTestDisclosure' ='false' THEN FALSE ELSE TRUE  END AS postTestDisclosurePlanDeveloped,\n" +
+          "          CASE WHEN post_test_counseling ->> 'bringPartnerHivtesting' =''\n" +
+          "          OR post_test_counseling ->> 'bringPartnerHivtesting' ILIKE 'false'THEN FALSE ELSE TRUE  END AS willBringPartnerForHIVTesting,\n" +
+          "          CASE WHEN post_test_counseling ->> 'childrenHivtesting' =''\n" +
+          "          OR post_test_counseling ->> 'childrenHivtesting' ILIKE 'false' THEN FALSE ELSE TRUE  END AS willBringOwnChildrenForHIVTesting,\n" +
+          "          CASE WHEN post_test_counseling ->> 'informationFp' = ''\n" +
+          "          OR post_test_counseling ->> 'informationFp' ILIKE 'false' THEN FALSE ELSE TRUE  END AS providedWithInformationOnFPandDualContraception,\n" +
+          "          CASE WHEN post_test_counseling ->> 'partnerFpThanCondom' =''\n" +
+          "          OR post_test_counseling ->> 'partnerFpThanCondom' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientOrPartnerUseFPMethodsOtherThanCondoms,\n" +
+          "          CASE WHEN post_test_counseling ->> 'partnerFpUseCondom' =''\n" +
+          "          OR post_test_counseling ->> 'partnerFpUseCondom'ILIKE 'false' THEN FALSE ELSE TRUE END  AS clientOrPartnerUseCondomsAsOneFPMethods,\n" +
+          "          CASE WHEN post_test_counseling ->> 'correctCondomUse' =''\n" +
+          "          OR post_test_counseling ->> 'correctCondomUse' ILIKE 'false' THEN FALSE ELSE TRUE END AS correctCondomUseDemonstrated,\n" +
+          "          CASE WHEN post_test_counseling ->> 'condomProvidedToClient' =''\n" +
+          "          OR  post_test_counseling ->> 'condomProvidedToClient' ILIKE 'false' THEN FALSE ELSE TRUE END  AS condomsProvidedToClient,\n" +
+          "          CASE WHEN post_test_counseling ->> 'referredToServices'=''\n" +
+          "          OR post_test_counseling ->> 'referredToServices' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientReferredToOtherServices\n" +
+          "          from hts_client hc\n" +
+          "          INNER JOIN \n" +
+          "          (SELECT person_uuid AS personUuid, uuid, client_code AS clientCode, \n" +
+          "          CASE WHEN test1 ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS screeningTestResult,\n" +
+          "          (CASE WHEN (test1 ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
+          "          ELSE CAST(test1 ->> 'date' AS DATE) END) AS screeningTestResultDate,\n" +
+          "          CASE WHEN confirmatory_test ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS confirmatoryTestResult,\n" +
+          "          (CASE WHEN (confirmatory_test ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
+          "          ELSE CAST(confirmatory_test ->> 'date' AS DATE) END) AS confirmatoryTestResultDate,\n" +
+          "          CASE WHEN tie_breaker_test ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS tieBreakerTestResult,\n" +
+          "          (CASE WHEN (tie_breaker_test ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
+          "          ELSE CAST(tie_breaker_test ->> 'date' AS DATE) END)AS tieBreakerTestResultDate\n" +
+          "          from hts_client) tr ON tr.clientcode=hc.client_code\n" +
+          "          LEFT JOIN(\n" +
+          "\t\t\t\tSELECT client_code as clientCode , person_uuid as personUuid, uuid,\n" +
+          "\t\t\t\trecency->>'optOutRTRI' As consent,\n" +
+          "\t\t\t\trecency->> 'rencencyId' AS recencyNumber, \n" +
+          "\t\t\t\trecency->>'sampleType' AS  sampleType, \n" +
+          "\t\t\t\trecency->>'controlLine' AS controlLine, \n" +
+          "\t\t\t\trecency->>'hasViralLoad' AS viralLoadRequest, \n" +
+          "\t\t\t\trecency->> 'longTermLine' AS longTermLine,   \n" +
+          "\t\t\t\t(CASE WHEN (recency->> 'sampleTestDate' ~* '[0-9]') is false THEN NULL\n" +
+          "\t\t\t\t\t\t  ELSE CAST(recency->> 'sampleTestDate' AS DATE) END)\n" +
+          "\t\t\t\t\t\t  AS  sampleTestDate,  \n" +
+          "\t\t\t\trecency->>'receivingPcrLab' AS pcrLab, \n" +
+          "\t\t\t\trecency->>'verififcationLine' AS verificationLine,  \n" +
+          "\t\t\t\trecency->>'finalRecencyResult' AS finalRecencyTestResult, \n" +
+          "\t\t\t\t(CASE WHEN (recency->>'optOutRTRITestDate'  ~* '[0-9]') is false THEN NULL\n" +
+          "\t\t\t\t\t\t  ELSE CAST(recency->>'optOutRTRITestDate' AS DATE) END)\n" +
+          "\t\t\t\t\t\t  AS testDate, \n" +
+          "\t\t\t\trecency->>'optOutRTRITestName' AS testName,\n" +
+          "\t\t\t\t(CASE WHEN (recency->>'sampleCollectedDate' ~* '[0-9]') is false THEN NULL\n" +
+          "\t\t\t\t\t\t  ELSE CAST(recency->>'sampleCollectedDate' AS DATE) END) AS dateSampleCollected, \n" +
+          "\t\t\t\trecency->>'sampleReferanceNumber' AS sampleReferenceNumber,\n" +
+          "\t\t\t\t(CASE WHEN (recency->>'dateSampleSentToPCRLab'   ~* '[0-9]') is false THEN NULL\n" +
+          "\t\t\t\t\t\t  ELSE CAST(recency->>'dateSampleSentToPCRLab'  AS DATE) END)\n" +
+          "\t\t\t\t\t\t  AS dateSampleSent, \n" +
+          "\t\t\t\trecency->>'rencencyInterpretation' AS recencyInterpretation, \n" +
+          "\t\t\t\t(CASE WHEN (recency->>'viralLoadConfirmationResult'   ~* '[0-9]') is false THEN NULL\n" +
+          "\t\t\t\t\t\t  ELSE CAST(recency->>'viralLoadConfirmationResult'  AS float) END)\n" +
+          "\t\t\t\t\t\t  AS viralLoadConfirmationResult, \n" +
+          "\t\t\t\trecency->>'viralLoadResultClassification' AS viralLoadClassification\n" +
+          "\t\t\t\tfrom hts_client ) rc ON rc.clientCode = hc.client_code\t  \n" +
+          "          WHERE hc.facility_id= ?1\n" +
+          "\t\t  AND hc.client_code = ?2\n" +
+          "  AND hc.date_modified > ?3 \n" +
+          "\t\t  AND hc.archived = 0\n" +
+          "\t\t ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
 }

@@ -1,7 +1,9 @@
 package org.lamisplus.modules.ndr.service;
 
+import kotlin.jvm.Throws;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.lamisplus.modules.ndr.domain.dto.*;
 import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.mapper.ConditionTypeMapper;
@@ -100,6 +102,7 @@ public class HtsService {
 			}
 		}catch (Exception e){
 		  ndrErrors.add(new NDRErrorDTO(clientCode, "", Arrays.toString(e.getStackTrace())));
+		  e.printStackTrace();
 		}
 		return null;
 	  }
@@ -116,30 +119,31 @@ public class HtsService {
 		AtomicInteger generatedCount = new AtomicInteger();
 		AtomicInteger errorCount = new AtomicInteger();
 		LocalDateTime start = LocalDateTime.of(1984, 1, 1, 0, 0);
-		List<String> patientIds = new ArrayList<String>();
+		List<String> patientIds = Arrays.asList("BA/TRR/WCH/118/2310", "BA/TRR/WCH/128/1195", "BA/TB/WCH/118/2340");
 		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
+		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
 		if (initial) {
-			patientIds = data.getHtsClientCode(facilityId, start);
+			//patientIds = data.getHtsClientCode(facilityId, start);
 			log.info("generating initial ....");
 		}else {
 			log.info("generating updated....");
 			Optional<Timestamp> lastGenerateDateTimeByFacilityId =
 					ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
 			if (lastGenerateDateTimeByFacilityId.isPresent()) {
-				LocalDateTime lastModified =
-						lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
-				log.info("Last Generated Date: " + lastModified);
-				patientIds = data.getPatientIdsEligibleForNDR(lastModified, facilityId);
+				start = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
+				log.info("Last Generated Date: " + start);
+				//patientIds = data.getHtsClientCode(facilityId,start);
 			}
 		}
-		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
+
 
 		log.info("patient size -> "+ patientIds.size());
+		LocalDateTime finalStart = start;
 		patientIds.parallelStream()
 				.forEach(id -> {
 					if (getPatientHtsNDRXml(id, facilityId, initial,objectFactory, ndrErrors)) {
 						generatedCount.getAndIncrement();
-						patientDemographicDTO[0] = data.getPatientDemographics(id, facilityId).get();
+						patientDemographicDTO[0] = data.getHtsPatientDemographics(facilityId, id , finalStart).get();
 					} else {
 						errorCount.getAndIncrement();
 					}
@@ -170,7 +174,6 @@ public class HtsService {
 			long facilityId,ObjectFactory objectFactory, PatientDemographicDTO patientDemographic,
 			List<HtsReportDto> htsReports, boolean initial, List<NDRErrorDTO> ndrErrors) {
 		log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
-		List<HtsReportDto> htsReportDtos = new ArrayList<>();
 		try {
 			log.info("fetching patient demographics....");
 			long id = messageId.incrementAndGet();
@@ -198,7 +201,7 @@ public class HtsService {
 				messageHeader.setMessageUniqueID(Long.toString(id));
 				container.setMessageHeader(messageHeader);
 				container.setIndividualReport(individualReportType);
-				log.info("done fetching treatment details ");
+				log.info("Done fetching treatment details ");
 				Marshaller jaxbMarshaller = ndrService.getMarshaller(jaxbContext);
 				jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
 				jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -206,11 +209,14 @@ public class HtsService {
 				SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR 1.6.2.xsd"));
 				jaxbMarshaller.setSchema(schema);
-				String identifier = patientDemographics.getPatientIdentifier();
 				if (conditionType != null) {
-					individualReportType.getCondition().add(conditionType);
+					if(htsTypeMapper.getHivTestingReportType(individualReportType,objectFactory,htsReports, ndrErrors)){
+						individualReportType.getCondition().add(conditionType);
+					}
+					if(individualReportType.getHIVTestingReport().isEmpty()){
+						throw new IllegalArgumentException("No HTS test was found for patient with client code "+ patientDemographic.getClientCode());
+					}
 				}
-				htsTypeMapper.getHivTestingReportType(individualReportType,objectFactory,htsReports, ndrErrors);
 				log.info("converting treatment details to xml... ");
 				String fileName = ndrService.processAndGenerateNDRFile(facilityId, jaxbMarshaller, container, patientDemographic, id, ndrErrors);
 				if (fileName != null) {
@@ -221,7 +227,7 @@ public class HtsService {
 		} catch (Exception e) {
 			log.error("An error occur when generating person with hospital number {}",
 					patientDemographic.getClientCode());
-			log.error("error: " + e.toString());
+			log.error("error: " + e.getMessage());
 			e.printStackTrace();
 			ndrErrors.add(new NDRErrorDTO(patientDemographic.getHtsUuid(),
 					patientDemographic.getClientCode(), Arrays.toString(e.getStackTrace())));

@@ -61,6 +61,7 @@ public class MessageHeaderTypeMapper {
     public FacilityType getTreatmentFacility(PatientDemographicDTO demographics) {
         FacilityType facility = new FacilityType ();
         facility.setFacilityTypeCode ("FAC");
+        System.out.printf("facilityName: "+ demographics.getFacilityName());
         if(demographics.getFacilityName() != null )facility.setFacilityName (demographics.getFacilityName());
         if(demographics.getFacilityId() != null) facility.setFacilityID(demographics.getFacilityId());
         return facility;

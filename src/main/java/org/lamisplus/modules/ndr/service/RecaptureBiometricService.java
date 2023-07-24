@@ -115,7 +115,7 @@ public class RecaptureBiometricService {
 			AtomicInteger count,
 			List<PatientDemographics> demographics) {
 		try {
-		String zipFileName = ndrService.zipFiles(demographics.get(0), pathname);
+		String zipFileName = ndrService.zipFileWithType(demographics.get(0), pathname, "bio_recapture");
 		NdrXmlStatus ndrXmlStatus = new NdrXmlStatus();
 		ndrXmlStatus.setFacilityId(facilityId);
 		ndrXmlStatus.setFiles(count.get());

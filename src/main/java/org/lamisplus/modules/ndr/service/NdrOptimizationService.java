@@ -439,7 +439,7 @@ public class NdrOptimizationService {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");
 		String sCode = demographic.getStateCode();
 		String lCode = demographic.getLgaCode();
-		String fileName = StringUtils.leftPad(sCode, 2, "0") + "_" +
+		String fileName = StringUtils.leftPad(sCode, 2, "0") +
 				StringUtils.leftPad(lCode, 3, "0") + "_" + demographic.getFacilityId() +
 				"_" + demographic.getFacilityName() + "_" + dateFormat.format(new Date());
 		fileName = RegExUtils.replaceAll(fileName, "/", "-");

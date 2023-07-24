@@ -35,7 +35,6 @@ import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.ZipUtility;
-import org.lamisplus.modules.patient.domain.Patient;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
@@ -438,7 +437,7 @@ public class NDRService {
                     ndrXmlStatusRepository.getPatientDemographicsByUUID(personId.get());
             if(patientDemographicsOptional.isPresent()) {
                 patientDemographicsOptional.get().getAddress();
-                String fileName = zipFiles (patientDemographicsOptional.get());
+                String fileName = zipFileWithType(patientDemographicsOptional.get());
                 NdrXmlStatus ndrXmlStatus = new NdrXmlStatus ();
                 ndrXmlStatus.setFacilityId (facilityId);
                 ndrXmlStatus.setFiles (filesSize);
@@ -505,14 +504,15 @@ public class NDRService {
             File file = new File(path + fileName);
             jaxbMarshaller.marshal(container, file);
             log.info("file generated: {}", fileName);
+            return fileName;
         }catch (Exception e){
             log.error(" An error occur while generating file with patient hospital number {} Error: {}",
                     demographics.getHospitalNumber(),
-                    e.getMessage());
+                    Arrays.toString(e.getStackTrace()));
             e.printStackTrace();
             ndrErrors.add(new NDRErrorDTO(demographics.getPersonUuid(), demographics.getHospitalNumber(), e.getMessage()));
         }
-        return fileName;
+        return null;
     }
 
     private String generateFileName( PatientDemographics demographics, String identifier) {
@@ -524,7 +524,7 @@ public class NDRService {
     }
     
     
-    public String zipFiles(PatientDemographics demographics) {
+    public String zipFileWithType(PatientDemographics demographics) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
         String sCode = "";
         String lCode = "";
@@ -561,7 +561,7 @@ public class NDRService {
         return null;
     }
     
-    public String zipFiles(PatientDemographics demographics, String sourceFolder) {
+    public String zipFileWithType(PatientDemographics demographics, String sourceFolder, String type) {
         SimpleDateFormat dateFormat = new SimpleDateFormat ("ddMMyyyy");
         String sCode = "";
         String lCode = "";
@@ -571,9 +571,9 @@ public class NDRService {
         Optional<String> lgaCode =
                 ndrCodeSetResolverService.getNDRCodeSetCode("LGA", demographics.getLga());
         if(lgaCode.isPresent()) lCode = lgaCode.get();
-        String fileName = StringUtils.leftPad (sCode, 2, "0") +"_"+
+        String fileName = StringUtils.leftPad (sCode, 2, "0") +
                 StringUtils.leftPad ( lCode, 3, "0") + "_" + demographics.getDatimId() +
-                "_" + demographics.getFacilityName()+"bio_recapture"+ "_" + dateFormat.format (new Date());
+                "_" + demographics.getFacilityName()+type+ "_" + dateFormat.format (new Date());
         
         fileName = RegExUtils.replaceAll (fileName, "/", "-");
         log.info ("file name for download {}", fileName);
