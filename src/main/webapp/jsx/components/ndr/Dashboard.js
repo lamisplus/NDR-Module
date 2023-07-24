@@ -7,9 +7,12 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { MdDashboard, MdContacts } from "react-icons/md";
+import ErrorIcon from "@mui/icons-material/Error";
 import GenerateNdr from "./generate";
+import HTS from "./hts";
 import DownloadNdr from "./download";
 import Biometrics from "./Biometrics";
+import ErrorPage from "./Errors";
 import NdrConfiguration from "./NdrConfiguration";
 import { getQueryParams } from "./../PageUtils";
 
@@ -148,6 +151,7 @@ const HomePage = (props) => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
   const urlIndex = getQueryParams("tab", props.location);
+  const [errors, setErrors] = useState([]);
   //const urlTabs = urlIndex !== null ? urlIndex : props.location ;
   //
   useEffect(() => {
@@ -183,28 +187,42 @@ const HomePage = (props) => {
         >
           <Tab
             className={classes.title}
-            label="Generate Messages "
+            label="Treatment XML"
             icon={<MdDashboard />}
             {...a11yProps(0)}
           />
+
           <Tab
             className={classes.title}
-            label="Download Files"
+            label="HTS XML"
             icon={<MdContacts />}
             {...a11yProps(1)}
           />
+
           <Tab
             className={classes.title}
-            label="NDR COnfiguration"
+            label="Biometrics XML"
             icon={<MdContacts />}
             {...a11yProps(2)}
           />
           <Tab
             className={classes.title}
-            label="Biometrics XML"
+            label="Download Files"
             icon={<MdContacts />}
             {...a11yProps(3)}
           />
+          <Tab
+            className={classes.title}
+            label="NDR File Errors"
+            icon={<ErrorIcon />}
+            {...a11yProps(4)}
+          />
+          {/* <Tab
+            className={classes.title}
+            label="NDR COnfiguration"
+            icon={<MdContacts />}
+            {...a11yProps(5)}
+          /> */}
         </Tabs>
         <div></div>
       </AppBar>
@@ -213,14 +231,17 @@ const HomePage = (props) => {
         <GenerateNdr value={value} setValue={setValue} />
       </TabPanel>
       <TabPanel value={value} setValue={setValue} index={1}>
-        <DownloadNdr value={value} setValue={setValue} />
+        <HTS value={value} setValue={setValue} />
       </TabPanel>
-      <TabPanel value={value} setValue={setValue} index={3}>
+      <TabPanel value={value} setValue={setValue} index={2}>
         <Biometrics value={value} setValue={setValue} />
       </TabPanel>
-      {/*<TabPanel value={value} setValue={setValue} index={2}>*/}
-      {/*  <NdrConfiguration value={value} setValue={setValue}/>*/}
-      {/*</TabPanel>*/}
+      <TabPanel value={value} setValue={setValue} index={3}>
+        <DownloadNdr value={value} setValue={setValue} setErrors={setErrors} />
+      </TabPanel>
+      <TabPanel value={value} setValue={setValue} index={4}>
+        <ErrorPage value={value} setValue={setValue} errors={errors} />
+      </TabPanel>
     </div>
   );
 };
