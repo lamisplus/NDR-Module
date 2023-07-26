@@ -377,7 +377,7 @@ public class NDRService {
        }else {
            log.info("start generating NDR file from updated");
            Optional<Timestamp> lastGenerateDateTimeByFacilityId =
-                   ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
+                   ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId,"treatment");
            if(lastGenerateDateTimeByFacilityId.isPresent()){
                LocalDateTime lastModified =
                        lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
@@ -573,7 +573,7 @@ public class NDRService {
         if(lgaCode.isPresent()) lCode = lgaCode.get();
         String fileName = StringUtils.leftPad (sCode, 2, "0") +
                 StringUtils.leftPad ( lCode, 3, "0") + "_" + demographics.getDatimId() +
-                "_" + demographics.getFacilityName()+type+ "_" + dateFormat.format (new Date());
+                "_" + demographics.getFacilityName()+"_"+type+ "_" + dateFormat.format (new Date());
         
         fileName = RegExUtils.replaceAll (fileName, "/", "-");
         log.info ("file name for download {}", fileName);

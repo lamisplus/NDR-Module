@@ -239,8 +239,8 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "             LEFT JOIN base_organisation_unit facility ON facility.id=hc.facility_id   \n" +
           "             LEFT JOIN base_organisation_unit lga ON lga.id=facility.parent_organisation_unit_id   \n" +
           "             LEFT JOIN base_organisation_unit state ON state.id=lga.parent_organisation_unit_id     \n" +
-          "             LEFT JOIN ndr_code_set facilityState ON TRIM(facilityState.code_description) = TRIM(state.name)\n" +
-          "             LEFT JOIN ndr_code_set facilityLga ON TRIM(facilityLga.code_description) = TRIM(lga.name)\n" +
+          "             LEFT JOIN ndr_code_set facilityState ON TRIM(facilityState.code_description) = TRIM(state.name) AND facilityState.code_set_nm = 'STATES'\n" +
+          "             LEFT JOIN ndr_code_set facilityLga ON TRIM(facilityLga.code_description) = TRIM(lga.name) AND facilityLga.code_set_nm = 'LGA'\n" +
           "             LEFT JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id=hc.facility_id AND boui.name='DATIM_ID'    \n" +
           "             WHERE hc.archived=0 AND hc.facility_id =?1 and hc.client_code =?2\n" +
           "\t\t\t AND hc.date_modified > ?3", nativeQuery = true)

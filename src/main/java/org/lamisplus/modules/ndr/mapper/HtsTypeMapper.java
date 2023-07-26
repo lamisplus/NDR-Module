@@ -85,24 +85,23 @@ public class HtsTypeMapper {
     }
 
     private void processAndSetRecencyResult(HIVTestResultType testResult, ObjectFactory objectFactory, HtsReportDto h) {
-        RecencyTestingType recencyTestingType = objectFactory.createRecencyTestingType();
-        RecencyTestingType recencyTesting = objectFactory.createRecencyTestingType();
-        validateAndSetRecencyYNCode(h, recencyTesting);
-        validateAndSetStringValues(h, recencyTesting);
-        validateDateValuesForRecencyData(h, recencyTesting);
+        RecencyTestingType recency = objectFactory.createRecencyTestingType();
+        validateAndSetRecencyYNCode(h, recency);
+        validateAndSetStringValues(h, recency);
+        validateDateValuesForRecencyData(h, recency);
         if (h.getFinalRecencyTestResult() != null) {
             if (h.getFinalRecencyTestResult().equalsIgnoreCase("RITA Long term")) {
-                recencyTesting.setFinalRecencyTestResult(RecencyStatus.RITA_LONG_TERM.getValue());
+                recency.setFinalRecencyTestResult(RecencyStatus.RITA_LONG_TERM.getValue());
             } else if (h.getFinalRecencyTestResult().equalsIgnoreCase("Rita Recent")) {
-                recencyTesting.setFinalRecencyTestResult(RecencyStatus.RITA_RECENT.getValue());
+                recency.setFinalRecencyTestResult(RecencyStatus.RITA_RECENT.getValue());
             } else {
-                recencyTesting.setFinalRecencyTestResult(RecencyStatus.RITA_INCONCLUSIVE.getValue());
+                recency.setFinalRecencyTestResult(RecencyStatus.RITA_INCONCLUSIVE.getValue());
             }
         } else {
-            recencyTesting.setFinalRecencyTestResult(RecencyStatus.RITA_INCONCLUSIVE.getValue());
+            recency.setFinalRecencyTestResult(RecencyStatus.RITA_INCONCLUSIVE.getValue());
         }
-        log.info("recency {}",  recencyTestingType);
-        testResult.setRecencyTesting(recencyTestingType);
+        log.info("recency {} recency number {}",  recency, h.getRecencyNumber());
+        testResult.setRecencyTesting(recency);
     }
 
     private void validateDateValuesForRecencyData(HtsReportDto h, RecencyTestingType recencyTesting) {
@@ -151,7 +150,6 @@ public class HtsTypeMapper {
     }
 
     private static void validateAndSetStringValues(HtsReportDto h, RecencyTestingType recencyTesting) {
-        //test name
         validateNotNull(h.getTestName(), "TestName");
         if (h.getTestName().contains("Asante")) {
            log.info("test name {}", RecencyTestName.ASANTE.getValue());
@@ -162,20 +160,21 @@ public class HtsTypeMapper {
         }
         recencyTesting.setViralLoadConfirmationResult(h.getViralLoadConfirmationResult());
         if (h.getSampleType() != null) {
-            recencyTesting.setSampleType(h.getSampleType());
+            if(h.getSampleType().equalsIgnoreCase("Plasma")){
+                recencyTesting.setSampleType("P");
+            }else {
+                recencyTesting.setSampleType("D");
+            }
         } else {
             recencyTesting.setSampleType("");
         }
+
         if (h.getPcrLab() != null) {
             recencyTesting.setPCRLab(h.getPcrLab());
         } else {
             recencyTesting.setPCRLab("");
         }
-        if (h.getRapidRecencyAssay() != null) {
-            recencyTesting.setRapidRecencyAssay(h.getRapidRecencyAssay());
-        } else {
-            recencyTesting.setRapidRecencyAssay("");
-        }
+
         validateNotNull(h.getRecencyNumber(), "RecencyNumber");
         recencyTesting.setRecencyNumber(h.getRecencyNumber());
 
@@ -183,12 +182,16 @@ public class HtsTypeMapper {
         validateNotNull(h.getRecencyInterpretation(), "RecencyInterpretation");
         if (h.getRecencyInterpretation().contains("Recent")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.RECENT.getValue());
+            recencyTesting.setRapidRecencyAssay(RecencyInterpretation.RECENT.getValue());
         } else if (h.getRecencyInterpretation().contains("Long Term")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.LONG_TERM.getValue());
+            recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
         } else if (h.getRecencyInterpretation().contains("Negative")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.NEGATIVE.getValue());
+            recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
         } else {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.INVALID.getValue());
+            recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
         }
         if (h.getSampleReferenceNumber() != null) {
             recencyTesting.setSampleReferenceNumber(h.getSampleReferenceNumber());

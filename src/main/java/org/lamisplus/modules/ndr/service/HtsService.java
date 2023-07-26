@@ -119,20 +119,24 @@ public class HtsService {
 		AtomicInteger generatedCount = new AtomicInteger();
 		AtomicInteger errorCount = new AtomicInteger();
 		LocalDateTime start = LocalDateTime.of(1984, 1, 1, 0, 0);
-		List<String> patientIds = Arrays.asList("BA/TRR/WCH/118/2310", "BA/TRR/WCH/128/1195", "BA/TB/WCH/118/2340");
+//		List<String> patientIds = Arrays.asList("BA/TRR/WCH/118/2310",
+//				"BA/TRR/WCH/128/1195",
+//				"BA/TB/WCH/118/2340"
+//		);
+		List<String> patientIds = new ArrayList<>();
 		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
 		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
 		if (initial) {
-			//patientIds = data.getHtsClientCode(facilityId, start);
+			patientIds = data.getHtsClientCode(facilityId, start);
 			log.info("generating initial ....");
 		}else {
 			log.info("generating updated....");
 			Optional<Timestamp> lastGenerateDateTimeByFacilityId =
-					ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId);
+					ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId,"hts");
 			if (lastGenerateDateTimeByFacilityId.isPresent()) {
 				start = lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
 				log.info("Last Generated Date: " + start);
-				//patientIds = data.getHtsClientCode(facilityId,start);
+				patientIds = data.getHtsClientCode(facilityId,start);
 			}
 		}
 
@@ -161,7 +165,8 @@ public class HtsService {
 					pathname,
 					generatedCount,
 					patientDemographicDTO[0],
-					ndrErrors
+					ndrErrors,
+					"hts"
 			);
 		}
 		log.error("error list size {}", ndrErrors.size());
@@ -179,7 +184,6 @@ public class HtsService {
 			long id = messageId.incrementAndGet();
 			Container container = new Container();
 			JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
-			//caching this because is static
 			PatientDemographicsType patientDemographics =
 					patientDemographicsMapper.getPatientDemographics(patientDemographic, true);
 			if (patientDemographics != null) {
