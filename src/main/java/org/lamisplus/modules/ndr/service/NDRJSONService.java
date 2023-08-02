@@ -292,21 +292,32 @@ public class NDRJSONService {
                 int batches = 0;
                 int counter = 0;
                 List<String> data = new ArrayList<>();
+                List<NDRMessages> messages = new ArrayList<>();
                 while (iterator.hasNext()) {
                     NDRMessages msg = (NDRMessages) iterator.next();
                     batches++; counter++;
                     if(batches%BATCHMAX != 0){
                         data.add(msg.getDeMessage());
+                        messages.add(msg);
                         continue;
                     }
-                    else if ( (batches%BATCHMAX == 0) || (counter == size))
-                    {
-                        if(batches == BATCHMAX) data.add(msg.getDeMessage());
+                    else if ( (batches%BATCHMAX == 0) || (counter == size)) {
+                        if (batches == BATCHMAX) {
+                            data.add(msg.getDeMessage());
+                            messages.add(msg);
+                        }
                         NDRDataResponseDTO ndrDataResponseDTO = PushData(token, data);
-                         if (ndrDataResponseDTO.getMessage().contains("success")) {
-                            msg.setIsPushed(Boolean.TRUE);
-                            msg.setMessageDate(LocalDate.now());
-                            ndrMessagesRepository.save(msg);
+                        if (ndrDataResponseDTO.getMessage().contains("success")) {
+                            //msg.setIsPushed(Boolean.TRUE);
+                            //msg.setMessageDate(LocalDate.now());
+                            //ndrMessagesRepository.save(msg);
+
+                            for (NDRMessages message:messages) {
+                                message.setIsPushed(Boolean.TRUE);
+                                message.setMessageDate(LocalDate.now());
+                            }
+                            ndrMessagesRepository.saveAll(messages);
+
                             Long percentagePushed = this.getPacentagePushed(ndrXmlStatus.getId());
                             ndrXmlStatus.setPercentagePushed(percentagePushed);
                             Boolean complete = Boolean.FALSE;
@@ -315,11 +326,11 @@ public class NDRJSONService {
                             ndrXmlStatusRepository.save(ndrXmlStatus);
                         }
                         data = new ArrayList<>();
+                        messages = new ArrayList<>();
                         batches = 0;
                     }
                 }
             }
-
         }
     }
 }

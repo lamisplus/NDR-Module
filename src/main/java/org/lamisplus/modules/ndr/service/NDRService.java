@@ -1,5 +1,6 @@
 package org.lamisplus.modules.ndr.service;
 
+import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -750,15 +751,16 @@ private String ConvertContainerToString(Container container) throws JsonProcessi
         return mapper.writeValueAsString(container);
     }
 
-    public void creatNDRMessages(Container container, String identifier){
+    public void creatNDRMessages(Container container, String identifier, Long facilityId){
         try {
             NDRMessages ndrMessages = new NDRMessages();
             String msg = ConvertContainerToString(container);
             ndrMessages.setDeMessage(msg);
             ndrMessages.setMessageDate(LocalDate.now());
             ndrMessages.setIsPushed(Boolean.FALSE);
-            Optional<User> currentUser = this.userService.getUserWithRoles();
-            currentUser.ifPresent(user -> ndrMessages.setFacilityId(user.getCurrentOrganisationUnitId()));
+            //Optional<User> currentUser = this.userService.getUserWithRoles();
+            //currentUser.ifPresent(user -> ndrMessages.setFacilityId(user.getCurrentOrganisationUnitId()));
+            ndrMessages.setFacilityId(facilityId);
             ndrMessages.setIdentifier(identifier);
             ndrMessagesRepository.save(ndrMessages);
         }catch (Exception e){}

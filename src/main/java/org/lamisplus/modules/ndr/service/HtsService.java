@@ -166,7 +166,7 @@ public class HtsService {
 					generatedCount,
 					patientDemographicDTO[0],
 					ndrErrors,
-					"hts"
+					"hts", patientDemographicDTO[0].getPatientIdentifier()
 			);
 		}
 		log.error("error list size {}", ndrErrors.size());
