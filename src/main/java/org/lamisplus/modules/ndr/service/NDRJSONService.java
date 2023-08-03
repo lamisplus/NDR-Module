@@ -247,7 +247,7 @@ public class NDRJSONService {
 
 
     public Long getPacentagePushed(Integer id) {
-        int per = 0;
+       int per = 0;
         Long facilityId = 0L;
         Optional<User> currentUser = this.userService.getUserWithRoles();
         if (currentUser.isPresent()) {
@@ -263,8 +263,7 @@ public class NDRJSONService {
             //Long
         } catch (Exception e) {
         }
-        Long per2 = new Long(per+"");
-        return per2;
+        return new Long(String.valueOf(per));
     }
 
     public void batchPushToNDR(Integer id) throws Exception {
@@ -285,7 +284,8 @@ public class NDRJSONService {
                 ndrXmlStatus = ndrXmlStatusOptional.get();
                 identifier = ndrXmlStatus.getPushIdentifier();
 
-                List<NDRMessages> ndrMessagesList = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
+                List<NDRMessages> ndrMessagesList =
+                        ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
                 Iterator iterator = ndrMessagesList.iterator();
                 int size = ndrMessagesList.size();
                 System.out.println("Token gotten " + size);
