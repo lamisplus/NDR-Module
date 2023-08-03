@@ -47,7 +47,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "                       INNER JOIN base_organisation_unit facility ON facility.id = facility_id\n" +
             "                        INNER JOIN base_organisation_unit facility_lga ON facility_lga.id = facility.parent_organisation_unit_id\n" +
             "                       INNER JOIN base_organisation_unit facility_state ON facility_state.id = facility_lga.parent_organisation_unit_id\n" +
-            "                       INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = facility_id\n" +
+            "                       INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = facility_id AND boui.name ='DATIM_ID'\n" +
             "                        INNER JOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
             "                        INNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = h.uuid AND hac.archived = 0\n" +
             "                      INNER JOIN hiv_regimen hr ON hr.id = hac.regimen_id\n" +
