@@ -124,4 +124,26 @@ public class ZipUtility {
         bis.close();
         return entry;
     }
+    public static long getFolderSize(File folder) {
+        long size = 0;
+        
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        size += file.length();
+                    } else {
+                        size += getFolderSize(file);
+                    }
+                }
+            }
+        } else {
+            size = folder.length();
+        }
+        
+        return size;
+    }
+
 }
