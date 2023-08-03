@@ -2,6 +2,7 @@ package org.lamisplus.modules.ndr.mapper;
 
 
 import lombok.RequiredArgsConstructor;
+import org.lamisplus.modules.base.domain.entities.OrganisationUnit;
 import org.lamisplus.modules.base.service.OrganisationUnitService;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
@@ -17,11 +18,11 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class MessageHeaderTypeMapper {
-    private final OrganisationUnitService organisationUnitService;
+
 
 
     public MessageHeaderType getMessageHeader(PatientDemographics demographics) {
-         MessageHeaderType header = new MessageHeaderType ();
+        MessageHeaderType header = new MessageHeaderType ();
             try {
                 header.setMessageCreationDateTime (DateUtil.getXmlDateTime (new Date ()));
                 header.setMessageSchemaVersion (new BigDecimal ("1.6"));
