@@ -36,4 +36,5 @@ public interface PatientDemographicDTO {
 	LocalDate getEnrolledInHIVCareDate();
 	String getClientCode();
 	String getHtsUuid();
+	String getTbStatus();
 }    

@@ -40,6 +40,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "             mariCode.code AS PatientMaritalStatusCode,\n" +
             "             stateCode.code AS stateOfNigeriaOriginCode,\n" +
             "            eduCode.code AS patientEducationLevelCode,\n" +
+            "            ndrTbstatus.code AS tbStatus,\n" +
             "            COALESCE(ndrFuncStatCodestatus.code, ndrClinicStage.code) AS functionalStatusStartART,\n" +
             "            h.date_of_registration AS enrolledInHIVCareDate\n" +
             "               FROM\n" +
@@ -61,8 +62,10 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "            LEFT JOIN ndr_code_set mariCode ON mariCode.code_description=p.marital_status->>'display' and mariCode.code_set_nm = 'MARITAL_STATUS'\n" +
             "            LEFT JOIN ndr_code_set eduCode ON  eduCode.code_description=p.education->>'display' and eduCode.code_set_nm = 'EDUCATIONAL_LEVEL'\n" +
             "           LEFT JOIN base_application_codeset fsCodeset ON fsCodeset.id=hac.functional_status_id\n" +
+            "           LEFT JOIN base_application_codeset tbCodeset ON tbCodeset.id=h.tb_status_id\n" +
             "            LEFT JOIN base_application_codeset csCodeset ON csCodeset.id=hac.clinical_stage_id\n" +
             "            LEFT JOIN ndr_code_set ndrFuncStatCodestatus ON ndrFuncStatCodestatus.code_description=fsCodeset.display\n" +
+            "            LEFT JOIN ndr_code_set ndrTbstatus ON trim(ndrTbstatus.code_description)=trim(tbCodeset.display)\n" +
             "            LEFT JOIN ndr_code_set ndrClinicStage ON ndrClinicStage.code_description=csCodeset.display\n" +
             "               WHERE h.archived = 0\n" +
             "             AND p.uuid = ?1\n" +
