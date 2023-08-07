@@ -155,6 +155,9 @@ public class PatientDemographicsMapper {
             if(demographicDTO.getStateCode() != null){
                 patientDemographicsType.setStateOfNigeriaOriginCode(demographicDTO.getStateCode());
             }
+            if(demographicDTO.getLgaCode() != null){
+
+            }
 //            FingerPrintType fingerPrintTypeForPatient =
 //                    biometricTemplateMapper.getFingerPrintTypeForPatient (demographicDTO.getPersonUuid ());
 //            if(fingerPrintTypeForPatient != null){

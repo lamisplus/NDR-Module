@@ -247,7 +247,7 @@ public class NDRJSONService {
 
 
     public Long getPacentagePushed(Integer id) {
-        int per = 0;
+       int per = 0;
         Long facilityId = 0L;
         Optional<User> currentUser = this.userService.getUserWithRoles();
         if (currentUser.isPresent()) {
@@ -263,8 +263,7 @@ public class NDRJSONService {
             //Long
         } catch (Exception e) {
         }
-        Long per2 = new Long(per+"");
-        return per2;
+        return new Long(String.valueOf(per));
     }
 
     public void batchPushToNDR(Integer id) throws Exception {
@@ -285,28 +284,40 @@ public class NDRJSONService {
                 ndrXmlStatus = ndrXmlStatusOptional.get();
                 identifier = ndrXmlStatus.getPushIdentifier();
 
-                List<NDRMessages> ndrMessagesList = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
+                List<NDRMessages> ndrMessagesList =
+                        ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
                 Iterator iterator = ndrMessagesList.iterator();
                 int size = ndrMessagesList.size();
                 System.out.println("Token gotten " + size);
                 int batches = 0;
                 int counter = 0;
                 List<String> data = new ArrayList<>();
+                List<NDRMessages> messages = new ArrayList<>();
                 while (iterator.hasNext()) {
                     NDRMessages msg = (NDRMessages) iterator.next();
                     batches++; counter++;
                     if(batches%BATCHMAX != 0){
                         data.add(msg.getDeMessage());
+                        messages.add(msg);
                         continue;
                     }
-                    else if ( (batches%BATCHMAX == 0) || (counter == size))
-                    {
-                        if(batches == BATCHMAX) data.add(msg.getDeMessage());
+                    else if ( (batches%BATCHMAX == 0) || (counter == size)) {
+                        if (batches == BATCHMAX) {
+                            data.add(msg.getDeMessage());
+                            messages.add(msg);
+                        }
                         NDRDataResponseDTO ndrDataResponseDTO = PushData(token, data);
-                         if (ndrDataResponseDTO.getMessage().contains("success")) {
-                            msg.setIsPushed(Boolean.TRUE);
-                            msg.setMessageDate(LocalDate.now());
-                            ndrMessagesRepository.save(msg);
+                        if (ndrDataResponseDTO.getMessage().contains("success")) {
+                            //msg.setIsPushed(Boolean.TRUE);
+                            //msg.setMessageDate(LocalDate.now());
+                            //ndrMessagesRepository.save(msg);
+
+                            for (NDRMessages message:messages) {
+                                message.setIsPushed(Boolean.TRUE);
+                                message.setMessageDate(LocalDate.now());
+                            }
+                            ndrMessagesRepository.saveAll(messages);
+
                             Long percentagePushed = this.getPacentagePushed(ndrXmlStatus.getId());
                             ndrXmlStatus.setPercentagePushed(percentagePushed);
                             Boolean complete = Boolean.FALSE;
@@ -315,11 +326,11 @@ public class NDRJSONService {
                             ndrXmlStatusRepository.save(ndrXmlStatus);
                         }
                         data = new ArrayList<>();
+                        messages = new ArrayList<>();
                         batches = 0;
                     }
                 }
             }
-
         }
     }
 }

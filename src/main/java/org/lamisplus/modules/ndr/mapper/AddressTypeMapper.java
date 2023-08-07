@@ -55,6 +55,9 @@ public class AddressTypeMapper {
 		}
 		
 	}
+
+
+
 	
 	private void processAndSetPatientCurrentAddress(AddressType addressType, PatientDemographicDTO patientDemographics) {
 		log.info("Processing address...");

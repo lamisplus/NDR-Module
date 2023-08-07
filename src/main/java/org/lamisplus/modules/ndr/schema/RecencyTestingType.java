@@ -1,6 +1,8 @@
 
 package org.lamisplus.modules.ndr.schema;
 
+import lombok.ToString;
+
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -102,8 +104,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "sampleReferenceNumber",
     "viralLoadClassification"
 })
+@ToString
 public class RecencyTestingType {
-
     @XmlElement(name = "TestName", required = true)
     protected String testName;
     @XmlElement(name = "TestDate", required = true)

@@ -34,4 +34,7 @@ public interface PatientDemographicDTO {
 	String getFunctionalStatusStartART();
 	String getWHOClinicalStageART();
 	LocalDate getEnrolledInHIVCareDate();
+	String getClientCode();
+	String getHtsUuid();
+	String getTbStatus();
 }    

@@ -4,23 +4,24 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
+import java.time.LocalDate;
 
-public class TestResultTypeDTO implements Serializable {
+public interface TestResultTypeDTO {
 	//@XmlElement(name = "ScreeningTestResult", required = true)
-	 String screeningTestResult;
-	@XmlElement(name = "ScreeningTestResultDate", required = true)
-	@XmlSchemaType(name = "date")
-	protected XMLGregorianCalendar screeningTestResultDate;
-	@XmlElement(name = "ConfirmatoryTestResult", required = true)
-	protected String confirmatoryTestResult;
-	@XmlElement(name = "ConfirmatoryTestResultDate", required = true)
-	@XmlSchemaType(name = "date")
-	protected XMLGregorianCalendar confirmatoryTestResultDate;
-	@XmlElement(name = "TieBreakerTestResult", required = true)
-	protected String tieBreakerTestResult;
-	@XmlElement(name = "TieBreakerTestResultDate", required = true)
-	@XmlSchemaType(name = "date")
-	protected XMLGregorianCalendar tieBreakerTestResultDate;
-	@XmlElement(name = "FinalTestResult", required = true)
-	protected String finalTestResult;
+	 String getScreeningTestResult();
+	//@XmlElement(name = "ScreeningTestResultDate", required = true)
+	//@XmlSchemaType(name = "date")
+	 LocalDate getScreeningTestResultDate();
+	//@XmlElement(name = "ConfirmatoryTestResult", required = true)
+	 String getConfirmatoryTestResult();
+	//@XmlElement(name = "ConfirmatoryTestResultDate", required = true)
+	//@XmlSchemaType(name = "date")
+	LocalDate getConfirmatoryTestResultDate();
+	//@XmlElement(name = "TieBreakerTestResult", required = true)
+     String getTieBreakerTestResult();
+	//@XmlElement(name = "TieBreakerTestResultDate", required = true)
+	//@XmlSchemaType(name = "date")
+	 LocalDate getTieBreakerTestResultDate();
+	//@XmlElement(name = "FinalTestResult", required = true)
+	 String getFinalTestResult();
 }

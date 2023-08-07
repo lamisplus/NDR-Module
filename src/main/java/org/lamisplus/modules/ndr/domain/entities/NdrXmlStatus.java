@@ -41,4 +41,7 @@ public class NdrXmlStatus {
     @Column(name = "error", columnDefinition = "jsonb")
     private JsonNode error;
 
+    @Column(name = "type", nullable = false, length = 128)
+    private String type;
+
 }
