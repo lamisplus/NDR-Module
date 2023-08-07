@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
 import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
+import org.lamisplus.modules.ndr.service.HtsService;
 import org.lamisplus.modules.ndr.service.NDRService;
 import org.lamisplus.modules.ndr.service.NdrOptimizationService;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class NDRController {
     private final NdrOptimizationService ndrOptmizationService;
 
     private final SimpMessageSendingOperations messagingTemplate;
+    private final HtsService htsService;
 
 
     @GetMapping("/generate/{personId}")
@@ -74,6 +76,14 @@ public class NDRController {
     public ResponseEntity<Void> generateWithOptimization(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, isInitial));
+        log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/hts")
+    public ResponseEntity<Void> generateHts(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        facilityIds.forEach(facilityId -> htsService.generatePatientsHtsNDRXml(facilityId, isInitial));
         log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());
         return ResponseEntity.ok().build();
     }
