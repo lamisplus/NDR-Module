@@ -211,7 +211,12 @@ export default function DownloadNdr(props) {
             type: "date",
             filtering: false,
           },
-          // {title: "NDR Upload Status", field: "ndrStatus", type: "date", filtering: false},
+          {
+            title: "NDR Upload Status",
+            field: "ndrStatus",
+            type: "date",
+            filtering: false,
+          },
 
           {
             title: "Action",
@@ -251,9 +256,11 @@ export default function DownloadNdr(props) {
                           <ErrorIcon color="error" />
                           Error File
                         </Dropdown.Item>
-                        {/*{!row.completelyPushed && (<Dropdown.Item  onClick= {() => generateAction(row.id)}><CloudUpload color="primary"/> Upload To NDR*/}
-                        {/*</Dropdown.Item>*/}
-                        {/*)}*/}
+                        {!row.completelyPushed && (
+                          <Dropdown.Item onClick={() => generateAction(row.id)}>
+                            <CloudUpload color="primary" /> Upload To NDR
+                          </Dropdown.Item>
+                        )}
                       </Dropdown.Menu>
                     </Dropdown>
                   </Buuton2>

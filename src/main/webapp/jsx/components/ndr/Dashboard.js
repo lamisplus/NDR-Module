@@ -217,12 +217,12 @@ const HomePage = (props) => {
             icon={<ErrorIcon />}
             {...a11yProps(4)}
           />
-          {/* <Tab
+          <Tab
             className={classes.title}
             label="NDR COnfiguration"
             icon={<MdContacts />}
             {...a11yProps(5)}
-          /> */}
+          />
         </Tabs>
         <div></div>
       </AppBar>
@@ -241,6 +241,9 @@ const HomePage = (props) => {
       </TabPanel>
       <TabPanel value={value} setValue={setValue} index={4}>
         <ErrorPage value={value} setValue={setValue} errors={errors} />
+      </TabPanel>
+      <TabPanel value={value} setValue={setValue} index={5}>
+        <NdrConfiguration value={value} setValue={setValue} />
       </TabPanel>
     </div>
   );
