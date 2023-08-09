@@ -126,6 +126,7 @@ public class NdrOptimizationService {
 	public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean initial, List<String> patientUuidList) {
 		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
 		log.info("folder -> "+ pathname);
+		List<String> idsNotGenerated = new LinkedList<>();
 		ndrService.cleanupFacility(facilityId, pathname);
 		AtomicInteger generatedCount = new AtomicInteger();
 		AtomicInteger errorCount = new AtomicInteger();
@@ -141,11 +142,13 @@ public class NdrOptimizationService {
 						generatedCount.getAndIncrement();
 						patientDemographicDTO[0] = data.getPatientDemographics(id, facilityId).get();
 					} else {
+						idsNotGenerated.add(id);
 						errorCount.getAndIncrement();
 					}
 				});
 		log.info("generated  {}/{}", generatedCount.get(), patientUuidList.size());
 		log.info("files not generated  {}/{}", errorCount.get(), patientUuidList.size());
+		log.info("patientIds of files not generated: {}", idsNotGenerated);
 		File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
 		log.info("fileSize {} bytes ", ZipUtility.getFolderSize(folder));
 		if (ZipUtility.getFolderSize(folder) >= 15_000_000) {
