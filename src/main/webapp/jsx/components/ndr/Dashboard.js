@@ -201,7 +201,7 @@ const HomePage = (props) => {
 
           <Tab
             className={classes.title}
-            label="Biometrics XML"
+            label="Biometrics Recapture XML"
             icon={<MdContacts />}
             {...a11yProps(2)}
           />
