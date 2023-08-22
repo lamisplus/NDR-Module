@@ -2,6 +2,7 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.ndr.domain.dto.HtsReportDto;
 import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.schema.*;
@@ -78,7 +79,7 @@ public class HtsTypeMapper {
         validateAndSetConfirmatoryTestResultDate(h.getConfirmatoryTestResultDate(), testResult);
         validateAndSetTieBreakerTestResultDate(h.getScreeningTestResultDate(), testResult);
         hivTestResultType.setTestResult(testResult);
-        if (testResult.getFinalTestResult().equals("Pos") && h.getRecencyNumber() != null) {
+        if (testResult.getFinalTestResult().equals("Pos") &&  StringUtils.isBlank(h.getRecencyNumber())) {
             processAndSetRecencyResult(hivTestResultType, objectFactory, h);
         }
         return hivTestResultType;
