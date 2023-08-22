@@ -22,6 +22,8 @@ public interface ARTClinicalInfo {
 	
 	String getclinicalUuid();
 	
+	String getpersonUuid();
+	
 	long getRegimenId();
 	
 	long getRegimenTypeId();
