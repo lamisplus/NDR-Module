@@ -16,6 +16,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,60 +30,75 @@ public class BiometricTemplateMapper {
 
 
     public FingerPrintType getFingerPrintTypeForPatient(String patientUuid) {
+        log.info ("Generating FingerPrint of patient with uuid {} ", patientUuid);
         boolean biometricModule = moduleService.exist ("biometricModule");
         log.info ("biometric install {}", biometricModule);
-        if (biometricModule) {
-            List<BiometricDto> biometrics = ndrCodeSetRepository.getPatientBiometricByPatientUuid (patientUuid);
-            if (biometrics.size () > 2) {
-                FingerPrintType fingerPrintType = new FingerPrintType ();
-                RightHandType rightHandType = new RightHandType ();
-                LeftHandType leftHandType = new LeftHandType ();
-                biometrics.forEach (biometricDto -> {
-                    setEnrollmentDate (biometricDto, fingerPrintType);
-                    String type = biometricDto.getTemplateType ();
-                    String template = Base64.getEncoder ().encodeToString (biometricDto.getTemplate ());
-                    if (StringUtils.containsIgnoreCase (type, "RIGHT")) {
-                        if (StringUtils.containsIgnoreCase (type, "Thumb")) {
-                            rightHandType.setRightThumb (template);
-                            rightHandType.setRightIndexQuality (null);
-                        } else if (StringUtils.containsIgnoreCase (type, "Index")) {
-                            rightHandType.setRightIndex (template);
-                            rightHandType.setRightIndexQuality (null);
-                        } else if (StringUtils.containsIgnoreCase (type, "Middle")) {
-                            rightHandType.setRightMiddle (template);
-                            rightHandType.setRightMiddleQuality (null);
-                        } else if (StringUtils.containsIgnoreCase (type, "Little")) {
-                            rightHandType.setRightSmall (template);
-                            rightHandType.setRightSmallQuality (null);
-                        } else {
-                            rightHandType.setRightWedding (template);
-                            rightHandType.setRightWeddingQuality (null);
-                        }
-                        fingerPrintType.setRightHand (rightHandType);
-                    } else {
-                        if (StringUtils.containsIgnoreCase (type, "Thumb")) {
-                            leftHandType.setLeftThumb (template);
-                            leftHandType.setLeftThumbQuality (null);
-                        } else if (StringUtils.containsIgnoreCase (type, "Index")) {
-                            leftHandType.setLeftIndex (template);
-                            leftHandType.setLeftIndexQuality (null);
-                        } else if (StringUtils.containsIgnoreCase (type, "Middle")) {
-                            leftHandType.setLeftMiddle (template);
-                            leftHandType.setLeftMiddleQuality (null);
-                        } else if (StringUtils.containsIgnoreCase (type, "Little")) {
-                            leftHandType.setLeftSmall (template);
-                            leftHandType.setLeftSmallQuality (null);
-                        } else {
-                            leftHandType.setLeftWedding (template);
-                            leftHandType.setLeftWeddingQuality (null);
-                        }
-                        fingerPrintType.setLeftHand (leftHandType);
+        try {
+            if (biometricModule) {
+                List<BiometricDto> biometrics = ndrCodeSetRepository.getPatientBiometricByPatientUuid(patientUuid);
+                if (biometrics.size() > 2) {
+                    FingerPrintType fingerPrintType = new FingerPrintType();
+                    RightHandType rightHandType = new RightHandType();
+                    LeftHandType leftHandType = new LeftHandType();
+                    List<BiometricDto> rights = biometrics.stream().filter(finger -> finger.getTemplateType().contains("Right"))
+                            .collect(Collectors.toList());
+                    List<BiometricDto> lefts = biometrics.stream().filter(finger -> finger.getTemplateType().contains("Left"))
+                            .collect(Collectors.toList());
+                    
+                    if(rights.isEmpty() || lefts.isEmpty()){
+                         throw new IllegalArgumentException("At least one right finger or left finger must be captured");
                     }
-                });
-                return fingerPrintType;
-            } else {
-                return null;
+                    biometrics.forEach(biometricDto -> {
+                        setEnrollmentDate(biometricDto, fingerPrintType);
+                        String type = biometricDto.getTemplateType();
+                        String template = Base64.getEncoder().encodeToString(biometricDto.getTemplate());
+                        if (StringUtils.containsIgnoreCase(type, "RIGHT")) {
+                            if (StringUtils.containsIgnoreCase(type, "Thumb")) {
+                                rightHandType.setRightThumb(template);
+                                rightHandType.setRightIndexQuality(biometricDto.getQuality());
+                            } else if (StringUtils.containsIgnoreCase(type, "Index")) {
+                                rightHandType.setRightIndex(template);
+                                rightHandType.setRightIndexQuality(biometricDto.getQuality());
+                            } else if (StringUtils.containsIgnoreCase(type, "Middle")) {
+                                rightHandType.setRightMiddle(template);
+                                rightHandType.setRightMiddleQuality(biometricDto.getQuality());
+                            } else if (StringUtils.containsIgnoreCase(type, "Little")) {
+                                rightHandType.setRightSmall(template);
+                                rightHandType.setRightSmallQuality(biometricDto.getQuality());
+                            } else {
+                                rightHandType.setRightWedding(template);
+                                rightHandType.setRightWeddingQuality(biometricDto.getQuality());
+                            }
+                            fingerPrintType.setRightHand(rightHandType);
+                        } else {
+                            if (StringUtils.containsIgnoreCase(type, "Thumb")) {
+                                leftHandType.setLeftThumb(template);
+                                leftHandType.setLeftThumbQuality(biometricDto.getQuality());
+                            } else if (StringUtils.containsIgnoreCase(type, "Index")) {
+                                leftHandType.setLeftIndex(template);
+                                leftHandType.setLeftIndexQuality(biometricDto.getQuality());
+                            } else if (StringUtils.containsIgnoreCase(type, "Middle")) {
+                                leftHandType.setLeftMiddle(template);
+                                leftHandType.setLeftMiddleQuality(biometricDto.getQuality());
+                            } else if (StringUtils.containsIgnoreCase(type, "Little")) {
+                                leftHandType.setLeftSmall(template);
+                                leftHandType.setLeftSmallQuality(biometricDto.getQuality());
+                            } else {
+                                leftHandType.setLeftWedding(template);
+                                leftHandType.setLeftWeddingQuality(biometricDto.getQuality());
+                            }
+                            fingerPrintType.setLeftHand(leftHandType);
+                        }
+                    });
+                    return fingerPrintType;
+                } else {
+                    return null;
+                }
             }
+        }catch (Exception e) {
+          log.error("An error occurred while creating the fingerPrint");
+          log.error("Error message {}",e.getMessage());
+          throw new IllegalArgumentException(e.toString());
         }
         return null;
     }

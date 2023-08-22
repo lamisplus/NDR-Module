@@ -19,4 +19,5 @@ public class NdrXmlStatusDto implements Serializable {
     private String pushIdentifier;
     private Long percentagePushed;
     private Boolean completelyPushed;
+    private boolean error;
 }

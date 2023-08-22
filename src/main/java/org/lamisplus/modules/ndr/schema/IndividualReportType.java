@@ -39,13 +39,24 @@ import java.util.List;
     "pmtct"
 })
 public class IndividualReportType {
-
+    @Override
+    public String toString() {
+        return "IndividualReportType{" +
+                "patientDemographics=" + patientDemographics +
+                ", condition=" + condition +
+                ", hivTestingReport=" + hivTestingReport +
+                ", pmtct=" + pmtct +
+                '}';
+    }
+    
     @XmlElement(name = "PatientDemographics", required = true)
     protected PatientDemographicsType patientDemographics;
+   
     @XmlElement(name = "Condition", required = true)
     protected List<ConditionType> condition;
     @XmlElement(name = "HIVTestingReport")
     protected List<HIVTestingReportType> hivTestingReport;
+   
     @XmlElement(name = "PMTCT")
     protected PMTCTType pmtct;
 

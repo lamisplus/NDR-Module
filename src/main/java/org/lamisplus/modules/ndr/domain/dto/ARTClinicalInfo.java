@@ -14,7 +14,7 @@ public interface ARTClinicalInfo {
 	
 	Long getCd4();
 	
-	Boolean isCommencement();
+	//Boolean isCommencement();
 	
 	Long getFunctionalStatusId();
 	
@@ -64,7 +64,7 @@ public interface ARTClinicalInfo {
 		
 	Double getRespiratoryRate();
 	
-	Long getVisitId();
+	String getVisitId();
 		
 	Double getSystolic();
 	

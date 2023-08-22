@@ -35,7 +35,15 @@ import javax.xml.bind.annotation.*;
 })
 @XmlRootElement(name = "Container")
 public class Container {
-
+    @Override
+    public String toString() {
+        return "Container{" +
+                "messageHeader=" + messageHeader +
+                ", individualReport=" + individualReport +
+                ", validation='" + validation + '\'' +
+                '}';
+    }
+    
     @XmlElement(name = "MessageHeader", required = true)
     protected MessageHeaderType messageHeader;
     @XmlElement(name = "IndividualReport")

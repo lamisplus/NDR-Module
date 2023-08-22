@@ -2,32 +2,24 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.lamisplus.modules.base.domain.dto.ApplicationCodesetDTO;
 import org.lamisplus.modules.base.service.ApplicationCodesetService;
-import org.lamisplus.modules.hiv.domain.dto.HIVStatusTrackerDto;
-import org.lamisplus.modules.hiv.domain.entity.ARTClinical;
-import org.lamisplus.modules.hiv.domain.entity.Regimen;
-import org.lamisplus.modules.hiv.repositories.ARTClinicalRepository;
-import org.lamisplus.modules.hiv.repositories.HivEnrollmentRepository;
+import org.lamisplus.modules.hiv.domain.dto.HIVStatusDisplay;
 import org.lamisplus.modules.hiv.repositories.RegimenRepository;
-import org.lamisplus.modules.hiv.service.HIVStatusTrackerService;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.hiv.service.StatusManagementService;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.domain.dto.ArtCommencementDTO;
 import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
 import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionSpecificQuestionsType;
 import org.lamisplus.modules.ndr.schema.HIVQuestionsType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
-import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.lamisplus.modules.triage.domain.entity.VitalSign;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.lamisplus.modules.ndr.utility.DateUtil.getXmlDate;
@@ -44,11 +36,11 @@ public class ConditionSpecificQuestionsTypeMapper {
     private final ApplicationCodesetService applicationCodesetService;
     
     private final RegimenRepository regimenRepository;
+    private final StatusManagementService statusManagementService;
 
-    private final HIVStatusTrackerService hivStatusTrackerService;
-// improve performance
 
     public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(PatientDemographics demographics) {
+        log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
         try {
             ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
             HIVQuestionsType hiv = new HIVQuestionsType ();
@@ -58,21 +50,18 @@ public class ConditionSpecificQuestionsTypeMapper {
                                 String enrollmentStatus = demographics.getStatusAtRegistration();
                                 processAndHandleARTStatus (hiv, demographics.getId (), enrollmentStatus);
             }
-                
-//                Optional<ARTClinical> artCommencement =
-//                        artClinicalRepository.findByArchivedAndIsCommencementIsTrue(0)
-//                        .stream()
-//                        .filter(artClinical -> artClinical.getPerson().getUuid().equals(demographics.getPersonUuid()))
-//                       .findFirst();
-            Optional<ArtCommencementDTO> artCommencement = ndrCodeSetRepository.getArtCommencementByPatientUuid(demographics.getPersonUuid());
-            System.out.println("ART Commencement: " + artCommencement);
+            
+               Optional<ArtCommencementDTO> artCommencement =
+                       ndrCodeSetRepository.getArtCommencementByPatientUuid(demographics.getPersonUuid());
+            
+                log.info("ART Commencement: {}", artCommencement);
                 if (artCommencement.isPresent()) {
                     processAndSetArtStartDate (hiv, artCommencement.get().getArtStartDate());
                     processAndSetWHOStagingAndFunctionalStatus (hiv, artCommencement.get().getWhoStage(), artCommencement.get().getFunctionStatus());
                     String regimen = artCommencement.get().getRegimen();
                     if(regimen != null) {
                      Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen);
-                     System.out.println("ndrRegimen: " + regimen);
+                     log.info("ndrRegimen: " + regimen);
                      simpleCodeSet.ifPresent(hiv::setFirstARTRegimen);
                      }
                     processAndSetCD4 (hiv, demographics.getAge(), artCommencement.get());
@@ -80,12 +69,111 @@ public class ConditionSpecificQuestionsTypeMapper {
                 hivQuestions.setHIVQuestions (hiv);
             return hivQuestions;
         } catch (Exception e) {
-            e.printStackTrace ();
+            log.error("An error Generating condition specific questions for patient with uuid {}",
+                    demographics.getPersonUuid());
+           log.error("Error Message: {} " + e.getMessage());
         }
         return null;
 
     }
+    
+    
+    public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(
+            PatientDemographics demographics,
+            ArtCommencementDTO artCommencement) {
+        log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
+        try {
+            ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
+            HIVQuestionsType hiv = new HIVQuestionsType ();
+            processAndSetDateOfRegistration (hiv, demographics.getDateOfRegistration(), demographics.getStatusAtRegistration());
+            processAndSetCareEntryPoint (hiv, demographics.getCareEntryPoint());
+            if (demographics.getDateOfRegistration() != null) {
+                String enrollmentStatus = demographics.getStatusAtRegistration();
+                processAndHandleARTStatus (hiv, demographics.getId (), enrollmentStatus);
+            }
+             log.info("ART Commencement: {}", artCommencement);
+                processAndSetArtStartDate (hiv, artCommencement.getArtStartDate());
+                processAndSetWHOStagingAndFunctionalStatus (hiv, artCommencement.getWhoStage(), artCommencement.getFunctionStatus());
+                String regimen = artCommencement.getRegimen();
+                if(regimen != null) {
+                    Optional<CodedSimpleType> simpleCodeSet = ndrCodeSetResolverService.getRegimen(regimen);
+                    log.info("First ndrRegimen: " + regimen);
+                    simpleCodeSet.ifPresent(hiv::setFirstARTRegimen);
+                }
+                processAndSetCD4 (hiv, demographics.getAge(), artCommencement);
+            
+            hivQuestions.setHIVQuestions (hiv);
+            return hivQuestions;
+        } catch (Exception e) {
+            log.error("An error Generating condition specific questions for patient with uuid {}",
+                    demographics.getPersonUuid());
+            log.error("Error Message: {} " + e.getMessage());
+        }
+        return null;
+        
+    }
+    
+    public ConditionSpecificQuestionsType getConditionSpecificQuestionsType(PatientDemographicDTO demographics) {
+        //@XmlElement(name = "EnrolledInHIVCareDate", required = true)
+        log.info("Generating condition specific questions for patient with uuid {}", demographics.getPersonUuid());
+        try {
+            ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
+            HIVQuestionsType hiv = new HIVQuestionsType ();
+            LocalDate inHIVCareDate = demographics.getEnrolledInHIVCareDate();
+            if(inHIVCareDate != null){
+                hiv.setEnrolledInHIVCareDate(getXmlDate (Date.valueOf (inHIVCareDate)));
+                String statusAtRegistration = demographics.getStatusAtRegistration();
+                if (statusAtRegistration != null) {
+                    if (statusAtRegistration.equalsIgnoreCase ("HIV+ non ART")) {
+                        hiv.setFirstConfirmedHIVTestDate (getXmlDate (Date.valueOf (inHIVCareDate)));
+                    }
+                    if (statusAtRegistration.equalsIgnoreCase ("ART Transfer In")) {
+                        hiv.setTransferredInDate (getXmlDate (Date.valueOf (inHIVCareDate)));
+                    }
+                    String tbStatus = demographics.getTbStatus();
+                    log.info("initial tb status {}", tbStatus);
+                    if(tbStatus != null){
+                        hiv.setInitialTBStatus(demographics.getTbStatus());
+                    }
+                    processAndHandleARTStatus (hiv, demographics.getPersonId(), statusAtRegistration);
+                }
+            }else {
+                throw new IllegalArgumentException(" Enrolled In HIVCareDate cannot be null");
+            }
+            if(demographics.getCareEntryPoint() != null){
+                hiv.setCareEntryPoint(demographics.getCareEntryPoint());
+            }
+            log.info("art start date {}", demographics.getArtStartDate());
+           
+            if (demographics.getArtStartDate() != null) {
+                hiv.setARTStartDate (getXmlDate (Date.valueOf ((demographics.getArtStartDate()))));
+            }
+            if(demographics.getFirstARTRegimenCode() != null && demographics.getFirstARTRegimenCodeDescTxt() != null) {
+                CodedSimpleType codedSimpleType = new CodedSimpleType();
+                codedSimpleType.setCode(demographics.getFirstARTRegimenCode());
+                codedSimpleType.setCodeDescTxt(demographics.getFirstARTRegimenCodeDescTxt());
+                hiv.setFirstARTRegimen(codedSimpleType);
+            }
+            if(demographics.getFunctionalStatusStartART() != null){
+                hiv.setFunctionalStatusStartART(demographics.getFunctionalStatusStartART());
+            }
+            if(demographics.getWHOClinicalStageART() != null){
+                hiv.setWHOClinicalStageARTStart(demographics.getWHOClinicalStageART());
+            }
+            // need more clarity on CD4
+            hivQuestions.setHIVQuestions (hiv);
+            return hivQuestions;
+        } catch (Exception e) {
+            log.error("An error Generating condition specific questions for patient with uuid {}",
+                    demographics.getPersonUuid());
+            log.error("Error Message: {} " + e.getMessage());
+        }
+        return null;
+        
+    }
 
+    
+    
     private void processAndSetHeightAndWeight(HIVQuestionsType hiv, VitalSign vitalSign) {
         Double bodyWeight = vitalSign.getBodyWeight ();
         if (bodyWeight > 0) {
@@ -106,12 +194,10 @@ public class ConditionSpecificQuestionsTypeMapper {
     }
 
     private void processAndSetWHOStagingAndFunctionalStatus(HIVQuestionsType hiv, String whoStage, String functionalStatus) {
-       
         if(whoStage != null) {
                 Optional<String> whoStageCodeSet =
                         ndrCodeSetResolverService.getNDRCodeSetCode("WHO_STAGE",whoStage);
                 whoStageCodeSet.ifPresent(hiv::setWHOClinicalStageARTStart);
-            
         }
         if(functionalStatus != null) {
                 Optional<String> functionalStatusCodeSet =
@@ -158,57 +244,56 @@ public class ConditionSpecificQuestionsTypeMapper {
     private void processAndHandleARTStatus(HIVQuestionsType hiv, Long personId, String enrollmentStatus) {
         try {
             String ndrARTStatus = enrollmentStatus == null ? "Pre-ART" : "ART";
-            String status = hivStatusTrackerService.getPersonCurrentHIVStatusByPersonId (personId).getStatus();
+            String status = statusManagementService.getCurrentStatus (personId);
             handlePatientTransferOut (hiv, personId, ndrARTStatus, status);
             handlePatientDeathStatus (hiv, personId, ndrARTStatus, status);
         } catch (Exception e) {
-            e.printStackTrace ();
+           log.error ("An error occurred while processing client status message {}", e.getMessage());
         }
 
     }
 
     private void handlePatientDeathStatus(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
-        if (status.contains ("Died")) {
-            Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
-            patientStatus.ifPresent (currentStatus -> {
-                Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode ("ART_STATUS", ndrARTStatus);
-                artStatus.ifPresent (hiv::setStatusAtDeath);
-                try {
-                    hiv.setDeathDate (getXmlDate (Date.valueOf (currentStatus.getStatusDate ())));
-                } catch (DatatypeConfigurationException e) {
-                    throw new RuntimeException (e);
-                }
-                hiv.setPatientHasDied (true);
-            });
-
+        try {
+        if (status.contains("Died") || status.contains("DEATH")) {
+            //Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
+            HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
+            log.info("current status handling death {} ", clientReportingStatus.getDescription());
+            Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
+            artStatus.ifPresent(hiv::setStatusAtDeath);
+            hiv.setDeathDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
+            hiv.setPatientHasDied(true);
+        }
+    }catch (DatatypeConfigurationException e) {
+            log.error("An error occurred while handling Death status msg {}", e.getMessage());
         }
     }
 
     private void handlePatientTransferOut(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
-        if (status.contains ("Out")) {
-            Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
-            patientStatus.ifPresent (currentStatus -> {
-                Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode ("ART_STATUS", ndrARTStatus);
-                artStatus.ifPresent (hiv::setTransferredOutStatus);
-                try {
-                    hiv.setTransferredOutDate (getXmlDate (Date.valueOf (currentStatus.getStatusDate ())));
-                } catch (DatatypeConfigurationException e) {
-                    throw new RuntimeException (e);
-                }
-                hiv.setPatientTransferredOut (true);
-            });
-        } else {
-            hiv.setPatientTransferredOut (false);
+        try {
+            if (status.contains("Out")) {
+                //  Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
+                HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
+                Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
+                artStatus.ifPresent(hiv::setTransferredOutStatus);
+                hiv.setTransferredOutDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
+                hiv.setPatientTransferredOut(true);
+            
+            } else {
+                hiv.setPatientTransferredOut(false);
+            }
+        } catch (Exception e) {
+            log.error("An error occurred while processing transfer-out client status msg {}", e.getMessage());
         }
     }
 
-    @NotNull
-    private Optional<HIVStatusTrackerDto> getPatientStatus(Long personId, String status) {
-        return hivStatusTrackerService.getPersonHIVStatusByPersonId (personId)
-                .stream ()
-                .filter (s -> s.getHivStatus ().equals (status))
-                .findFirst ();
-    }
+//    @NotNull
+//    private Optional<HIVStatusTrackerDto> getPatientStatus(Long personId, String status) {
+//        return hivStatusTrackerService.getPersonHIVStatusByPersonId (personId)
+//                .stream ()
+//                .filter (s -> s.getHivStatus ().equals (status))
+//                .findFirst ();
+//    }
 
     private void processAndSetCD4(HIVQuestionsType hiv, int age, ArtCommencementDTO artCommence) {
         Long cd4 = artCommence.getCd4 ();

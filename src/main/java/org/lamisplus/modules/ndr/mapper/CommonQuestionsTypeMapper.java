@@ -1,8 +1,10 @@
 package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.hiv.service.StatusManagementService;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
 import org.lamisplus.modules.ndr.schema.CommonQuestionsType;
 import org.lamisplus.modules.ndr.schema.FacilityType;
 import org.lamisplus.modules.ndr.utility.DateUtil;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommonQuestionsTypeMapper {
 	
 	private final MessageHeaderTypeMapper messageHeaderTypeMapper;
@@ -27,13 +30,13 @@ public class CommonQuestionsTypeMapper {
 	
 	
 	public CommonQuestionsType getPatientCommonQuestion(PatientDemographics demographics) {
+		log.info("Generating common questions for patient with uuid {}", demographics.getPersonUuid());
 		try {
 			CommonQuestionsType common = new CommonQuestionsType();
 			FacilityType treatmentFacility = messageHeaderTypeMapper.getTreatmentFacility(demographics);
 			common.setDiagnosisFacility(treatmentFacility);
 			common.setHospitalNumber(demographics.getHospitalNumber());
 			common.setPatientAge(demographics.getAge());
-			
 			if (demographics.getSex() != null) {
 				if (demographics.getSex().contains("F")) {
 					Map<String, Object> pStatus =
@@ -48,11 +51,78 @@ public class CommonQuestionsTypeMapper {
 			}
 			return common;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("An error occurred while Generating common questions for patient with uuid {}",
+					demographics.getPersonUuid());
+			log.error("Error Message: {}", e.getMessage());
 		}
 		
 		return null;
 	}
+	
+	public CommonQuestionsType getPatientCommonQuestion(PatientDemographicDTO demographics) {
+//		  @XmlElement(name = "DiagnosisDate", required = true)
+		log.info("Generating common questions for patient with uuid {}", demographics.getPersonUuid());
+		try {
+			CommonQuestionsType common = new CommonQuestionsType();
+			FacilityType treatmentFacility = messageHeaderTypeMapper.getTreatmentFacility(demographics);
+			common.setDiagnosisFacility(treatmentFacility);
+			common.setHospitalNumber(demographics.getHospitalNumber());
+			common.setPatientAge(demographics.getAge());
+			if (demographics.getPatientSexCode() != null) {
+				if (demographics.getPatientSexCode().contains("F")) {
+					Map<String, Object> pStatus =
+							pregnancyStatus.getPregnancyStatus(demographics.getPersonUuid());
+					common.setPatientPregnancyStatusCode((String) pStatus.get("status"));
+				}
+			}
+			String currentStatus = statusManagementService.getCurrentStatus(demographics.getPersonId());
+			if (currentStatus.equalsIgnoreCase("KNOWN_DEATH")) common.setPatientDieFromThisIllness(true);
+			if (demographics.getDiagnosisDate() != null) {
+				common.setDiagnosisDate(DateUtil.getXmlDate(Date.valueOf(demographics.getDiagnosisDate())));
+			}else {
+			   throw  new IllegalArgumentException("Diagnosis date cannot be null");
+			}
+			return common;
+		} catch (Exception e) {
+			log.error("An error occurred while Generating common questions for patient with uuid {}",
+					demographics.getPersonUuid());
+			log.error("Error Message: {}", e.getMessage());
+		}
+		return null;
+	}
+	
+	public CommonQuestionsType getPatientCommonQuestion(PatientDemographicDTO demographics, boolean isHts) {
+//		  @XmlElement(name = "DiagnosisDate", required = true)
+		log.info("Generating common questions for patient with uuid {}", demographics.getPersonUuid());
+		try {
+			CommonQuestionsType common = new CommonQuestionsType();
+			FacilityType treatmentFacility = messageHeaderTypeMapper.getTreatmentFacility(demographics);
+			common.setDiagnosisFacility(treatmentFacility);
+			common.setHospitalNumber(demographics.getHospitalNumber());
+			common.setPatientAge(demographics.getAge());
+			if (demographics.getPatientSexCode() != null) {
+				if (demographics.getPatientSexCode().contains("F")) {
+					Map<String, Object> pStatus =
+							pregnancyStatus.getPregnancyStatus(demographics.getPersonUuid());
+					common.setPatientPregnancyStatusCode((String) pStatus.get("status"));
+				}
+			}
+			if (demographics.getDiagnosisDate() != null) {
+				common.setDiagnosisDate(DateUtil.getXmlDate(Date.valueOf(demographics.getDiagnosisDate())));
+			}else {
+				throw  new IllegalArgumentException("Diagnosis date cannot be null");
+			}
+			return common;
+		} catch (Exception e) {
+			log.error("An error occurred while Generating common questions for patient with uuid {}",
+					demographics.getPersonUuid());
+			log.error("Error Message: {}", e.getMessage());
+		}
+		return null;
+	}
+	
+	
+	
 	
 	private int getAge(LocalDate dateOfBirth) {
 		LocalDate currentDate = LocalDate.now();
