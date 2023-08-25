@@ -1,11 +1,14 @@
 package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.ndr.domain.dto.HtsReportDto;
 import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.DateUtil;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -28,6 +31,7 @@ public class HtsTypeMapper {
             List<NDRErrorDTO> errors) {
         if (!htsReportDtos.isEmpty()) {
             List<HIVTestingReportType> hivTestingReport = individualReportType.getHIVTestingReport();
+            log.info("hts data: {}", htsReportDtos);
             htsReportDtos.parallelStream().forEach(h -> {
                 try {
                     HIVTestingReportType hivTestingReportType = NDRObjectFactory.createHIVTestingReportType();
@@ -121,8 +125,12 @@ public class HtsTypeMapper {
             } catch (DatatypeConfigurationException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            throw new IllegalArgumentException("DateSampleSent can not be null kindly correct this");
+        }else if(h.getDateSampleSent() == null && h.getTestDate() != null ){
+            try {
+                recencyTesting.setDateSampleSent(DateUtil.getXmlDate(Date.valueOf(h.getTestDate())));
+            } catch (DatatypeConfigurationException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         if (h.getDateSampleCollected() != null) {
@@ -131,8 +139,12 @@ public class HtsTypeMapper {
             } catch (DatatypeConfigurationException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            throw new IllegalArgumentException("DateSampleCollected can not be null kindly correct this");
+        } else if(h.getDateSampleCollected() == null && h.getTestDate()!= null ){
+            try {
+                recencyTesting.setDateSampleCollected(DateUtil.getXmlDate(Date.valueOf(h.getTestDate())));
+            } catch (DatatypeConfigurationException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         if (h.getViralLoadConfirmationTestDate() != null) {
@@ -142,14 +154,11 @@ public class HtsTypeMapper {
                 throw new RuntimeException(e);
             }
         }
-//		else {
-//			throw new IllegalArgumentException("ViralLoadConfirmationTestDate can not be null kindly correct this");
-//		}
-
 
     }
 
     private static void validateAndSetStringValues(HtsReportDto h, RecencyTestingType recencyTesting) {
+
         validateNotNull(h.getTestName(), "TestName");
         if (h.getTestName().contains("Asante")) {
            log.info("test name {}", RecencyTestName.ASANTE.getValue());
@@ -158,6 +167,7 @@ public class HtsTypeMapper {
             log.info("test name {}", RecencyTestName.OTHERS.getValue());
             recencyTesting.setTestName(RecencyTestName.OTHERS.name());
         }
+
         recencyTesting.setViralLoadConfirmationResult(h.getViralLoadConfirmationResult());
         if (h.getSampleType() != null) {
             if(h.getSampleType().equalsIgnoreCase("Plasma")){
@@ -166,50 +176,45 @@ public class HtsTypeMapper {
                 recencyTesting.setSampleType("D");
             }
         } else {
-            recencyTesting.setSampleType("");
+            recencyTesting.setSampleType("D");
         }
 
         if (h.getPcrLab() != null) {
             recencyTesting.setPCRLab(h.getPcrLab());
-        } else {
-            recencyTesting.setPCRLab("");
+        }else {
+            recencyTesting.setPCRLab("LIMS190001");
         }
 
         validateNotNull(h.getRecencyNumber(), "RecencyNumber");
         recencyTesting.setRecencyNumber(h.getRecencyNumber());
 
         //interpretation
-        validateNotNull(h.getRecencyInterpretation(), "RecencyInterpretation");
-        if (h.getRecencyInterpretation().contains("Recent")) {
+       // validateNotNull(h.getRecencyInterpretation(), "RecencyInterpretation");
+        if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().equalsIgnoreCase("Recent")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.RECENT.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.RECENT.getValue());
-        } else if (h.getRecencyInterpretation().contains("Long Term")) {
+        } else if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().equalsIgnoreCase("Long Term")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.LONG_TERM.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
-        } else if (h.getRecencyInterpretation().contains("Negative")) {
+        } else if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().equalsIgnoreCase("Negative")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.NEGATIVE.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
-        } else {
+        } else if(StringUtils.isNotBlank(h.getRecencyInterpretation()) && !h.getRecencyInterpretation().equalsIgnoreCase("Recent")
+            && !h.getRecencyInterpretation().contains("Long Term") && !h.getRecencyInterpretation().equalsIgnoreCase("Negative")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.INVALID.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
         }
         if (h.getSampleReferenceNumber() != null) {
             recencyTesting.setSampleReferenceNumber(h.getSampleReferenceNumber());
-        } else {
-            recencyTesting.setSampleReferenceNumber("");
         }
         if (h.getViralLoadClassification() != null) {
             recencyTesting.setViralLoadClassification(h.getViralLoadClassification());
-        } else {
-            recencyTesting.setViralLoadClassification("");
         }
     }
 
     private static void validateAndSetRecencyYNCode(HtsReportDto h, RecencyTestingType recencyTesting) {
         if (h.getConsent() != null && (h.getConsent().equalsIgnoreCase("false") || h.getConsent().equalsIgnoreCase("no"))) {
             recencyTesting.setConsent(YNCodeType.YES);
-        } else {
-            recencyTesting.setConsent(YNCodeType.NO);
         }
 
         if (h.getControlLine() != null && (h.getControlLine().equalsIgnoreCase("yes") || h.getControlLine().equalsIgnoreCase("true"))) {
