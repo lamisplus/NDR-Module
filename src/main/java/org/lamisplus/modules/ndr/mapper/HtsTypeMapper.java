@@ -190,17 +190,17 @@ public class HtsTypeMapper {
 
         //interpretation
        // validateNotNull(h.getRecencyInterpretation(), "RecencyInterpretation");
-        if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().equalsIgnoreCase("Recent")) {
+        if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().contains("Recent")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.RECENT.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.RECENT.getValue());
-        } else if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().equalsIgnoreCase("Long Term")) {
+        } else if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().contains("Long")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.LONG_TERM.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
-        } else if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().equalsIgnoreCase("Negative")) {
+        } else if (StringUtils.isNotBlank(h.getRecencyInterpretation()) && h.getRecencyInterpretation().contains("Negative")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.NEGATIVE.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
-        } else if(StringUtils.isNotBlank(h.getRecencyInterpretation()) && !h.getRecencyInterpretation().equalsIgnoreCase("Recent")
-            && !h.getRecencyInterpretation().contains("Long Term") && !h.getRecencyInterpretation().equalsIgnoreCase("Negative")) {
+        } else if(StringUtils.isNotBlank(h.getRecencyInterpretation()) && !h.getRecencyInterpretation().contains("Recent")
+            && !h.getRecencyInterpretation().contains("Long") && !h.getRecencyInterpretation().contains("Negative")) {
             recencyTesting.setRecencyInterpretation(RecencyInterpretation.INVALID.getValue());
             recencyTesting.setRapidRecencyAssay(RecencyInterpretation.LONG_TERM.getValue());
         }
