@@ -206,9 +206,13 @@ public class HtsTypeMapper {
         }
         if (h.getSampleReferenceNumber() != null) {
             recencyTesting.setSampleReferenceNumber(h.getSampleReferenceNumber());
+        } else {
+            recencyTesting.setSampleReferenceNumber("");
         }
         if (h.getViralLoadClassification() != null) {
             recencyTesting.setViralLoadClassification(h.getViralLoadClassification());
+        } else {
+            recencyTesting.setViralLoadClassification("");
         }
     }
 
