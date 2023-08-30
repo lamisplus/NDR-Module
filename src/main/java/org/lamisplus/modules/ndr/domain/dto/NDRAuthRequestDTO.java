@@ -6,4 +6,5 @@ import lombok.Data;
 public class NDRAuthRequestDTO {
     String email;
     String password;
+    String baseUrl;
 }

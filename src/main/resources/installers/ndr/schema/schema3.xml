@@ -37,5 +37,15 @@
             ALTER TABLE ndr_xml_status ADD percentage_pushed bigint DEFAULT 100;
         </sql>
     </changeSet>
+    <changeSet failOnError="true"  id="20230225-006-DR" author="Dr Karim">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ndr_xml_status" columnName="percentage_pushed" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE ndr_xml_status ADD percentage_pushed bigint DEFAULT 100;
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
