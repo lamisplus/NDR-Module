@@ -77,10 +77,12 @@ public class NDRJSONController {
 //    }
 
     @PostMapping("/auto-push-configuration")
-    public NDRPusherConfig autoPushConfig(@RequestParam("username") String username,
-                                          @RequestParam("password") String password,
-                                          @RequestParam("baseUrl") String baseUrl) throws Exception {
-        NDRPusherConfig ndrPusherConfig = NDRJSONService.save(username, password, baseUrl);
+    public NDRPusherConfig autoPushConfig(@RequestBody NDRAuthRequestDTO ndrAuthRequestDTO) throws Exception {
+        NDRPusherConfig ndrPusherConfig = NDRJSONService.save(
+                ndrAuthRequestDTO.getEmail(),
+                ndrAuthRequestDTO.getPassword(),
+                ndrAuthRequestDTO.getBaseUrl()
+        );
         return ndrPusherConfig;
     }
 
