@@ -130,6 +130,11 @@ public class ConditionSpecificQuestionsTypeMapper {
                     if (statusAtRegistration.equalsIgnoreCase ("ART Transfer In")) {
                         hiv.setTransferredInDate (getXmlDate (Date.valueOf (inHIVCareDate)));
                     }
+                    String tbStatus = demographics.getTbStatus();
+                    log.info("initial tb status {}", tbStatus);
+                    if(tbStatus != null){
+                        hiv.setInitialTBStatus(demographics.getTbStatus());
+                    }
                     processAndHandleARTStatus (hiv, demographics.getPersonId(), statusAtRegistration);
                 }
             }else {

@@ -17,4 +17,11 @@
                 ADD COLUMN type varchar(100) DEFAULT 'treatment';
         </sql>
     </changeSet>
+    <changeSet failOnError="true"  id="20230807-002-PM" author="Amos data-fi">
+        <sql>
+            update base_application_codeset
+            set display = 'No signs or symptoms of TB'
+            where id = 67
+        </sql>
+    </changeSet>
 </databaseChangeLog>

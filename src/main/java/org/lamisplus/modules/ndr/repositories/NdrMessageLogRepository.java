@@ -40,6 +40,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "             mariCode.code AS PatientMaritalStatusCode,\n" +
             "             stateCode.code AS stateOfNigeriaOriginCode,\n" +
             "            eduCode.code AS patientEducationLevelCode,\n" +
+            "            ndrTbstatus.code AS tbStatus,\n" +
             "            COALESCE(ndrFuncStatCodestatus.code, ndrClinicStage.code) AS functionalStatusStartART,\n" +
             "            h.date_of_registration AS enrolledInHIVCareDate\n" +
             "               FROM\n" +
@@ -47,7 +48,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "                       INNER JOIN base_organisation_unit facility ON facility.id = facility_id\n" +
             "                        INNER JOIN base_organisation_unit facility_lga ON facility_lga.id = facility.parent_organisation_unit_id\n" +
             "                       INNER JOIN base_organisation_unit facility_state ON facility_state.id = facility_lga.parent_organisation_unit_id\n" +
-            "                       INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = facility_id\n" +
+            "                       INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = facility_id AND boui.name ='DATIM_ID'\n" +
             "                        INNER JOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
             "                        INNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = h.uuid AND hac.archived = 0\n" +
             "                      INNER JOIN hiv_regimen hr ON hr.id = hac.regimen_id\n" +
@@ -61,8 +62,10 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "            LEFT JOIN ndr_code_set mariCode ON mariCode.code_description=p.marital_status->>'display' and mariCode.code_set_nm = 'MARITAL_STATUS'\n" +
             "            LEFT JOIN ndr_code_set eduCode ON  eduCode.code_description=p.education->>'display' and eduCode.code_set_nm = 'EDUCATIONAL_LEVEL'\n" +
             "           LEFT JOIN base_application_codeset fsCodeset ON fsCodeset.id=hac.functional_status_id\n" +
+            "           LEFT JOIN base_application_codeset tbCodeset ON tbCodeset.id=h.tb_status_id\n" +
             "            LEFT JOIN base_application_codeset csCodeset ON csCodeset.id=hac.clinical_stage_id\n" +
             "            LEFT JOIN ndr_code_set ndrFuncStatCodestatus ON ndrFuncStatCodestatus.code_description=fsCodeset.display\n" +
+            "            LEFT JOIN ndr_code_set ndrTbstatus ON trim(ndrTbstatus.code_description)=trim(tbCodeset.display)\n" +
             "            LEFT JOIN ndr_code_set ndrClinicStage ON ndrClinicStage.code_description=csCodeset.display\n" +
             "               WHERE h.archived = 0\n" +
             "             AND p.uuid = ?1\n" +

@@ -74,7 +74,7 @@ const Biometrics = (props) => {
         window.setTimeout(() => {
           toast.success(" Generating Biometrics XML Successful!");
           setModal(false);
-          props.setValue(1);
+          props.setValue(3);
         }, 5000);
 
         //props.history.push("/generate", { state: 'download'});
