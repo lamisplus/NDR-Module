@@ -37,7 +37,7 @@ import java.util.*;
 @Slf4j
 public class NDRJSONService {
     //TODO: Save the hard-coded values in database
-    String pingUrl = "http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping";
+    String pingUrl = "https://emr-ndrpushsandbox.phis3project.org.ng/api/Cronbox/v1/utils/ping";
     
     //"https://emr-ndrpush.phis3project.org.ng/api/Cronbox";
 
@@ -85,6 +85,7 @@ public class NDRJSONService {
         HttpEntity<NDRAuthRequestDTO> loginEntity = new HttpEntity<>(loginRequestDTO, GetHTTPHeaders());
         ResponseEntity<NDRAuthResponseDTO> response = GetRestTemplate().exchange(baseUrl + authEndPoint,
                 HttpMethod.POST, loginEntity, NDRAuthResponseDTO.class);
+        log.info("url {}  data {}", baseUrl + authEndPoint, response.getBody());
         return response.getBody();
     }
 
@@ -289,7 +290,7 @@ public class NDRJSONService {
                         ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
                 Iterator iterator = ndrMessagesList.iterator();
                 int size = ndrMessagesList.size();
-                System.out.println("Token gotten " + size);
+                log.info("container size :" + size);
                 int batches = 0;
                 int counter = 0;
                 List<String> data = new ArrayList<>();
@@ -312,7 +313,8 @@ public class NDRJSONService {
                             //msg.setIsPushed(Boolean.TRUE);
                             //msg.setMessageDate(LocalDate.now());
                             //ndrMessagesRepository.save(msg);
-
+                            log.info("data:{}", ndrDataResponseDTO);
+                            log.info("batchId from server : {}", ndrDataResponseDTO.getBatchNumber());
                             for (NDRMessages message:messages) {
                                 message.setIsPushed(Boolean.TRUE);
                                 message.setMessageDate(LocalDate.now());
