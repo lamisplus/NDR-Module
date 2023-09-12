@@ -45,7 +45,8 @@ public class NDRJSONService {
     String authEndPoint = "/auth";
     String pushEndPoint = "/beep";
     String logsEndPoint = "/errorLogs";
-    String baseUrl = "http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
+   // String baseUrl = "http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
+    String baseUrl = "https://emr-ndrpushsandbox.phis3project.org.ng/api/Cronbox";
     String email = "nonye.nwanya@thepalladiumgroup.com";
     String password = "]W(I*=v}-+z8h$F";
 
