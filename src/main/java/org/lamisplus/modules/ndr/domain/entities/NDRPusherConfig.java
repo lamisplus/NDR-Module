@@ -22,6 +22,7 @@ public class NDRPusherConfig implements Serializable, Persistable<Long>
     private Long facilityId;
     private String username;
     private String password;
+    private String baseUrl;
 
     @Override
     public boolean isNew() {
