@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.audit4j.core.util.Log;
-import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 import org.lamisplus.modules.base.domain.entities.User;
 import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.ndr.domain.dto.*;
@@ -163,7 +161,7 @@ public class NDRJSONService {
         return "no token";
     }
 
-    public NDRPusherConfig save(String username, String password) {
+    public NDRPusherConfig save(String username, String password, String baseUrl) {
         NDRPusherConfig ndrPusherConfig = new NDRPusherConfig();
         Optional<User> currentUser = this.userService.getUserWithRoles();
         User user = (User) currentUser.get();

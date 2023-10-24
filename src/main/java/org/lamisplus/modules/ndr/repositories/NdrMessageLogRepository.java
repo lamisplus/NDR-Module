@@ -70,7 +70,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "               WHERE h.archived = 0\n" +
             "             AND p.uuid = ?1\n" +
             "               AND h.facility_id = ?2\n" +
-            "               AND hac.is_commencement = TRUE\n" ,
+            "               AND hac.is_commencement = TRUE LIMIT 1\n" ,
             nativeQuery = true)
     Optional<PatientDemographicDTO> getPatientDemographics(String identifier, Long facilityId);
     
@@ -446,5 +446,6 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\t\t  AND hc.client_code = ?2\n" +
           "  AND hc.date_modified > ?3 \n" +
           "\t\t  AND hc.archived = 0\n" +
-          "\t\t ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
+          "\t\t ", nativeQuery = true)
+  List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
 }
