@@ -447,4 +447,53 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "  AND hc.date_modified > ?3 \n" +
           "\t\t  AND hc.archived = 0\n" +
           "\t\t ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
+
+    @Query(value = "SELECT DISTINCT p.uuid FROM patient_person p \n" +
+            "INNER JOIN hiv_enrollment h ON h.person_uuid =p.uuid\n" +
+            "INNER JOIN hiv_art_pharmacy ph ON ph.person_uuid = h.person_uuid\n" +
+            "WHERE h.archived = 1 AND ph.last_modified_date >= ?1 AND ph.facility_id = ?2", nativeQuery = true)
+    List<String> getPatientIdsEligibleForRedaction(LocalDateTime start, long facilityId);
+
+    @Query(value="SELECT \n" +
+            "\tDISTINCT (p.uuid) AS personUuid,\n" +
+            "\tp.hospital_number AS hospitalNumber, \n" +
+            "\tp.date_of_registration AS diagnosisDate, \n" +
+            "\tp.id AS personId,\n" +
+            "\tboui.code AS facilityId,\n" +
+            "facility.name AS facilityName, " +
+            "concat(boui.code, '_', p.uuid) as patientIdentifier," +
+            "\tlgaCode.code AS lgaCode, \n" +
+            "    stateCode.code AS stateCode,\n" +
+            "\tenrollStatus.display AS statusAtRegistration,\n" +
+            "\th.created_date,\n" +
+            "    h.last_modified_date,\n" +
+            "\th.archived\n" +
+            "FROM patient_person p \n" +
+            "INNER JOIN base_organisation_unit facility ON facility.id = facility_id  \n" +
+            "INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = facility_id \n" +
+            "AND boui.name = 'DATIM_ID'\n" +
+            "INNER JOIN base_organisation_unit facility_lga ON facility_lga.id = facility.parent_organisation_unit_id\n" +
+            "INNER JOIN base_organisation_unit facility_state ON facility_state.id = facility_lga.parent_organisation_unit_id\n" +
+            "LEFT JOIN ndr_code_set lgaCode ON trim(lgaCode.code_description)= trim(facility_lga.name) \n" +
+            "AND lgaCode.code_set_nm = 'LGA' \n" +
+            "LEFT JOIN ndr_code_set stateCode ON trim(stateCode.code_description)= trim(facility_state.name) \n" +
+            "AND stateCode.code_set_nm = 'STATES' \n" +
+            "INNER JOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
+            "LEFT JOIN base_application_codeset enrollStatus ON enrollStatus.id = h.status_at_registration_id \n" +
+            "INNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = h.uuid\n" +
+            "WHERE h.archived = 1\n" +
+            "AND h.person_uuid = ?1\n" +
+            "AND h.facility_id = ?2 \n" +
+            "AND hac.is_commencement = TRUE" ,
+            nativeQuery = true)
+    Optional<PatientRedactedDemographicDTO> getRedactedPatientDemographics(String identifier, Long facilityId);
+
+    @Query(value=" SELECT ph.visit_id AS visitId FROM hiv_art_pharmacy ph\n" +
+            " \t\tINNER JOIN hiv_enrollment h ON h.person_uuid =ph.person_uuid\n" +
+            "        INNER JOIN patient_person p ON p.uuid = h.person_uuid\n" +
+            "\t\tINNER JOIN hiv_art_clinical hac ON hac.person_uuid = h.person_uuid\n" +
+            "        WHERE h.archived = 1 AND hac.archived = 1 OR ph.archived = 1\n" +
+            "\t\tAND h.person_uuid = ?1", nativeQuery = true)
+
+    List<RedactedVisitTypeDTO> getRedactedPatientVisits(String identifier);
 }

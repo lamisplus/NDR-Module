@@ -14,6 +14,7 @@ import DownloadNdr from "./download";
 import Biometrics from "./Biometrics";
 import ErrorPage from "./Errors";
 import NdrConfiguration from "./NdrConfiguration";
+import Redact from "./Redact";
 import { getQueryParams } from "./../PageUtils";
 
 function TabPanel(props) {
@@ -223,6 +224,12 @@ const HomePage = (props) => {
             icon={<MdContacts />}
             {...a11yProps(5)}
           />
+             <Tab
+                      className={classes.title}
+                      label="NDR Redacted Files"
+                      icon={<MdContacts />}
+                      {...a11yProps(6)}
+                    />
         </Tabs>
         <div></div>
       </AppBar>
@@ -245,6 +252,9 @@ const HomePage = (props) => {
       <TabPanel value={value} setValue={setValue} index={5}>
         <NdrConfiguration value={value} setValue={setValue} />
       </TabPanel>
+      <TabPanel value={value} setValue={setValue} index={6}>
+              <Redact value={value} setValue={setValue} />
+            </TabPanel>
     </div>
   );
 };

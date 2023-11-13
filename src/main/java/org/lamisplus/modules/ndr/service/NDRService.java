@@ -102,6 +102,7 @@ public class NDRService {
     private final UserService userService;
 
     public static final String BASE_DIR = "runtime/ndr/transfer/";
+    public static final String BASE_REDACTED_DIR = "runtime/ndr_redact/transfer/";
 
     public static final String   USER_DIR = "user.dir";
 
@@ -620,6 +621,23 @@ public class NDRService {
                 IOUtils.copy (is, baos);
             } catch (IOException ignored) {
             
+            }
+        });
+        return baos;
+    }
+
+    @SneakyThrows
+    public ByteArrayOutputStream downloadRedactedFile(String file) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream ();
+        String folder = BASE_REDACTED_DIR + "ndr/";
+        Optional<String> fileToDownload = listFilesUsingDirectoryStream (folder).stream ()
+                .filter (f -> f.equals (file))
+                .findFirst ();
+        fileToDownload.ifPresent (s -> {
+            try (InputStream is = new FileInputStream (folder + s)) {
+                IOUtils.copy (is, baos);
+            } catch (IOException ignored) {
+
             }
         });
         return baos;
