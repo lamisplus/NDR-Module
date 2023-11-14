@@ -224,12 +224,6 @@ const HomePage = (props) => {
             icon={<MdContacts />}
             {...a11yProps(5)}
           />
-             <Tab
-                      className={classes.title}
-                      label="NDR Redacted Files"
-                      icon={<MdContacts />}
-                      {...a11yProps(6)}
-                    />
         </Tabs>
         <div></div>
       </AppBar>
@@ -252,9 +246,6 @@ const HomePage = (props) => {
       <TabPanel value={value} setValue={setValue} index={5}>
         <NdrConfiguration value={value} setValue={setValue} />
       </TabPanel>
-      <TabPanel value={value} setValue={setValue} index={6}>
-              <Redact value={value} setValue={setValue} />
-            </TabPanel>
     </div>
   );
 };
