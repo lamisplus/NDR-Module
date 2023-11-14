@@ -37,4 +37,6 @@ public interface PatientDemographicDTO {
 	String getClientCode();
 	String getHtsUuid();
 	String getTbStatus();
+
+	String getCauseOfDeath();
 }    

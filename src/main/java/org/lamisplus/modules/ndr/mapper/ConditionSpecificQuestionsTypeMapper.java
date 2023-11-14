@@ -123,6 +123,16 @@ public class ConditionSpecificQuestionsTypeMapper {
             if(inHIVCareDate != null){
                 hiv.setEnrolledInHIVCareDate(getXmlDate (Date.valueOf (inHIVCareDate)));
                 String statusAtRegistration = demographics.getStatusAtRegistration();
+                String causeOfDeath = demographics.getCauseOfDeath();
+                if(causeOfDeath != null) {
+                    if(causeOfDeath.toUpperCase().contains("HIV")) {
+                        hiv.setCauseOfDeathHIVRelated("Y");
+                    } else if(causeOfDeath.toUpperCase().contains("UNKNOWN")) {
+                        hiv.setCauseOfDeathHIVRelated("U");
+                    } else {
+                        hiv.setCauseOfDeathHIVRelated("N");
+                    }
+                }
                 if (statusAtRegistration != null) {
                     if (statusAtRegistration.equalsIgnoreCase ("HIV+ non ART")) {
                         hiv.setFirstConfirmedHIVTestDate (getXmlDate (Date.valueOf (inHIVCareDate)));
@@ -255,12 +265,21 @@ public class ConditionSpecificQuestionsTypeMapper {
 
     private void handlePatientDeathStatus(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
         try {
-        if (status.contains("Died") || status.contains("DEATH")) {
+            log.info("status of the current patient {}", status);
+        if (status.contains("Died") || status.contains("DEATH") || status.contains("DIED")) {
             //Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
             HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
             log.info("current status handling death {} ", clientReportingStatus.getDescription());
             Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
             artStatus.ifPresent(hiv::setStatusAtDeath);
+            log.info("art status at the death of the patient {}", artStatus);
+            log.info("ndr art status at the death of the patient {}", ndrARTStatus);
+
+            if (!artStatus.isPresent()) {
+                Optional<String> ndrART = Optional.of(ndrARTStatus);
+                String artStatusInitial = ndrART.map(statusInitial -> statusInitial.equalsIgnoreCase("ART") ? "A" : "P").orElse("P");
+                hiv.setStatusAtDeath(artStatusInitial);
+            }
             hiv.setDeathDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
             hiv.setPatientHasDied(true);
         }

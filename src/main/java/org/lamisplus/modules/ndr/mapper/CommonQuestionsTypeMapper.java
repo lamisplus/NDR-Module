@@ -45,6 +45,10 @@ public class CommonQuestionsTypeMapper {
 				}
 			}
 			String currentStatus = statusManagementService.getCurrentStatus(demographics.getId());
+			log.info("current death status **************************",currentStatus);
+			System.out.println("current death status **************************");
+			System.out.println(currentStatus);
+
 			if (currentStatus.equalsIgnoreCase("KNOWN_DEATH")) common.setPatientDieFromThisIllness(true);
 			if (demographics.getDateOfRegistration() != null) {
 				common.setDiagnosisDate(DateUtil.getXmlDate(Date.valueOf(demographics.getDateOfRegistration())));
