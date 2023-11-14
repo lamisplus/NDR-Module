@@ -42,7 +42,8 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "            eduCode.code AS patientEducationLevelCode,\n" +
             "            ndrTbstatus.code AS tbStatus,\n" +
             "            COALESCE(ndrFuncStatCodestatus.code, ndrClinicStage.code) AS functionalStatusStartART,\n" +
-            "            h.date_of_registration AS enrolledInHIVCareDate\n" +
+            "            h.date_of_registration AS enrolledInHIVCareDate,\n" +
+            "         CASE WHEN hpt.reason_for_discountinuation = 'Death' THEN hpt.cause_of_death ELSE NULL END AS causeOfDeath\n" +
             "               FROM\n" +
             "                    patient_person p\n" +
             "                       INNER JOIN base_organisation_unit facility ON facility.id = facility_id\n" +
@@ -67,6 +68,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "            LEFT JOIN ndr_code_set ndrFuncStatCodestatus ON ndrFuncStatCodestatus.code_description=fsCodeset.display\n" +
             "            LEFT JOIN ndr_code_set ndrTbstatus ON trim(ndrTbstatus.code_description)=trim(tbCodeset.display)\n" +
             "            LEFT JOIN ndr_code_set ndrClinicStage ON ndrClinicStage.code_description=csCodeset.display\n" +
+            "           LEFT JOIN hiv_patient_tracker hpt ON hpt.person_uuid = p.uuid\n" +
             "               WHERE h.archived = 0\n" +
             "             AND p.uuid = ?1\n" +
             "               AND h.facility_id = ?2\n" +
