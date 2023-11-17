@@ -79,7 +79,7 @@ public class RedactService {
         }else {
             log.info("starting updated redaction....");
             Optional<Timestamp> lastGenerateDateTimeByFacilityId =
-                    ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId, "treatment");
+                    ndrXmlStatusRepository.getLastGenerateDateTimeByFacilityId(facilityId, "redacted");
             if (lastGenerateDateTimeByFacilityId.isPresent()) {
                 LocalDateTime lastModified =
                         lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
@@ -116,7 +116,7 @@ public class RedactService {
                     generatedCount,
                     patientRedactedDemographicDTO[0],
                     ndrErrors,
-                    "treatment", pushIdentifier
+                    "redacted", pushIdentifier
             );
         }
         log.error("error list size {}", ndrErrors.size());
@@ -148,7 +148,7 @@ public class RedactService {
                 initial,
                 ndrErrors, pushIdentifier);
         if (fileName != null) {
-            saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName,"treatment");
+            saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName,"redacted");
         }
         return fileName != null;
     }
@@ -165,7 +165,7 @@ public class RedactService {
             PatientDemographicsType patientDemographics =
                     patientDemographicsMapper.getPatientDemographics(patientDemographic);
             if (patientDemographics != null) {
-                log.info("fetching treatment details... ");
+                log.info("fetching redacted details... ");
 
                MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(patientDemographic);
                 String messageStatusCode = "INITIAL";
