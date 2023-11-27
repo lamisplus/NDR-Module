@@ -82,7 +82,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "\t\t\t\t\t\t\t\t\t\t'bloodPressure', \n" +
             "\t\t\t\t\t\t\t\t\t\t(CASE WHEN tvs.systolic IS NOT NULL AND tvs.diastolic IS NOT NULL \n" +
             "\t\t\t\t\t\t\t\t\t\tTHEN CONCAT(CAST(tvs.systolic AS INTEGER), '/', CAST(tvs.diastolic AS INTEGER))\n" +
-            "\t\t\t\t\t\t\t\t\t\tELSE NULL END),\n" +
+            "\t\t\t\t\t\t\t\t\t\tELSE '' END),\n" +
             "\t\t\t\t\t\t\t\t\t  'nextAppointmentDate', hac.next_appointment)) as varchar) AS encounters\n" +
             "\tFROM hiv_art_clinical hac \n" +
             "\tLEFT JOIN triage_vital_sign tvs ON hac.vital_sign_uuid=tvs.uuid AND hac.archived=0\n" +

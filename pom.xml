@@ -322,19 +322,19 @@
 			            <plugin>
 							<artifactId>maven-antrun-plugin</artifactId>
 			                <executions>
-			                    <execution>
-			                        <phase>generate-resources</phase>
-			                        <configuration>
-										<target>
-											<copy todir="${project.build.directory}/classes/views/static/ndr">
-												<fileset dir="${project.basedir}/build"/>
-											</copy>
-										</target>
-			                        </configuration>
-			                        <goals>
-			                            <goal>run</goal>
-			                        </goals>
-			                    </execution>
+<!--			                    <execution>-->
+<!--			                        <phase>generate-resources</phase>-->
+<!--			                        <configuration>-->
+<!--										<target>-->
+<!--											<copy todir="${project.build.directory}/classes/views/static/ndr">-->
+<!--												<fileset dir="${project.basedir}/build"/>-->
+<!--											</copy>-->
+<!--										</target>-->
+<!--			                        </configuration>-->
+<!--			                        <goals>-->
+<!--			                            <goal>run</goal>-->
+<!--			                        </goals>-->
+<!--			                    </execution>-->
 			                </executions>
 			            </plugin>
 		</plugins>

@@ -35,7 +35,7 @@ import java.util.*;
 @Slf4j
 public class NDRJSONService {
     //TODO: Save the hard-coded values in database
-    String pingUrl = "https://emr-ndrpushsandbox.phis3project.org.ng/api/Cronbox/v1/utils/ping";
+    String pingUrl = "https://emr-ndrpushsandbox.phis3project.org.ng/api/Cronbox";
     
     //"https://emr-ndrpush.phis3project.org.ng/api/Cronbox";
 
@@ -297,7 +297,7 @@ public class NDRJSONService {
                     NDRMessages msg = (NDRMessages) iterator.next();
                     batches++; counter++;
                     if(batches%BATCHMAX != 0){
-                        data.add(msg.getDeMessage());
+                        data.add(msg.getDeMessage().replace("null,", ""));
                         messages.add(msg);
                         continue;
                     }
