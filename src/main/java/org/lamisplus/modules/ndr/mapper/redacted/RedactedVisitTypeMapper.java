@@ -23,11 +23,11 @@ public class RedactedVisitTypeMapper {
 
 
         List<RedactedVisitTypeDTO> visits = ndrMessageLogRepository.getRedactedPatientVisits(patientRedactedDemographicDTO.getPersonUuid());
-        System.out.println("visits" + " " + visits);
+        //System.out.println("visits" + " " + visits);
 
         if (visits != null) {
             visits.forEach(visit -> {
-                System.out.println("visit" + " " + visit.getVisitID());
+                //System.out.println("visit" + " " + visit.getVisitID());
                 if(visit.getVisitID() != null)redactedVisitType.setVisitID(visit.getVisitID());
                 if(visit.getVisitID() != null) {
                     redactedVisitType.setRedactedVisitReason("Encounters Deleted");

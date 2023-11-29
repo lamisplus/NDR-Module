@@ -45,10 +45,11 @@ public class CommonQuestionsTypeMapper {
 				}
 			}
 			String currentStatus = statusManagementService.getCurrentStatus(demographics.getId());
-			if (currentStatus.equalsIgnoreCase("KNOWN_DEATH")) common.setPatientDieFromThisIllness(true);
+			if (currentStatus.equalsIgnoreCase("KNOWN_DEATH") || currentStatus.contains("DIED")) common.setPatientDieFromThisIllness(true);
 			if (demographics.getDateOfRegistration() != null) {
 				common.setDiagnosisDate(DateUtil.getXmlDate(Date.valueOf(demographics.getDateOfRegistration())));
 			}
+
 			return common;
 		} catch (Exception e) {
 			log.error("An error occurred while Generating common questions for patient with uuid {}",
@@ -58,7 +59,7 @@ public class CommonQuestionsTypeMapper {
 
 		return null;
 	}
-
+// optimization uses
 	public CommonQuestionsType getPatientCommonQuestion(PatientDemographicDTO demographics) {
 //       @XmlElement(name = "DiagnosisDate", required = true)
 		log.info("Generating common questions for patient with uuid {}", demographics.getPersonUuid());
@@ -80,7 +81,7 @@ public class CommonQuestionsTypeMapper {
 			log.info("Client current Status: {}", currentStatus);
 			//"KNOWN_DEATH",
 			//"Died (Confirmed)",
-			if (currentStatus.contains("DIED")) {
+			if (currentStatus.contains("DIED") || currentStatus.equalsIgnoreCase("KNOWN_DEATH")) {
 				common.setPatientDieFromThisIllness(true);
 			}
 			if (demographics.getDiagnosisDate() != null) {
@@ -88,6 +89,14 @@ public class CommonQuestionsTypeMapper {
 			} else {
 				throw new IllegalArgumentException("Diagnosis date cannot be null");
 			}
+			/*
+			 * Ajor victor
+			 * Updates for common question variables
+			 * */
+//			common.setDateOfFirstReport(null);
+//			common.setDateOfLastReport(null);
+//			common.setPatientPregnancyStatusCode(null);
+//			common.setEstimatedDeliveryDate(null);
 			return common;
 		} catch (Exception e) {
 			log.error("An error occurred while Generating common questions for patient with uuid {}",
