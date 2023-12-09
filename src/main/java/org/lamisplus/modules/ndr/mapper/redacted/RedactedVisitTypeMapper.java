@@ -2,6 +2,7 @@ package org.lamisplus.modules.ndr.mapper.redacted;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.ndr.domain.dto.PatientRedactedDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.RedactedVisitTypeDTO;
 import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
@@ -21,16 +22,20 @@ public class RedactedVisitTypeMapper {
 
         RedactedVisitType redactedVisitType = new RedactedVisitType();
 
-
         List<RedactedVisitTypeDTO> visits = ndrMessageLogRepository.getRedactedPatientVisits(patientRedactedDemographicDTO.getPersonUuid());
-        //System.out.println("visits" + " " + visits);
 
         if (visits != null) {
             visits.forEach(visit -> {
-                //System.out.println("visit" + " " + visit.getVisitID());
-                if(visit.getVisitID() != null)redactedVisitType.setVisitID(visit.getVisitID());
                 if(visit.getVisitID() != null) {
-                    redactedVisitType.setRedactedVisitReason("Encounters Deleted");
+                    redactedVisitType.setVisitID(visit.getVisitID());
+                }else {
+                    throw new IllegalArgumentException("Redacted Patient Visit ID cannot be null");
+                }
+
+                if(StringUtils.isNotBlank(visit.getReason())) {
+                    redactedVisitType.setRedactedVisitReason(visit.getReason());
+                }else {
+                    redactedVisitType.setRedactedVisitReason("Patient Clinical Visit Deleted");
                 }
             });
         }

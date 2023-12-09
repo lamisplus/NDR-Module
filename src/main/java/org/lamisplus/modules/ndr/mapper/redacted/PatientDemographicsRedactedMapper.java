@@ -33,10 +33,10 @@ public class PatientDemographicsRedactedMapper {
                 throw new IllegalArgumentException("Redacted Patient cannot be null");
             }
 
-            if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
-                patientDemographicsType.setRedactedPatientReason("Patient Deleted");
+            if(StringUtils.isNotBlank(demographicDTO.getReason())) {
+                patientDemographicsType.setRedactedPatientReason(demographicDTO.getReason());
             }else {
-                return null;
+                patientDemographicsType.setRedactedPatientReason("Enrolled Patient Deleted");
             }
 
             RedactedVisitType redactedVisitType = redactedVisitTypeMapper.getPatientRedactedVisits(demographicDTO);

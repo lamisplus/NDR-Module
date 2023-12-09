@@ -11,4 +11,5 @@ public interface PatientRedactedDemographicDTO {
     String getRedactedPatient();
     String getRedactedPatientReason();
     String getRedactedVisit();
+    String getReason();
 }

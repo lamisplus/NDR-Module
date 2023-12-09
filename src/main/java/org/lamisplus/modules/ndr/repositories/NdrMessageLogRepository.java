@@ -451,50 +451,53 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\t\t ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
 
     @Query(value = "SELECT DISTINCT p.uuid FROM patient_person AS p\n" +
-            "JOIN hiv_enrollment AS e on e.person_uuid = p.uuid\n" +
-            "WHERE p.archived = 1 OR e.archived = 1 AND e.last_modified_date >= ?1 AND e.facility_id = ?2", nativeQuery = true)
+            "\tJOIN hiv_enrollment AS e on e.person_uuid = p.uuid\n" +
+            "\tINNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = e.uuid\n" +
+            "\tWHERE p.archived = 1 OR e.archived = 1 AND e.last_modified_date >= ?1 AND e.facility_id = ?2\n" +
+            "\tAND hac.is_commencement = TRUE", nativeQuery = true)
     List<String> getPatientIdsEligibleForRedaction(LocalDateTime start, long facilityId);
 
-    @Query(value="SELECT \n" +
-            "    DISTINCT (p.uuid) AS personUuid,\n" +
-            "    p.hospital_number AS hospitalNumber, \n" +
-            "    p.date_of_registration AS diagnosisDate, \n" +
-            "    p.id AS personId,\n" +
-            "    boui.code AS facilityId,\n" +
-            "    facility.name AS facilityName,  \n" +
-            "    concat(boui.code, '_', p.uuid) as patientIdentifier, \n" +
-            "    lgaCode.code AS lgaCode, \n" +
-            "        stateCode.code AS stateCode,\n" +
-            "    enrollStatus.display AS statusAtRegistration,\n" +
-            "    h.created_date,\n" +
-            "        h.last_modified_date,\n" +
-            "    h.archived\n" +
-            "    FROM patient_person p \n" +
-            "\tJOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
-            "    INNER JOIN base_organisation_unit facility ON facility.id = h.facility_id  \n" +
-            "    INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = h.facility_id \n" +
-            "    AND boui.name = 'DATIM_ID'\n" +
-            "    INNER JOIN base_organisation_unit facility_lga ON facility_lga.id = facility.parent_organisation_unit_id\n" +
-            "    INNER JOIN base_organisation_unit facility_state ON facility_state.id = facility_lga.parent_organisation_unit_id\n" +
-            "    LEFT JOIN ndr_code_set lgaCode ON trim(lgaCode.code_description)= trim(facility_lga.name) \n" +
-            "    AND lgaCode.code_set_nm = 'LGA' \n" +
-            "    LEFT JOIN ndr_code_set stateCode ON trim(stateCode.code_description)= trim(facility_state.name) \n" +
-            "    AND stateCode.code_set_nm = 'STATES' \n" +
-            "    LEFT JOIN base_application_codeset enrollStatus ON enrollStatus.id = h.status_at_registration_id \n" +
-            "    --INNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = h.uuid\n" +
-            "    WHERE h.archived = 1\n" +
-            "    AND h.person_uuid = ?1\n" +
-            "    AND h.facility_id = ?2 \n" +
-            "    --AND hac.is_commencement = TRUE" ,
+    @Query(value="SELECT  \n" +
+            "            DISTINCT (p.uuid) AS personUuid,\n" +
+            "            p.hospital_number AS hospitalNumber, \n" +
+            "            p.date_of_registration AS diagnosisDate, \n" +
+            "            p.id AS personId,\n" +
+            "            boui.code AS facilityId,\n" +
+            "            facility.name AS facilityName,  \n" +
+            "            concat(boui.code, '_', p.uuid) as patientIdentifier, \n" +
+            "            lgaCode.code AS lgaCode, \n" +
+            "            stateCode.code AS stateCode,\n" +
+            "            enrollStatus.display AS statusAtRegistration,\n" +
+            "            h.created_date,\n" +
+            "            h.last_modified_date,\n" +
+            "            h.archived,\n" +
+            "            p.reason\n" +
+            "            FROM patient_person p \n" +
+            "            JOIN hiv_enrollment h ON h.person_uuid = p.uuid\n" +
+            "            INNER JOIN base_organisation_unit facility ON facility.id = h.facility_id  \n" +
+            "            INNER JOIN base_organisation_unit_identifier boui ON boui.organisation_unit_id = h.facility_id \n" +
+            "            AND boui.name = 'DATIM_ID'\n" +
+            "            INNER JOIN base_organisation_unit facility_lga ON facility_lga.id = facility.parent_organisation_unit_id\n" +
+            "            INNER JOIN base_organisation_unit facility_state ON facility_state.id = facility_lga.parent_organisation_unit_id\n" +
+            "            LEFT JOIN ndr_code_set lgaCode ON trim(lgaCode.code_description)= trim(facility_lga.name) \n" +
+            "            AND lgaCode.code_set_nm = 'LGA' \n" +
+            "            LEFT JOIN ndr_code_set stateCode ON trim(stateCode.code_description)= trim(facility_state.name) \n" +
+            "            AND stateCode.code_set_nm = 'STATES' \n" +
+            "            LEFT JOIN base_application_codeset enrollStatus ON enrollStatus.id = h.status_at_registration_id \n" +
+            "            INNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = h.uuid\n" +
+            "            WHERE p.archived = 1 \n" +
+            "            AND h.person_uuid = ?1\n" +
+            "            AND h.facility_id = ?2\n" +
+            "            --AND hac.is_commencement = TRUE",
             nativeQuery = true)
     Optional<PatientRedactedDemographicDTO> getRedactedPatientDemographics(String identifier, Long facilityId);
 
-    @Query(value=" SELECT ph.visit_id AS visitId FROM hiv_art_pharmacy ph\n" +
-            " \t\tINNER JOIN hiv_enrollment h ON h.person_uuid =ph.person_uuid\n" +
-            "        INNER JOIN patient_person p ON p.uuid = h.person_uuid\n" +
-            "\t\tINNER JOIN hiv_art_clinical hac ON hac.person_uuid = h.person_uuid\n" +
-            "        WHERE h.archived = 1 AND hac.archived = 1 OR ph.archived = 1\n" +
-            "\t\tAND h.person_uuid = ?1", nativeQuery = true)
+    @Query(value=" SELECT ph.visit_id AS visitId, hac.reason AS reason FROM hiv_art_pharmacy ph\n" +
+            "\t\t\t\tINNER JOIN hiv_enrollment h ON h.person_uuid =ph.person_uuid\n" +
+            "\t\t\t\tINNER JOIN patient_person p ON p.uuid = h.person_uuid\n" +
+            "\t\t\t\tJOIN hiv_art_clinical hac ON hac.person_uuid = h.person_uuid\n" +
+            "\t\t\t\tWHERE p.archived = 1 \n" +
+            "                AND h.person_uuid = ?1", nativeQuery = true)
 
     List<RedactedVisitTypeDTO> getRedactedPatientVisits(String identifier);
 }

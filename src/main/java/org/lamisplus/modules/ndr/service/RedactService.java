@@ -203,7 +203,7 @@ public class RedactService {
                 log.info("converting redacted details to xml... ");
                 String fileName = ndrService.processAndGenerateRedactedFile(facilityId, jaxbMarshaller, container, patientDemographic, id, ndrErrors);
                 if (fileName != null) {
-                    log.info("NDR XML was successfully generated for patient with hospital number " + patientDemographic.getHospitalNumber());
+                    log.info("Redacted XML was successfully generated for patient with hospital number " + patientDemographic.getHospitalNumber());
                 }
                 return fileName;
             }
