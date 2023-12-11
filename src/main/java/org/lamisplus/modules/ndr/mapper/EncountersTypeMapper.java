@@ -78,7 +78,6 @@ public class EncountersTypeMapper {
 						hivEncounter.add(hivEncounterType);
 					});
 			if (hivEncounter.isEmpty()) return null;
-			
 		}
 		return encountersType;
 	}
@@ -140,7 +139,9 @@ public class EncountersTypeMapper {
 			}catch (Exception e) {
 			 log.error("An exception occurred while processing  the patient encounters error {}", e.getMessage());
 			}
-			if (hivEncounters.isEmpty()) return null;
+			if (hivEncounters.isEmpty()){
+				//return null;
+			}
 			
 		return encountersType;
 	}

@@ -5,4 +5,5 @@ public class NDRLoginDetails
     Long facilityId;
     String username;
     String password;
+    String baseUrl;
 }

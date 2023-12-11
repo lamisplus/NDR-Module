@@ -119,10 +119,6 @@ public class HtsService {
 		AtomicInteger generatedCount = new AtomicInteger();
 		AtomicInteger errorCount = new AtomicInteger();
 		LocalDateTime start = LocalDateTime.of(1984, 1, 1, 0, 0);
-//		List<String> patientIds = Arrays.asList("BA/TRR/WCH/118/2310",
-//				"BA/TRR/WCH/128/1195",
-//				"BA/TB/WCH/118/2340"
-//		);
 		List<String> patientIds = new ArrayList<>();
 		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
 		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
