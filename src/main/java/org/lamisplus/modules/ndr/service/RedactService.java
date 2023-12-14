@@ -333,7 +333,7 @@ public class RedactService {
         NdrXmlStatus ndrXmlStatus = new NdrXmlStatus();
         if(ndrErrors.size() > 0){
             JsonNode node = getNode(ndrErrors);
-            //ndrXmlStatus.setError(node);
+            ndrXmlStatus.setError(node);
         }
         ndrXmlStatus.setFacilityId(facilityId);
         ndrXmlStatus.setFiles(count.get());
@@ -342,7 +342,7 @@ public class RedactService {
         ndrXmlStatus.setPushIdentifier(patient.getFacilityId().concat("_").concat(identifier));
         ndrXmlStatus.setCompletelyPushed(Boolean.FALSE);
         ndrXmlStatus.setPercentagePushed(0L);
-//        ndrXmlStatus.setType(type);
+        ndrXmlStatus.setType(type);
         ndrXmlStatusRepository.save(ndrXmlStatus);
     }
 

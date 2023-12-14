@@ -32,7 +32,6 @@ public class NdrMessageLog {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
-
     public NdrMessageLog(String identifier, String file, LocalDateTime lastUpdated)
     {
         this.identifier = identifier;
