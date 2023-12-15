@@ -23,7 +23,7 @@ public class NDRMessages implements Serializable, Persistable<Long>
     private Long facilityId;
     private Boolean isPushed;
     private String identifier;
-    //to do here!!
+    private String batchNumber;
     @Override
     public boolean isNew() {
         return false;

@@ -10,6 +10,7 @@ import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
 import org.lamisplus.modules.ndr.service.HtsService;
 import org.lamisplus.modules.ndr.service.NDRService;
 import org.lamisplus.modules.ndr.service.NdrOptimizationService;
+import org.lamisplus.modules.ndr.service.RedactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class NDRController {
 
     private final SimpMessageSendingOperations messagingTemplate;
     private final HtsService htsService;
+    private final RedactService redactService;
 
 
     @GetMapping("/generate/{personId}")
@@ -112,5 +114,27 @@ public class NDRController {
     public List<NDRErrorDTO> getErrorsByFileId(@PathVariable("id")  int id) throws IOException {
         return  ndrService.getNDRXmlFileErrors(id);
     }
+
+    @GetMapping("/redacted")
+    public ResponseEntity<Void> generateRedactedXML(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        facilityIds.forEach(facilityId -> redactService.generatePatientsRedactedXml(facilityId, isInitial));
+
+        log.info("Total time taken to generate a redacted NDR files: {}", stopwatch.elapsed().toMinutes());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/download_redacted/{file}")
+    public void downloadRedactedFile(@PathVariable String file, HttpServletResponse response) throws IOException {
+        ByteArrayOutputStream baos = ndrService.downloadRedactedFile (file);
+        response.setHeader ("Content-Type", "application/octet-stream");
+        response.setHeader ("Content-Disposition", "attachment;filename=" + file + ".zip");
+        response.setHeader ("Content-Length", Integer.toString (baos.size ()));
+        OutputStream outputStream = response.getOutputStream ();
+        outputStream.write (baos.toByteArray ());
+        outputStream.close ();
+        response.flushBuffer ();
+    }
+
 
 }

@@ -7,9 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
 import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
-import org.lamisplus.modules.ndr.schema.FacilityType;
-import org.lamisplus.modules.ndr.schema.FingerPrintType;
-import org.lamisplus.modules.ndr.schema.PatientDemographicsType;
+import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.springframework.stereotype.Service;
@@ -28,6 +26,7 @@ public class PatientDemographicsMapper {
     private final MessageHeaderTypeMapper messageHeaderTypeMapper;
     private  final NDRCodeSetResolverService ndrCodeSetResolverService;
     private  final  BiometricTemplateMapper biometricTemplateMapper;
+    private final IdentifiersTypeMapper identifiersTypeMapper;
     
     public PatientDemographicsType getPatientDemographics(PatientDemographics patientDemographics) {
         PatientDemographicsType patientDemographicsType = new PatientDemographicsType ();
@@ -134,6 +133,17 @@ public class PatientDemographicsMapper {
             }else {
                 throw new IllegalArgumentException("Treatment facility cannot be null");
             }
+
+            //GET IDENTIFIERS
+            IdentifiersType identifiers = new IdentifiersType();
+
+            IdentifierType identifierType = identifiersTypeMapper.getIdentifiers(demographicDTO);
+
+            identifiers.getIdentifier().add(identifierType);
+
+            //OtherPatientIdentifier
+            patientDemographicsType.setOtherPatientIdentifiers(identifiers);
+
             processAndSetDateOFBirth (patientDemographicsType, demographicDTO.getDateOfBirth ());
             
             if(demographicDTO.getPatientSexCode()  != null) {
