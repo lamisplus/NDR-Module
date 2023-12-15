@@ -14,6 +14,7 @@ import DownloadNdr from "./download";
 import Biometrics from "./Biometrics";
 import ErrorPage from "./Errors";
 import NdrConfiguration from "./NdrConfiguration";
+import Redact from "./Redact";
 import { getQueryParams } from "./../PageUtils";
 
 function TabPanel(props) {
@@ -201,7 +202,7 @@ const HomePage = (props) => {
 
           <Tab
             className={classes.title}
-            label="Biometrics XML"
+            label="Biometrics Recapture XML"
             icon={<MdContacts />}
             {...a11yProps(2)}
           />
@@ -222,6 +223,12 @@ const HomePage = (props) => {
             label="NDR COnfiguration"
             icon={<MdContacts />}
             {...a11yProps(5)}
+          />
+          <Tab
+            className={classes.title}
+            label="NDR Redacted"
+            icon={<MdContacts />}
+            {...a11yProps(6)}
           />
         </Tabs>
         <div></div>
@@ -244,6 +251,9 @@ const HomePage = (props) => {
       </TabPanel>
       <TabPanel value={value} setValue={setValue} index={5}>
         <NdrConfiguration value={value} setValue={setValue} />
+      </TabPanel>
+      <TabPanel value={value} setValue={setValue} index={6}>
+        <Redact value={value} setValue={setValue} />
       </TabPanel>
     </div>
   );

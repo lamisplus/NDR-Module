@@ -177,7 +177,7 @@ public class NdrOptimizationService {
 
 		PatientDemographicDTO patientDemographic =
 				getPatientDemographic(patientId, facilityId, ndrErrors);
-
+		log.info("patient demographic.... {}",patientDemographic);
 		if (!initial && patientDemographic != null) {
 			Optional<NdrMessageLog> messageLog =
 					data.findFirstByIdentifierAndFileType(patientDemographic.getPatientIdentifier(), "treatment");

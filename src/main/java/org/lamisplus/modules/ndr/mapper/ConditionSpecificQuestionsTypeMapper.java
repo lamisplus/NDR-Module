@@ -123,6 +123,16 @@ public class ConditionSpecificQuestionsTypeMapper {
             if(inHIVCareDate != null){
                 hiv.setEnrolledInHIVCareDate(getXmlDate (Date.valueOf (inHIVCareDate)));
                 String statusAtRegistration = demographics.getStatusAtRegistration();
+                String causeOfDeath = demographics.getCauseOfDeath();
+                if(causeOfDeath != null) {
+                    if(causeOfDeath.toUpperCase().contains("HIV")) {
+                        hiv.setCauseOfDeathHIVRelated("Y");
+                    } else if(causeOfDeath.toUpperCase().contains("UNKNOWN")) {
+                        hiv.setCauseOfDeathHIVRelated("U");
+                    } else {
+                        hiv.setCauseOfDeathHIVRelated("N");
+                    }
+                }
                 if (statusAtRegistration != null) {
                     if (statusAtRegistration.equalsIgnoreCase ("HIV+ non ART")) {
                         hiv.setFirstConfirmedHIVTestDate (getXmlDate (Date.valueOf (inHIVCareDate)));
@@ -241,51 +251,60 @@ public class ConditionSpecificQuestionsTypeMapper {
         }
     }
 
-    private void processAndHandleARTStatus(HIVQuestionsType hiv, Long personId, String enrollmentStatus) {
-        try {
-            String ndrARTStatus = enrollmentStatus == null ? "Pre-ART" : "ART";
-            String status = statusManagementService.getCurrentStatus (personId);
-            handlePatientTransferOut (hiv, personId, ndrARTStatus, status);
-            handlePatientDeathStatus (hiv, personId, ndrARTStatus, status);
-        } catch (Exception e) {
-           log.error ("An error occurred while processing client status message {}", e.getMessage());
-        }
-
-    }
-
-    private void handlePatientDeathStatus(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
-        try {
-        if (status.contains("Died") || status.contains("DEATH")) {
-            //Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
-            HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
-            log.info("current status handling death {} ", clientReportingStatus.getDescription());
-            Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
-            artStatus.ifPresent(hiv::setStatusAtDeath);
-            hiv.setDeathDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
-            hiv.setPatientHasDied(true);
-        }
-    }catch (DatatypeConfigurationException e) {
-            log.error("An error occurred while handling Death status msg {}", e.getMessage());
-        }
-    }
-
-    private void handlePatientTransferOut(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
-        try {
-            if (status.contains("Out")) {
-                //  Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
-                HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
-                Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
-                artStatus.ifPresent(hiv::setTransferredOutStatus);
-                hiv.setTransferredOutDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
-                hiv.setPatientTransferredOut(true);
-            
-            } else {
-                hiv.setPatientTransferredOut(false);
-            }
-        } catch (Exception e) {
-            log.error("An error occurred while processing transfer-out client status msg {}", e.getMessage());
-        }
-    }
+//    private void processAndHandleARTStatus(HIVQuestionsType hiv, Long personId, String enrollmentStatus) {
+//        try {
+//            String ndrARTStatus = enrollmentStatus == null ? "Pre-ART" : "ART";
+//            String status = statusManagementService.getCurrentStatus (personId);
+//            handlePatientTransferOut (hiv, personId, ndrARTStatus, status);
+//            handlePatientDeathStatus (hiv, personId, ndrARTStatus, status);
+//        } catch (Exception e) {
+//           log.error ("An error occurred while processing client status message {}", e.getMessage());
+//        }
+//
+//    }
+//
+//    private void handlePatientDeathStatus(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
+//        try {
+//            log.info("status of the current patient {}", status);
+//        if (status.contains("Died") || status.contains("DEATH") || status.contains("DIED")) {
+//            //Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
+//            HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
+//            log.info("current status handling death {} ", clientReportingStatus.getDescription());
+//            Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
+//            artStatus.ifPresent(hiv::setStatusAtDeath);
+//            log.info("art status at the death of the patient {}", artStatus);
+//            log.info("ndr art status at the death of the patient {}", ndrARTStatus);
+//
+//            if (!artStatus.isPresent()) {
+//                Optional<String> ndrART = Optional.of(ndrARTStatus);
+//                String artStatusInitial = ndrART.map(statusInitial -> statusInitial.equalsIgnoreCase("ART") ? "A" : "P").orElse("P");
+//                hiv.setStatusAtDeath(artStatusInitial);
+//            }
+//            hiv.setDeathDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
+//            hiv.setPatientHasDied(true);
+//        }
+//    }catch (DatatypeConfigurationException e) {
+//            log.error("An error occurred while handling Death status msg {}", e.getMessage());
+//        }
+//    }
+//
+//    private void handlePatientTransferOut(HIVQuestionsType hiv, Long personId, String ndrARTStatus, String status) {
+//        try {
+//            if (status.contains("Out")) {
+//                //  Optional<HIVStatusTrackerDto> patientStatus = getPatientStatus (personId, status);
+//                HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
+//                Optional<String> artStatus = ndrCodeSetResolverService.getNDRCodeSetCode("ART_STATUS", ndrARTStatus);
+//                artStatus.ifPresent(hiv::setTransferredOutStatus);
+//                hiv.setTransferredOutDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
+//                hiv.setPatientTransferredOut(true);
+//
+//            } else {
+//                hiv.setPatientTransferredOut(false);
+//            }
+//        } catch (Exception e) {
+//            log.error("An error occurred while processing transfer-out client status msg {}", e.getMessage());
+//        }
+//    }
 
 //    @NotNull
 //    private Optional<HIVStatusTrackerDto> getPatientStatus(Long personId, String status) {
@@ -295,6 +314,46 @@ public class ConditionSpecificQuestionsTypeMapper {
 //                .findFirst ();
 //    }
 
+    private void processAndHandleARTStatus(HIVQuestionsType hiv, Long personId, String enrollmentStatus) {
+        try {
+            String ndrARTStatus = enrollmentStatus == null ? "Pre-ART" : "ART";
+            String status = statusManagementService.getCurrentStatus (personId);
+            handlePatientTransferOut (hiv, personId, status);
+            handlePatientDeathStatus (hiv, personId, status);
+        } catch (Exception e) {
+            log.error ("An error occurred while processing client status message {}", e.getMessage());
+        }
+
+    }
+
+    private void handlePatientDeathStatus(HIVQuestionsType hiv, Long personId, String status) {
+        try {
+            if (status.contains("DIED") || status.contains("DEATH")) {
+                HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
+                log.info("current status handling death {} ", clientReportingStatus.getDescription());
+                hiv.setDeathDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
+                hiv.setPatientHasDied(true);
+            }
+        }catch (DatatypeConfigurationException e) {
+            log.error("An error occurred while handling Death status msg {}", e.getMessage());
+        }
+    }
+
+    private void handlePatientTransferOut(HIVQuestionsType hiv, Long personId, String status) {
+        try {
+            if (status.contains("Out")) {
+                HIVStatusDisplay clientReportingStatus = statusManagementService.getClientReportingStatus(personId);
+                hiv.setTransferredOutStatus("TO");
+                hiv.setTransferredOutDate(getXmlDate(Date.valueOf(clientReportingStatus.getDate())));
+                hiv.setPatientTransferredOut(true);
+
+            } else {
+                hiv.setPatientTransferredOut(false);
+            }
+        } catch (Exception e) {
+            log.error("An error occurred while processing transfer-out client status msg {}", e.getMessage());
+        }
+    }
     private void processAndSetCD4(HIVQuestionsType hiv, int age, ArtCommencementDTO artCommence) {
         Long cd4 = artCommence.getCd4 ();
         Long cd4p = artCommence.getCd4Percentage ();
