@@ -128,12 +128,15 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
    Optional<PatientPharmacyEncounterDTO> getPatientPharmacyEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
    
    @Query(value = "SELECT DISTINCT person_uuid FROM hiv_art_pharmacy ph\n" +
-           "INNER JOIN patient_person p ON p.uuid = ph.person_uuid\n" +
-           "LEFT JOIN laboratory_result lr ON lr.patient_uuid = ph.person_uuid\n" +
-           "WHERE ph.archived = 0 AND p.archived = 0\n" +
-           "AND ph.last_modified_date >= ?1 \n" +
-           "OR lr.date_result_reported >= ?1 \n" +
-           "AND ph.facility_id = ?2", nativeQuery = true)
+           "           INNER JOIN patient_person p ON p.uuid = ph.person_uuid\n" +
+           "           LEFT JOIN laboratory_result lr ON lr.patient_uuid = ph.person_uuid\n" +
+           "           LEFT JOIN hiv_status_tracker hst ON hst.person_id = ph.person_uuid\n" +
+           "           WHERE ph.archived = 0 AND p.archived = 0 AND hst.archived = 0\n" +
+           "           AND ph.last_modified_date >= ?1\n" +
+           "           OR lr.date_result_reported >= ?1\n" +
+           "           OR lr.date_modified >= ?1\n" +
+           "           OR hst.last_modified_date >= ?1\n" +
+           "           AND ph.facility_id = ?2", nativeQuery = true)
    List<String> getPatientIdsEligibleForNDR(LocalDateTime start, long facilityId);
    
   @Query(value = "SELECT lo.patient_uuid, CAST(json_agg(distinct  jsonb_build_object(\n" +
