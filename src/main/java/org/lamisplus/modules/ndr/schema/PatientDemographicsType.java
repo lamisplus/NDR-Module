@@ -237,7 +237,7 @@ public class PatientDemographicsType {
      *     {@link IdentifiersType }
      *     
      */
-    public IdentifiersType getOtherPatientIdentifiers() {
+    public IdentifiersType getOtherPatientIdentifiers(IdentifiersType indentifiers) {
         return otherPatientIdentifiers;
     }
 

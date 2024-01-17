@@ -9,4 +9,6 @@ public interface BiometricDto {
     byte[] getTemplate();
 
     LocalDate getEnrollmentDate();
+    
+    Integer getQuality();
 }

@@ -25,10 +25,12 @@ public class NdrMessageLog {
 
     @Column(name = "file", nullable = false, length = 128)
     private String file;
+    
+    @Column(name = "file_type", nullable = false, length = 128)
+    private String fileType;
 
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
-
 
     public NdrMessageLog(String identifier, String file, LocalDateTime lastUpdated)
     {

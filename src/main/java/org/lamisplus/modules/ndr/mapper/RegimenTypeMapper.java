@@ -2,20 +2,23 @@ package org.lamisplus.modules.ndr.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.hiv.domain.entity.ArtPharmacy;
 import org.lamisplus.modules.hiv.domain.entity.Regimen;
 import org.lamisplus.modules.hiv.repositories.ArtPharmacyRepository;
 import org.lamisplus.modules.hiv.repositories.RegimenTypeRepository;
-import org.lamisplus.modules.ndr.domain.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographicDTO;
+import org.lamisplus.modules.ndr.domain.dto.PatientDemographics;
+import org.lamisplus.modules.ndr.domain.dto.RegimenDTO;
 import org.lamisplus.modules.ndr.schema.CodedSimpleType;
 import org.lamisplus.modules.ndr.schema.ConditionType;
 import org.lamisplus.modules.ndr.schema.RegimenType;
 import org.lamisplus.modules.ndr.service.NDRCodeSetResolverService;
+import org.lamisplus.modules.ndr.service.NDRService;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.repository.PersonRepository;
 import org.springframework.stereotype.Service;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -37,16 +40,23 @@ public class RegimenTypeMapper {
 	
 	private final NDRCodeSetResolverService ndrCodeSetResolverService;
 	
+	private Set<ArtPharmacy> patientRegimens;
+	
 	
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition) {
+		try {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());
 			Comparator<ArtPharmacy> artVisitDateComparator = Comparator.comparing(ArtPharmacy::getVisitDate);
-			Set<ArtPharmacy> patientRegimens = artPharmacyRepository
+			if(patientRegimens == null) {
+				log.info("Creating a new collection instance");
+			patientRegimens = artPharmacyRepository
 					.findAll()
 					.stream()
 					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
-					.collect(Collectors.toSet());
+					.collect(Collectors.toSet());}
+			else
+				log.info("Re-using existing collection");
 			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
 			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));
 			patientRegimens.forEach(artPharmacy -> {
@@ -58,20 +68,130 @@ public class RegimenTypeMapper {
 			});
 		}
 		sortConditionRegimenType(condition);
+		}
+		catch(Exception ignore)
+		{
+			ignore.printStackTrace();
+			log.error("Error retrieving regimen type : {}",ignore.getMessage());
+		}
 		return condition;
 	}
 	
+	
+	
+	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, List<ArtPharmacy> patientRegimens) {
+		if(demographics != null ){
+			Person person = personRepository.getOne(demographics.getId());
+			Comparator<ArtPharmacy> artVisitDateComparator = Comparator.comparing(ArtPharmacy::getVisitDate);
+			 artPharmacyRepository
+					.findAll()
+					.stream()
+					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
+					.collect(Collectors.toSet());
+			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
+			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));
+			patientRegimens.forEach(artPharmacy -> {
+				Set<Regimen> regimens = artPharmacy.getRegimens()
+						.stream()
+						.filter(r -> regimenTypeIds.contains(r.getRegimenType ().getId ())).collect(Collectors.toSet());
+				log.info(person.getHospitalNumber() + "regimens : {}", regimens.size() );
+				processAndSetPrescribeRegimen(artPharmacy, regimens, artVisitDateComparator, patientRegimens.stream().collect(Collectors.toSet()), condition);
+			});
+		}
+		sortConditionRegimenType(condition);
+		return condition;
+	}
+	public ConditionType regimenType(PatientDemographicDTO demographics, ConditionType condition, List<RegimenDTO> regimens) {
+		List<RegimenType> regimenTypeList = condition.getRegimen();
+//		@XmlElement(name = "VisitID", required = true) ---- >  done checked
+//		protected String visitID;
+//		@XmlElement(name = "VisitDate", required = true)  ---- >  done checked
+//		@XmlSchemaType(name = "date")
+//		protected XMLGregorianCalendar visitDate;
+//		@XmlElement(name = "PrescribedRegimen", required = true) ---- >  done checked
+//		protected CodedSimpleType prescribedRegimen;
+//		@XmlElement(name = "PrescribedRegimenTypeCode", required = true) ---- >  done checked
+//		@XmlElement(name = "PrescribedRegimenDuration", required = true)  ---- >  done checked
+//		@XmlElement(name = "PrescribedRegimenDispensedDate", required = true)   ---- >  done checked
+		if(regimens != null ) {
+			regimens.parallelStream()
+					.forEach(regimen -> {
+						
+						RegimenType regimenType = new RegimenType();
+						
+						
+						if (StringUtils.isNotBlank(regimen.getVisitDate())) {
+							try {
+								LocalDate local = LocalDate.parse(regimen.getVisitDate());
+								regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								regimenType.setPrescribedRegimenDispensedDate(DateUtil.getXmlDate(Date.valueOf(local)));
+							} catch (Exception e) {
+								log.info("An error occurred parsing the regimen date: error{}" + e.getMessage());
+							}
+						} else {
+							throw new IllegalArgumentException("Regimen visit date cannot be null");
+							
+						}
+						
+						
+						if (StringUtils.isNotBlank(regimen.getVisitID())) {
+							regimenType.setVisitID(regimen.getVisitID());
+						} else {
+							throw new IllegalArgumentException("Regimen visit Id cannot be null");
+						}
+						
+						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenDuration())) {
+							regimenType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
+						} else {
+							throw new IllegalArgumentException("Regimen duration cannot be null");
+						}
+						
+						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenTypeCode())) {
+							regimenType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
+						} else {
+							throw new IllegalArgumentException("Regimen type code cannot be null");
+						}
+						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenCode())
+								&& StringUtils.isNotBlank(regimen.getPrescribedRegimenCodeDescTxt())) {
+							CodedSimpleType simpleTypeCode = new CodedSimpleType();
+							simpleTypeCode.setCode(regimen.getPrescribedRegimenCode());
+							simpleTypeCode.setCodeDescTxt(regimen.getPrescribedRegimenCodeDescTxt());
+							regimenType.setPrescribedRegimen(simpleTypeCode);
+						} else {
+							throw new IllegalArgumentException("Regimen type code cannot be null");
+						}
+						if (StringUtils.isNotBlank(regimen.getDateRegimenStarted())) {
+							try {
+								LocalDate local = LocalDate.parse(regimen.getDateRegimenStarted());
+								regimenType.setVisitDate(DateUtil.getXmlDate(Date.valueOf(local)));
+								regimenType.setDateRegimenStarted(DateUtil.getXmlDate(Date.valueOf(local)));
+							} catch (Exception e) {
+								log.info("An error occurred parsing the Date Regimen Started date: error{}" + e.getMessage());
+							}
+						}
+						regimenTypeList.add(regimenType);
+					});
+			
+			if (!condition.getRegimen().isEmpty()) {
+				sortConditionRegimenType(condition);
+			}
+		}
+			return condition;
+	}
 	
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, LocalDateTime lastUpdate) {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());
 			Comparator<ArtPharmacy> artVisitDateComparator = Comparator.comparing(ArtPharmacy::getVisitDate);
-			Set<ArtPharmacy> patientRegimens = artPharmacyRepository
+			if(this.patientRegimens == null) {
+			this.patientRegimens = artPharmacyRepository
 					.findAll()
 					.stream()
 					.filter(artPharmacy -> artPharmacy.getPerson().getUuid().equals(person.getUuid()))
 					.filter(artPharmacy -> artPharmacy.getLastModifiedDate().isAfter(lastUpdate))
 					.collect(Collectors.toSet());
+			}
+			else log.info("Re-using existing collection");
 			log.info(person.getHospitalNumber() + " pharmacy visit is : {}", patientRegimens.size());
 			List<Long> regimenTypeIds = new ArrayList<> (Arrays.asList (1L, 2L, 3L, 4L, 14L, 8L));
 			patientRegimens.forEach(artPharmacy -> {
@@ -137,11 +257,10 @@ public class RegimenTypeMapper {
 	
 	private void sortConditionRegimenType(ConditionType condition) {
 		List<RegimenType> regimenTypeSet = new ArrayList<>(condition.getRegimen());
-		log.info("regimen  type {}", regimenTypeSet);
+		//log.info("regimen  type {}", regimenTypeSet);
 		List<RegimenType> regimenTypes = regimenTypeSet.stream()
 				.filter(Objects::nonNull)
 				.sorted(Comparator.comparing(RegimenType::getPrescribedRegimenDuration))
-				//.sorted((r1, r2) -> r2.getPrescribedRegimenTypeCode().compareTo(r1.getPrescribedRegimenTypeCode()))
 				.sorted((r1, r2) -> r1.getVisitDate().compare(r2.getVisitDate()))
 				.collect(Collectors.toList());
 		condition.getRegimen().clear();

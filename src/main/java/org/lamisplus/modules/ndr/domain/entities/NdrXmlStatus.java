@@ -1,8 +1,12 @@
 package org.lamisplus.modules.ndr.domain.entities;
 
+
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -33,5 +37,11 @@ public class NdrXmlStatus {
     private Long percentagePushed;
 
     private Boolean completelyPushed;
+    @Type(type = "jsonb")
+    @Column(name = "error", columnDefinition = "jsonb")
+    private JsonNode error;
+
+    @Column(name = "type", nullable = false, length = 128)
+    private String type;
 
 }

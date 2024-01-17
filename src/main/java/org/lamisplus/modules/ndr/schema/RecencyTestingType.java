@@ -1,6 +1,8 @@
 
 package org.lamisplus.modules.ndr.schema;
 
+import lombok.ToString;
+
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -82,25 +84,25 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RecencyTestingType", propOrder = {
-    "testName",
-    "testDate",
-    "sampleType",
-    "dateSampleCollected",
-    "dateSampleSent",
-    "pcrLab",
-    "rapidRecencyAssay",
-    "viralLoadConfirmationResult",
-    "viralLoadConfirmationTestDate",
-    "finalRecencyTestResult",
-    "consent",
-    "recencyNumber",
-    "controlLine",
-    "verificationLine",
-    "longTermLine",
-    "recencyInterpretation",
-    "viralLoadRequest",
-    "sampleReferenceNumber",
-    "viralLoadClassification"
+        "testName",
+        "testDate",
+        "sampleType",
+        "dateSampleCollected",
+        "dateSampleSent",
+        "pcrLab",
+        "rapidRecencyAssay",
+        "viralLoadConfirmationResult",
+        "viralLoadConfirmationTestDate",
+        "finalRecencyTestResult",
+        "consent",
+        "recencyNumber",
+        "controlLine",
+        "verificationLine",
+        "longTermLine",
+        "recencyInterpretation",
+        "viralLoadRequest",
+        "sampleReferenceNumber",
+        "viralLoadClassification"
 })
 public class RecencyTestingType {
 
@@ -109,47 +111,47 @@ public class RecencyTestingType {
     @XmlElement(name = "TestDate", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar testDate;
-    @XmlElement(name = "SampleType", required = true)
+    @XmlElement(name = "SampleType")
     protected String sampleType;
-    @XmlElement(name = "DateSampleCollected", required = true)
+    @XmlElement(name = "DateSampleCollected")
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar dateSampleCollected;
-    @XmlElement(name = "DateSampleSent", required = true)
+    @XmlElement(name = "DateSampleSent")
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar dateSampleSent;
-    @XmlElement(name = "PCRLab", required = true)
+    @XmlElement(name = "PCRLab")
     protected String pcrLab;
-    @XmlElement(name = "RapidRecencyAssay", required = true)
+    @XmlElement(name = "RapidRecencyAssay")
     protected String rapidRecencyAssay;
     @XmlElement(name = "ViralLoadConfirmationResult")
     protected Double viralLoadConfirmationResult;
     @XmlElement(name = "ViralLoadConfirmationTestDate")
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar viralLoadConfirmationTestDate;
-    @XmlElement(name = "FinalRecencyTestResult", required = true)
+    @XmlElement(name = "FinalRecencyTestResult")
     protected String finalRecencyTestResult;
-    @XmlElement(name = "Consent", required = true)
+    @XmlElement(name = "Consent")
     @XmlSchemaType(name = "string")
     protected YNCodeType consent;
     @XmlElement(name = "RecencyNumber", required = true)
     protected String recencyNumber;
-    @XmlElement(name = "ControlLine", required = true)
+    @XmlElement(name = "ControlLine")
     @XmlSchemaType(name = "string")
     protected YNCodeType controlLine;
-    @XmlElement(name = "VerificationLine", required = true)
+    @XmlElement(name = "VerificationLine")
     @XmlSchemaType(name = "string")
     protected YNCodeType verificationLine;
-    @XmlElement(name = "LongTermLine", required = true)
+    @XmlElement(name = "LongTermLine")
     @XmlSchemaType(name = "string")
     protected YNCodeType longTermLine;
-    @XmlElement(name = "RecencyInterpretation", required = true)
+    @XmlElement(name = "RecencyInterpretation")
     protected String recencyInterpretation;
-    @XmlElement(name = "ViralLoadRequest", required = true)
+    @XmlElement(name = "ViralLoadRequest")
     @XmlSchemaType(name = "string")
     protected YNCodeType viralLoadRequest;
-    @XmlElement(name = "SampleReferenceNumber", required = true)
+    @XmlElement(name = "SampleReferenceNumber")
     protected String sampleReferenceNumber;
-    @XmlElement(name = "ViralLoadClassification", required = true)
+    @XmlElement(name = "ViralLoadClassification")
     protected String viralLoadClassification;
 
     /**

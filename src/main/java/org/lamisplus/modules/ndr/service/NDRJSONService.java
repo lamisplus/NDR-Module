@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.audit4j.core.util.Log;
-import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 import org.lamisplus.modules.base.domain.entities.User;
 import org.lamisplus.modules.base.service.UserService;
 import org.lamisplus.modules.ndr.domain.dto.*;
@@ -37,7 +35,7 @@ import java.util.*;
 @Slf4j
 public class NDRJSONService {
     //TODO: Save the hard-coded values in database
-    String pingUrl = "http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping";
+    String pingUrl = "https://emr-ndrpushsandbox.phis3project.org.ng/api/Cronbox";
     
     //"https://emr-ndrpush.phis3project.org.ng/api/Cronbox";
 
@@ -45,7 +43,8 @@ public class NDRJSONService {
     String authEndPoint = "/auth";
     String pushEndPoint = "/beep";
     String logsEndPoint = "/errorLogs";
-    String baseUrl = "http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
+   // String baseUrl = "http://ndrstaging.phis3project.org.ng:8087/api/Cronbox";
+    String baseUrl = "https://emr-ndrpushsandbox.phis3project.org.ng/api/Cronbox";
     String email = "nonye.nwanya@thepalladiumgroup.com";
     String password = "]W(I*=v}-+z8h$F";
 
@@ -84,6 +83,7 @@ public class NDRJSONService {
         HttpEntity<NDRAuthRequestDTO> loginEntity = new HttpEntity<>(loginRequestDTO, GetHTTPHeaders());
         ResponseEntity<NDRAuthResponseDTO> response = GetRestTemplate().exchange(baseUrl + authEndPoint,
                 HttpMethod.POST, loginEntity, NDRAuthResponseDTO.class);
+        log.info("url {}  data {}", baseUrl + authEndPoint, response.getBody());
         return response.getBody();
     }
 
@@ -161,7 +161,7 @@ public class NDRJSONService {
         return "no token";
     }
 
-    public NDRPusherConfig save(String username, String password) {
+    public NDRPusherConfig save(String username, String password, String baseUrl) {
         NDRPusherConfig ndrPusherConfig = new NDRPusherConfig();
         Optional<User> currentUser = this.userService.getUserWithRoles();
         User user = (User) currentUser.get();
@@ -247,7 +247,7 @@ public class NDRJSONService {
 
 
     public Long getPacentagePushed(Integer id) {
-        int per = 0;
+       int per = 0;
         Long facilityId = 0L;
         Optional<User> currentUser = this.userService.getUserWithRoles();
         if (currentUser.isPresent()) {
@@ -263,8 +263,7 @@ public class NDRJSONService {
             //Long
         } catch (Exception e) {
         }
-        Long per2 = new Long(per+"");
-        return per2;
+        return new Long(String.valueOf(per));
     }
 
     public void batchPushToNDR(Integer id) throws Exception {
@@ -285,28 +284,41 @@ public class NDRJSONService {
                 ndrXmlStatus = ndrXmlStatusOptional.get();
                 identifier = ndrXmlStatus.getPushIdentifier();
 
-                List<NDRMessages> ndrMessagesList = ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
+                List<NDRMessages> ndrMessagesList =
+                        ndrMessagesRepository.findNDRMessagesByIsPushedAndFacilityIdAndIdentifier(Boolean.FALSE, facilityId, identifier);
                 Iterator iterator = ndrMessagesList.iterator();
                 int size = ndrMessagesList.size();
-                System.out.println("Token gotten " + size);
+                log.info("container size :" + size);
                 int batches = 0;
                 int counter = 0;
                 List<String> data = new ArrayList<>();
+                List<NDRMessages> messages = new ArrayList<>();
                 while (iterator.hasNext()) {
                     NDRMessages msg = (NDRMessages) iterator.next();
                     batches++; counter++;
                     if(batches%BATCHMAX != 0){
-                        data.add(msg.getDeMessage());
+                        data.add(msg.getDeMessage().replace("null,", ""));
+                        messages.add(msg);
                         continue;
                     }
-                    else if ( (batches%BATCHMAX == 0) || (counter == size))
-                    {
-                        if(batches == BATCHMAX) data.add(msg.getDeMessage());
+                    else if ( (batches%BATCHMAX == 0) || (counter == size)) {
+                        if (batches == BATCHMAX) {
+                            data.add(msg.getDeMessage());
+                            messages.add(msg);
+                        }
                         NDRDataResponseDTO ndrDataResponseDTO = PushData(token, data);
-                         if (ndrDataResponseDTO.getMessage().contains("success")) {
-                            msg.setIsPushed(Boolean.TRUE);
-                            msg.setMessageDate(LocalDate.now());
-                            ndrMessagesRepository.save(msg);
+                        if (ndrDataResponseDTO.getMessage().contains("success")) {
+                            //msg.setIsPushed(Boolean.TRUE);
+                            //msg.setMessageDate(LocalDate.now());
+                            //ndrMessagesRepository.save(msg);
+                            log.info("data:{}", ndrDataResponseDTO);
+                            log.info("batchId from server : {}", ndrDataResponseDTO.getBatchNumber());
+                            for (NDRMessages message:messages) {
+                                message.setIsPushed(Boolean.TRUE);
+                                message.setMessageDate(LocalDate.now());
+                            }
+                            ndrMessagesRepository.saveAll(messages);
+
                             Long percentagePushed = this.getPacentagePushed(ndrXmlStatus.getId());
                             ndrXmlStatus.setPercentagePushed(percentagePushed);
                             Boolean complete = Boolean.FALSE;
@@ -315,11 +327,11 @@ public class NDRJSONService {
                             ndrXmlStatusRepository.save(ndrXmlStatus);
                         }
                         data = new ArrayList<>();
+                        messages = new ArrayList<>();
                         batches = 0;
                     }
                 }
             }
-
         }
     }
 }

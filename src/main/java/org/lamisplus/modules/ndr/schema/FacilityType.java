@@ -1,6 +1,8 @@
 
 package org.lamisplus.modules.ndr.schema;
 
+import lombok.ToString;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -45,6 +47,7 @@ import javax.xml.bind.annotation.XmlType;
     "facilityID",
     "facilityTypeCode"
 })
+@ToString
 public class FacilityType {
 
     @XmlElement(name = "FacilityName", required = true)

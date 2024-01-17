@@ -1,6 +1,7 @@
 package org.lamisplus.modules.ndr.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.lamisplus.modules.ndr.domain.entities.NDRCodeSet;
 import org.lamisplus.modules.ndr.repositories.NDRCodeSetRepository;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NDRCodeSetResolverService {
     private final NDRCodeSetRepository ndrCodeSetRepository;
 
@@ -40,10 +42,9 @@ public class NDRCodeSetResolverService {
     public Optional<CodedSimpleType> getRegimen(String display) {
         Optional<String> regimenResolver = ndrCodeSetRepository.getNDREquivalentRegimenUsingSystemRegimen (display);
         if (regimenResolver.isPresent ()) {
-           // System.out.println("NDR REGIMEN 1: "+ regimenResolver.get());
             Optional<NDRCodeSet> ndrCodeSet = ndrCodeSetRepository.getNDRCodeSetByCodeDescription (regimenResolver.get ());
             if (ndrCodeSet.isPresent ()) {
-                System.out.println("NDR REGIMEN CODE: "+ ndrCodeSet.get().getCode());
+               log.info("NDR REGIMEN CODE: "+ ndrCodeSet.get().getCode());
                 CodedSimpleType codedSimpleType = new CodedSimpleType ();
                 codedSimpleType.setCode (ndrCodeSet.get ().getCode ());
                 codedSimpleType.setCodeDescTxt (ndrCodeSet.get ().getCodeDescription ());
