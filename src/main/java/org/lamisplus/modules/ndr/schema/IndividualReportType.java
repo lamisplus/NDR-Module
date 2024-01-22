@@ -36,7 +36,7 @@ import java.util.List;
     "patientDemographics",
     "condition",
     "hivTestingReport",
-    "pmtct"
+    "pmtct", "mortality",
 })
 public class IndividualReportType {
     @Override
@@ -46,6 +46,7 @@ public class IndividualReportType {
                 ", condition=" + condition +
                 ", hivTestingReport=" + hivTestingReport +
                 ", pmtct=" + pmtct +
+                ", mortality=" + mortality +
                 '}';
     }
     
@@ -59,6 +60,9 @@ public class IndividualReportType {
    
     @XmlElement(name = "PMTCT")
     protected PMTCTType pmtct;
+
+    @XmlElement(name = "Mortality")
+    protected List<MortalityType> mortality;
 
     /**
      * Gets the value of the patientDemographics property.
@@ -164,6 +168,34 @@ public class IndividualReportType {
      */
     public void setPMTCT(PMTCTType value) {
         this.pmtct = value;
+    }
+    /**
+     * Gets the value of the mortality property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the mortality property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getMortality().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link MortalityType }
+     *
+     *
+     */
+    public List<MortalityType> getMortality() {
+        if (mortality == null) {
+            mortality = new ArrayList<MortalityType>();
+        }
+        return this.mortality;
     }
 
 }

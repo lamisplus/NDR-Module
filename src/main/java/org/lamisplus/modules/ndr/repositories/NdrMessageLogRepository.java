@@ -190,6 +190,72 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\t\t   GROUP BY lo.patient_uuid", nativeQuery = true)
   Optional<PatientLabEncounterDTO> getPatientLabEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
 
+  //mortality query
+  @Query(value = "SELECT p.uuid, \n" +
+          "CASE WHEN last_status.visit_id IS NULL THEN ho.visit_id ELSE last_status.visit_id END AS visitId,\n" +
+          "last_status.status_date AS visitDate,\n" +
+          "hpt.reason_for_tracking AS reasonForTracking,\n" +
+          "hpt.reason_for_tracking_others AS otherTrackingReason,\n" +
+          "CONCAT(p.contact->'contact'->0->>'surname', '', p.contact->'contact'->0->>'otherName') AS partnerFullName,\n" +
+          "TRANSLATE(CAST((p.contact->'contact'->0->'address'->>'line') AS varchar), '\\\",[,]', ' ') AS addressofTreatmentSupporter, \n" +
+          "(p.contact->'contact'->0->'contactPoint'->>'value') AS contactPhoneNumber,\n" +
+          "hpt.date_last_appointment AS dateofLastActualContact,\n" +
+          "hpt.date_missed_appointment AS dateofMissedScheduledAppointment,\n" +
+          "CAST (hpt.attempts->0->> 'attemptDate'  AS DATE) AS datePatientContacted,\n" +
+          "hpt.attempts->0->> 'whoAttemptedContact' AS nameofPersonWhoAttemptedContact,\n" +
+          "hpt.attempts->0->> 'modeOfConatct' AS modeofCommunication,\n" +
+          "hpt.attempts->0->> 'personContacted' AS personContacted,\n" +
+          "hpt.attempts->0->> 'reasonForDefaulting' AS reasonforDefaulting,\n" +
+          "hpt.attempts->0->> 'reasonForDefaultingOthers' AS otherReasonforDefaulting, \n" +
+          "CASE WHEN last_status.HIV_STATUS = 'LOST_TO_FOLLOWUP' THEN CAST (TRUE AS BOOLEAN) ELSE CAST (FALSE AS BOOLEAN) END AS losttoFollowup,\n" +
+          "hpt.reason_for_loss_to_follow_up AS reasonforLosttoFollowup,\n" +
+          "CASE WHEN last_status.HIV_STATUS = 'LOST_TO_FOLLOWUP' THEN last_status.status_date ELSE NULL END AS dateLosttoFollowup,\n" +
+          "NULL AS previousARVExposure,\n" +
+          "hpt.date_of_discontinuation AS dateofTermination,\n" +
+          "hpt.reason_for_discountinuation AS reasonforTermination,\n" +
+          "ho.indicationforClientVerification,\n" +
+          "NULL AS clientVerificationOther,\n" +
+          "NULL AS transferredOutTo,\n" +
+          "CASE WHEN last_status.HIV_STATUS = 'Died (Confirmed)' OR  last_status.HIV_STATUS = 'KNOWN_DEATH' THEN last_status.HIV_STATUS ELSE NULL END AS death,\n" +
+          "-- 'Unknown' AS death,\n" +
+          "last_status.va_cause_of_death AS vaCauseofDeath,\n" +
+          "hpt.cause_of_death_others AS OtherCauseofDeath,\n" +
+          "hpt.cause_of_death AS causeOfDeath,\n" +
+          "hpt.reason_for_discountinuation AS discontinuedCare,\n" +
+          "NULL AS discontinueCareOtherSpecify,\n" +
+          "hpt.date_return_to_care AS dateReturnedtoCare,\n" +
+          "hpt.referred_for AS reffferedFor,\n" +
+          "hpt.referred_for_others AS reffferedForOther,\n" +
+          "NULL AS nameofContactTracer,\n" +
+          "CAST (NULL AS DATE) AS contactTrackerSignatureDate\n" +
+          "from patient_person p\n" +
+          "INNER JOIN hiv_enrollment e ON p.uuid = e.person_uuid\n" +
+          "LEFT JOIN (\n" +
+          "\tSELECT DISTINCT ON (person_uuid) * FROM hiv_patient_tracker) hpt ON hpt.person_uuid = e.person_uuid\n" +
+          "LEFT JOIN(\n" +
+          "SELECT * FROM (\n" +
+          "select person_uuid, visit_id, data->'attempt'->0->>'outcome' AS clientVerificationStatus,\n" +
+          "CAST (data->'attempt'->0->>'dateOfAttempt' AS DATE) AS dateOfOutcome,\n" +
+          "CAST(TRANSLATE((data->>'anyOfTheFollowing'), '\\\"[]', ' ') AS VARCHAR) AS indicationforClientVerification,\n" +
+          "ROW_NUMBER() OVER ( PARTITION BY person_uuid ORDER BY CAST(data->'attempt'->0->>'dateOfAttempt' AS DATE) DESC)\n" +
+          "from public.hiv_observation where type = 'Client Verification' \n" +
+          "AND archived = 0\n" +
+          "\t) clientVerification WHERE row_number = 1\n" +
+          ") ho ON ho.person_uuid = e.person_uuid \n" +
+          "LEFT JOIN (\n" +
+          "SELECT * FROM (\n" +
+          "SELECT person_id, hiv_status, status_date, visit_id, va_cause_of_death,\n" +
+          "ROW_NUMBER() OVER ( PARTITION BY person_id ORDER BY status_date DESC)\n" +
+          "FROM hiv_status_tracker\n" +
+          "where archived = 0 ) status_tracker\n" +
+          "WHERE row_number = 1\n" +
+          ") last_status ON last_status.person_id = e.person_uuid\n" +
+          "WHERE p.archived = 0\n" +
+          "AND  last_status.status_date <= ?4\n" +
+          "AND last_status.status_date >= ?3\n" +
+          "AND p.facility_id = ?2\n" +
+          "AND hpt.person_uuid = ?1", nativeQuery = true)
+  List<MortalityDTO> getPatientMortalities(String identifier, Long facilityId, LocalDate start, LocalDate end);
   @Query(value = "SELECT client_code from hts_client where facility_id=?1 AND date_modified > ?2 AND archived = 0 ", nativeQuery = true)
   List<String>getHtsClientCode(Long facilityId, LocalDateTime lastModified);
 
@@ -452,6 +518,9 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "  AND hc.date_modified > ?3 \n" +
           "\t\t  AND hc.archived = 0\n" +
           "\t\t ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
+
+  // client verification query
+
 
     @Query(value = "SELECT DISTINCT p.uuid FROM patient_person AS p\n" +
             "\tJOIN hiv_enrollment AS e on e.person_uuid = p.uuid\n" +

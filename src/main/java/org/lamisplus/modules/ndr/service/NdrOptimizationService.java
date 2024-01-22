@@ -14,6 +14,7 @@ import org.lamisplus.modules.ndr.domain.entities.NdrMessageLog;
 import org.lamisplus.modules.ndr.domain.entities.NdrXmlStatus;
 import org.lamisplus.modules.ndr.mapper.ConditionTypeMapper;
 import org.lamisplus.modules.ndr.mapper.MessageHeaderTypeMapper;
+import org.lamisplus.modules.ndr.mapper.MortalityTypeMapper;
 import org.lamisplus.modules.ndr.mapper.PatientDemographicsMapper;
 import org.lamisplus.modules.ndr.repositories.*;
 import org.lamisplus.modules.ndr.schema.*;
@@ -52,6 +53,7 @@ public class NdrOptimizationService {
 	private final MessageHeaderTypeMapper messageHeaderTypeMapper;
 	private final PatientDemographicsMapper patientDemographicsMapper;
 	private final ConditionTypeMapper conditionTypeMapper;
+	private final MortalityTypeMapper mortalityTypeMapper;
 	
 	private final NdrXmlStatusRepository ndrXmlStatusRepository;
 	
@@ -193,6 +195,9 @@ public class NdrOptimizationService {
 
 		List<LaboratoryEncounterDTO> patientLabEncounters =
 				getPatientLabEncounter(patientId, facilityId, objectMapper, start, end, ndrErrors);
+
+		MortalityType mortalities = getPatientMortality(patientId, facilityId, start, end);
+
 		if (patientDemographic == null) return false;
 
 		String fileName = generatePatientNDRXml(
@@ -200,6 +205,7 @@ public class NdrOptimizationService {
 				patientEncounters,
 				patientRegimens,
 				patientLabEncounters,
+				mortalities,
 				initial,
 				ndrErrors, pushIdentifier);
 		if (fileName != null) {
@@ -213,6 +219,7 @@ public class NdrOptimizationService {
 	                                    List<EncounterDTO> patientEncounters,
 	                                    List<RegimenDTO> patientRegimens,
 	                                    List<LaboratoryEncounterDTO> patientLabEncounters,
+										MortalityType mortalities,
 	                                    boolean initial, List<NDRErrorDTO> ndrErrors, String pushIdentifier) {
 		log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
 		try {
@@ -229,6 +236,12 @@ public class NdrOptimizationService {
 				ConditionType conditionType =
 						conditionTypeMapper.getConditionType(patientDemographic, patientEncounters, patientRegimens, patientLabEncounters);
 				individualReportType.setPatientDemographics(patientDemographics);
+
+				//mortality
+				if (mortalities != null) {
+					individualReportType.getMortality().add(mortalities);
+				}
+
 				MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(patientDemographic);
 				String messageStatusCode = "INITIAL";
 				if (!initial) {
@@ -248,7 +261,7 @@ public class NdrOptimizationService {
 				jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 				jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
 				SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR 1.6.2.xsd"));
+				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR 1_6_6.xsd"));
 				jaxbMarshaller.setSchema(schema);
 				String identifier = patientDemographics.getPatientIdentifier();
 				if (conditionType != null) {
@@ -345,6 +358,12 @@ public class NdrOptimizationService {
 			
 		}
 		return new ArrayList<>();
+	}
+
+	private MortalityType getPatientMortality(String patientId, long facilityId,
+											  LocalDate start, LocalDate end) {
+		MortalityType mortalities = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end);
+		return mortalities;
 	}
 	
 	
