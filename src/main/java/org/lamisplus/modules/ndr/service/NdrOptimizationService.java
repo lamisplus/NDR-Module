@@ -65,8 +65,40 @@ public class NdrOptimizationService {
 	public static final String XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION = "\n<!-- This XML was generated from LAMISPlus application -->";
 	public static final String HEADER_BIND_COMMENT = "com.sun.xml.bind.xmlHeaders";
 	public final AtomicLong messageId = new AtomicLong(0);
-	
-	
+
+	public void generatePatientOneNDRXml(long facilityId, boolean initial, String patientId) {
+		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
+		log.info("folder -> "+ pathname);
+		ndrService.cleanupFacility(facilityId, pathname);
+		AtomicInteger generatedCount = new AtomicInteger();
+
+		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
+
+		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
+
+		String pushIdentifier = UUID.randomUUID().toString();
+
+		getPatientNDRXml(patientId, facilityId, initial, ndrErrors, pushIdentifier);
+		generatedCount.getAndIncrement();
+		patientDemographicDTO[0] = data.getPatientDemographics(patientId, facilityId).get();
+
+		File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
+		log.info("fileSize {} bytes ", ZipUtility.getFolderSize(folder));
+		if (ZipUtility.getFolderSize(folder) >= 15_000_000) {
+			log.info(BASE_DIR + "temp/" + facilityId + "/" + " will be split into two");
+		}
+		if (generatedCount.get() > 0) {
+			zipAndSaveTheFilesforDownload(
+					facilityId,
+					pathname,
+					generatedCount,
+					patientDemographicDTO[0],
+					ndrErrors,
+					"treatment", pushIdentifier
+			);
+		}
+		log.error("error list size {}", ndrErrors.size());
+	}
 	public void generatePatientsNDRXml(long facilityId, boolean initial) {
 		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
 		log.info("folder -> "+ pathname);
@@ -261,7 +293,7 @@ public class NdrOptimizationService {
 				jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 				jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
 				SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR 1_6_6.xsd"));
+				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR1_6_6_0.xsd"));
 				jaxbMarshaller.setSchema(schema);
 				String identifier = patientDemographics.getPatientIdentifier();
 				if (conditionType != null) {

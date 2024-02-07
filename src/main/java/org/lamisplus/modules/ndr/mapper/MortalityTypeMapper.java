@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.ndr.domain.dto.MortalityDTO;
 import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
+import org.lamisplus.modules.ndr.schema.ClientVerificationType;
 import org.lamisplus.modules.ndr.schema.MortalityType;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 public class MortalityTypeMapper {
     @Autowired
     private NdrMessageLogRepository ndrMessageLogRepository;
+    private final ClientVerificationTypeMapper clientVerificationTypeMapper;
     public MortalityType getMortalityType(String patientId, long facilityId, LocalDate start, LocalDate end) {
 
         MortalityType mortalityType = new MortalityType();
@@ -27,6 +29,13 @@ public class MortalityTypeMapper {
 
         if (mortalities != null) {
             mortalities.forEach(mortality -> {
+                //client verification
+                ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end);
+
+                if (clientVerification != null) {
+                    mortalityType.setClientVerification(clientVerification);
+                }
+
                 log.info("patient mortality visit Id {}", mortality.getVisitID());
                 if(mortality.getVisitID() != null)mortalityType.setVisitID(mortality.getVisitID());
                 if(mortality.getVisitDate() != null) {
@@ -39,27 +48,27 @@ public class MortalityTypeMapper {
 
                 }
                 if(mortality.getReasonForTracking() != null) {
-                    log.info("Reason For Tracking {}", mortality.getReasonForTracking());
+                    //log.info("Reason For Tracking {}", mortality.getReasonForTracking());
                     reasonForTracking(mortality.getReasonForTracking(), mortalityType);
                 }
                 if(mortality.getOtherTrackingReason() != null) {
-                    log.info("OtherTrackingReason {}", mortality.getOtherTrackingReason());
+                    //log.info("OtherTrackingReason {}", mortality.getOtherTrackingReason());
                     mortalityType.setOtherTrackingReason(mortality.getOtherTrackingReason());
                 }
                 if(mortality.getPartnerFullName() != null) {
-                    log.info("PartnerFullName {}", mortality.getPartnerFullName());
+                    //log.info("PartnerFullName {}", mortality.getPartnerFullName());
                     mortalityType.setPartnerFullName(mortality.getPartnerFullName());
                 }
                 if(mortality.getAddressofTreatmentSupporter() != null) {
-                    log.info("AddressofTreatmentSupporter {}", mortality.getAddressofTreatmentSupporter());
+                    //log.info("AddressofTreatmentSupporter {}", mortality.getAddressofTreatmentSupporter());
                     mortalityType.setAddressofTreatmentSupporter(mortality.getAddressofTreatmentSupporter());
                 }
                 if(mortality.getContactPhoneNumber() != null) {
-                    log.info("101 {}", mortality.getContactPhoneNumber());
+                    //log.info("101 {}", mortality.getContactPhoneNumber());
                     mortalityType.setContactPhoneNumber(mortality.getContactPhoneNumber());
                 }
                 if(mortality.getDateofLastActualContact() != null) {
-                    log.info("102 {}", mortality.getDateofLastActualContact());
+                    //log.info("102 {}", mortality.getDateofLastActualContact());
                     Date contactDate = java.sql.Date.valueOf(mortality.getDateofLastActualContact());
                     try {
                         mortalityType.setDateofLastActualContact(DateUtil.getXmlDate(contactDate));
@@ -69,7 +78,7 @@ public class MortalityTypeMapper {
 
                 }
                 if(mortality.getDateofMissedScheduledAppointment() != null) {
-                    log.info("103 {}", mortality.getDateofMissedScheduledAppointment());
+                    //log.info("103 {}", mortality.getDateofMissedScheduledAppointment());
                     Date missedDate = java.sql.Date.valueOf(mortality.getDateofMissedScheduledAppointment());
                     try {
                         mortalityType.setDateofMissedScheduledAppointment(DateUtil.getXmlDate(missedDate));
@@ -79,7 +88,7 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getDatePatientContacted() != null) {
-                    log.info("104 {}", mortality.getDatePatientContacted());
+                    //log.info("104 {}", mortality.getDatePatientContacted());
                     Date patientContectedDate = java.sql.Date.valueOf(mortality.getDatePatientContacted());
                     try {
                         mortalityType.setDatePatientContacted(DateUtil.getXmlDate(patientContectedDate));
@@ -89,43 +98,43 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getNameofPersonWhoAttemptedContact() != null) {
-                    log.info("105 {}", mortality.getNameofPersonWhoAttemptedContact());
+                    //log.info("105 {}", mortality.getNameofPersonWhoAttemptedContact());
                     mortalityType.setNameofPersonWhoAttemptedContact(mortality.getNameofPersonWhoAttemptedContact());
                 }
                 if(mortality.getModeofCommunication() != null) {
-                    log.info("106 {}", mortality.getModeofCommunication());
+                    //log.info("106 {}", mortality.getModeofCommunication());
                     modeofCommunication(mortality.getModeofCommunication(), mortalityType);
                 }
                 if(mortality.getPersonContacted() != null) {
-                    log.info("107 {}", mortality.getPersonContacted());
+                    //log.info("107 {}", mortality.getPersonContacted());
                     personContacted(mortality.getPersonContacted(), mortalityType);
                 }
                 if(mortality.getReasonforDefaulting() != null) {
-                    log.info("108 {}", mortality.getReasonforDefaulting());
+                    //log.info("108 {}", mortality.getReasonforDefaulting());
                     reasonforDefaulting(mortality.getReasonforDefaulting(), mortalityType);
                 }
                 if(mortality.getOtherReasonforDefaulting() != null) {
-                    log.info("109 {}", mortality.getOtherReasonforDefaulting());
+                    //log.info("109 {}", mortality.getOtherReasonforDefaulting());
                     mortalityType.setOtherReasonforDefaulting(mortality.getOtherReasonforDefaulting());
                 }
-                if(mortality.getLosttoFollowup() != null) {
-                    log.info("110 {}", mortality.getLosttoFollowup());
-                    mortalityType.setLosttoFollowup(true);
-                }
+//                if(mortality.getLosttoFollowup() != null) {
+//                    log.info("110 {}", mortality.getLosttoFollowup());
+//                    mortalityType.setLosttoFollowup(true);
+//                }
                 if(mortality.getReasonforLosttoFollowup() != null) {
-                    log.info("111 {}", mortality.getReasonforLosttoFollowup());
+                    //log.info("111 {}", mortality.getReasonforLosttoFollowup());
                     reasonforLosttoFollowup(mortality.getReasonforLosttoFollowup(), mortalityType);
                 }
-                if(mortality.getDateLosttoFollowup() != null) {
-                    log.info("121 {}", mortality.getReasonforLosttoFollowup());
-                    Date lostOtFollowUpDate = java.sql.Date.valueOf(mortality.getDateLosttoFollowup());
-                    try {
-                        mortalityType.setDateLosttoFollowup(DateUtil.getXmlDate(lostOtFollowUpDate));
-                    } catch (DatatypeConfigurationException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                };
+//                if(mortality.getDateLosttoFollowup() != null) {
+//                    log.info("121 {}", mortality.getReasonforLosttoFollowup());
+//                    Date lostOtFollowUpDate = java.sql.Date.valueOf(mortality.getDateLosttoFollowup());
+//                    try {
+//                        mortalityType.setDateLosttoFollowup(DateUtil.getXmlDate(lostOtFollowUpDate));
+//                    } catch (DatatypeConfigurationException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//
+//                };
                 if(mortality.getPreviousARVExposure() != null) {
 
                     if(mortality.getPreviousARVExposure().contains("previousARVExposure")) {
@@ -133,7 +142,7 @@ public class MortalityTypeMapper {
                     }
                 }
                 if(mortality.getDateofTermination() != null) {
-                    log.info("122 {}", mortality.getReasonforLosttoFollowup());
+                    //log.info("122 {}", mortality.getReasonforLosttoFollowup());
                     Date terminationDate = java.sql.Date.valueOf(mortality.getDateofTermination());
                     try {
                         mortalityType.setDateofTermination(DateUtil.getXmlDate(terminationDate));
@@ -143,48 +152,48 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getReasonforTermination() != null) {
-                    log.info("112 {}", mortality.getReasonforTermination());
+                    //log.info("112 {}", mortality.getReasonforTermination());
                     reasonforTermination(mortality.getReasonforTermination(), mortalityType);
                 }
-                if(mortality.getIndicationforClientVerification() != null) {
-                    log.info("113 {}", mortality.getIndicationforClientVerification());
-                    indicationforClientVerification(mortality.getIndicationforClientVerification(), mortalityType);
-                }
-                if(mortality.getClientVerificationOther() != null) {
-                    log.info("114 {}", mortality.getClientVerificationOther());
-                    mortalityType.setClientVerificationOther(mortality.getClientVerificationOther());
-                }
+//                if(mortality.getIndicationforClientVerification() != null) {
+//                    log.info("113 {}", mortality.getIndicationforClientVerification());
+//                    indicationforClientVerification(mortality.getIndicationforClientVerification(), mortalityType);
+//                }
+//                if(mortality.getClientVerificationOther() != null) {
+//                    log.info("114 {}", mortality.getClientVerificationOther());
+//                    mortalityType.setClientVerificationOther(mortality.getClientVerificationOther());
+//                }
                 if(mortality.getTransferredOutTo() != null) {
-                    log.info("115 {}", mortality.getTransferredOutTo());
+                    //log.info("115 {}", mortality.getTransferredOutTo());
                     mortalityType.setTransferredOutTo(mortality.getTransferredOutTo());
                 }
                 if(mortality.getDeath() != null) {
-                    log.info("117 {}", mortality.getDeath());
+                    //log.info("117 {}", mortality.getDeath());
                     death(mortality.getDeath(), mortalityType);
                 }
                 if(mortality.getVaCauseofDeath() != null) {
-                    log.info("116 {}", mortality.getVaCauseofDeath());
+                    //log.info("116 {}", mortality.getVaCauseofDeath());
                     vaCauseOfDeath(mortality.getVaCauseofDeath(), mortalityType);
                 }
                 if(mortality.getOtherCauseofDeath() != null) {
-                    log.info("117 {}", mortality.getOtherCauseofDeath());
+                    //log.info("117 {}", mortality.getOtherCauseofDeath());
                     mortalityType.setOtherCauseofDeath(mortality.getOtherCauseofDeath());
                 }
                 if(mortality.getCauseOfDeath() != null) {
-                    log.info("118 {}", mortality.getCauseOfDeath());
+                    //log.info("118 {}", mortality.getCauseOfDeath());
                     causeOfDeath(mortality.getCauseOfDeath(), mortalityType);
                 }
                 if(mortality.getDiscontinuedCare() != null) {
-                    log.info("120 {}", mortality.getDiscontinuedCare());
+                    //log.info("120 {}", mortality.getDiscontinuedCare());
                     discontinuedCare(mortality.getDiscontinuedCare(), mortalityType);
                 }
 
                 if(mortality.getDiscontinueCareOtherSpecify() != null) {
-                    log.info("121 {}", mortality.getDiscontinueCareOtherSpecify());
+                    //log.info("121 {}", mortality.getDiscontinueCareOtherSpecify());
                     mortalityType.setDiscontinueCareOtherSpecify(mortality.getDiscontinueCareOtherSpecify());
                 }
                 if(mortality.getDateReturnedtoCare() != null) {
-                    log.info("127 {}", mortality.getDiscontinueCareOtherSpecify());
+                    //log.info("127 {}", mortality.getDiscontinueCareOtherSpecify());
                     Date returnedDate = java.sql.Date.valueOf(mortality.getDateReturnedtoCare());
                     try {
                         mortalityType.setDateReturnedtoCare(DateUtil.getXmlDate(returnedDate));
@@ -291,29 +300,29 @@ public class MortalityTypeMapper {
     }
 
 
-    private void indicationforClientVerification(String indicationforClientVerification, MortalityType mortalityType){
-        if (indicationforClientVerification.contains("No initial biometric capture") ) {
-            mortalityType.setIndicationforClientVerification("NoInitialBiometricCapture");
-        }else if (indicationforClientVerification.contains("Duplicated demographic and clinical variables") ) {
-            mortalityType.setIndicationforClientVerification("DuplicatedDemographicAndClinicalVariables");
-        }else if (indicationforClientVerification.contains("No biometrics recapture") ) {
-            mortalityType.setIndicationforClientVerification("NoBiometricsRecapture");
-        }else if (indicationforClientVerification.contains("Last clinical visit is over 15 months prior") ) {
-            mortalityType.setIndicationforClientVerification("LastClinicalVisitIsOver15MonthsPrior");
-        }else if (indicationforClientVerification.contains("Incomplete visit data on the care card or pharmacy forms or EMz ") ) {
-            mortalityType.setIndicationforClientVerification("IncompleteVisitData");
-        }else if (indicationforClientVerification.contains("Records of repeated clinical encounters, with no fingerprint recapture.") ) {
-            mortalityType.setIndicationforClientVerification("RepeatedClinicalEncounters");
-        }else if (indicationforClientVerification.contains("Long intervals between ARV pick-ups (pick-ups more than one year apart in the same facility)") ) {
-            mortalityType.setIndicationforClientVerification("LongIntervalsARVPickup");
-        }else if (indicationforClientVerification.contains("Same sex, DOB and ART start date") ) {
-            mortalityType.setIndicationforClientVerification("SameSexDOBARTStartDate");
-        }else if (indicationforClientVerification.contains("PickupByProxy") ) {
-            mortalityType.setIndicationforClientVerification("Consistently had drug pickup by proxy without viral load sample collection for two quarters");
-        }else if (indicationforClientVerification.contains("Others") ) {
-            mortalityType.setIndicationforClientVerification("OtherSpecify");
-        }
-    }
+//    private void indicationforClientVerification(String indicationforClientVerification, MortalityType mortalityType){
+//        if (indicationforClientVerification.contains("No initial biometric capture") ) {
+//            mortalityType.setIndicationforClientVerification("NoInitialBiometricCapture");
+//        }else if (indicationforClientVerification.contains("Duplicated demographic and clinical variables") ) {
+//            mortalityType.setIndicationforClientVerification("DuplicatedDemographicAndClinicalVariables");
+//        }else if (indicationforClientVerification.contains("No biometrics recapture") ) {
+//            mortalityType.setIndicationforClientVerification("NoBiometricsRecapture");
+//        }else if (indicationforClientVerification.contains("Last clinical visit is over 15 months prior") ) {
+//            mortalityType.setIndicationforClientVerification("LastClinicalVisitIsOver15MonthsPrior");
+//        }else if (indicationforClientVerification.contains("Incomplete visit data on the care card or pharmacy forms or EMz ") ) {
+//            mortalityType.setIndicationforClientVerification("IncompleteVisitData");
+//        }else if (indicationforClientVerification.contains("Records of repeated clinical encounters, with no fingerprint recapture.") ) {
+//            mortalityType.setIndicationforClientVerification("RepeatedClinicalEncounters");
+//        }else if (indicationforClientVerification.contains("Long intervals between ARV pick-ups (pick-ups more than one year apart in the same facility)") ) {
+//            mortalityType.setIndicationforClientVerification("LongIntervalsARVPickup");
+//        }else if (indicationforClientVerification.contains("Same sex, DOB and ART start date") ) {
+//            mortalityType.setIndicationforClientVerification("SameSexDOBARTStartDate");
+//        }else if (indicationforClientVerification.contains("PickupByProxy") ) {
+//            mortalityType.setIndicationforClientVerification("Consistently had drug pickup by proxy without viral load sample collection for two quarters");
+//        }else if (indicationforClientVerification.contains("Others") ) {
+//            mortalityType.setIndicationforClientVerification("OtherSpecify");
+//        }
+//    }
 
     private void death(String death, MortalityType mortalityType) {
         if (death.contains("Other Cause of Death")) {

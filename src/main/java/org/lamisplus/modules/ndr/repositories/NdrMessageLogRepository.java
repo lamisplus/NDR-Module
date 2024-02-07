@@ -42,8 +42,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "            eduCode.code AS patientEducationLevelCode,\n" +
             "            ndrTbstatus.code AS tbStatus,\n" +
             "            COALESCE(ndrFuncStatCodestatus.code, ndrClinicStage.code) AS functionalStatusStartART,\n" +
-            "            h.date_of_registration AS enrolledInHIVCareDate,\n" +
-            "         CASE WHEN hpt.reason_for_discountinuation = 'Death' THEN hpt.cause_of_death ELSE NULL END AS causeOfDeath\n" +
+            "            CASE WHEN hpt.reason_for_discountinuation = 'Death' THEN hpt.cause_of_death ELSE NULL END AS causeOfDeath\n" +
             "               FROM\n" +
             "                    patient_person p\n" +
             "                       INNER JOIN base_organisation_unit facility ON facility.id = facility_id\n" +
@@ -191,71 +190,120 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
   Optional<PatientLabEncounterDTO> getPatientLabEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
 
   //mortality query
-  @Query(value = "SELECT p.uuid, \n" +
-          "CASE WHEN last_status.visit_id IS NULL THEN ho.visit_id ELSE last_status.visit_id END AS visitId,\n" +
-          "last_status.status_date AS visitDate,\n" +
-          "hpt.reason_for_tracking AS reasonForTracking,\n" +
-          "hpt.reason_for_tracking_others AS otherTrackingReason,\n" +
-          "CONCAT(p.contact->'contact'->0->>'surname', '', p.contact->'contact'->0->>'otherName') AS partnerFullName,\n" +
-          "TRANSLATE(CAST((p.contact->'contact'->0->'address'->>'line') AS varchar), '\\\",[,]', ' ') AS addressofTreatmentSupporter, \n" +
-          "(p.contact->'contact'->0->'contactPoint'->>'value') AS contactPhoneNumber,\n" +
-          "hpt.date_last_appointment AS dateofLastActualContact,\n" +
-          "hpt.date_missed_appointment AS dateofMissedScheduledAppointment,\n" +
-          "CAST (hpt.attempts->0->> 'attemptDate'  AS DATE) AS datePatientContacted,\n" +
-          "hpt.attempts->0->> 'whoAttemptedContact' AS nameofPersonWhoAttemptedContact,\n" +
-          "hpt.attempts->0->> 'modeOfConatct' AS modeofCommunication,\n" +
-          "hpt.attempts->0->> 'personContacted' AS personContacted,\n" +
-          "hpt.attempts->0->> 'reasonForDefaulting' AS reasonforDefaulting,\n" +
-          "hpt.attempts->0->> 'reasonForDefaultingOthers' AS otherReasonforDefaulting, \n" +
-          "CASE WHEN last_status.HIV_STATUS = 'LOST_TO_FOLLOWUP' THEN CAST (TRUE AS BOOLEAN) ELSE CAST (FALSE AS BOOLEAN) END AS losttoFollowup,\n" +
-          "hpt.reason_for_loss_to_follow_up AS reasonforLosttoFollowup,\n" +
-          "CASE WHEN last_status.HIV_STATUS = 'LOST_TO_FOLLOWUP' THEN last_status.status_date ELSE NULL END AS dateLosttoFollowup,\n" +
-          "NULL AS previousARVExposure,\n" +
-          "hpt.date_of_discontinuation AS dateofTermination,\n" +
-          "hpt.reason_for_discountinuation AS reasonforTermination,\n" +
-          "ho.indicationforClientVerification,\n" +
-          "NULL AS clientVerificationOther,\n" +
-          "NULL AS transferredOutTo,\n" +
-          "CASE WHEN last_status.HIV_STATUS = 'Died (Confirmed)' OR  last_status.HIV_STATUS = 'KNOWN_DEATH' THEN last_status.HIV_STATUS ELSE NULL END AS death,\n" +
-          "-- 'Unknown' AS death,\n" +
-          "last_status.va_cause_of_death AS vaCauseofDeath,\n" +
-          "hpt.cause_of_death_others AS OtherCauseofDeath,\n" +
-          "hpt.cause_of_death AS causeOfDeath,\n" +
-          "hpt.reason_for_discountinuation AS discontinuedCare,\n" +
-          "NULL AS discontinueCareOtherSpecify,\n" +
-          "hpt.date_return_to_care AS dateReturnedtoCare,\n" +
-          "hpt.referred_for AS reffferedFor,\n" +
-          "hpt.referred_for_others AS reffferedForOther,\n" +
-          "NULL AS nameofContactTracer,\n" +
-          "CAST (NULL AS DATE) AS contactTrackerSignatureDate\n" +
-          "from patient_person p\n" +
-          "INNER JOIN hiv_enrollment e ON p.uuid = e.person_uuid\n" +
+  @Query(value = "SELECT\n" +
+          "    p.uuid,\n" +
+          "    COALESCE(ho.uuid, hpt.uuid ) AS visitId,\n" +
+          "    last_status.status_date AS visitDate,\n" +
+          "    hpt.reason_for_tracking,\n" +
+          "    hpt.reason_for_tracking_others AS otherTrackingReason,\n" +
+          "    CONCAT(p.contact->'contact'->0->>'surname', '', p.contact->'contact'->0->>'otherName') AS partnerFullName,\n" +
+          "    TRANSLATE(CAST(p.contact->'contact'->0->'address'->>'line' AS VARCHAR), '\\\\\\\",[\\\\]', ' ') AS addressofTreatmentSupporter,\n" +
+          "    (p.contact->'contact'->0->'contactPoint'->>'value') AS contactPhoneNumber,\n" +
+          "    hpt.date_last_appointment AS dateofLastActualContact,\n" +
+          "    hpt.date_missed_appointment AS dateofMissedScheduledAppointment,\n" +
+          "    CAST(hpt.attempts->0->> 'attemptDate' AS DATE) AS datePatientContacted,\n" +
+          "    hpt.attempts->0->> 'whoAttemptedContact' AS nameofPersonWhoAttemptedContact,\n" +
+          "    hpt.attempts->0->> 'modeOfConatct' AS modeofCommunication,\n" +
+          "    hpt.attempts->0->> 'personContacted' AS personContacted,\n" +
+          "    hpt.attempts->0->> 'reasonForDefaulting' AS reasonforDefaulting,\n" +
+          "    hpt.attempts->0->> 'reasonForDefaultingOthers' AS otherReasonforDefaulting,\n" +
+          "    CASE WHEN last_status.HIV_STATUS = 'LOST_TO_FOLLOWUP' THEN TRUE ELSE FALSE END AS losttoFollowup,\n" +
+          "    hpt.reason_for_loss_to_follow_up AS reasonforLosttoFollowup,\n" +
+          "    CASE WHEN last_status.HIV_STATUS = 'LOST_TO_FOLLOWUP' THEN last_status.status_date ELSE NULL END AS dateLosttoFollowup,\n" +
+          "    NULL AS previousARVExposure,\n" +
+          "    hpt.date_of_discontinuation AS dateofTermination,\n" +
+          "    hpt.reason_for_discountinuation AS reasonforTermination,\n" +
+          "    ho.indicationforClientVerification,\n" +
+          "    ho.clientVerificationOther AS clientVerificationOther,\n" +
+          "    NULL AS transferredOutTo,\n" +
+          "    CASE WHEN last_status.HIV_STATUS IN ('Died (Confirmed)', 'KNOWN_DEATH') THEN last_status.HIV_STATUS ELSE NULL END AS death,\n" +
+          "    last_status.va_cause_of_death AS vaCauseofDeath,\n" +
+          "    hpt.cause_of_death_others AS otherCauseofDeath,\n" +
+          "    hpt.cause_of_death AS causeOfDeath,\n" +
+          "    hpt.reason_for_discountinuation AS discontinuedCare,\n" +
+          "    NULL AS discontinueCareOtherSpecify,\n" +
+          "    hpt.date_return_to_care AS dateReturnedtoCare,\n" +
+          "    hpt.referred_for AS reffferedFor,\n" +
+          "    hpt.referred_for_others AS reffferedForOther,\n" +
+          "    NULL AS nameofContactTracer,\n" +
+          "    CAST(NULL AS DATE) AS contactTrackerSignatureDate\n" +
+          "FROM\n" +
+          "    patient_person p\n" +
+          "INNER JOIN\n" +
+          "    hiv_enrollment e ON p.uuid = e.person_uuid\n" +
           "LEFT JOIN (\n" +
-          "\tSELECT DISTINCT ON (person_uuid) * FROM hiv_patient_tracker) hpt ON hpt.person_uuid = e.person_uuid\n" +
-          "LEFT JOIN(\n" +
-          "SELECT * FROM (\n" +
-          "select person_uuid, visit_id, data->'attempt'->0->>'outcome' AS clientVerificationStatus,\n" +
-          "CAST (data->'attempt'->0->>'dateOfAttempt' AS DATE) AS dateOfOutcome,\n" +
-          "CAST(TRANSLATE((data->>'anyOfTheFollowing'), '\\\"[]', ' ') AS VARCHAR) AS indicationforClientVerification,\n" +
-          "ROW_NUMBER() OVER ( PARTITION BY person_uuid ORDER BY CAST(data->'attempt'->0->>'dateOfAttempt' AS DATE) DESC)\n" +
-          "from public.hiv_observation where type = 'Client Verification' \n" +
-          "AND archived = 0\n" +
-          "\t) clientVerification WHERE row_number = 1\n" +
-          ") ho ON ho.person_uuid = e.person_uuid \n" +
+          "    SELECT DISTINCT ON (person_uuid) *\n" +
+          "    FROM hiv_patient_tracker\n" +
+          ") hpt ON hpt.person_uuid = e.person_uuid\n" +
           "LEFT JOIN (\n" +
-          "SELECT * FROM (\n" +
-          "SELECT person_id, hiv_status, status_date, visit_id, va_cause_of_death,\n" +
-          "ROW_NUMBER() OVER ( PARTITION BY person_id ORDER BY status_date DESC)\n" +
-          "FROM hiv_status_tracker\n" +
-          "where archived = 0 ) status_tracker\n" +
-          "WHERE row_number = 1\n" +
-          ") last_status ON last_status.person_id = e.person_uuid\n" +
-          "WHERE p.archived = 0\n" +
-          "AND  last_status.status_date <= ?4\n" +
-          "AND last_status.status_date >= ?3\n" +
-          "AND p.facility_id = ?2\n" +
-          "AND hpt.person_uuid = ?1", nativeQuery = true)
+          "    SELECT\n" +
+          "        person_uuid,\n" +
+          "        visit_id,\n" +
+          "\t\tuuid,\n" +
+          "        data->'attempt'->0->>'outcome' AS clientVerificationStatus,\n" +
+          "        CAST(data->'attempt'->0->>'dateOfAttempt' AS DATE) AS dateOfOutcome,\n" +
+          "        (data->>'ClientVerificationOther') AS ClientVerificationOther,\n" +
+          "        CAST(TRANSLATE((data->>'anyOfTheFollowing'), '\\\\\\\"[]', ' ') AS VARCHAR) AS indicationforClientVerification,\n" +
+          "        ROW_NUMBER() OVER (PARTITION BY person_uuid ORDER BY CAST(data->'attempt'->0->>'dateOfAttempt' AS DATE) DESC) AS rn\n" +
+          "    FROM\n" +
+          "        public.hiv_observation\n" +
+          "    WHERE\n" +
+          "        type = 'Client Verification'\n" +
+          "        AND archived = 0\n" +
+          ") ho ON ho.person_uuid = e.person_uuid AND ho.rn = 1 \n" +
+          "LEFT JOIN (\n" +
+          "    SELECT\n" +
+          "        person_id,\n" +
+          "        hiv_status,\n" +
+          "        status_date,\n" +
+          "        visit_id,\n" +
+          "        va_cause_of_death,\n" +
+          "        ROW_NUMBER() OVER (PARTITION BY person_id ORDER BY status_date DESC) AS rn\n" +
+          "    FROM\n" +
+          "        hiv_status_tracker\n" +
+          "    WHERE\n" +
+          "        archived = 0\n" +
+          ") last_status ON last_status.person_id = e.person_uuid AND last_status.rn = 1\n" +
+          "WHERE\n" +
+          "    p.archived = 0\n" +
+          "    AND last_status.status_date <= ?4\n" +
+          "    AND last_status.status_date >= ?3\n" +
+          "    AND p.facility_id = ?2 \n" +
+          "    AND p.uuid = ?1\n" +
+          "    AND ho.visit_id IS NOT NULL OR hpt.uuid IS NOT NULL", nativeQuery = true)
   List<MortalityDTO> getPatientMortalities(String identifier, Long facilityId, LocalDate start, LocalDate end);
+  @Query(value = "SELECT data->>'serialEnrollmentNo' AS clientVerification, \n" +
+          "  data->'attempt'->0->>'outcome' AS firstOutcome,\n" +
+          "  data->'attempt'->0->>'verificationStatus' AS firstStatus,\n" +
+          "  null AS secondOutcome,\n" +
+          "  null AS secondVerificationStatus,\n" +
+          "  null AS lastOutcome,\n" +
+          "  null AS lastVerificationStatus,\n" +
+          "  CAST(data->'attempt'->0->>'dateOfAttempt' AS DATE) AS ct1STDate,\n" +
+          "  CASE WHEN 'No initial biometric capture' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'No initial biometric capture' ELSE null END AS noInitBiometric,\n" +
+          "  CASE WHEN 'Duplicated demographic and clinical variables' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Duplicated demographic and clinical variables' ELSE null END AS duplicatedDemographic,\n" +
+          "  CASE WHEN 'No biometrics recapture' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'No biometrics recapture' ELSE null END AS noRecapture,\n" +
+          "  CASE WHEN 'Last clinical visit is over 15 months prior' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Last clinical visit is over 15 months prior' ELSE null END AS lastVisitIsOver18M,\n" +
+          "  CASE WHEN 'Incomplete visit data on the care card or pharmacy forms or EMz' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Incomplete visit data on the care card or pharmacy forms or EMz' ELSE null END AS incompleteVisitData,\n" +
+          "  CASE WHEN 'Records of repeated clinical encounters, with no fingerprint recapture.' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Records of repeated clinical encounters, with no fingerprint recapture.' ELSE null END AS repeatEncounterNoPrint,\n" +
+          "  CASE WHEN 'Long intervals between ARV pick-ups (pick-ups more than one year apart in the same facility' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Long intervals between ARV pick-ups (pick-ups more than one year apart in the same facility' ELSE null END AS batchPickupDates,\n" +
+          "  CASE WHEN 'Same sex, DOB and ART start date' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Same sex, DOB and ART start date' ELSE null END AS sameSexDOBARTStartDate,\n" +
+          "  CASE WHEN 'Consistently had drug pickup by proxy without viral load sample collection for two quarters' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Consistently had drug pickup by proxy without viral load sample collection for two quarters' ELSE null END AS pickupByProxy,\n" +
+          "  CASE WHEN 'Others' IN (SELECT jsonb_array_elements_text(anyThing)) THEN 'Others' ELSE null END AS otherSpecifyForCV\n" +
+          "FROM\n" +
+          "(\n" +
+          "SELECT person_uuid, data->'anyOfTheFollowing' AS anyThing, date_of_observation, data,\n" +
+          "ROW_NUMBER() OVER (PARTITION BY person_uuid ORDER BY CAST(data->'attempt'->0->>'dateOfAttempt' AS DATE) DESC) AS rn\n" +
+          "FROM hiv_observation ho LEFT JOIN patient_person pp ON pp.uuid = ho.person_uuid\n" +
+          "WHERE type = 'Client Verification' \n" +
+          "\t AND pp.uuid = ?1\n" +
+          "\t AND pp.archived = 0\n" +
+          "     AND ho.date_of_observation <= ?4\n" +
+          "     AND ho.date_of_observation >= ?3\n" +
+          "\t AND ho.archived = 0\n" +
+          "     AND pp.facility_id = ?2\n" +
+          ") cc where rn = 1", nativeQuery = true)
+  ClientVerificationDTO getClientVerification(String identifier, Long facilityId, LocalDate start, LocalDate end);
   @Query(value = "SELECT client_code from hts_client where facility_id=?1 AND date_modified > ?2 AND archived = 0 ", nativeQuery = true)
   List<String>getHtsClientCode(Long facilityId, LocalDateTime lastModified);
 
