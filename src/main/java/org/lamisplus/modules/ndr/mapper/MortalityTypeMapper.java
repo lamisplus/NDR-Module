@@ -80,7 +80,7 @@ public class MortalityTypeMapper {
                         throw new RuntimeException(e);
                     }
 
-                };
+                }
                 if(mortality.getDatePatientContacted() != null) {
                     Date patientContectedDate = java.sql.Date.valueOf(mortality.getDatePatientContacted());
                     try {
@@ -89,7 +89,7 @@ public class MortalityTypeMapper {
                         throw new RuntimeException(e);
                     }
 
-                };
+                }
                 if(mortality.getNameofPersonWhoAttemptedContact() != null) {
                     mortalityType.setNameofPersonWhoAttemptedContact(mortality.getNameofPersonWhoAttemptedContact());
                 }
@@ -136,7 +136,7 @@ public class MortalityTypeMapper {
                         throw new RuntimeException(e);
                     }
 
-                };
+                }
                 if(mortality.getReasonforTermination() != null) {
                     reasonforTermination(mortality.getReasonforTermination(), mortalityType);
                 }
@@ -171,7 +171,7 @@ public class MortalityTypeMapper {
                         throw new RuntimeException(e);
                     }
 
-                };
+                }
                 if(mortality.getReffferedFor() != null) {
                     reffferedFor(mortality.getReffferedFor(), mortalityType);
                 }

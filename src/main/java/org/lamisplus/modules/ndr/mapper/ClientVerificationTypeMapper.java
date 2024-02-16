@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -113,7 +112,7 @@ public class ClientVerificationTypeMapper {
                 } catch (DatatypeConfigurationException e) {
                     throw new RuntimeException(e);
                 }
-            };
+            }
 
             if(clientVerificationVal.getFirstStatus() != null) {
                 getFirstStatus(clientVerificationVal.getFirstStatus(), clientVerificationType);
@@ -131,7 +130,7 @@ public class ClientVerificationTypeMapper {
                 } catch (DatatypeConfigurationException e) {
                     throw new RuntimeException(e);
                 }
-            };
+            }
 
             if(clientVerificationVal.getSecondStatus() != null) {
                 getSecondStatus(clientVerificationVal.getSecondStatus(), clientVerificationType);
@@ -149,7 +148,7 @@ public class ClientVerificationTypeMapper {
                 } catch (DatatypeConfigurationException e) {
                     throw new RuntimeException(e);
                 }
-            };
+            }
 
             if(clientVerificationVal.getLastStatus() != null) {
                 getThirdStatus(clientVerificationVal.getLastStatus(), clientVerificationType);
