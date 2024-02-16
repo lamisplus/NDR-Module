@@ -234,7 +234,7 @@ public class NdrOptimizationService {
 		//initialize mortality data
 		MortalityType mortality = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end);
 
-		log.info("generating mortality {}", mortality.getVisitID());
+//		log.info("generating mortality {}", mortality.getVisitID());
 		String 	fileName = generatePatientNDRXml(
 					facilityId, patientDemographic,
 					patientEncounters,
@@ -244,9 +244,9 @@ public class NdrOptimizationService {
 					initial,
 					ndrErrors, pushIdentifier);
 
-		log.info("filename generated {}", fileName);
+//		log.info("filename generated {}", fileName);
 			if (fileName != null) {
-				log.info("files saved");
+//				log.info("files saved");
 				saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName,"treatment");
 			 	return true;
 			}

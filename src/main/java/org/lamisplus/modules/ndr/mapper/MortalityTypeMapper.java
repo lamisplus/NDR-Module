@@ -23,21 +23,21 @@ public class MortalityTypeMapper {
     private NdrMessageLogRepository ndrMessageLogRepository;
     private final ClientVerificationTypeMapper clientVerificationTypeMapper;
     public MortalityType getMortalityType(String patientId, long facilityId, LocalDate start, LocalDate end) {
-        log.info("mortality patient id.... {}", patientId);
+//        log.info("mortality patient id.... {}", patientId);
         MortalityType mortalityType = new MortalityType();
 
         ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end);
         List<MortalityDTO> mortalities = ndrMessageLogRepository.getPatientMortalities(patientId, facilityId, start, end);
 
         if (mortalities != null) {
-            log.info("mortality init");
+//            log.info("mortality init");
             mortalities.forEach(mortality -> {
 
                 if (clientVerification != null) {
                     mortalityType.setClientVerification(clientVerification);
                 }
 
-                log.info("patient mortality visit Id {}", mortality.getVisitID());
+//                log.info("patient mortality visit Id {}", mortality.getVisitID());
                 if(mortality.getVisitID() != null)mortalityType.setVisitID(mortality.getVisitID());
                 if(mortality.getVisitDate() != null) {
                     Date visitDate = java.sql.Date.valueOf(mortality.getVisitDate());
@@ -193,10 +193,10 @@ public class MortalityTypeMapper {
 //                };
             });
         }else {
-            log.info("mortality was null");
+//            log.info("mortality was null");
             return null;
         }
-        log.info("mortality done");
+//        log.info("mortality done");
         return mortalityType;
     }
 

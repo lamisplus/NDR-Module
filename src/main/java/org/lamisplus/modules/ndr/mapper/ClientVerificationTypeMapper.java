@@ -22,13 +22,13 @@ public class ClientVerificationTypeMapper {
     @Autowired
     private NdrMessageLogRepository ndrMessageLogRepository;
     public ClientVerificationType getClientVerifications(String patientId, long facilityId, LocalDate start, LocalDate end) {
-        log.info("client V init {}", patientId);
+//        log.info("client V init {}", patientId);
         ClientVerificationType clientVerificationType = new ClientVerificationType();
 
         ClientVerificationDTO clientVerificationVal = ndrMessageLogRepository.getClientVerification(patientId, facilityId, start, end);
 
         if (clientVerificationVal != null) {
-            log.info("Started client");
+//            log.info("Started client");
             if(clientVerificationVal.getClientVerification() != null) {
                 clientVerificationType.setClientVerification("YES");
             }else{
@@ -159,11 +159,11 @@ public class ClientVerificationTypeMapper {
                 getThirdOutcome(clientVerificationVal.getLastOutcome(), clientVerificationType);
             }
         }else {
-            log.info("client V was null");
+//            log.info("client V was null");
             return null;
         }
 
-        log.info("client V done");
+//        log.info("client V done");
         return  clientVerificationType;
     }
 
