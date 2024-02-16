@@ -47,9 +47,9 @@ public interface MortalityDTO {
 
     String getReasonforTermination();
 
-    String getIndicationforClientVerification();
-
-    String getClientVerificationOther();
+//    String getIndicationforClientVerification();
+//
+//    String getClientVerificationOther();
 
     String getTransferredOutTo();
 

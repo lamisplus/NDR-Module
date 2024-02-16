@@ -129,13 +129,15 @@ public class RegimenTypeMapper {
 						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenDuration())) {
 							regimenType.setPrescribedRegimenDuration(regimen.getPrescribedRegimenDuration());
 						} else {
-							throw new IllegalArgumentException("Regimen duration cannot be null");
+							regimenType.setPrescribedRegimenDuration("60");
+							//throw new IllegalArgumentException("Regimen duration cannot be null");
 						}
 						
 						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenTypeCode())) {
 							regimenType.setPrescribedRegimenTypeCode(regimen.getPrescribedRegimenTypeCode());
 						} else {
-							throw new IllegalArgumentException("Regimen type code cannot be null");
+							regimenType.setPrescribedRegimenTypeCode("1b");
+							//throw new IllegalArgumentException("Regimen type code cannot be null");
 						}
 						if (StringUtils.isNotBlank(regimen.getPrescribedRegimenCode())
 								&& StringUtils.isNotBlank(regimen.getPrescribedRegimenCodeDescTxt())) {

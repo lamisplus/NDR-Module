@@ -23,14 +23,15 @@ public class MortalityTypeMapper {
     private NdrMessageLogRepository ndrMessageLogRepository;
     private final ClientVerificationTypeMapper clientVerificationTypeMapper;
     public MortalityType getMortalityType(String patientId, long facilityId, LocalDate start, LocalDate end) {
-
+        log.info("mortality patient id.... {}", patientId);
         MortalityType mortalityType = new MortalityType();
+
+        ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end);
         List<MortalityDTO> mortalities = ndrMessageLogRepository.getPatientMortalities(patientId, facilityId, start, end);
 
         if (mortalities != null) {
+            log.info("mortality init");
             mortalities.forEach(mortality -> {
-                //client verification
-                ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end);
 
                 if (clientVerification != null) {
                     mortalityType.setClientVerification(clientVerification);
@@ -48,27 +49,21 @@ public class MortalityTypeMapper {
 
                 }
                 if(mortality.getReasonForTracking() != null) {
-                    //log.info("Reason For Tracking {}", mortality.getReasonForTracking());
                     reasonForTracking(mortality.getReasonForTracking(), mortalityType);
                 }
                 if(mortality.getOtherTrackingReason() != null) {
-                    //log.info("OtherTrackingReason {}", mortality.getOtherTrackingReason());
                     mortalityType.setOtherTrackingReason(mortality.getOtherTrackingReason());
                 }
                 if(mortality.getPartnerFullName() != null) {
-                    //log.info("PartnerFullName {}", mortality.getPartnerFullName());
                     mortalityType.setPartnerFullName(mortality.getPartnerFullName());
                 }
                 if(mortality.getAddressofTreatmentSupporter() != null) {
-                    //log.info("AddressofTreatmentSupporter {}", mortality.getAddressofTreatmentSupporter());
                     mortalityType.setAddressofTreatmentSupporter(mortality.getAddressofTreatmentSupporter());
                 }
                 if(mortality.getContactPhoneNumber() != null) {
-                    //log.info("101 {}", mortality.getContactPhoneNumber());
                     mortalityType.setContactPhoneNumber(mortality.getContactPhoneNumber());
                 }
                 if(mortality.getDateofLastActualContact() != null) {
-                    //log.info("102 {}", mortality.getDateofLastActualContact());
                     Date contactDate = java.sql.Date.valueOf(mortality.getDateofLastActualContact());
                     try {
                         mortalityType.setDateofLastActualContact(DateUtil.getXmlDate(contactDate));
@@ -78,7 +73,6 @@ public class MortalityTypeMapper {
 
                 }
                 if(mortality.getDateofMissedScheduledAppointment() != null) {
-                    //log.info("103 {}", mortality.getDateofMissedScheduledAppointment());
                     Date missedDate = java.sql.Date.valueOf(mortality.getDateofMissedScheduledAppointment());
                     try {
                         mortalityType.setDateofMissedScheduledAppointment(DateUtil.getXmlDate(missedDate));
@@ -88,7 +82,6 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getDatePatientContacted() != null) {
-                    //log.info("104 {}", mortality.getDatePatientContacted());
                     Date patientContectedDate = java.sql.Date.valueOf(mortality.getDatePatientContacted());
                     try {
                         mortalityType.setDatePatientContacted(DateUtil.getXmlDate(patientContectedDate));
@@ -98,23 +91,18 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getNameofPersonWhoAttemptedContact() != null) {
-                    //log.info("105 {}", mortality.getNameofPersonWhoAttemptedContact());
                     mortalityType.setNameofPersonWhoAttemptedContact(mortality.getNameofPersonWhoAttemptedContact());
                 }
                 if(mortality.getModeofCommunication() != null) {
-                    //log.info("106 {}", mortality.getModeofCommunication());
                     modeofCommunication(mortality.getModeofCommunication(), mortalityType);
                 }
                 if(mortality.getPersonContacted() != null) {
-                    //log.info("107 {}", mortality.getPersonContacted());
                     personContacted(mortality.getPersonContacted(), mortalityType);
                 }
                 if(mortality.getReasonforDefaulting() != null) {
-                    //log.info("108 {}", mortality.getReasonforDefaulting());
                     reasonforDefaulting(mortality.getReasonforDefaulting(), mortalityType);
                 }
                 if(mortality.getOtherReasonforDefaulting() != null) {
-                    //log.info("109 {}", mortality.getOtherReasonforDefaulting());
                     mortalityType.setOtherReasonforDefaulting(mortality.getOtherReasonforDefaulting());
                 }
 //                if(mortality.getLosttoFollowup() != null) {
@@ -122,7 +110,6 @@ public class MortalityTypeMapper {
 //                    mortalityType.setLosttoFollowup(true);
 //                }
                 if(mortality.getReasonforLosttoFollowup() != null) {
-                    //log.info("111 {}", mortality.getReasonforLosttoFollowup());
                     reasonforLosttoFollowup(mortality.getReasonforLosttoFollowup(), mortalityType);
                 }
 //                if(mortality.getDateLosttoFollowup() != null) {
@@ -142,7 +129,6 @@ public class MortalityTypeMapper {
                     }
                 }
                 if(mortality.getDateofTermination() != null) {
-                    //log.info("122 {}", mortality.getReasonforLosttoFollowup());
                     Date terminationDate = java.sql.Date.valueOf(mortality.getDateofTermination());
                     try {
                         mortalityType.setDateofTermination(DateUtil.getXmlDate(terminationDate));
@@ -152,48 +138,32 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getReasonforTermination() != null) {
-                    //log.info("112 {}", mortality.getReasonforTermination());
                     reasonforTermination(mortality.getReasonforTermination(), mortalityType);
                 }
-//                if(mortality.getIndicationforClientVerification() != null) {
-//                    log.info("113 {}", mortality.getIndicationforClientVerification());
-//                    indicationforClientVerification(mortality.getIndicationforClientVerification(), mortalityType);
-//                }
-//                if(mortality.getClientVerificationOther() != null) {
-//                    log.info("114 {}", mortality.getClientVerificationOther());
-//                    mortalityType.setClientVerificationOther(mortality.getClientVerificationOther());
-//                }
+
                 if(mortality.getTransferredOutTo() != null) {
-                    //log.info("115 {}", mortality.getTransferredOutTo());
                     mortalityType.setTransferredOutTo(mortality.getTransferredOutTo());
                 }
                 if(mortality.getDeath() != null) {
-                    //log.info("117 {}", mortality.getDeath());
                     death(mortality.getDeath(), mortalityType);
                 }
                 if(mortality.getVaCauseofDeath() != null) {
-                    //log.info("116 {}", mortality.getVaCauseofDeath());
                     vaCauseOfDeath(mortality.getVaCauseofDeath(), mortalityType);
                 }
                 if(mortality.getOtherCauseofDeath() != null) {
-                    //log.info("117 {}", mortality.getOtherCauseofDeath());
                     mortalityType.setOtherCauseofDeath(mortality.getOtherCauseofDeath());
                 }
                 if(mortality.getCauseOfDeath() != null) {
-                    //log.info("118 {}", mortality.getCauseOfDeath());
                     causeOfDeath(mortality.getCauseOfDeath(), mortalityType);
                 }
                 if(mortality.getDiscontinuedCare() != null) {
-                    //log.info("120 {}", mortality.getDiscontinuedCare());
                     discontinuedCare(mortality.getDiscontinuedCare(), mortalityType);
                 }
 
                 if(mortality.getDiscontinueCareOtherSpecify() != null) {
-                    //log.info("121 {}", mortality.getDiscontinueCareOtherSpecify());
                     mortalityType.setDiscontinueCareOtherSpecify(mortality.getDiscontinueCareOtherSpecify());
                 }
                 if(mortality.getDateReturnedtoCare() != null) {
-                    //log.info("127 {}", mortality.getDiscontinueCareOtherSpecify());
                     Date returnedDate = java.sql.Date.valueOf(mortality.getDateReturnedtoCare());
                     try {
                         mortalityType.setDateReturnedtoCare(DateUtil.getXmlDate(returnedDate));
@@ -203,11 +173,9 @@ public class MortalityTypeMapper {
 
                 };
                 if(mortality.getReffferedFor() != null) {
-                    log.info("122 {}", mortality.getReffferedFor());
                     reffferedFor(mortality.getReffferedFor(), mortalityType);
                 }
                 if(mortality.getReffferedForOther() != null) {
-                    log.info("123 {}", mortality.getReffferedForOther());
                     mortalityType.setReffferedForOther(mortality.getReffferedForOther());
                 }
                 if(mortality.getNameofContactTracer() != null) {
@@ -224,8 +192,11 @@ public class MortalityTypeMapper {
 //
 //                };
             });
+        }else {
+            log.info("mortality was null");
+            return null;
         }
-
+        log.info("mortality done");
         return mortalityType;
     }
 
@@ -337,105 +308,105 @@ public class MortalityTypeMapper {
     }
 
     private void vaCauseOfDeath(String causeofdeath, MortalityType mortalityType) {
-        if (causeofdeath.contains("VA Adult Cases of Death")) {
+        if (causeofdeath.contains("Adult Causes") || causeofdeath.contains("Adult Causes - Injuries") || causeofdeath.contains("Adult Causes -Non-communicable diseases")) {
             mortalityType.setVACauseofDeath("VAAdultCasesofDeath");
-        }if (causeofdeath.contains("VA Child Cases of Death")) {
+        }if (causeofdeath.contains("Child Causes") || causeofdeath.contains("Child Causes - Injuries") || causeofdeath.contains("Child Causes - Non-communicable diseases")) {
             mortalityType.setVACauseofDeath("VAChildCasesofDeath");
         }
     }
 
     private void causeOfDeath(String causeofdeath, MortalityType mortalityType) {
-        if (causeofdeath.contains("AIDS")) {
+        if (causeofdeath.contains("B24 AIDS")) {
             mortalityType.setCauseOfDeath("AIDS");
-        }else if (causeofdeath.contains("Diarrhea Dysentery")) {
+        }else if (causeofdeath.contains("A09 Diarrhea/Dysentery")) {
             mortalityType.setCauseOfDeath("DiarrheaDysentery");
-        }else if (causeofdeath.contains("Malaria")) {
+        }else if (causeofdeath.contains("B54 Malaria")) {
             mortalityType.setCauseOfDeath("Malaria");
-        }else if (causeofdeath.contains("Maternal")) {
+        }else if (causeofdeath.contains("O95 Maternal")) {
             mortalityType.setCauseOfDeath("Maternal");
-        }else if (causeofdeath.contains("Other Infetious Diseases")) {
+        }else if (causeofdeath.contains("B99 Other Infectious Diseases")) {
             mortalityType.setCauseOfDeath("OtherInfetiousDiseases");
-        }else if (causeofdeath.contains("Pneumonia")) {
+        }else if (causeofdeath.contains("J22 Pneumonia")) {
             mortalityType.setCauseOfDeath("Pneumonia");
-        }else if (causeofdeath.contains("TB")) {
+        }else if (causeofdeath.contains("A16 TB")) {
             mortalityType.setCauseOfDeath("TB");
-        }else if (causeofdeath.contains("Acute Myocardial Infection")) {
+        }else if (causeofdeath.contains("I24 Acute Myocardial Infarction")) {
             mortalityType.setCauseOfDeath("AcuteMyocardialInfection");
-        }else if (causeofdeath.contains("Breast Cancer")) {
+        }else if (causeofdeath.contains("C50 Breast Cancer")) {
             mortalityType.setCauseOfDeath("BreastCancer");
-        }else if (causeofdeath.contains("Chronic Respiratory Diseases")) {
+        }else if (causeofdeath.contains("J44 Chronic Respiratory Diseases")) {
             mortalityType.setCauseOfDeath("ChronicRespiratoryDiseases");
-        }else if (causeofdeath.contains("Cervical Cancer")) {
+        }else if (causeofdeath.contains("C53 Cervical Cancers")) {
             mortalityType.setCauseOfDeath("CervicalCancer");
-        }else if (causeofdeath.contains("Cirrhosis")) {
+        }else if (causeofdeath.contains("K74 Cirrhosis")) {
             mortalityType.setCauseOfDeath("Cirrhosis");
-        }else if (causeofdeath.contains("Colorectal Cancer")) {
+        }else if (causeofdeath.contains("C18 Colorectal Cancer")) {
             mortalityType.setCauseOfDeath("ColorectalCancer");
-        }else if (causeofdeath.contains("Diabetes")) {
+        }else if (causeofdeath.contains("E14 Diabetes")) {
             mortalityType.setCauseOfDeath("Diabetes");
-        }else if (causeofdeath.contains("Esophageal Cancer")) {
+        }else if (causeofdeath.contains("C15 Esophageal Cancer")) {
             mortalityType.setCauseOfDeath("EsophagealCancer");
-        }else if (causeofdeath.contains("Leukamia Lymphomas")) {
+        }else if (causeofdeath.contains("C96 Leukemia/Lymphomas")) {
             mortalityType.setCauseOfDeath("LeukamiaLymphomas");
-        }else if (causeofdeath.contains("Lung Cancer")) {
+        }else if (causeofdeath.contains("C34 Lung Cancer")) {
             mortalityType.setCauseOfDeath("LungCancer");
-        }else if (causeofdeath.contains("Other Cardiovascular Diseases")) {
+        }else if (causeofdeath.contains("I99 Other Cardiovascular Diseases")) {
             mortalityType.setCauseOfDeath("OtherCardiovascularDiseases");
-        }else if (causeofdeath.contains("Other Non Communicable Diseases")) {
+        }else if (causeofdeath.contains("UU1* Other Non-communicable Diseases")) {
             mortalityType.setCauseOfDeath("OtherNonCommunicableDiseases");
-        }else if (causeofdeath.contains("Prostate Cancer")) {
+        }else if (causeofdeath.contains("C61 Prostate Cancer")) {
             mortalityType.setCauseOfDeath("ProstateCancer");
-        }else if (causeofdeath.contains("Chronic Kidney Disease")) {
+        }else if (causeofdeath.contains("N18 Chronic Kidney Disease")) {
             mortalityType.setCauseOfDeath("ChronicKidneyDisease");
-        }else if (causeofdeath.contains("StomachCancer")) {
+        }else if (causeofdeath.contains("C16 Stomach Cancer")) {
             mortalityType.setCauseOfDeath("StomachCancer");
-        }else if (causeofdeath.contains("Stroke")) {
+        }else if (causeofdeath.contains("I64 Stroke")) {
             mortalityType.setCauseOfDeath("Stroke");
-        }else if (causeofdeath.contains("Other Cancers")) {
+        }else if (causeofdeath.contains("C76 Other Cancers")) {
             mortalityType.setCauseOfDeath("OtherCancers");
-        }else if (causeofdeath.contains("Bite of Venomous Animal")) {
+        }else if (causeofdeath.contains("X27 Bite of Venomous Animal")) {
             mortalityType.setCauseOfDeath("BiteofVenomousAnimal");
-        }else if (causeofdeath.contains("Drowning")) {
+        }else if (causeofdeath.contains("W74 Drowning")) {
             mortalityType.setCauseOfDeath("Drowning");
-        }else if (causeofdeath.contains("Falls")) {
+        }else if (causeofdeath.contains("W19 Falls")) {
             mortalityType.setCauseOfDeath("Falls");
-        }else if (causeofdeath.contains("Fires")) {
+        }else if (causeofdeath.contains("X09 Fires")) {
             mortalityType.setCauseOfDeath("Fires");
-        }else if (causeofdeath.contains("Homicide")) {
+        }else if (causeofdeath.contains("Y09 Homicide (assault)")) {
             mortalityType.setCauseOfDeath("Homicide");
-        }else if (causeofdeath.contains("Other Injuries")) {
+        }else if (causeofdeath.contains("X58 Other Injuries")) {
             mortalityType.setCauseOfDeath("OtherInjuries");
-        }else if (causeofdeath.contains("Accidental Poisoning")) {
+        }else if (causeofdeath.contains("X49 Poisonings")) {
             mortalityType.setCauseOfDeath("AccidentalPoisoning");
-        }else if (causeofdeath.contains("Road Traffic")) {
+        }else if (causeofdeath.contains("V89 Road Traffic")) {
             mortalityType.setCauseOfDeath("RoadTraffic");
-        }else if (causeofdeath.contains("Suicide By Multiple Means")) {
+        }else if (causeofdeath.contains("X84 Suicide (intentional self-harm)")) {
             mortalityType.setCauseOfDeath("SuicideByMultipleMeans");
-        }else if (causeofdeath.contains("Encephalitis")) {
+        }else if (causeofdeath.contains("G04 Encephalitis")) {
             mortalityType.setCauseOfDeath("Encephalitis");
-        }else if (causeofdeath.contains("Hemorrhagic Fever")) {
+        }else if (causeofdeath.contains("A99 Hemorrhagic fever")) {
             mortalityType.setCauseOfDeath("HemorrhagicFever");
-        }else if (causeofdeath.contains("Sepsis")) {
+        }else if (causeofdeath.contains("A41 Sepsis")) {
             mortalityType.setCauseOfDeath("Sepsis");
-        }else if (causeofdeath.contains("Meningitis")) {
+        }else if (causeofdeath.contains("G03 Meningitis")) {
             mortalityType.setCauseOfDeath("Meningitis");
-        }else if (causeofdeath.contains("Measles")) {
+        }else if (causeofdeath.contains("B05 Measles")) {
             mortalityType.setCauseOfDeath("Measles");
-        }else if (causeofdeath.contains("Other Defined Causes of ChildDeaths")) {
+        }else if (causeofdeath.contains("UU2* Other Defined Causes of Child Deaths")) {
             mortalityType.setCauseOfDeath("OtherDefinedCausesofChildDeaths");
-        }else if (causeofdeath.contains("Other Digestive Diseases")) {
+        }else if (causeofdeath.contains("K92 Other Digestive Diseases")) {
             mortalityType.setCauseOfDeath("OtherDigestiveDiseases");
-        }else if (causeofdeath.contains("Birth Asphyxia")) {
+        }else if (causeofdeath.contains("P21 Birth asphyxia")) {
             mortalityType.setCauseOfDeath("BirthAsphyxia");
-        }else if (causeofdeath.contains("CongenitalMalformation")) {
+        }else if (causeofdeath.contains("Q89 Congenital malformation")) {
             mortalityType.setCauseOfDeath("CongenitalMalformation");
-        }else if (causeofdeath.contains("Neonatal Meningitis")) {
+        }else if (causeofdeath.contains("P36 Neonatal Meningitis/Sepsis")) {
             mortalityType.setCauseOfDeath("NeonatalMeningitis");
-        }else if (causeofdeath.contains("Neonatal Pneumonia")) {
+        }else if (causeofdeath.contains("P23 Neonatal Pneumonia")) {
             mortalityType.setCauseOfDeath("NeonatalPneumonia");
-        }else if (causeofdeath.contains("PretermDelivery")) {
+        }else if (causeofdeath.contains("P07 Preterm Delivery")) {
             mortalityType.setCauseOfDeath("PretermDelivery");
-        }else if (causeofdeath.contains("Still birth")) {
+        }else if (causeofdeath.contains("P95 Stillbirth")) {
             mortalityType.setCauseOfDeath("Stillbirth");
         }
     }
