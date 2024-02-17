@@ -231,10 +231,10 @@ public class NdrOptimizationService {
 
 		List<LaboratoryEncounterDTO> patientLabEncounters =
 				getPatientLabEncounter(patientId, facilityId, objectMapper, start, end, ndrErrors);
-		//initialize mortality data
-		MortalityType mortality = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end);
 
-//		log.info("generating mortality {}", mortality.getVisitID());
+		MortalityType mortality = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end, ndrErrors);
+
+		log.info("mortality generated with visit Id {}", mortality.getVisitID());
 		String 	fileName = generatePatientNDRXml(
 					facilityId, patientDemographic,
 					patientEncounters,
@@ -244,9 +244,7 @@ public class NdrOptimizationService {
 					initial,
 					ndrErrors, pushIdentifier);
 
-//		log.info("filename generated {}", fileName);
 			if (fileName != null) {
-//				log.info("files saved");
 				saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName,"treatment");
 			 	return true;
 			}
@@ -341,10 +339,7 @@ public class NdrOptimizationService {
 					data.getPatientPharmacyEncounter(patientId, facilityId, start, end);
 			if (patientPharmacyEncounter.isPresent()) {
 				patientPharmacyEncounterDTO = patientPharmacyEncounter.get();
-				List<RegimenDTO> patientRegimenList =
-						getPatientRegimenList(patientPharmacyEncounterDTO, objectMapper, ndrErrors);
-				log.info("patient Regimen returned. ");
-				return patientRegimenList;
+				return getPatientRegimenList(patientPharmacyEncounterDTO, objectMapper, ndrErrors);
 			}
 		} catch (Exception e) {
 			log.error("An error occurred while getting patient regimen list error {}", e.getMessage());
@@ -364,7 +359,6 @@ public class NdrOptimizationService {
 				data.getPatientEncounter(patientId, facilityId, start, end);
 		if (patientEncounter.isPresent()) {
 			patientEncounterDTO = patientEncounter.get();
-			log.info("patient Encounter returned. ");
 			return getPatientEncounterDTOList(patientEncounterDTO, objectMapper, ndrErrors);
 		}
 
@@ -384,7 +378,6 @@ public class NdrOptimizationService {
 					data.getPatientLabEncounter(patientId, facilityId, start, end);
 			if(patientLabEncounter.isPresent()){
 				laboratoryEncounter = patientLabEncounter.get();
-				log.info("patient Lab returned. ");
 				return getPatientLabEncounterDTOList(laboratoryEncounter, objectMapper, ndrErrors);
 			}
 
@@ -400,7 +393,6 @@ public class NdrOptimizationService {
 			ObjectMapper objectMapper, List<NDRErrorDTO> ndrErrors) {
 		try {
 			TypeFactory typeFactory = objectMapper.getTypeFactory();
-			log.info("patient Lab List returned. ");
 			return objectMapper.readValue(laboratoryEncounter.getLabs(),
 					typeFactory.constructCollectionType(List.class, LaboratoryEncounterDTO.class));
 		} catch (Exception e) {

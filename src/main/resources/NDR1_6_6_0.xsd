@@ -178,7 +178,6 @@
            
         </xs:sequence>
     </xs:complexType>
-
 	<xs:complexType name="MortalityType">
 		<xs:sequence>
             <xs:element name="ClientVerification" type="ClientVerificationType" minOccurs="0" maxOccurs="1" />
@@ -6796,11 +6795,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>																						 
-																								 
-																	
-							   
-													
-										 
+
   </xs:schema>
 								
 							   
