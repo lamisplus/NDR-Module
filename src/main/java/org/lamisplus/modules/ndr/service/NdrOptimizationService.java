@@ -233,8 +233,6 @@ public class NdrOptimizationService {
 				getPatientLabEncounter(patientId, facilityId, objectMapper, start, end, ndrErrors);
 
 		MortalityType mortality = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end, ndrErrors);
-
-		log.info("mortality generated with visit Id {}", mortality.getVisitID());
 		String 	fileName = generatePatientNDRXml(
 					facilityId, patientDemographic,
 					patientEncounters,
@@ -258,8 +256,8 @@ public class NdrOptimizationService {
 	                                    List<LaboratoryEncounterDTO> patientLabEncounters,
 										MortalityType mortality,
 	                                    boolean initial, List<NDRErrorDTO> ndrErrors, String pushIdentifier) {
-		log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
 		try {
+			log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
 			log.info("fetching patient demographics....");
 			long id = messageId.incrementAndGet();
 			Container container = new Container();
@@ -281,6 +279,7 @@ public class NdrOptimizationService {
 				}
 				//mortality
 				if (mortality != null) {
+					log.info("mortality generated with visit Id {}", mortality.getVisitID());
 					individualReportType.getMortality().add(mortality);
 				}
 
@@ -320,8 +319,8 @@ public class NdrOptimizationService {
 				return fileName;
 			}
 		} catch (Exception e) {
-			log.error("An error occur when generating person with hospital number {}",
-					patientDemographic.getHospitalNumber());
+//			log.error("An error occur when generating person with hospital number {}",
+//					patientDemographic.getHospitalNumber());
 			log.error("error: " + e.toString());
 			e.printStackTrace();
 			ndrErrors.add(new NDRErrorDTO(patientDemographic.getPersonUuid(),

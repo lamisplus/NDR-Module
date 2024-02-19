@@ -8,7 +8,6 @@ import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.schema.ClientVerificationType;
 import org.lamisplus.modules.ndr.schema.MortalityType;
 import org.lamisplus.modules.ndr.utility.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -24,7 +23,6 @@ public class MortalityTypeMapper {
     private final NdrMessageLogRepository ndrMessageLogRepository;
     private final ClientVerificationTypeMapper clientVerificationTypeMapper;
     public MortalityType getMortalityType(String patientId, long facilityId, LocalDate start, LocalDate end, List<NDRErrorDTO> ndrErrors) {
-
         MortalityType mortalityType = new MortalityType();
         try {
             ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end, ndrErrors);
@@ -39,7 +37,11 @@ public class MortalityTypeMapper {
                     }
 
 //                log.info("patient mortality visit Id {}", mortality.getVisitID());
-                    if(mortality.getVisitID() != null)mortalityType.setVisitID(mortality.getVisitID());
+                    if(mortality.getVisitID() != null) {
+                        mortalityType.setVisitID(mortality.getVisitID());
+                    }else {
+                        throw new RuntimeException("Mortality visit id cannot be null");
+                    }
                     if(mortality.getVisitDate() != null) {
                         Date visitDate = java.sql.Date.valueOf(mortality.getVisitDate());
                         try {
@@ -48,6 +50,8 @@ public class MortalityTypeMapper {
                             throw new RuntimeException(e);
                         }
 
+                    }else {
+                        throw new RuntimeException("Mortality visit date  cannot be null");
                     }
                     if(mortality.getReasonForTracking() != null) {
                         reasonForTracking(mortality.getReasonForTracking(), mortalityType);
@@ -193,15 +197,14 @@ public class MortalityTypeMapper {
 //
 //                };
                 });
-            }else {
-                return null;
             }
+            return  mortalityType;
         }catch (Exception e) {
             log.error("An error occur while fetching mortality records for patient with uuid {} information {}", patientId, e.getMessage());
             ndrErrors.add(new NDRErrorDTO(patientId, "", e.getMessage()));
         }
 
-        return mortalityType;
+        return null;
     }
 
     private void reasonForTracking(String reasonForTracking, MortalityType mortalityType) {
