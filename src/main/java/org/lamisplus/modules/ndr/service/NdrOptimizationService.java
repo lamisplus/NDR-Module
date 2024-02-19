@@ -202,7 +202,9 @@ public class NdrOptimizationService {
 	}
 
 
-	private boolean getPatientNDRXml(String patientId, long facilityId, boolean initial, List<NDRErrorDTO> ndrErrors, String pushIdentifier) {
+	private boolean getPatientNDRXml(String patientId, long facilityId, boolean initial,
+									 List<NDRErrorDTO> ndrErrors,
+									 String pushIdentifier) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		log.info("starting process patient xml file information");
 		log.info("facilityId {}, patientId {}", facilityId, patientId);
@@ -232,6 +234,8 @@ public class NdrOptimizationService {
 		List<LaboratoryEncounterDTO> patientLabEncounters =
 				getPatientLabEncounter(patientId, facilityId, objectMapper, start, end, ndrErrors);
 
+		if (patientDemographic == null) return false;
+
 		MortalityType mortality = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end, ndrErrors);
 		String 	fileName = generatePatientNDRXml(
 					facilityId, patientDemographic,
@@ -257,7 +261,7 @@ public class NdrOptimizationService {
 										MortalityType mortality,
 	                                    boolean initial, List<NDRErrorDTO> ndrErrors, String pushIdentifier) {
 		try {
-			log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
+			//log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
 			log.info("fetching patient demographics....");
 			long id = messageId.incrementAndGet();
 			Container container = new Container();

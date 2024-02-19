@@ -19,7 +19,7 @@ public class PatientDemographicsRedactedMapper {
         // @XmlElement(name = "RedactedPatientReason", required = true)
         //  @XmlElement(name = "RedactedVisit", required = true)
         PatientDemographicsType patientDemographicsType = new PatientDemographicsType();
-        log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
+        //log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
         try {
             if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
                 patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
