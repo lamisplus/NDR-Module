@@ -125,10 +125,10 @@ public class ClientVerificationTypeMapper {
                 }
 
                 if(clientVerificationVal.getCt2NdDate() != null) {
-//            log.info("122 {}", clientVerificationVal.ct1STDate());
+//                    log.info("122 {}", clientVerificationVal.getCt2NdDate());
                     Date ct2NdDate = java.sql.Date.valueOf(clientVerificationVal.getCt2NdDate());
                     try {
-                        clientVerificationType.setCT1STDate(DateUtil.getXmlDate(ct2NdDate));
+                        clientVerificationType.setCT2NdDate(DateUtil.getXmlDate(ct2NdDate));
                     } catch (DatatypeConfigurationException e) {
                         throw new RuntimeException(e);
                     }
@@ -143,10 +143,10 @@ public class ClientVerificationTypeMapper {
                 }
 
                 if(clientVerificationVal.getCtLastDate() != null) {
-//            log.info("122 {}", clientVerificationVal.ct1STDate());
+//                    log.info("123 {}", clientVerificationVal.getCtLastDate());
                     Date ctLastDate = java.sql.Date.valueOf(clientVerificationVal.getCtLastDate());
                     try {
-                        clientVerificationType.setCT1STDate(DateUtil.getXmlDate(ctLastDate));
+                        clientVerificationType.setCTLastDate(DateUtil.getXmlDate(ctLastDate));
                     } catch (DatatypeConfigurationException e) {
                         throw new RuntimeException(e);
                     }
