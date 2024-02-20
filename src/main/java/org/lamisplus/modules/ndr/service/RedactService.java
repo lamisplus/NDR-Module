@@ -152,7 +152,6 @@ public class RedactService {
         }
         return fileName != null;
     }
-    //mapping
     public String generatePatientRedactedXml(long facilityId, PatientRedactedDemographicDTO patientDemographic,
                                              boolean initial, List<NDRErrorDTO> ndrErrors, String pushIdentifier) {
 
@@ -166,9 +165,7 @@ public class RedactService {
             PatientDemographicsType patientRedactedDemographic =
                     patientDemographicsMapper.getRedactedPatient(patientDemographic);
 
-            if (patientRedactedDemographic.getRedactedVisit() != null) {
-                log.info("fetching redacted details... {}", patientRedactedDemographic.getPatientIdentifier());
-
+            if (patientRedactedDemographic != null) {
                MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(patientDemographic);
                 String messageStatusCode = "INITIAL";
                 if (!initial) {

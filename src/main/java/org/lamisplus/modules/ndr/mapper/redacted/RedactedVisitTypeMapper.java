@@ -24,7 +24,8 @@ public class RedactedVisitTypeMapper {
 
             List<RedactedVisitTypeDTO> visits = ndrMessageLogRepository.getRedactedPatientVisits(patientRedactedDemographicDTO.getPersonUuid());
 
-            if (visits != null) {
+            if (visits != null && visits.size() != 0) {
+                log.info("Patient with ID {} has {} visits", patientRedactedDemographicDTO.getPersonUuid(), visits.size());
                 visits.forEach(visit -> {
                     if(visit.getVisitID() != null) {
                         redactedVisitType.setVisitID(visit.getVisitID());
@@ -40,10 +41,8 @@ public class RedactedVisitTypeMapper {
                 });
 
                 return redactedVisitType;
-            }else {
-                throw new IllegalArgumentException("Redacted Patient visit cannot be null");
-                //return null;
             }
+            return null;
         }
         catch (Exception e) {
             log.info("An error occurred getting redacted patient visits with uuid {} : {}",

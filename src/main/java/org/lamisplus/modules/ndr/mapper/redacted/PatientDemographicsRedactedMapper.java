@@ -14,35 +14,33 @@ import org.springframework.stereotype.Service;
 public class PatientDemographicsRedactedMapper {
     private final RedactedVisitTypeMapper redactedVisitTypeMapper;
     public PatientDemographicsType getRedactedPatient(PatientRedactedDemographicDTO demographicDTO) {
+        PatientDemographicsType patientDemographicsType = new PatientDemographicsType();
         try {
-            PatientDemographicsType patientDemographicsType = new PatientDemographicsType();
             RedactedVisitType redactedVisits = redactedVisitTypeMapper.getPatientRedactedVisits(demographicDTO);
 
-            if (redactedVisits != null) {
-                if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
-                    patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
-                }else {
-                    throw new IllegalArgumentException("Patient Identifier cannot be null");
-                }
+                if (redactedVisits != null) {
+                    if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
+                        patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
+                    }else {
+                        throw new IllegalArgumentException("Patient Identifier cannot be null");
+                    }
 
-                if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
-                    patientDemographicsType.setRedactedPatient("YES");
-                }else {
-                    throw new IllegalArgumentException("Redacted Patient cannot be null");
-                }
+                    if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
+                        patientDemographicsType.setRedactedPatient("YES");
+                    }else {
+                        throw new IllegalArgumentException("Redacted Patient cannot be null");
+                    }
 
-                if(StringUtils.isNotBlank(demographicDTO.getReason())) {
-                    patientDemographicsType.setRedactedPatientReason(demographicDTO.getReason());
-                }else {
-                    patientDemographicsType.setRedactedPatientReason("Enrolled Patient Deleted");
+                    if(StringUtils.isNotBlank(demographicDTO.getReason())) {
+                        patientDemographicsType.setRedactedPatientReason(demographicDTO.getReason());
+                    }else {
+                        patientDemographicsType.setRedactedPatientReason("Enrolled Patient Deleted");
+                    }
+                    patientDemographicsType.getRedactedVisit().add(redactedVisits);
+                    return patientDemographicsType;
                 }
-
-                patientDemographicsType.getRedactedVisit().add(redactedVisits);
-                return patientDemographicsType;
-            }else {
-                //throw new IllegalArgumentException("Redacted Patient visit cannot be null");
                 return null;
-            }
+
         } catch (Exception e) {
             log.info("An error occurred while trying to get redacted patient with uuid {} : {}",
                     demographicDTO.getPersonUuid(), e.getMessage());
