@@ -19,27 +19,36 @@ public class RedactedVisitTypeMapper {
     @Autowired
     private NdrMessageLogRepository ndrMessageLogRepository;
     public RedactedVisitType getPatientRedactedVisits(PatientRedactedDemographicDTO patientRedactedDemographicDTO) {
+        try{
+            RedactedVisitType redactedVisitType = new RedactedVisitType();
 
-        RedactedVisitType redactedVisitType = new RedactedVisitType();
+            List<RedactedVisitTypeDTO> visits = ndrMessageLogRepository.getRedactedPatientVisits(patientRedactedDemographicDTO.getPersonUuid());
 
-        List<RedactedVisitTypeDTO> visits = ndrMessageLogRepository.getRedactedPatientVisits(patientRedactedDemographicDTO.getPersonUuid());
+            if (visits != null) {
+                visits.forEach(visit -> {
+                    if(visit.getVisitID() != null) {
+                        redactedVisitType.setVisitID(visit.getVisitID());
+                    }else {
+                        throw new IllegalArgumentException("Redacted Patient Visit ID cannot be null");
+                    }
 
-        if (visits != null) {
-            visits.forEach(visit -> {
-                if(visit.getVisitID() != null) {
-                    redactedVisitType.setVisitID(visit.getVisitID());
-                }else {
-                    throw new IllegalArgumentException("Redacted Patient Visit ID cannot be null");
-                }
+                    if(StringUtils.isNotBlank(visit.getReason())) {
+                        redactedVisitType.setRedactedVisitReason(visit.getReason());
+                    }else {
+                        redactedVisitType.setRedactedVisitReason("Patient Clinical Visit Deleted");
+                    }
+                });
 
-                if(StringUtils.isNotBlank(visit.getReason())) {
-                    redactedVisitType.setRedactedVisitReason(visit.getReason());
-                }else {
-                    redactedVisitType.setRedactedVisitReason("Patient Clinical Visit Deleted");
-                }
-            });
+                return redactedVisitType;
+            }else {
+                throw new IllegalArgumentException("Redacted Patient visit cannot be null");
+                //return null;
+            }
         }
-
-        return redactedVisitType;
+        catch (Exception e) {
+            log.info("An error occurred getting redacted patient visits with uuid {} : {}",
+                    patientRedactedDemographicDTO.getPersonUuid(), e.getMessage());
+            throw new IllegalStateException(e.toString());
+        }
     }
 }

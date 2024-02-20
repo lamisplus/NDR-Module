@@ -155,17 +155,19 @@ public class RedactService {
     //mapping
     public String generatePatientRedactedXml(long facilityId, PatientRedactedDemographicDTO patientDemographic,
                                              boolean initial, List<NDRErrorDTO> ndrErrors, String pushIdentifier) {
-        log.info("generating redacted xml for patient with uuid {}", patientDemographic.getPatientIdentifier());
+
         try {
+            log.info("generating redacted xml for patient with uuid {}", patientDemographic.getPatientIdentifier());
             log.info("fetching redacted patient demographics....");
             long id = messageId.incrementAndGet();
             Container container = new Container();
             JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
             //caching this because is static
-            PatientDemographicsType patientDemographics =
-                    patientDemographicsMapper.getPatientDemographics(patientDemographic);
-            if (patientDemographics != null) {
-                log.info("fetching redacted details... ");
+            PatientDemographicsType patientRedactedDemographic =
+                    patientDemographicsMapper.getRedactedPatient(patientDemographic);
+
+            if (patientRedactedDemographic.getRedactedVisit() != null) {
+                log.info("fetching redacted details... {}", patientRedactedDemographic.getPatientIdentifier());
 
                MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(patientDemographic);
                 String messageStatusCode = "INITIAL";
@@ -181,9 +183,8 @@ public class RedactService {
 
                 container.setEmrType("LAMISPlus");
                 container.setMessageHeader(messageHeader);
-                container.setPatientDemographics(patientDemographics);
+                container.setPatientDemographics(patientRedactedDemographic);
 
-                log.info("done fetching redacted details ");
                 Marshaller jaxbMarshaller = ndrService.getMarshaller(jaxbContext);
                 jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
                 jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -193,14 +194,13 @@ public class RedactService {
                 if (resourceUrl != null) {
                     Schema schema = sf.newSchema(resourceUrl);
                     jaxbMarshaller.setSchema(schema);
-                    String identifier = patientDemographics.getPatientIdentifier();
+                    //String identifier = patientRedactedDemographic.getPatientIdentifier();
                     System.out.println("XSD Resource URL: " + resourceUrl);
                 } else {
                     // Resource not found
                     System.err.println("XSD Resource not found.");
                 }
 
-                log.info("converting redacted details to xml... ");
                 String fileName = ndrService.processAndGenerateRedactedFile(facilityId, jaxbMarshaller, container, patientDemographic, id, ndrErrors);
                 if (fileName != null) {
                     log.info("Redacted XML was successfully generated for patient with hospital number " + patientDemographic.getHospitalNumber());
