@@ -1116,7 +1116,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-                  <xs:element name="CollectionDate" type="xs:date"
+		<xs:element name="CollectionDate" type="xs:date"
 				minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">

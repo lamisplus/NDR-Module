@@ -62,13 +62,14 @@ public class PatientDemographicsMapper {
        // @XmlElement(name = "PatientDateOfBirth", required = true)
         //  @XmlElement(name = "PatientSexCode", required = true)
         PatientDemographicsType patientDemographicsType = new PatientDemographicsType ();
-        log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
+        //log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
         try {
             if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
                 patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
             }else {
                 throw new IllegalArgumentException("Patient Identifier cannot be null");
             }
+            //identifierChange missing
             FacilityType treatmentFacility =
                     messageHeaderTypeMapper.getTreatmentFacility (demographicDTO);
            
@@ -77,28 +78,34 @@ public class PatientDemographicsMapper {
             }else {
                 throw new IllegalArgumentException("Treatment facility cannot be null");
             }
+            //OtherPatientIdentifiers
             processAndSetDateOFBirth (patientDemographicsType, demographicDTO.getDateOfBirth ());
             
             if(demographicDTO.getPatientSexCode()  != null) {
+                log.info("state code {}", demographicDTO.getStateCode());
                 patientDemographicsType.setPatientSexCode(demographicDTO.getPatientSexCode());
             }else {
                 throw new IllegalArgumentException("Sex code cannot be null");
             }
+            //PatientDeceasedIndicator
+            //PatientDeceasedDate
+            //PatientPrimaryLanguageCode
             if( demographicDTO.getPatientEducationLevelCode() != null){
                patientDemographicsType.setPatientEducationLevelCode(demographicDTO.getPatientEducationLevelCode());
+           }
+
+           if(demographicDTO.getPatientOccupationCode() != null){
+               patientDemographicsType.setPatientOccupationCode(demographicDTO.getPatientOccupationCode());
            }
             if( demographicDTO.getPatientMaritalStatusCode() != null){
                 patientDemographicsType.setPatientMaritalStatusCode(demographicDTO.getPatientMaritalStatusCode());
             }
-            
-           if(demographicDTO.getPatientOccupationCode() != null){
-               patientDemographicsType.setPatientOccupationCode(demographicDTO.getPatientOccupationCode());
-           }
-           
-           if(demographicDTO.getStateCode() != null){
+
+            if(demographicDTO.getStateCode() != null){
+               log.info("state code {}", demographicDTO.getStateCode());
                 patientDemographicsType.setStateOfNigeriaOriginCode(demographicDTO.getStateCode());
             }
-           
+            //PatientNotes
             FingerPrintType fingerPrintTypeForPatient =
                     biometricTemplateMapper.getFingerPrintTypeForPatient (demographicDTO.getPersonUuid ());
             if(fingerPrintTypeForPatient != null){
@@ -118,7 +125,7 @@ public class PatientDemographicsMapper {
         // @XmlElement(name = "PatientDateOfBirth", required = true)
         //  @XmlElement(name = "PatientSexCode", required = true)
         PatientDemographicsType patientDemographicsType = new PatientDemographicsType ();
-        log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
+        //log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
         try {
             if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {
                 patientDemographicsType.setPatientIdentifier(demographicDTO.getPatientIdentifier());
@@ -198,7 +205,6 @@ public class PatientDemographicsMapper {
         }
             Optional<String> sexCode = ndrCodeSetResolverService.getNDRCodeSetCode ("SEX", sex);
             sexCode.ifPresent (patientDemographics::setPatientSexCode);
-
     }
 
 

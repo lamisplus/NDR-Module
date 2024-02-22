@@ -119,7 +119,8 @@ public class ConditionSpecificQuestionsTypeMapper {
         try {
             ConditionSpecificQuestionsType hivQuestions = new ConditionSpecificQuestionsType ();
             HIVQuestionsType hiv = new HIVQuestionsType ();
-            LocalDate inHIVCareDate = demographics.getEnrolledInHIVCareDate();
+            //LocalDate inHIVCareDate = demographics.getEnrolledInHIVCareDate();
+            LocalDate inHIVCareDate = (demographics.getEnrolledInHIVCareDate() != null ? demographics.getEnrolledInHIVCareDate() : demographics.getArtStartDate());
             if(inHIVCareDate != null){
                 hiv.setEnrolledInHIVCareDate(getXmlDate (Date.valueOf (inHIVCareDate)));
                 String statusAtRegistration = demographics.getStatusAtRegistration();
