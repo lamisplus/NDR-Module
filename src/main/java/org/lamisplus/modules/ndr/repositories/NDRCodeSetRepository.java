@@ -39,7 +39,7 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
             "AND biometric_type = 'FINGERPRINT' and archived = 0\n" +
             "AND recapture > 0\n" +
             "AND version_iso_20 = true  and iso = true\n" +
-            "AND enrollment_date > ?2 \n" +
+            "AND enrollment_date >= ?2 \n" +
             "ORDER BY enrollment_date DESC LIMIT 10;", nativeQuery = true)
     List<RecaptureBiometricDTO> getPatientRecapturedBiometricByPatientUuid(String patientUuid, LocalDate previousUploadDate);
     
