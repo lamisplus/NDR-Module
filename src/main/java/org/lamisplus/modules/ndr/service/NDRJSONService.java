@@ -169,6 +169,7 @@ public class NDRJSONService {
         ndrPusherConfig.setPassword(password);
         ndrPusherConfig.setUsername(username);
         ndrPusherConfig.setFacilityId(facilityId);
+        ndrPusherConfig.setBaseUrl(baseUrl);
         return ndrPusherConfigRepository.save(ndrPusherConfig);
     }
 

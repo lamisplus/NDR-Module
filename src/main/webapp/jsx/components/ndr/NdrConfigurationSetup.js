@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 
 const DatabaseSyn = (props) => {
     const classes = useStyles()
-    const defaultValues = { username: "", password: ""  }
+    const defaultValues = { baseUrl:"", email: "", password: ""  }
     //console.log(props)
     const [patDetails, setPatDetails] = useState(defaultValues);
     const [saving, setSaving] = useState(false);
@@ -70,13 +70,16 @@ const DatabaseSyn = (props) => {
     /*****  Validation */
     const validate = () => {
     let temp = { ...errors };
-    temp.username = patDetails.username
+    temp.email = patDetails.email
         ? ""
         : "Username is required";
         temp.password = patDetails.password
         ? ""
         : "Password is required";
-        
+        temp.baseUrl = patDetails.baseUrl
+            ? ""
+            : "URL is required";
+
         setErrors({
             ...temp,
         });
@@ -87,7 +90,7 @@ const DatabaseSyn = (props) => {
       e.preventDefault();
             if (validate()) {      
                     setSaving(true);
-                    axios.post(`${baseUrl}ndr-emr/auto-push-configuration?username=${patDetails.username}&password=${patDetails.password}`,patDetails,
+                    axios.post(`${baseUrl}ndr-emr/auto-push-configuration`,patDetails,
                      { headers: {"Authorization" : `Bearer ${token}`}},
                     
                     ).then(response => {
@@ -124,23 +127,40 @@ const DatabaseSyn = (props) => {
                     <Card >
                         <CardBody>
                             <Row >
-                            <Col md={12}>
-                            <FormGroup>
-                            <Label >Username </Label>
-                                    <Input
-                                        type="text"
-                                        name="username"
-                                        id="username" 
-                                        value={patDetails.username}
-                                        onChange={handleInputChange}
-                                        required
+                                <Col md={12}>
+                                    <FormGroup>
+                                        <Label >URL </Label>
+                                        <Input
+                                            type="text"
+                                            name="baseUrl"
+                                            id="baseUrl"
+                                            value={patDetails.baseUrl}
+                                            onChange={handleInputChange}
+                                            required
                                         />
-                                    {errors.username !=="" ? (
-                                        <span className={classes.error}>{errors.username}</span>
-                                    ) : "" }
-                            </FormGroup>
-                            </Col>
-                            <Col md={12}>
+                                        {errors.baseUrl !=="" ? (
+                                            <span className={classes.error}>{errors.baseUrl}</span>
+                                        ) : "" }
+                                    </FormGroup>
+                                </Col>
+                                <Col md={12}>
+                                <FormGroup>
+                                <Label >Username </Label>
+                                        <Input
+                                            type="text"
+                                            name="email"
+                                            id="email"
+                                            value={patDetails.email}
+                                            onChange={handleInputChange}
+                                            required
+                                            />
+                                        {errors.email !=="" ? (
+                                            <span className={classes.error}>{errors.email}</span>
+                                        ) : "" }
+                                </FormGroup>
+                                </Col>
+
+                                <Col md={12}>
                             <FormGroup>
                             <Label >Password </Label>
                                     <Input

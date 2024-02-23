@@ -162,8 +162,8 @@ export default function DownloadNdr() {
 
                 columns={[
                     {title: "Username", field: "username", filtering: false},
-                    
                     {title: "Password", field: "password", filtering: false},
+                    {title: "URL", field: "baseUrl", filtering: false},
                     {
                         title: "Action",
                         field: "actions",
@@ -174,6 +174,7 @@ export default function DownloadNdr() {
                 data={ndrDetail &&  [ndrDetail].map((row) => ({
                     username: row.username,
                     password: row.password,
+                    baseUrl: row.baseUrl,
                     actions:<div>
                     <Menu.Menu position='right'  >
                     <Menu.Item >
