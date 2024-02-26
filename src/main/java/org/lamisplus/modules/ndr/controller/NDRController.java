@@ -82,8 +82,8 @@ public class NDRController {
         return  ResponseEntity.ok(ndrService.getNDRClientList(facilityId, search));
     }
     
-    @GetMapping("/optimization")
-    public ResponseEntity<Void> generateWithDateRange (@RequestParam List<Long> facilityIds, @RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate) {
+    @GetMapping("/optimization/date-range")
+    public ResponseEntity<Void> generateWithDateRange(@RequestParam List<Long> facilityIds, @RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, startDate, endDate));
         log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());
