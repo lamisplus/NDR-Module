@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -81,6 +82,14 @@ public class NDRController {
         return  ResponseEntity.ok(ndrService.getNDRClientList(facilityId, search));
     }
     
+    @GetMapping("/optimization")
+    public ResponseEntity<Void> generateWithOptimization(@RequestParam List<Long> facilityIds, @RequestParam LocalDateTime startDate, @RequestParam LocalDateTime endDate) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, startDate, endDate));
+        log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/optimization")
     public ResponseEntity<Void> generateWithOptimization(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
         Stopwatch stopwatch = Stopwatch.createStarted();
