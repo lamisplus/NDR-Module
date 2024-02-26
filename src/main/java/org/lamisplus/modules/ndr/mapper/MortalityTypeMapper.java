@@ -405,10 +405,10 @@ public class MortalityTypeMapper {
         }
     }
 
-    private void reffferedFor(String discontinuedCare, MortalityType mortalityType) {
-        if (discontinuedCare.contains("Adherence Counseling")) {
+    private void reffferedFor(String reffferedFor, MortalityType mortalityType) {
+        if (reffferedFor.contains("Adherence Counseling")) {
             mortalityType.setReffferedFor("AdherenceCounseling");
-        }else if (discontinuedCare.contains("Other")) {
+        }else if (reffferedFor.contains("Other")) {
             mortalityType.setReffferedFor("Other");
         }
     }
