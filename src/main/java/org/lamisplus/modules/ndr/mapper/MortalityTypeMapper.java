@@ -28,7 +28,7 @@ public class MortalityTypeMapper {
             ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end, ndrErrors);
             List<MortalityDTO> mortalityVariables = ndrMessageLogRepository.getPatientMortalities(patientId, facilityId, start, end);
 
-            if (mortalityVariables != null) {
+            if (!mortalityVariables.isEmpty()) {
 //            log.info("mortality init");
                 mortalityVariables.forEach(mortality -> {
 
@@ -199,6 +199,7 @@ public class MortalityTypeMapper {
                 });
                 return  mortalityType;
             }
+
         }catch (Exception e) {
             log.error("An error occur while fetching mortality records for patient with uuid {} information {}", patientId, e.getMessage());
             ndrErrors.add(new NDRErrorDTO(patientId, "", e.getMessage()));
