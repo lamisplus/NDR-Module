@@ -109,7 +109,7 @@ public class NdrOptimizationService {
 		if (initial) {
 			patientIds = data.getPatientIdsEligibleForNDR(start, LocalDateTime.now(), facilityId);
 			log.info("generating initial ....");
-			generatePatientsNDRXml(facilityId, initial, patientIds);
+			generatePatientsNDRXml(facilityId, initial, patientIds,0);
 		}else { //updated
 			log.info("generating updated....");
 			Optional<Timestamp> lastGenerateDateTimeByFacilityId =
@@ -119,33 +119,37 @@ public class NdrOptimizationService {
 						lastGenerateDateTimeByFacilityId.get().toLocalDateTime();
 				log.info("Last Generated Date: " + lastModified);
 				patientIds = data.getPatientIdsEligibleForNDR(lastModified, LocalDateTime.now(), facilityId);
-				generatePatientsNDRXml(facilityId, false, patientIds);
+				List<String> unModifiedPatients = fetchUnModifiedPatients(patientIds, start, LocalDateTime.now(), facilityId);
+				generatePatientsNDRXml_ByLastRecord(facilityId, false, unModifiedPatients);
+				generatePatientsNDRXml(facilityId, false, patientIds,unModifiedPatients.size());
 			}
 			//call a functioin to generate thr last updated records of the other patients
-
-			List<String> unModifiedPatients = fetchUnModifiedPatients(patientIds, start, facilityId);
-			generatePatientsNDRXml_ByLastRecord(facilityId, false, unModifiedPatients);
+			//List<String> unModifiedPatients = fetchUnModifiedPatients(patientIds, start, LocalDateTime.now(), facilityId);
+			//generatePatientsNDRXml_ByLastRecord(facilityId, false, unModifiedPatients);
 		}
 	}
 
-	private  List<String> fetchUnModifiedPatients(List<String> updatedPatients, LocalDateTime start, Long facilityId) {
-		List<String> AllEligiblePatients = data.getPatientIdsEligibleForNDR(start, facilityId);
-		return AllEligiblePatients.stream()
-				.filter(p -> !updatedPatients.contains(p))
+	private  List<String> fetchUnModifiedPatients(List<String> updatedPatients, LocalDateTime start,  LocalDateTime endDate, Long facilityId) {
+		Objects.requireNonNull(data, "Data cannot be null");
+		List<String> allEligiblePatients = data.getPatientIdsEligibleForNDR(start, endDate, facilityId);
+		Set<String> updatedPatientsSet = new HashSet<>(updatedPatients);
+		return allEligiblePatients.stream()
+				.filter(p -> !updatedPatientsSet.contains(p))
 				.collect(Collectors.toList());
 	}
 
 	public void generatePatientsNDRXml(long facilityId, LocalDateTime startDate, LocalDateTime endDate){
 
 		List<String> patientIds  = data.getPatientIdsEligibleForNDR(startDate, endDate, facilityId);
-		generatePatientsNDRXml(facilityId, false, patientIds);
+		generatePatientsNDRXml(facilityId, false, patientIds,0);
 	}
 
-	public void generatePatientsNDRXml(long facilityId, boolean initial, List<String> patientIds) {
+	public void generatePatientsNDRXml(long facilityId, boolean initial, List<String> patientIds, long unModfiedCounts) {
 		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
 		log.info("folder -> "+ pathname);
 		ndrService.cleanupFacility(facilityId, pathname);
 		AtomicInteger generatedCount = new AtomicInteger();
+		generatedCount.set((int) unModfiedCounts);
 		AtomicInteger errorCount = new AtomicInteger();
 		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
 
@@ -208,25 +212,25 @@ public class NdrOptimizationService {
 						errorCount.getAndIncrement();
 					}
 				});
-		log.info("generated  {}/{}", generatedCount.get(), patientIds.size());
-		log.info("files not generated  {}/{}", errorCount.get(), patientIds.size());
-		File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
-		log.info("fileSize {} bytes ", ZipUtility.getFolderSize(folder));
-		if (ZipUtility.getFolderSize(folder) >= 15_000_000) {
-			log.info(BASE_DIR + "temp/" + facilityId + "/" + " will be split into two");
-		}
-
-		if (generatedCount.get() > 0 && ZipUtility.getFolderSize(folder) > 0) {
-			zipAndSaveTheFilesforDownload(
-					facilityId,
-					pathname,
-					generatedCount,
-					patientDemographicDTO[0],
-					ndrErrors,
-					"treatment", pushIdentifier
-			);
-		}
-		log.error("error list size {}", ndrErrors.size());
+//		log.info("generated  {}/{}", generatedCount.get(), patientIds.size());
+//		log.info("files not generated  {}/{}", errorCount.get(), patientIds.size());
+//		File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
+//		log.info("fileSize {} bytes ", ZipUtility.getFolderSize(folder));
+//		if (ZipUtility.getFolderSize(folder) >= 15_000_000) {
+//			log.info(BASE_DIR + "temp/" + facilityId + "/" + " will be split into two");
+//		}
+//
+//		if (generatedCount.get() > 0 && ZipUtility.getFolderSize(folder) > 0) {
+//			zipAndSaveTheFilesforDownload(
+//					facilityId,
+//					pathname,
+//					generatedCount,
+//					patientDemographicDTO[0],
+//					ndrErrors,
+//					"treatment", pushIdentifier
+//			);
+//		}
+//		log.error("error list size {}", ndrErrors.size());
 	}
 
 	public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean initial, List<String> patientUuidList) {
