@@ -188,7 +188,7 @@ export default function GenerateNdr(props) {
     } else if (objValues.startDate !== "" && objValues.endDate !== "") {
       axios
         .get(
-          `${api.url}ndr/optimization?${FacilityIDArray}&isInitial=${status}`,
+          `${api.url}ndr/optimization/date-range?${FacilityIDArray}&startDate=${objValues.startDate}&endDate=${objValues.endDate}`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
         .then((response) => {
