@@ -197,8 +197,8 @@ public class MortalityTypeMapper {
 //
 //                };
                 });
+                return  mortalityType;
             }
-            return  mortalityType;
         }catch (Exception e) {
             log.error("An error occur while fetching mortality records for patient with uuid {} information {}", patientId, e.getMessage());
             ndrErrors.add(new NDRErrorDTO(patientId, "", e.getMessage()));
