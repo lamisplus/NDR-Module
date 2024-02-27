@@ -37,6 +37,7 @@ import { TiArrowForward } from "react-icons/ti";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-widgets/dist/css/react-widgets.css";
+import uniq from "lodash/uniq";
 //import { Label } from "semantic-ui-react";
 import { MdDashboard } from "react-icons/md";
 //import { Spinner } from "reactstrap";
@@ -156,18 +157,16 @@ export default function GenerateNdr(props) {
     if (selectPatients.length > 0) {
       axios
         .get(
-          `${
-            api.url
-          }ndr/generate/patients?${FacilityIDArray}&initial=${true}&patientIds=${selectPatients}`,
+          `${api.url}ndr/generate/patients?${FacilityIDArray}&initial=${status}&patientIds=${selectPatients}`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
         .then((response) => {
+          setSelectPatients([]);
           window.setTimeout(() => {
             toast.success(" Generating NDR Successful!");
             setModal(false);
             props.setValue(3);
           }, 5000);
-
           //props.history.push("/generate", { state: 'download'});
         })
         .catch((error) => {
@@ -256,7 +255,7 @@ export default function GenerateNdr(props) {
 
   const handleRowSelection = (rows) => {
     setSelectedRows(rows);
-    rows.map((row) => getSelectedPatientIDs(row.uuid));
+    uniq(rows).map((row) => getSelectedPatientIDs(row.uuid));
   };
 
   const handleInputChange = (e) => {
