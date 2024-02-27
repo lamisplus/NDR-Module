@@ -77,8 +77,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function GenerateNdr(props) {
-  //const [loading, stillLoading] = useState(true)
-  //let history = useHistory();
   const classes = useStyles();
   const [facilities, setFacilities] = useState([]);
   const [processing, setProcessing] = useState(false);
@@ -96,6 +94,7 @@ export default function GenerateNdr(props) {
     startDate: "",
     endDate: "",
   });
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const handleCheckBox = (e) => {
     if (e.target.checked) {
@@ -143,6 +142,7 @@ export default function GenerateNdr(props) {
   const generateAction = () => {
     setProcessing(true);
     setModal(true);
+    setSelectedRows([]);
     let FacilityIDArray = "";
 
     checked.forEach(function (value) {
@@ -247,12 +247,16 @@ export default function GenerateNdr(props) {
   };
 
   const getSelectedPatientIDs = (row) => {
-    patientIDs.push(row.personUuid);
+    patientIDs.push(row);
     setSelectPatients([...selectPatients, ...patientIDs]);
+    // toast.success(`Patient with Id:  ${row} selected`, {
+    //   position: toast.POSITION.BOTTOM_CENTER,
+    // });
+  };
 
-    toast.success(`Patient with Id:  ${row.personUuid} selected`, {
-      position: toast.POSITION.BOTTOM_CENTER,
-    });
+  const handleRowSelection = (rows) => {
+    setSelectedRows(rows);
+    rows.map((row) => getSelectedPatientIDs(row.uuid));
   };
 
   const handleInputChange = (e) => {
@@ -268,43 +272,7 @@ export default function GenerateNdr(props) {
       <ToastContainer autoClose={3000} hideProgressBar />
       <Card>
         <CardBody>
-          {checked.length >= 1 ? (
-            <>
-              <Button
-                color="primary"
-                variant="contained"
-                className=" float-right mr-1"
-                size="large"
-                hidden={processing}
-                onClick={() => generateAction()}
-              >
-                {<GiFiles />} &nbsp;&nbsp;
-                <span style={{ textTransform: "capitalize" }}>
-                  {" "}
-                  Generate Messages
-                </span>
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                color="primary"
-                variant="contained"
-                className=" float-right mr-1"
-                size="large"
-                disabled="true"
-              >
-                {<GiFiles />} &nbsp;&nbsp;
-                <span style={{ textTransform: "capitalize" }}>
-                  {" "}
-                  Generate Messages{" "}
-                </span>
-              </Button>
-            </>
-          )}
-
           <>
-            <br /> <br />
             <Alert severity="info">
               <AlertTitle>Info</AlertTitle>
               Please check the Facilities you want
@@ -359,7 +327,12 @@ export default function GenerateNdr(props) {
             </label>
             <form>
               <div className="row">
-                <div className="form-group  col-md-6">
+                <div className="form-group  col-md-2">
+                  <b>
+                    <p>Generate by date range</p>
+                  </b>
+                </div>
+                <div className="form-group  col-md-5">
                   <FormGroup>
                     <Label>From *</Label>
                     <input
@@ -378,7 +351,7 @@ export default function GenerateNdr(props) {
                     />
                   </FormGroup>
                 </div>
-                <div className="form-group  col-md-6">
+                <div className="form-group  col-md-5">
                   <FormGroup>
                     <Label>To *</Label>
                     <input
@@ -400,6 +373,42 @@ export default function GenerateNdr(props) {
                 </div>
               </div>
             </form>
+            {checked.length >= 1 ? (
+              <>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  className=" float-right mr-1"
+                  size="large"
+                  hidden={processing}
+                  onClick={() => generateAction()}
+                >
+                  {<GiFiles />} &nbsp;&nbsp;
+                  <span style={{ textTransform: "capitalize" }}>
+                    {" "}
+                    Generate Messages
+                  </span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  className=" float-right mr-1"
+                  size="large"
+                  disabled="true"
+                >
+                  {<GiFiles />} &nbsp;&nbsp;
+                  <span style={{ textTransform: "capitalize" }}>
+                    {" "}
+                    Generate Messages{" "}
+                  </span>
+                </Button>
+              </>
+            )}
+            <br />
+            <br />
             <br />
             <div>
               <MaterialTable
@@ -414,11 +423,11 @@ export default function GenerateNdr(props) {
                   },
                   { title: "Unique ID", field: "uniqueId", filtering: false },
                   { title: "Sex", field: "sex", filtering: false },
+                  { title: "Patient UUID", field: "uuid", filtering: false },
                   //{ title: "Age", field: "age", filtering: false },
                   //{ title: "Enrollment Status", field: "v_status", filtering: false },
                   //{ title: "ART Number", field: "v_status", filtering: false },
                   { title: "ART Status", field: "status", filtering: false },
-                  { title: "Actions", field: "actions", filtering: false },
                 ]}
                 data={(query) =>
                   new Promise((resolve, reject) =>
@@ -464,6 +473,7 @@ export default function GenerateNdr(props) {
                               ),
                             uniqueId: row.uniqueId,
                             sex: row.sex,
+                            uuid: row.personUuid,
                             //age: calculate_age(row.dateOfBirth),
 
                             status: (
@@ -471,113 +481,19 @@ export default function GenerateNdr(props) {
                                 {row.currentStatus}
                               </Label>
                             ),
-                            actions: (
-                              <div>
-                                {row.currentStatus !== "Not Enrolled" ? (
-                                  <>
-                                    <ButtonGroup
-                                      variant="contained"
-                                      aria-label="split button"
-                                      style={{
-                                        backgroundColor: "rgb(153, 46, 98)",
-                                        height: "30px",
-                                        width: "215px",
-                                      }}
-                                      size="large"
-                                    >
-                                      <Button
-                                        color="primary"
-                                        size="small"
-                                        aria-label="select merge strategy"
-                                        aria-haspopup="menu"
-                                        style={{
-                                          backgroundColor: "rgb(153, 46, 98)",
-                                        }}
-                                      >
-                                        <MdDashboard />
-                                      </Button>
-                                      <Button
-                                        style={{
-                                          backgroundColor: "rgb(153, 46, 98)",
-                                        }}
-                                        onClick={() =>
-                                          getSelectedPatientIDs(row)
-                                        }
-                                      >
-                                        <span
-                                          style={{
-                                            fontSize: "12px",
-                                            color: "#fff",
-                                            fontWeight: "bolder",
-                                          }}
-                                        >
-                                          Select Patient
-                                        </span>
-                                      </Button>
-                                    </ButtonGroup>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Link
-                                      to={{
-                                        pathname: "/enroll-patient",
-                                        state: {
-                                          patientId: row.id,
-                                          patientObj: row,
-                                        },
-                                      }}
-                                    >
-                                      <ButtonGroup
-                                        variant="contained"
-                                        aria-label="split button"
-                                        style={{
-                                          backgroundColor: "rgb(153, 46, 98)",
-                                          height: "30px",
-                                          width: "215px",
-                                        }}
-                                        size="large"
-                                      >
-                                        <Button
-                                          color="primary"
-                                          size="small"
-                                          aria-label="select merge strategy"
-                                          aria-haspopup="menu"
-                                          style={{
-                                            backgroundColor: "rgb(153, 46, 98)",
-                                          }}
-                                        >
-                                          <TiArrowForward />
-                                        </Button>
-                                        <Button
-                                          style={{
-                                            backgroundColor: "rgb(153, 46, 98)",
-                                          }}
-                                        >
-                                          <span
-                                            style={{
-                                              fontSize: "12px",
-                                              color: "#fff",
-                                              fontWeight: "bolder",
-                                            }}
-                                          >
-                                            Enroll Patient
-                                          </span>
-                                        </Button>
-                                      </ButtonGroup>
-                                    </Link>
-                                  </>
-                                )}
-                              </div>
-                            ),
                           })),
                           page: query.page,
                           totalCount: result.data.totalRecords,
                         });
                       })
+                      .then(() => {
+                        setSelectedRows([]);
+                      })
                   )
                 }
                 options={{
                   search: true,
+                  selection: true,
                   headerStyle: {
                     backgroundColor: "#014d88",
                     color: "#fff",
@@ -586,11 +502,18 @@ export default function GenerateNdr(props) {
                     width: "300%",
                     margingLeft: "300px",
                   },
+                  rowStyle: (rowData) => ({
+                    backgroundColor: selectedRows.find(
+                      (row) => row.tableData.id === rowData.tableData.id
+                    )
+                      ? "#B4D3B2"
+                      : "",
+                  }),
                   filtering: false,
                   exportButton: false,
                   searchFieldAlignment: "left",
-                  pageSizeOptions: [5, 10, 20, 100],
-                  pageSize: 5,
+                  pageSizeOptions: [10, 20, 100],
+                  pageSize: 10,
                   debounceInterval: 400,
                 }}
                 components={{
@@ -623,6 +546,7 @@ export default function GenerateNdr(props) {
                     </div>
                   ),
                 }}
+                onSelectionChange={handleRowSelection}
               />
             </div>
           </>

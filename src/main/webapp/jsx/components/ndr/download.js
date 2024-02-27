@@ -92,7 +92,7 @@ export default function DownloadNdr(props) {
         headers: { Authorization: `Bearer ${api.token}` },
       })
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         setGeneratedNdrList(response.data);
         //console.log(response.data);
       })
@@ -114,36 +114,35 @@ export default function DownloadNdr(props) {
   };
 
   const downloadFile = (fileName) => {
-    if (fileName.includes('redacted')) {
-        axios
-              .get(`${api.url}ndr/download_redacted/${fileName}`, {
-                headers: { Authorization: `Bearer ${api.token}` },
-                responseType: "blob",
-              })
-              .then((response) => {
-                const responseData = response.data;
-                let blob = new Blob([responseData], {
-                  type: "application/octet-stream",
-                });
-                FileSaver.saveAs(blob, `${fileName}.zip`);
-              })
-              .catch((error) => {});
-    }else {
-        axios
-              .get(`${api.url}ndr/download/${fileName}`, {
-                headers: { Authorization: `Bearer ${api.token}` },
-                responseType: "blob",
-              })
-              .then((response) => {
-                const responseData = response.data;
-                let blob = new Blob([responseData], {
-                  type: "application/octet-stream",
-                });
-                FileSaver.saveAs(blob, `${fileName}.zip`);
-              })
-              .catch((error) => {});
+    if (fileName.includes("redacted")) {
+      axios
+        .get(`${api.url}ndr/download_redacted/${fileName}`, {
+          headers: { Authorization: `Bearer ${api.token}` },
+          responseType: "blob",
+        })
+        .then((response) => {
+          const responseData = response.data;
+          let blob = new Blob([responseData], {
+            type: "application/octet-stream",
+          });
+          FileSaver.saveAs(blob, `${fileName}.zip`);
+        })
+        .catch((error) => {});
+    } else {
+      axios
+        .get(`${api.url}ndr/download/${fileName}`, {
+          headers: { Authorization: `Bearer ${api.token}` },
+          responseType: "blob",
+        })
+        .then((response) => {
+          const responseData = response.data;
+          let blob = new Blob([responseData], {
+            type: "application/octet-stream",
+          });
+          FileSaver.saveAs(blob, `${fileName}.zip`);
+        })
+        .catch((error) => {});
     }
-
   };
   const generateAction = (ndrFileId) => {
     setModal(true);

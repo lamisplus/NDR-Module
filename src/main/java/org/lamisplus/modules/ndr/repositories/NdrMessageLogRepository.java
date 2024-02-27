@@ -146,31 +146,42 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
            "\tGROUP BY person_uuid", nativeQuery = true)
    Optional<PatientPharmacyEncounterDTO> getPatientPharmacyEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
 
-    @Query(value = "SELECT person_uuid, cast(json_agg(DISTINCT  jsonb_build_object('visitID', phar.uuid,\n" +
-            "\t\t\t\t\t\t\t\t\t  'visitDate', phar.visitDate,\n" +
-            "\t\t\t\t\t\t\t\t\t  'prescribedRegimenCode',  phar.prescribedRegimenCode,\n" +
-            "\t\t\t\t\t\t\t\t\t  'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
-            "\t\t\t\t\t\t\t\t\t   'prescribedRegimenTypeCode', (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END),\n" +
-            "\t\t\t\t\t\t\t \t\t\t'prescribedRegimenDuration', phar.duration,\n" +
-            "  'dateRegimenStarted', phar.visitDate))as varchar) AS regimens\n" +
-            "FROM (SELECT DISTINCT pharmacy.person_uuid, pharmacy.uuid, pharmacy.visit_date AS visitDate,\n" +
-            "pharmacy_object ->> 'name' as name, cast(pharmacy_object ->> 'duration' as VARCHAR) as duration,\n" +
-            "hr.regimen_type_id, (CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END) AS prescribedRegimenCodeDescTxt, \n" +
-            "(CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END)AS prescribedRegimenCode\n" +
-            "FROM hiv_art_pharmacy pharmacy,\n" +
-            "jsonb_array_elements(extra->'regimens') with ordinality p(pharmacy_object)\n" +
-            "INNER JOIN hiv_regimen hr ON hr.description=CAST(pharmacy_object ->> 'name' AS VARCHAR) \n" +
-            "AND hr.regimen_type_id IN (1,2,3,4,14,8)\n" +
-            "LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys=hr.description\n" +
-            "LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description=hrr.regimen\n" +
-            "LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description=hr.description --12662\n" +
-            "AND hr.regimen_type_id NOT IN (1,2,3,4,14)\n" +
-            "\t  WHERE pharmacy.archived = 0\n" +
-            "\t  AND  pharmacy.person_uuid = ?1\n" +
-            "      AND pharmacy.facility_id = ?2\n" +
-            "\t \n" +
-            "\t ) phar\n" +
-            "\tGROUP BY person_uuid, pharmacy.visit_date ORDER BY pharmacy.visit_date desc limit 1", nativeQuery = true)
+    @Query(value = "SELECT phar.person_uuid, \n" +
+            "       CAST(json_agg(DISTINCT jsonb_build_object('visitID', phar.uuid,\n" +
+            " 'visitDate', phar.visitDate,\n" +
+            " 'prescribedRegimenCode', phar.prescribedRegimenCode,\n" +
+            " 'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
+            " 'prescribedRegimenTypeCode', phar.prescribedRegimenTypeCode,\n" +
+            " 'prescribedRegimenDuration', phar.duration,\n" +
+            " 'dateRegimenStarted', phar.visitDate)) AS varchar) AS regimens\n" +
+            "FROM (\n" +
+            "    SELECT pharmacy.person_uuid, \n" +
+            "           pharmacy.uuid, \n" +
+            "           pharmacy.visit_date AS visitDate,\n" +
+            "           pharmacy_object ->> 'name' AS name, \n" +
+            "           CAST(pharmacy_object ->> 'duration' AS VARCHAR) AS duration,\n" +
+            "           hr.regimen_type_id, \n" +
+            "           (CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END) AS prescribedRegimenCodeDescTxt, \n" +
+            "           (CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END) AS prescribedRegimenCode,\n" +
+            "           (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END) AS prescribedRegimenTypeCode\n" +
+            "    FROM hiv_art_pharmacy pharmacy\n" +
+            "    JOIN (\n" +
+            "        SELECT person_uuid, MAX(visit_date) AS max_visit_date\n" +
+            "        FROM hiv_art_pharmacy\n" +
+            "        WHERE archived = 0\n" +
+            "         AND  person_uuid = ?1\n" +
+            "          AND facility_id = ?2\n" +
+            "        GROUP BY person_uuid\n" +
+            "    ) max_dates ON pharmacy.person_uuid = max_dates.person_uuid AND pharmacy.visit_date = max_dates.max_visit_date\n" +
+            "    CROSS JOIN LATERAL jsonb_array_elements(extra->'regimens') WITH ORDINALITY p(pharmacy_object)\n" +
+            "    JOIN hiv_regimen hr ON hr.description = CAST(pharmacy_object ->> 'name' AS VARCHAR) \n" +
+            "        AND hr.regimen_type_id IN (1,2,3,4,14,8)\n" +
+            "    LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys = hr.description\n" +
+            "    LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description = hrr.regimen\n" +
+            "    LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description = hr.description\n" +
+            "    WHERE pharmacy.archived = 0\n" +
+            ") phar\n" +
+            "GROUP BY phar.person_uuid;", nativeQuery = true)
     Optional<PatientPharmacyEncounterDTO> getPatientLastPharmacyEncounter(String identifier, Long facilityId);
 
    @Query(value = "SELECT DISTINCT person_uuid FROM hiv_art_pharmacy ph\n" +
