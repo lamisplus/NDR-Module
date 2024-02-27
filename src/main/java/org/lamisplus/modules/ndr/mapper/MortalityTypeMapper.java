@@ -28,7 +28,7 @@ public class MortalityTypeMapper {
             ClientVerificationType clientVerification = clientVerificationTypeMapper.getClientVerifications(patientId, facilityId, start, end, ndrErrors);
             List<MortalityDTO> mortalityVariables = ndrMessageLogRepository.getPatientMortalities(patientId, facilityId, start, end);
 
-            if (!mortalityVariables.isEmpty()) {
+            if (mortalityVariables != null && !mortalityVariables.isEmpty()) {
 //            log.info("mortality init");
                 mortalityVariables.forEach(mortality -> {
 
@@ -59,7 +59,7 @@ public class MortalityTypeMapper {
                     if(mortality.getOtherTrackingReason() != null) {
                         mortalityType.setOtherTrackingReason(mortality.getOtherTrackingReason());
                     }
-                    if(mortality.getPartnerFullName() != null) {
+                    if(mortality.getPartnerFullName() != null && mortality.getPartnerFullName().isEmpty()) {
                         mortalityType.setPartnerFullName(mortality.getPartnerFullName());
                     }
                     if(mortality.getAddressofTreatmentSupporter() != null) {
