@@ -72,6 +72,7 @@ public class NDRController {
             @RequestParam List<String> patientIds){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");
         Stopwatch stopwatch = Stopwatch.createStarted();
+        System.out.println("calling patients api with initial value  = " + initial);
         facilityIds.forEach (facilityId -> ndrOptmizationService.generateNDRXMLByFacilityAndListOfPatient(facilityId,initial,patientIds));
         messagingTemplate.convertAndSend("/topic/ndr-status", "end");
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
