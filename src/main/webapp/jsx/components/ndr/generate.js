@@ -245,17 +245,10 @@ export default function GenerateNdr(props) {
     }
   };
 
-  const getSelectedPatientIDs = (row) => {
-    patientIDs.push(row);
-    setSelectPatients([...selectPatients, ...patientIDs]);
-    // toast.success(`Patient with Id:  ${row} selected`, {
-    //   position: toast.POSITION.BOTTOM_CENTER,
-    // });
-  };
-
   const handleRowSelection = (rows) => {
     setSelectedRows(rows);
-    uniq(rows).map((row) => getSelectedPatientIDs(row.uuid));
+    let patientIDs = uniq(rows).map((row) => row.uuid);
+    setSelectPatients(patientIDs);
   };
 
   const handleInputChange = (e) => {
@@ -277,53 +270,6 @@ export default function GenerateNdr(props) {
               Please check the Facilities you want
             </Alert>
             <br />
-            <label>
-              <input
-                type="radio"
-                name="status"
-                checked={status === false}
-                onChange={handleChange}
-              />
-              <b> Updated</b>
-            </label>
-            {"   "}
-            {"   "}
-            <label>
-              <input
-                type="radio"
-                name="status"
-                checked={status === true}
-                onChange={handleChange}
-              />
-              <b> Initial</b>
-            </label>
-            <label style={{ float: "right" }}>
-              <List dense className={classes.root}>
-                {facilities.map((value) => {
-                  //console.log(value)
-                  const labelId = `checkbox-list-secondary-label-${value.id}`;
-                  return (
-                    <ListItem key={value.id} button>
-                      <ListItemAvatar>
-                        <AccountBalanceIcon />
-                      </ListItemAvatar>
-                      <ListItemText
-                        id={labelId}
-                        primary={`${value.organisationUnitName}`}
-                      />
-                      <ListItemSecondaryAction>
-                        <Checkbox
-                          edge="end"
-                          onChange={handleToggle(value)}
-                          checked={checked.indexOf(value) !== -1}
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </label>
             <form>
               <div className="row">
                 <div className="form-group  col-md-2">
@@ -372,43 +318,98 @@ export default function GenerateNdr(props) {
                 </div>
               </div>
             </form>
-            {checked.length >= 1 ? (
-              <>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  className=" float-right mr-1"
-                  size="large"
-                  hidden={processing}
-                  onClick={() => generateAction()}
-                >
-                  {<GiFiles />} &nbsp;&nbsp;
-                  <span style={{ textTransform: "capitalize" }}>
-                    {" "}
-                    Generate Messages
-                  </span>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  className=" float-right mr-1"
-                  size="large"
-                  disabled="true"
-                >
-                  {<GiFiles />} &nbsp;&nbsp;
-                  <span style={{ textTransform: "capitalize" }}>
-                    {" "}
-                    Generate Messages{" "}
-                  </span>
-                </Button>
-              </>
-            )}
             <br />
-            <br />
-            <br />
+            <div className="row">
+              <div className="form-group  col-md-2"></div>
+              <div className="form-group  col-md-2">
+                <label>
+                  <input
+                    type="radio"
+                    name="status"
+                    checked={status === false}
+                    onChange={handleChange}
+                  />
+                  <b> Updated</b>
+                </label>
+              </div>
+              <div className="form-group  col-md-2">
+                <label>
+                  <input
+                    type="radio"
+                    name="status"
+                    checked={status === true}
+                    onChange={handleChange}
+                  />
+                  <b> Initial</b>
+                </label>
+              </div>
+              <div className="form-group  col-md-3">
+                <label>
+                  <List dense className={classes.root}>
+                    {facilities.map((value) => {
+                      //console.log(value)
+                      const labelId = `checkbox-list-secondary-label-${value.id}`;
+                      return (
+                        <ListItem key={value.id} button>
+                          <ListItemAvatar>
+                            <AccountBalanceIcon />
+                          </ListItemAvatar>
+                          <ListItemText
+                            id={labelId}
+                            primary={`${value.organisationUnitName}`}
+                          />
+                          <ListItemSecondaryAction>
+                            <Checkbox
+                              edge="end"
+                              onChange={handleToggle(value)}
+                              checked={checked.indexOf(value) !== -1}
+                              inputProps={{ "aria-labelledby": labelId }}
+                            />
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </label>
+              </div>
+              <div className="form-group  col-md-3">
+                {checked.length >= 1 ? (
+                  <>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      className=" float-right mr-1"
+                      size="large"
+                      hidden={processing}
+                      onClick={() => generateAction()}
+                    >
+                      {<GiFiles />} &nbsp;&nbsp;
+                      <span style={{ textTransform: "capitalize" }}>
+                        {" "}
+                        Generate Messages
+                      </span>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      className=" float-right mr-1"
+                      size="large"
+                      disabled="true"
+                    >
+                      {<GiFiles />} &nbsp;&nbsp;
+                      <span style={{ textTransform: "capitalize" }}>
+                        {" "}
+                        Generate Messages{" "}
+                      </span>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
             <div>
               <MaterialTable
                 icons={tableIcons}
