@@ -242,14 +242,15 @@ public class HtsTypeMapper {
     }
 
     private static PreTestInformationType setPreTest(ObjectFactory objectFactory, HtsReportDto h) {
-//		KnowledgeAssessmentType knowledgeAssessment = objectFactory.createKnowledgeAssessmentType();
-//		knowledgeAssessment.setPreviouslyTestedHIVNegative(h.getPreviouslyTestedHIVNegative());
-//		knowledgeAssessment.setClientInformedAboutHIVTransmissionRoutes(h.getClientInformedAboutHIVTransmissionRoutes());
-//		knowledgeAssessment.setClientPregnant(h.getClientPregnant());
-//		knowledgeAssessment.setClientInformedOfHIVTransmissionRiskFactors(h.getClientInformedOfHIVTransmissionRiskFactors());
-//		knowledgeAssessment.setClientInformedAboutPreventingHIV(h.getClientInformedAboutPreventingHIV());
-//		knowledgeAssessment.setClientInformedAboutPossibleTestResults(h.getClientInformedAboutPossibleTestResults());
-//		knowledgeAssessment.setInformedConsentForHIVTestingGiven(h.getInformedConsentForHIVTestingGiven());
+        //uncomment KnowledgeAssessment
+		KnowledgeAssessmentType knowledgeAssessment = objectFactory.createKnowledgeAssessmentType();
+		knowledgeAssessment.setPreviouslyTestedHIVNegative(h.getPreviouslyTestedHIVNegative());
+		knowledgeAssessment.setClientInformedAboutHIVTransmissionRoutes(h.getClientInformedAboutHIVTransmissionRoutes());
+		knowledgeAssessment.setClientPregnant(h.getClientPregnant());
+		knowledgeAssessment.setClientInformedOfHIVTransmissionRiskFactors(h.getClientInformedOfHIVTransmissionRiskFactors());
+		knowledgeAssessment.setClientInformedAboutPreventingHIV(h.getClientInformedAboutPreventingHIV());
+		knowledgeAssessment.setClientInformedAboutPossibleTestResults(h.getClientInformedAboutPossibleTestResults());
+		knowledgeAssessment.setInformedConsentForHIVTestingGiven(h.getInformedConsentForHIVTestingGiven());
         HIVRiskAssessmentType assessment = objectFactory.createHIVRiskAssessmentType();
         if (isNotNull(h.getEverHadSexualIntercourse())) {
             assessment.setEverHadSexualIntercourse(h.getEverHadSexualIntercourse());
