@@ -304,6 +304,7 @@ public class NdrOptimizationService {
 				start = messageLog.get().getLastUpdated().toLocalDate();
 				List<EncounterDTO> patientEncounters =
 						getPatientEncounters(patientId, facilityId, objectMapper, start, end, ndrErrors);
+
 				if(patientEncounters.isEmpty()){
 					patientEncounters = getPatientEncounters_lastRecord(patientId, facilityId, objectMapper, ndrErrors);
 				}
@@ -317,8 +318,10 @@ public class NdrOptimizationService {
 
 				List<LaboratoryEncounterDTO> patientLabEncounters =
 						getPatientLabEncounter(patientId, facilityId, objectMapper, start, end, ndrErrors);
+
 				if(patientLabEncounters.isEmpty()){
-					getPatientLastLabEncounter(patientId, facilityId, objectMapper, ndrErrors);
+					System.out.println("getting last lab record");
+					patientLabEncounters = getPatientLastLabEncounter(patientId, facilityId, objectMapper, ndrErrors);
 				}
 				// those that have updated
 
@@ -372,13 +375,13 @@ public class NdrOptimizationService {
 			log.info("updated part 4");
 			// those that don't have
 			List<EncounterDTO> patientEncounters =
-					getPatientEncounters_lastRecord(patientId, facilityId, objectMapper, ndrErrors);
+					getPatientEncounters(patientId, facilityId, objectMapper, start, end, ndrErrors);
 
 			List<RegimenDTO> patientRegimens =
-					getPatientLastRegimen(patientId, facilityId, objectMapper, ndrErrors);
+					getPatientRegimens(patientId, facilityId, objectMapper, start, end, ndrErrors);
 
 			List<LaboratoryEncounterDTO> patientLabEncounters =
-					getPatientLastLabEncounter(patientId, facilityId, objectMapper, ndrErrors);
+					getPatientLabEncounter(patientId, facilityId, objectMapper, start, end, ndrErrors);
 
 			if (patientDemographic == null) return false;
 
@@ -621,6 +624,7 @@ public class NdrOptimizationService {
 			PatientLabEncounterDTO laboratoryEncounter;
 			Optional<PatientLabEncounterDTO> patientLabEncounter = 	data.getPatientLastLabEncounter(patientId, facilityId);
 			if(patientLabEncounter.isPresent()){
+				System.out.println("Last lab is present");
 				laboratoryEncounter = patientLabEncounter.get();
 				return getPatientLabEncounterDTOList(laboratoryEncounter, objectMapper, ndrErrors);
 			}
