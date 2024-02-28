@@ -304,51 +304,55 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
   Optional<PatientLabEncounterDTO> getPatientLabEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
 
 
-    @Query(value = "SELECT lo.patient_uuid, CAST(json_agg(distinct  jsonb_build_object(\n" +
-            "\t'visitId', lo.visitid,\n" +
-            "\t'visitDate', lo.visitdate,\n" +
-            "\t'collectionDate', ls.collectiondate,\n" +
-            "\t'laboratoryTestIdentifier', lt.laboratorytestidentifier,\n" +
-            "\t'laboratoryTestTypeCode', lt.laboratorytesttypecode,\n" +
-            "\t'orderedTestDate', lo.orderedtestdate,\n" +
-            "\t'laboratoryResultedTestCode', lt.laboratoryresultedtestcode,\n" +
-            "\t'laboratoryResultedTestCodeDescTxt', lt.laboratoryresultedtestcodedesctxt,\n" +
-            "\t'laboratoryResultAnswerNumeric', lr.laboratoryresultanswernumeric,\n" +
-            "\t'resultedTestDate', lr.resultedtestdate\t\n" +
-            "\t\n" +
-            "\t)) AS VARCHAR) as labs\n" +
-            "\n" +
+    @Query(value = "SELECT lo.patient_uuid, lr.resultedtestdate, CAST(json_agg(distinct jsonb_build_object(\n" +
+            "    'visitId', lo.visitid,\n" +
+            "    'visitDate', lo.visitdate,\n" +
+            "    'collectionDate', ls.collectiondate,\n" +
+            "    'laboratoryTestIdentifier', lt.laboratorytestidentifier,\n" +
+            "    'laboratoryTestTypeCode', lt.laboratorytesttypecode,\n" +
+            "    'orderedTestDate', lo.orderedtestdate,\n" +
+            "    'laboratoryResultedTestCode', lt.laboratoryresultedtestcode,\n" +
+            "    'laboratoryResultedTestCodeDescTxt', lt.laboratoryresultedtestcodedesctxt,\n" +
+            "    'laboratoryResultAnswerNumeric', lr.laboratoryresultanswernumeric,\n" +
+            "    'resultedTestDate', lr.resultedtestdate\n" +
+            "    )) AS VARCHAR) as labs\n" +
             "FROM (\n" +
-            "\tSELECT uuid AS VisitID, id, CAST(lo.order_date AS DATE) AS OrderedTestDate, \n" +
-            "\tCAST(lo.order_date AS DATE) AS VisitDate, lo.patient_uuid FROM laboratory_order lo\n" +
-            "\tWHERE lo.order_date IS NOT NULL AND lo.archived=0 AND lo.facility_id=?2\n" +
-            "\tAND lo.patient_uuid = ?1 \n" +
-            "\t)lo\n" +
+            "    SELECT uuid AS VisitID, id, CAST(lo.order_date AS DATE) AS OrderedTestDate,\n" +
+            "    CAST(lo.order_date AS DATE) AS VisitDate, lo.patient_uuid FROM laboratory_order lo\n" +
+            "    WHERE lo.order_date IS NOT NULL AND lo.archived=0 \n" +
+            "\tAND lo.facility_id=?2 AND lo.patient_uuid = ?1 \n" +
+            "    ) lo\n" +
             "INNER JOIN (\n" +
-            "\t\t\tSELECT lt.id, lt.lab_order_id, lt.lab_test_id, lt.lab_test_group_id, lt.patient_uuid,\n" +
-            "\t\t\t'0000001' AS LaboratoryTestIdentifier, '00001' AS LaboratoryTestTypeCode,\n" +
-            "\t\t\ttestncs.code AS LaboratoryResultedTestCode, testncs.code_description AS LaboratoryResultedTestCodeDescTxt\n" +
-            "\t\t\tFROM laboratory_test lt \n" +
-            "\t\t\tINNER JOIN laboratory_labtest llt ON llt.id=lt.lab_test_id\n" +
-            "\t\t\tINNER JOIN ndr_code_set testncs ON testncs.code_description=llt.lab_test_name\n" +
-            "\t\t\tWHERE lt.archived=0 AND lt.facility_id=?2 --5652\n" +
-            "\t)lt ON lt.lab_order_id=lo.id AND lt.patient_uuid=lo.patient_uuid\n" +
+            "        SELECT lt.id, lt.lab_order_id, lt.lab_test_id, lt.lab_test_group_id, lt.patient_uuid,\n" +
+            "        '0000001' AS LaboratoryTestIdentifier, '00001' AS LaboratoryTestTypeCode,\n" +
+            "        testncs.code AS LaboratoryResultedTestCode, testncs.code_description AS LaboratoryResultedTestCodeDescTxt\n" +
+            "        FROM laboratory_test lt \n" +
+            "        INNER JOIN laboratory_labtest llt ON llt.id=lt.lab_test_id\n" +
+            "        INNER JOIN ndr_code_set testncs ON testncs.code_description=llt.lab_test_name\n" +
+            "        WHERE lt.archived=0\n" +
+            "\t    AND lt.facility_id=?2 --5652\n" +
+            "    ) lt ON lt.lab_order_id=lo.id AND lt.patient_uuid=lo.patient_uuid\n" +
             "INNER JOIN (\n" +
-            "\t\tSELECT DISTINCT CAST(ls.date_sample_collected AS DATE) AS CollectionDate, ls.patient_uuid, test_id\n" +
-            "\t\t\tFROM laboratory_sample ls\n" +
-            "\t\t   WHERE ls.archived=0 AND ls.facility_id=?2 AND ls.date_sample_collected IS NOT NULL\n" +
-            "\t      AND ls.patient_uuid = ?1\n" +
-            "\t\t   )ls ON ls.test_id=lt.id AND ls.patient_uuid=lo.patient_uuid\n" +
+            "        SELECT DISTINCT CAST(ls.date_sample_collected AS DATE) AS CollectionDate, ls.patient_uuid, test_id\n" +
+            "            FROM laboratory_sample ls\n" +
+            "           WHERE ls.archived=0 \n" +
+            "\tAND ls.facility_id=?2 \n" +
+            "\tAND ls.date_sample_collected IS NOT NULL\n" +
+            "          \n" +
+            "\tAND ls.patient_uuid = ?1\n" +
+            "           ) ls ON ls.test_id=lt.id AND ls.patient_uuid=lo.patient_uuid\n" +
             "INNER JOIN (\n" +
-            "\t\t\tSELECT DISTINCT CAST(lr.date_result_reported AS DATE) AS resultedTestDate, \n" +
-            "\t\t\tlr.patient_uuid, lr.result_reported AS LaboratoryResultAnswerNumeric, lr.test_id\n" +
-            "\t\t\tFROM laboratory_result lr\n" +
-            "\t\t   WHERE lr.archived=0 AND lr.facility_id=?2 AND lr.date_result_reported IS NOT NULL\n" +
-            "\t\t\t AND lr.result_reported IS NOT NULL\n" +
-            "\t   AND lr.patient_uuid = ?1 \n" +
-            "\t\t   )lr ON lr.test_id=lt.id AND lr.patient_uuid=lt.patient_uuid\n" +
-            "\t\t   \n" +
-            "\t\t   GROUP BY lo.patient_uuid, lr.date_result_reported ORDER  BY lr.date_result_reported DESC", nativeQuery = true)
+            "        SELECT DISTINCT CAST(lr.date_result_reported AS DATE) AS resultedTestDate, \n" +
+            "        lr.patient_uuid, lr.result_reported AS LaboratoryResultAnswerNumeric, lr.test_id\n" +
+            "        FROM laboratory_result lr\n" +
+            "       WHERE lr.archived=0 \n" +
+            "\tAND lr.facility_id=?2 \n" +
+            "\tAND lr.date_result_reported IS NOT NULL\n" +
+            "        AND lr.result_reported IS NOT NULL\n" +
+            "       AND lr.patient_uuid = ?1 \n" +
+            "       ) lr ON lr.test_id=lt.id AND lr.patient_uuid=lt.patient_uuid\n" +
+            "       \n" +
+            "GROUP BY lo.patient_uuid, lr.resultedtestdate ORDER  BY lr.resultedtestdate DESC", nativeQuery = true)
     Optional<PatientLabEncounterDTO> getPatientLastLabEncounter(String identifier, Long facilityId);
 
 
