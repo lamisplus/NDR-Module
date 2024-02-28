@@ -79,8 +79,7 @@ public class HtsTypeMapper {
         validateAndSetConfirmatoryTestResultDate(h.getConfirmatoryTestResultDate(), testResult);
         validateAndSetTieBreakerTestResultDate(h.getScreeningTestResultDate(), testResult);
         hivTestResultType.setTestResult(testResult);
-        if (testResult.getFinalTestResult().equals("Pos") &&  StringUtils.isBlank(h.getRecencyNumber())) {
-
+        if (testResult.getFinalTestResult().equals("Pos") &&  !StringUtils.isBlank(h.getRecencyNumber())) {
             processAndSetRecencyResult(hivTestResultType, objectFactory, h);
         }
         return hivTestResultType;
