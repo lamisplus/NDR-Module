@@ -413,7 +413,7 @@ export default function GenerateNdr(props) {
             <div>
               <MaterialTable
                 icons={tableIcons}
-                title="ART Patients"
+                title="Eligible Patients"
                 columns={[
                   // { title: " ID", field: "Id" },
                   {
