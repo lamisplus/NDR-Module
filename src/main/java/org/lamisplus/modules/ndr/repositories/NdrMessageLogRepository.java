@@ -197,7 +197,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys=hr.description\n" +
             "LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description=hrr.regimen\n" +
             "LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description=hr.description \n" +
-            "LEFT JOIN ndr_code_set ncs_tpt ON hr.description = any(string_to_array(ncs_tpt.alt_description, ',')::text[]) \n" +
+            "LEFT JOIN ndr_code_set ncs_tpt ON hr.description = any(string_to_array(ncs_tpt.alt_description, ',')\\:\\:text[]) \n" +
             "WHERE pharmacy.archived = 0\n" +
             "\t  AND  pharmacy.person_uuid = ?1\n" +
             "      AND pharmacy.facility_id = ?2\n" +
@@ -231,7 +231,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys=hr.description\n" +
             "LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description=hrr.regimen\n" +
             "LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description=hr.description \n" +
-            "LEFT JOIN ndr_code_set ncs_tpt ON hr.description = any(string_to_array(ncs_tpt.alt_description, ',')::text[]) \n" +
+            "LEFT JOIN ndr_code_set ncs_tpt ON hr.description = any(string_to_array(ncs_tpt.alt_description, ',')\\:\\:text[]) \n" +
             "WHERE pharmacy.archived = 0\n" +
             "\t  AND  pharmacy.person_uuid = ?1\n" +
             "      AND pharmacy.facility_id = ?2\n" +
@@ -738,7 +738,8 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\t\t  AND hc.client_code = ?2\n" +
           "  AND hc.date_modified > ?3 \n" +
           "\t\t  AND hc.archived = 0\n" +
-          "\t\t ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
+          "\t\t ", nativeQuery = true)
+  List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
 
   // client verification query
 
