@@ -395,7 +395,6 @@ public class HtsTypeMapper {
         }
     }
 
-
     private static void validateAndSetClientCode(String clientCode, HIVTestingReportType hivTestingReportType) {
         if (clientCode != null) {
             hivTestingReportType.setClientCode(clientCode);
