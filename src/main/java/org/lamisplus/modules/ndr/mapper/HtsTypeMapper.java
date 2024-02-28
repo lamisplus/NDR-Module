@@ -251,6 +251,7 @@ public class HtsTypeMapper {
 		knowledgeAssessment.setClientInformedAboutPreventingHIV(h.getClientInformedAboutPreventingHIV());
 		knowledgeAssessment.setClientInformedAboutPossibleTestResults(h.getClientInformedAboutPossibleTestResults());
 		knowledgeAssessment.setInformedConsentForHIVTestingGiven(h.getInformedConsentForHIVTestingGiven());
+
         HIVRiskAssessmentType assessment = objectFactory.createHIVRiskAssessmentType();
         if (isNotNull(h.getEverHadSexualIntercourse())) {
             assessment.setEverHadSexualIntercourse(h.getEverHadSexualIntercourse());
@@ -312,7 +313,7 @@ public class HtsTypeMapper {
             preTestInformationType.setSyndromicSTIScreening(synStiScreening);
         }
 
-        //preTestInformationType.setKnowledgeAssessment(knowledgeAssessment);
+        preTestInformationType.setKnowledgeAssessment(knowledgeAssessment);
         return preTestInformationType;
 
     }
