@@ -178,7 +178,7 @@ export default function DownloadNdr(props) {
   };
 
   const varient = (value) => {
-    console.log(value);
+    //console.log(value);
     if (value <= 20) {
       return "danger";
     } else if (value > 20 && value <= 69) {
