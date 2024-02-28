@@ -80,6 +80,7 @@ public class HtsTypeMapper {
         validateAndSetTieBreakerTestResultDate(h.getScreeningTestResultDate(), testResult);
         hivTestResultType.setTestResult(testResult);
         if (testResult.getFinalTestResult().equals("Pos") &&  StringUtils.isBlank(h.getRecencyNumber())) {
+
             processAndSetRecencyResult(hivTestResultType, objectFactory, h);
         }
         return hivTestResultType;
@@ -90,6 +91,7 @@ public class HtsTypeMapper {
         validateAndSetRecencyYNCode(h, recency);
         validateAndSetStringValues(h, recency);
         validateDateValuesForRecencyData(h, recency);
+
         if (h.getFinalRecencyTestResult() != null) {
             if (h.getFinalRecencyTestResult().equalsIgnoreCase("RITA Long term")) {
                 recency.setFinalRecencyTestResult(RecencyStatus.RITA_LONG_TERM.getValue());

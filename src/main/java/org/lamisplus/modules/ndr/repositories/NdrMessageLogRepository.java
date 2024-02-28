@@ -557,7 +557,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
 //          "AND hc.date_modified > ?3 AND hc.archived = 0",nativeQuery = true)
 
 
-  @Query(value = "SELECT hc.person_uuid AS personUuid,\n" +
+  @Query(value = "SELECT DISTINCT ON (hc.person_uuid) hc.person_uuid AS personUuid,\n" +
           "rc.consent,\n" +
           "rc.recencyNumber, \n" +
           "rc.sampleType, \n" +
@@ -658,7 +658,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "ELSE CAST(tie_breaker_test ->> 'date' AS DATE) END)AS tieBreakerTestResultDate\n" +
           "from hts_client) tr ON tr.clientcode=hc.client_code\n" +
           "LEFT JOIN(\n" +
-          "SELECT client_code as clientCode , person_uuid as personUuid, uuid,\n" +
+          "SELECT DISTINCT ON (person_uuid) client_code as clientCode , person_uuid as personUuid, uuid,\n" +
           "recency->>'optOutRTRI' As consent,\n" +
           "recency->> 'rencencyId' AS recencyNumber, \n" +
           "recency->>'sampleType' AS  sampleType, \n" +
@@ -690,7 +690,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\n" +
           "--KnowledgeAssesment\n" +
           "LEFT JOIN (\n" +
-          "SELECT client_code as clientCode , person_uuid as personUuid, uuid,\n" +
+          "SELECT DISTINCT ON (person_uuid) client_code as clientCode , person_uuid as personUuid, uuid,\n" +
           "\tCASE WHEN knowledge_assessment ->> 'previousTestedHIVNegative'='' \n" +
           " OR knowledge_assessment ->> 'previousTestedHIVNegative' ILIKE 'false' THEN FALSE ELSE true END AS previouslyTestedHIVNegative,\n" +
           "CASE WHEN knowledge_assessment ->> 'clientInformHivTransRoutes'='' \n" +
