@@ -123,11 +123,16 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
            "\t\t\t\t\t\t\t\t\t  'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
            "\t\t\t\t\t\t\t\t\t   'prescribedRegimenTypeCode', (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END),\n" +
            "\t\t\t\t\t\t\t \t\t\t'prescribedRegimenDuration', phar.duration,\n" +
-           "  'dateRegimenStarted', phar.visitDate))as varchar) AS regimens\n" +
+           "\t\t\t\t\t\t\t'dateRegimenStarted', phar.visitDate" +
+           "\t\t\t\t\t\t\t'differentiatedServiceDelivery', phar.dsd_model,\n" +
+           "\t\t\t\t\t\t\t'dispensing', phar.dsd_model_type,\n" +
+           "\t\t\t\t\t\t\t'multiMonthDispensing', phar.mmd_type\n"+
+           "))as varchar) AS regimens\n" +
            "FROM (SELECT DISTINCT pharmacy.person_uuid, pharmacy.uuid, pharmacy.visit_date AS visitDate,\n" +
            "pharmacy_object ->> 'name' as name, cast(pharmacy_object ->> 'duration' as VARCHAR) as duration,\n" +
            "hr.regimen_type_id, (CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END) AS prescribedRegimenCodeDescTxt, \n" +
-           "(CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END)AS prescribedRegimenCode\n" +
+           "(CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END)AS prescribedRegimenCode,\n" +
+           "\t dsd_model, dsd_model_type, mmd_type \n"+
            "FROM hiv_art_pharmacy pharmacy,\n" +
            "jsonb_array_elements(extra->'regimens') with ordinality p(pharmacy_object)\n" +
            "INNER JOIN hiv_regimen hr ON hr.description=CAST(pharmacy_object ->> 'name' AS VARCHAR) \n" +
@@ -153,7 +158,11 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             " 'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
             " 'prescribedRegimenTypeCode', phar.prescribedRegimenTypeCode,\n" +
             " 'prescribedRegimenDuration', phar.duration,\n" +
-            " 'dateRegimenStarted', phar.visitDate)) AS varchar) AS regimens\n" +
+            " 'dateRegimenStarted', phar.visitDate" +
+            "\t\t\t\t\t\t\t'differentiatedServiceDelivery', phar.dsd_model,\n" +
+            "\t\t\t\t\t\t\t'dispensing', phar.dsd_model_type,\n" +
+            "\t\t\t\t\t\t\t'multiMonthDispensing', phar.mmd_type\n"+
+            "))as varchar) AS regimens\n" +
             "FROM (\n" +
             "    SELECT pharmacy.person_uuid, \n" +
             "           pharmacy.uuid, \n" +
@@ -163,7 +172,8 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "           hr.regimen_type_id, \n" +
             "           (CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END) AS prescribedRegimenCodeDescTxt, \n" +
             "           (CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END) AS prescribedRegimenCode,\n" +
-            "           (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END) AS prescribedRegimenTypeCode\n" +
+            "           (CASE WHEN regimen_type_id=8 THEN 'OI' ELSE 'ART' END) AS prescribedRegimenTypeCode,\n" +
+            "\t dsd_model, dsd_model_type, mmd_type \n"+
             "    FROM hiv_art_pharmacy pharmacy\n" +
             "    JOIN (\n" +
             "        SELECT person_uuid, MAX(visit_date) AS max_visit_date\n" +
