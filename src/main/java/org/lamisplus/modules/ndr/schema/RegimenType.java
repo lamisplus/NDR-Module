@@ -96,7 +96,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "dateRegimenEnded",
     "dateRegimenEndedDD",
     "dateRegimenEndedMM",
-    "dateRegimenEndedYYYY"
+    "dateRegimenEndedYYYY",
+    "pillBalance",
+    "differentiatedServiceDelivery",
+    "dispensing",
+    "multiMonthDispensing"
 })
 public class RegimenType {
     @Override
@@ -117,6 +121,10 @@ public class RegimenType {
                 ", dateRegimenEndedDD='" + dateRegimenEndedDD + '\'' +
                 ", dateRegimenEndedMM='" + dateRegimenEndedMM + '\'' +
                 ", dateRegimenEndedYYYY='" + dateRegimenEndedYYYY + '\'' +
+                ", pillBalance='" + pillBalance + '\'' +
+                ", differentiatedServiceDelivery='" + differentiatedServiceDelivery + '\'' +
+                ", dispensing='" + dispensing + '\'' +
+                ", multiMonthDispensing='" + multiMonthDispensing + '\'' +
                 '}';
     }
     
@@ -154,6 +162,15 @@ public class RegimenType {
     protected String dateRegimenEndedMM;
     @XmlElement(name = "DateRegimenEndedYYYY")
     protected String dateRegimenEndedYYYY;
+
+    @XmlElement(name = "PillBalance")
+    protected Integer pillBalance;
+    @XmlElement(name = "DifferentiatedServiceDelivery")
+    protected String differentiatedServiceDelivery;
+    @XmlElement(name = "Dispensing")
+    protected String dispensing;
+    @XmlElement(name = "MultiMonthDispensing")
+    protected String multiMonthDispensing;
 
     /**
      * Gets the value of the visitID property.
@@ -515,4 +532,98 @@ public class RegimenType {
         this.dateRegimenEndedYYYY = value;
     }
 
+    /**
+     * Gets the value of the pillBalance property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *
+     */
+    public Integer getPillBalance() {
+        return pillBalance;
+    }
+
+    /**
+     * Sets the value of the pillBalance property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *
+     */
+    public void setPillBalance(Integer value) {
+        this.pillBalance = value;
+    }
+
+    /**
+     * Gets the value of the differentiatedServiceDelivery property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDifferentiatedServiceDelivery() {
+        return differentiatedServiceDelivery;
+    }
+
+    /**
+     * Sets the value of the differentiatedServiceDelivery property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDifferentiatedServiceDelivery(String value) {
+        this.differentiatedServiceDelivery = value;
+    }
+    /**
+     * Gets the value of the dispensing property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDispensing() {
+        return dispensing;
+    }
+
+    /**
+     * Sets the value of the dispensing property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDispensing(String value) {
+        this.dispensing = value;
+    }
+
+    /**
+     * Gets the value of the multiMonthDispensing property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getMultiMonthDispensing() {
+        return multiMonthDispensing;
+    }
+
+    /**
+     * Sets the value of the multiMonthDispensing property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setMultiMonthDispensing(String value) {
+        this.multiMonthDispensing = value;
+    }
 }
