@@ -217,7 +217,7 @@ public class RegimenTypeMapper {
 	}
 
 	private void processDispense(RegimenType regimenType, RegimenDTO regimen) {
-		if (regimen.getDispensing().contains("FD1")) {
+		if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_FAST-TRACK")) {
 			regimenType.setDispensing("FD1");
 		}else if (regimen.getDispensing().contains("FD2")) {
 			regimenType.setDispensing("FD2");
@@ -239,13 +239,13 @@ public class RegimenTypeMapper {
 			regimenType.setDispensing("DDD01");
 		}else if (regimen.getDispensing().contains("DDD02")) {
 			regimenType.setDispensing("DDD02");
-		}else if (regimen.getDispensing().contains("DDD03")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_COMMUNITY_PHARMACY_ART_REFILL")) {
 			regimenType.setDispensing("DDD03");
 		}else if (regimen.getDispensing().contains("DDD04")) {
 			regimenType.setDispensing("DDD04");
 		}else if (regimen.getDispensing().contains("DDD05")) {
 			regimenType.setDispensing("DDD05");
-		}else if (regimen.getDispensing().contains("DDD06")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_HOME_DELIVERY")) {
 			regimenType.setDispensing("DDD06");
 		}else if (regimen.getDispensing().contains("DDD07")) {
 			regimenType.setDispensing("DDD07");
@@ -260,11 +260,11 @@ public class RegimenTypeMapper {
 
 	private void processMultiDispense(RegimenType regimenType, RegimenDTO regimen) {
 		if (regimen.getMultiMonthDispensing().contains("MMD-3") || regimen.getMultiMonthDispensing().contains("MMD-4") || regimen.getMultiMonthDispensing().contains("MMD-5")) {
-			regimenType.setDispensing("MMD3");
+			regimenType.setMultiMonthDispensing("MMD3");
 		} else if (regimen.getMultiMonthDispensing().contains("MMD-6")) {
-			regimenType.setDispensing("MMD2");
+			regimenType.setMultiMonthDispensing("MMD2");
 		} else if (Integer.parseInt(regimen.getPrescribedRegimenDuration()) < 90) {
-			regimenType.setDispensing("MMD1");
+			regimenType.setMultiMonthDispensing("MMD1");
 		}
 	}
 	private void processAndSetPrescribeRegimen(
