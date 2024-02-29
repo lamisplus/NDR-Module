@@ -296,7 +296,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "       AND lr.patient_uuid = ?1 \n" +
             "       ) lr ON lr.test_id=lt.id AND lr.patient_uuid=lt.patient_uuid\n" +
             "       \n" +
-            "GROUP BY lo.patient_uuid, lr.resultedtestdate ORDER  BY lr.resultedtestdate DESC", nativeQuery = true)
+            "GROUP BY lo.patient_uuid, lr.resultedtestdate ORDER  BY lr.resultedtestdate DESC limit 1", nativeQuery = true)
     Optional<PatientLabEncounterDTO> getPatientLastLabEncounter(String identifier, Long facilityId);
 
 
