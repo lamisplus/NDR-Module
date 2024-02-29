@@ -79,7 +79,7 @@ public class HtsTypeMapper {
         validateAndSetConfirmatoryTestResultDate(h.getConfirmatoryTestResultDate(), testResult);
         validateAndSetTieBreakerTestResultDate(h.getScreeningTestResultDate(), testResult);
         hivTestResultType.setTestResult(testResult);
-        if (testResult.getFinalTestResult().equals("Pos") &&  StringUtils.isBlank(h.getRecencyNumber())) {
+        if (testResult.getFinalTestResult().equals("Pos") &&  !StringUtils.isBlank(h.getRecencyNumber())) {
             processAndSetRecencyResult(hivTestResultType, objectFactory, h);
         }
         return hivTestResultType;
@@ -90,6 +90,7 @@ public class HtsTypeMapper {
         validateAndSetRecencyYNCode(h, recency);
         validateAndSetStringValues(h, recency);
         validateDateValuesForRecencyData(h, recency);
+
         if (h.getFinalRecencyTestResult() != null) {
             if (h.getFinalRecencyTestResult().equalsIgnoreCase("RITA Long term")) {
                 recency.setFinalRecencyTestResult(RecencyStatus.RITA_LONG_TERM.getValue());
@@ -242,14 +243,16 @@ public class HtsTypeMapper {
     }
 
     private static PreTestInformationType setPreTest(ObjectFactory objectFactory, HtsReportDto h) {
-//		KnowledgeAssessmentType knowledgeAssessment = objectFactory.createKnowledgeAssessmentType();
-//		knowledgeAssessment.setPreviouslyTestedHIVNegative(h.getPreviouslyTestedHIVNegative());
-//		knowledgeAssessment.setClientInformedAboutHIVTransmissionRoutes(h.getClientInformedAboutHIVTransmissionRoutes());
-//		knowledgeAssessment.setClientPregnant(h.getClientPregnant());
-//		knowledgeAssessment.setClientInformedOfHIVTransmissionRiskFactors(h.getClientInformedOfHIVTransmissionRiskFactors());
-//		knowledgeAssessment.setClientInformedAboutPreventingHIV(h.getClientInformedAboutPreventingHIV());
-//		knowledgeAssessment.setClientInformedAboutPossibleTestResults(h.getClientInformedAboutPossibleTestResults());
-//		knowledgeAssessment.setInformedConsentForHIVTestingGiven(h.getInformedConsentForHIVTestingGiven());
+        //uncomment KnowledgeAssessment
+		KnowledgeAssessmentType knowledgeAssessment = objectFactory.createKnowledgeAssessmentType();
+		knowledgeAssessment.setPreviouslyTestedHIVNegative(h.getPreviouslyTestedHIVNegative());
+		knowledgeAssessment.setClientInformedAboutHIVTransmissionRoutes(h.getClientInformedAboutHIVTransmissionRoutes());
+		knowledgeAssessment.setClientPregnant(h.getClientPregnant());
+		knowledgeAssessment.setClientInformedOfHIVTransmissionRiskFactors(h.getClientInformedOfHIVTransmissionRiskFactors());
+		knowledgeAssessment.setClientInformedAboutPreventingHIV(h.getClientInformedAboutPreventingHIV());
+		knowledgeAssessment.setClientInformedAboutPossibleTestResults(h.getClientInformedAboutPossibleTestResults());
+		knowledgeAssessment.setInformedConsentForHIVTestingGiven(h.getInformedConsentForHIVTestingGiven());
+
         HIVRiskAssessmentType assessment = objectFactory.createHIVRiskAssessmentType();
         if (isNotNull(h.getEverHadSexualIntercourse())) {
             assessment.setEverHadSexualIntercourse(h.getEverHadSexualIntercourse());
@@ -311,7 +314,7 @@ public class HtsTypeMapper {
             preTestInformationType.setSyndromicSTIScreening(synStiScreening);
         }
 
-        //preTestInformationType.setKnowledgeAssessment(knowledgeAssessment);
+        preTestInformationType.setKnowledgeAssessment(knowledgeAssessment);
         return preTestInformationType;
 
     }
