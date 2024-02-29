@@ -223,17 +223,17 @@ public class RegimenTypeMapper {
 			regimenType.setDispensing("FD2");
 		}else if (regimen.getDispensing().contains("FD3")) {
 			regimenType.setDispensing("FD3");
-		}else if (regimen.getDispensing().contains("FBM2")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_FACILITY_ART_GROUP:_HCW_LED")) {
 			regimenType.setDispensing("FBM2");
-		}else if (regimen.getDispensing().contains("FBM3")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_FACILITY_ART_GROUP:_SUPPORT_GROUP_LED")) {
 			regimenType.setDispensing("FBM3");
-		}else if (regimen.getDispensing().contains("FBM4")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_DECENTRALIZATION_(HUB_AND_SPOKE)")) {
 			regimenType.setDispensing("FBM4");
-		}else if (regimen.getDispensing().contains("FBM5")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_AFTER_HOURS")) {
 			regimenType.setDispensing("FBM5");
-		}else if (regimen.getDispensing().contains("FBM6")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_WEEKENDS_AND_PUBLIC_HOLIDAYS_")) {
 			regimenType.setDispensing("FBM6");
-		}else if (regimen.getDispensing().contains("FBM7")) {
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_CHILD_TEEN_ADOLESCENTS_CLUB_(PEER_MANAGED)")) {
 			regimenType.setDispensing("FBM7");
 		}else if (regimen.getDispensing().contains("DDD01")) {
 			regimenType.setDispensing("DDD01");
@@ -249,6 +249,12 @@ public class RegimenTypeMapper {
 			regimenType.setDispensing("DDD06");
 		}else if (regimen.getDispensing().contains("DDD07")) {
 			regimenType.setDispensing("DDD07");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_OSS_COMMUNITY_PLATFORMS")) {
+			regimenType.setDispensing("CBM6");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_ADOLESCENT_COMMUNITY_ART_PEER-LED_GROUPS")) {
+			regimenType.setDispensing("CBM4");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_COMMUNITY_ART_REFILL_GROUP:_PLHIV_–_LED_")) {
+			regimenType.setDispensing("CBM3");
 		}
 	}
 
