@@ -1,17 +1,22 @@
 package org.lamisplus.modules.ndr.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.ndr.domain.dto.HtsReportDto;
 import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
+import org.lamisplus.modules.ndr.domain.dto.PartnerNotificationDTO;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.DateUtil;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.spring5.processor.SpringErrorClassTagProcessor;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,9 +42,48 @@ public class HtsTypeMapper {
                     validateAndSetVisitDate(h.getVisitDate(), hivTestingReportType);
                     validateAndSetSetting(h.getSetting(), hivTestingReportType);
                     validateAndSetFirstTime(h.getFirstTimeVisit(), hivTestingReportType);
+                    // add referred_from and session type here
+                    validateAndSetReferedFrom(h.getReferredFrom(), hivTestingReportType);
+                    validateAndSetMaritalStatus(h.getMaritalStatus(), hivTestingReportType);
+                    validateAndSetNumOfChildren(h.getNoOfOwnChildrenLessThan5Years(), hivTestingReportType);
+                    validateAndSetNumWives(h.getNoOfAllWives(), hivTestingReportType);
+                    validateAndSetIsIndex(h.getIsIndexClient(), hivTestingReportType);
+                    validateAndSetIsIndexClientId(h.getIndexClientId(), hivTestingReportType);
+                    // add resTestForResult here
                     PreTestInformationType preTestInformationType = setPreTest(objectFactory, h);
                     hivTestingReportType.setPreTestInformation(preTestInformationType);
                     PostTestCounsellingType postTestCounsellingType = setPostTest(objectFactory, h);
+                    validateAndSetSyphilisResult(h.getSyphilisTestResult(), hivTestingReportType);
+                    validAndSetHbV(h.getHbvTestResult(), hivTestingReportType);
+                    validAndSetHcV(h.getHcvTestResult(), hivTestingReportType);
+
+
+
+                    IndexNotificationServicesType indexNotificationServicesType = new IndexNotificationServicesType();
+                    //List<PartnerNotificationType> partnerNotifications = getAllPartnerNotification(query);
+
+                    List<PartnerNotificationType> partnerNotifications = getAllPartnerNotification(h, errors);
+                    log.info("List of partner notification size {} ", partnerNotifications.size());
+                    indexNotificationServicesType.getPartner().addAll(partnerNotifications);
+                    hivTestingReportType.setIndexNotificationServices(indexNotificationServicesType);
+
+
+
+
+
+
+
+
+
+                    //IndexNotificationServicesType indexNotificationServicesType = objectFactory.createIndexNotificationServicesType();
+                    //List<PartnerNotificationType> partnerNotifications = getPartnerNotification(Hts);
+                    //define a method pass partnernotificationtype and HTSdto return a list partnerNotifications
+                    // should loop and set partner notifications variables
+                    //IndexNotificationServicesType indexNotificationServicesType =  new IndexNotificationServicesType();
+                    //indexNotificationServicesType.getPartner().addAll(getAllPartnerNotification);
+                    //hivTestingReportType.setIndexNotificationServices(indexNotificationServicesType);
+                    //PartnerNotificationType partnerNotificationType = setPartnerNotification(objectFactory, h);
+                    //hivTestingReportType.setIndexNotificationServices(partnerNotificationType);
                     hivTestingReportType.setPostTestCounselling(postTestCounsellingType);
                     HIVTestResultType hivTestResultType = setResult(objectFactory, h);
                     hivTestingReportType.setHIVTestResult(hivTestResultType);
@@ -52,6 +96,57 @@ public class HtsTypeMapper {
             return true;
         }
         return false;
+    }
+
+    private List<PartnerNotificationDTO> getPartnerNotifications (HtsReportDto h, List<NDRErrorDTO> ndrErrors) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            TypeFactory typeFactory = objectMapper.getTypeFactory();
+            return objectMapper.readValue(h.getPartnerNotification(), typeFactory.constructCollectionType(List.class, PartnerNotificationDTO.class));
+        } catch (Exception e) {
+            log.error("Error reading partner notification of patient with uuid {}  errorMsg {}",
+                    h.getClientCode(), e.getMessage());
+            ndrErrors.add(new NDRErrorDTO(h.getClientCode(),  "", e.getMessage()));
+        }
+        return new ArrayList<>();
+    }
+
+
+    private List<PartnerNotificationType> getAllPartnerNotification (HtsReportDto h, List<NDRErrorDTO> ndrErrors ) {
+        List<PartnerNotificationType> partnerNotifications = new ArrayList<>();
+        List<PartnerNotificationDTO> partnerNotificationsDto = getPartnerNotifications(h, ndrErrors);
+        for (PartnerNotificationDTO p : partnerNotificationsDto) {
+            log.info("Hts in a loop {}", h.getPartnerNotification());
+            PartnerNotificationType partner = new PartnerNotificationType();
+            partner.setPartnername(p.getPartnername());
+            partner.setDescriptiveAddress(p.getDescriptiveAddress());
+            partner.setPhoneNumber(p.getPhoneNumber());
+            String gender = p.getPartnerGender();
+            if (gender != null) {
+                if (gender.contains("Male")) {
+                    gender = "M";
+                } else {
+                    gender = "F";
+                }
+                partner.setPartnerGender(gender);
+            }
+
+            String indexRelation = p.getIndexRelation();
+            if (indexRelation != null) {
+                if (indexRelation.contains("Biological")) {
+                    indexRelation = "1";
+                } else if (indexRelation.contains("Sexual")) {
+                    indexRelation = "2";
+                } else if (indexRelation.contains("Social")) {
+                    indexRelation = "3";
+                }
+                partner.setIndexRelation(indexRelation);
+            }
+
+            partnerNotifications.add(partner);
+        }
+
+        return partnerNotifications;
     }
 
     private HIVTestResultType setResult(ObjectFactory objectFactory, HtsReportDto h) {
@@ -320,6 +415,59 @@ public class HtsTypeMapper {
     }
 
 
+//    private static List<PartnerNotificationType> getPartnerNotification(ObjectFactory objectFactory, HtsReportDto h) {
+//        List<PartnerNotificationType> partnerNotifications = new ArrayList<>();
+//
+//        PartnerNotificationType partner = objectFactory.createPartnerNotificationType();
+//
+//        partner.setPartnername(h.getPartnername());
+//        partner.setDescriptiveAddress(h.getDescriptiveAddress());
+//        partner.setPhoneNumber(h.getPhoneNumber());
+//
+//        String gender = h.getPartnerGender();
+//        if (gender != null) {
+//            if (gender.contains("Male")) {
+//                gender = "M";
+//            } else {
+//                gender = "F";
+//            }
+//            partner.setPartnerGender(gender);
+//        }
+//
+//        String indexRelation = h.getIndexRelation();
+//        if (indexRelation != null) {
+//            if (indexRelation.contains("Biological")) {
+//                indexRelation = "1";
+//            } else if (indexRelation.contains("Sexual")) {
+//                indexRelation = "2";
+//            } else if (indexRelation.contains("Social")) {
+//                indexRelation = "3";
+//            }
+//            partner.setIndexRelation(indexRelation);
+//        }
+//        partnerNotifications.add(partner);
+//
+//        return partnerNotifications;
+//    }
+//                gender = "F";
+//            }
+//            partner.setPartnerGender(h.getPartnerGender());
+//        }
+//        partner.setDescriptiveAddress(h.getDescriptiveAddress());
+//        if (indexRelation != null){
+//            if (indexRelation.contains("Biological")){
+//                indexRelation = "1";
+//            } else if (indexRelation.contains("Sexual")) {
+//               indexRelation = "2";
+//            } else if (indexRelation.contains("Social")) {
+//                indexRelation = "3";
+//            }
+//            partner.setIndexRelation(h.getIndexRelation());
+//        }
+//        partner.setPhoneNumber(h.getPhoneNumber());
+//        return partner;
+//    }
+
     private static PostTestCounsellingType setPostTest(ObjectFactory objectFactory, HtsReportDto h) {
         PostTestCounsellingType postTest = objectFactory.createPostTestCounsellingType();
         String testedForHIVBeforeWithinThisYear = h.getTestedForHIVBeforeWithinThisYear();
@@ -452,6 +600,110 @@ public class HtsTypeMapper {
         }
 
     }
+
+    public static void validateAndSetSyphilisResult(String syphilisTest, HIVTestingReportType hivTestingReportType) {
+        if (syphilisTest != null) {
+            if (syphilisTest.equalsIgnoreCase("yes")) {
+                syphilisTest = "R";
+            } else {
+                syphilisTest = "NR";
+            }
+            hivTestingReportType.setSyphilisTestResult(syphilisTest);
+        }
+    }
+
+    public static void validAndSetHbV(String hbvTest, HIVTestingReportType hivTestingReportType) {
+        if (hbvTest != null) {
+            if (hbvTest.equalsIgnoreCase("Yes")){
+                hbvTest = "Pos";
+            } else {
+                hbvTest = "Neg";
+            }
+            hivTestingReportType.setHBVTestResult(hbvTest);
+        }
+    }
+
+    public static void validAndSetHcV(String hcvTest, HIVTestingReportType hivTestingReportType) {
+        if (hcvTest != null) {
+            if (hcvTest.equalsIgnoreCase("Yes")){
+                hcvTest = "Pos";
+            } else {
+                hcvTest = "Neg";
+            }
+            hivTestingReportType.setHCVTestResult(hcvTest);
+        }
+    }
+
+    public static void validateAndSetNumOfChildren(Integer numChild, HIVTestingReportType hivTestingReportType) {
+        if (numChild != null) {
+            hivTestingReportType.setNoOfOwnChildrenLessThan5Years(numChild);
+        }
+    }
+
+    public static void validateAndSetNumWives (Integer numWives, HIVTestingReportType hivTestingReportType) {
+        if (numWives != null) {
+            hivTestingReportType.setNoOfAllWives(numWives);
+        }
+    }
+
+public static void validateAndSetIsIndex (String isIndex, HIVTestingReportType hivTestingReportType) {
+        if(isIndex != null) {
+            if(isIndex.equalsIgnoreCase("true")){
+                isIndex = "Y";
+            } else {
+             isIndex = "N";
+            }
+            hivTestingReportType.setIsIndexClient(isIndex);
+        }
+}
+
+
+public static void validateAndSetMaritalStatus (String maritalStatus, HIVTestingReportType hivTestingReportType) {
+        if (maritalStatus != null){
+            if (maritalStatus.contains("Married")) {
+                maritalStatus = "M";
+            } else if (maritalStatus.contains("Single")) {
+                maritalStatus = "S";
+            } else if (maritalStatus.contains("Widowed")) {
+                maritalStatus = "W";
+            } else if (maritalStatus.contains("Separated")) {
+                maritalStatus = "A";
+            } else if (maritalStatus.contains("Divorced")) {
+                maritalStatus = "D";
+            } else if (maritalStatus.contains("Living together")) {
+                maritalStatus = "G";
+            }
+            hivTestingReportType.setMaritalStatus(maritalStatus);
+        }
+}
+
+    public static void validateAndSetReferedFrom (String referredFrom, HIVTestingReportType hivTestingReportType) {
+        if (referredFrom != null){
+            if (referredFrom.contains("Self")) {
+                referredFrom = "1";
+            } else if (referredFrom.contains("TB")) {
+                referredFrom = "2";
+            } else if (referredFrom.contains("STI")) {
+                referredFrom = "3";
+            } else if (referredFrom.contains("FP")) {
+                referredFrom = "4";
+            } else if (referredFrom.contains("OPD")) {
+                referredFrom = "5";
+            } else if (referredFrom.contains("Ward")) {
+                referredFrom = "6";
+            }   else if (referredFrom.contains("Blood Bank")) {
+                referredFrom = "7";
+            } else if (referredFrom.contains("Others")) {
+                referredFrom = "8";
+            }
+        }
+    }
+
+public static void validateAndSetIsIndexClientId (String indexClientId, HIVTestingReportType hivTestingReportType){
+        if(indexClientId != null) {
+            hivTestingReportType.setIsIndexClient(indexClientId);
+        }
+}
 
     public static boolean isNotNull(Object obj) {
         return obj != null;

@@ -562,6 +562,12 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
 
 
   @Query(value = "SELECT DISTINCT ON (hc.person_uuid) hc.person_uuid AS personUuid,\n" +
+          "partner.partnerNotifications AS partnerNotification,\n" +
+          "sti.vaginalDischargeOrBurningWhenUrinating,\n" +
+          "sti.lowerAbdominalPainsWithOrWithoutVaginalDischarge,\n" +
+          "sti.urethralDischargeOrBurningWhenUrinating,\n" +
+          "sti.scrotalSwellingAndPain,\n" +
+          "sti.genitalSoreOrSwollenInguinalLymphNodes,\n" +
           "rc.consent,\n" +
           "rc.recencyNumber, \n" +
           "rc.sampleType, \n" +
@@ -582,8 +588,12 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "hc.uuid as visitId, hc.testing_setting as setting, \n" +
           "'YES' as firstTimeVisit, hc.client_code AS clientCode,\n" +
           " hc.date_visit  as visitDate, \n" +
-          "--  hc.referred_from AS referred_from,\n" +
-          "--  hc.extra->>'marital_status' AS maritalStatus,\n" +
+          " bac.display AS referredFrom,\n" +
+          " p.marital_status->>'display' AS maritalStatus,\n" +
+          " hc.num_children AS noOfOwnChildrenLessThan5Years,\n" +
+          " hc.num_wives AS noOfAllWives,\n" +
+          " hc.index_client AS isIndexClient,\n" +
+          " hc.index_client_code AS indexClientId,\n" +
           "\tkc.previouslyTestedHIVNegative,\n" +
           "\tkc.clientInformedAboutHIVTransmissionRoutes,\n" +
           "\tkc.clientPregnant,\n" +
@@ -647,10 +657,19 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "CASE WHEN post_test_counseling ->> 'condomProvidedToClient' =''\n" +
           "OR  post_test_counseling ->> 'condomProvidedToClient' ILIKE 'false' THEN FALSE ELSE TRUE END  AS condomsProvidedToClient,\n" +
           "CASE WHEN post_test_counseling ->> 'referredToServices'=''\n" +
-          "OR post_test_counseling ->> 'referredToServices' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientReferredToOtherServices\n" +
+          "OR post_test_counseling ->> 'referredToServices' ILIKE 'false' THEN FALSE ELSE TRUE END AS clientReferredToOtherServices,\n" +
+          "\n" +
+          "\n" +
+          "syphilis_testing->>'syphilisTestResult' AS syphilisTestResult,\n" +
+          "-- hepatitis\n" +
+          "hepatitis_testing->>'hepatitisBTestResult' AS hbvTestResult,\n" +
+          "hepatitis_testing->>'hepatitisCTestResult' AS hcvTestResult\n" +
           "from hts_client hc\n" +
+          "INNER JOIN patient_person p ON hc.person_uuid = p.uuid\n" +
+          "LEFT JOIN base_application_codeset bac ON hc.referred_from = bac.id\n" +
+          "\n" +
           "INNER JOIN \n" +
-          "(SELECT person_uuid AS personUuid, uuid, client_code AS clientCode, \n" +
+          "(SELECT DISTINCT ON (person_uuid) person_uuid AS personUuid, uuid, client_code AS clientCode, \n" +
           "CASE WHEN test1 ->> 'result' ILIKE 'Yes' THEN 'Positive' ELSE 'Negative' END AS screeningTestResult,\n" +
           "(CASE WHEN (test1 ->> 'date' ~* '[0-9]') is false THEN NULL\n" +
           "ELSE CAST(test1 ->> 'date' AS DATE) END) AS screeningTestResultDate,\n" +
@@ -690,10 +709,11 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "ELSE CAST(recency->>'viralLoadConfirmationResult'  AS float) END)\n" +
           "AS viralLoadConfirmationResult, \n" +
           "recency->>'viralLoadResultClassification' AS viralLoadClassification\n" +
-          "from hts_client ) rc ON rc.clientCode = hc.client_code  \n" +
+          "from hts_client\n" +
+          " ) rc ON rc.clientCode = hc.client_code  \n" +
           "\n" +
           "--KnowledgeAssesment\n" +
-          "LEFT JOIN (\n" +
+          "INNER JOIN (\n" +
           "SELECT DISTINCT ON (person_uuid) client_code as clientCode , person_uuid as personUuid, uuid,\n" +
           "\tCASE WHEN knowledge_assessment ->> 'previousTestedHIVNegative'='' \n" +
           " OR knowledge_assessment ->> 'previousTestedHIVNegative' ILIKE 'false' THEN FALSE ELSE true END AS previouslyTestedHIVNegative,\n" +
@@ -712,15 +732,56 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
           "\tFROM hts_client\n" +
           ") kc ON kc.clientCode = hc.client_code  \n" +
           "\n" +
+          "-- SyndromicSTI\n" +
+          "INNER JOIN (\n" +
+          "SELECT DISTINCT ON (person_uuid) client_code as clientCode , person_uuid as personUuid, uuid,\n" +
+          "\tCASE WHEN --sti_screening ->> 'vaginalDischarge'='' \n" +
+          " sti_screening ->> 'vaginalDischarge' ILIKE 'false' THEN FALSE ELSE true END AS vaginalDischargeOrBurningWhenUrinating,\n" +
+          "CASE WHEN --sti_screening ->> 'lowerAbdominalPains'='' \n" +
+          " sti_screening ->> 'lowerAbdominalPains' ILIKE 'false' THEN FALSE ELSE true END AS lowerAbdominalPainsWithOrWithoutVaginalDischarge,\n" +
+          "CASE WHEN --sti_screening ->> 'urethralDischarge'='' \n" +
+          " sti_screening ->> 'urethralDischarge' ILIKE 'false' THEN FALSE ELSE true END AS urethralDischargeOrBurningWhenUrinating,\n" +
+          "CASE WHEN --sti_screening ->> 'complaintsOfScrotal'='' \n" +
+          " sti_screening ->> 'complaintsOfScrotal' ILIKE 'false' THEN FALSE ELSE true END AS scrotalSwellingAndPain,\n" +
+          "CASE WHEN --sti_screening ->> 'complaintsGenitalSore'='' \n" +
+          "  sti_screening ->> 'complaintsGenitalSore' ILIKE 'false' THEN FALSE ELSE true END AS genitalSoreOrSwollenInguinalLymphNodes\n" +
+          "\n" +
+          "\tFROM hts_client --where person_uuid = 'fead794f-90d9-436a-88b1-a6f7b1505e57'\n" +
+          ") sti ON sti.clientCode = hc.client_code\n" +
+          "\n" +
+          "LEFT JOIN ( \n" +
+          "SELECT DISTINCT ON (person_uuid) client_code as clientCode , person_uuid as personUuid,\n" +
+          " CAST(json_agg(DISTINCT jsonb_build_object('partnername', CONCAT(hie.last_name, ' ', hie.first_name,' ', hie.middle_name),\n" +
+          " 'partnerGender', bac.display,\n" +
+          " 'indexRelation', hie.relationship_with_index_client,\n" +
+          " 'descriptiveAddress', hie.address,\n" +
+          " 'phoneNumber', hie.phone_number)) AS varchar) AS partnerNotifications\n" +
+          "from hts_index_elicitation hie\n" +
+          "INNER JOIN hts_client hc ON hie.hts_client_uuid = hc.uuid\n" +
+          "LEFT JOIN base_application_codeset bac ON hie.sex = bac.id\n" +
+          "GROUP by hc.person_uuid, hie.facility_id, hc.client_code\n" +
+          ") partner ON partner.clientCode = hc.client_code "+
           "WHERE hc.facility_id= ?1\n" +
           "AND hc.client_code = ?2\n" +
           "AND hc.date_modified > ?3 \n" +
           "AND hc.archived = 0 ", nativeQuery = true) List<HtsReportDto> getHstReportByClientCodeAndLastModified(Long facilityId, String clientCode, LocalDateTime lastModified);
 
+//  @Query(value = "SELECT hc.person_uuid, hie.facility_id, hc.client_code,\n" +
+//          "CONCAT(hie.last_name, ' ', hie.first_name,' ', hie.middle_name)\n" +
+//          "AS partnername,\n" +
+//          "bac.display AS partnerGender, \n" +
+//          "hie.relationship_with_index_client AS indexRelation, \n" +
+//          "hie.address AS descriptiveAddress, \n" +
+//          "hie.phone_number AS phoneNumber\n" +
+//          "from hts_index_elicitation hie\n" +
+//          "INNER JOIN hts_client hc ON hie.hts_client_uuid = hc.uuid\n" +
+//          "LEFT JOIN base_application_codeset bac ON hie.sex = bac.id\n" +
+//          "WHERE hie.facility_id = ?1 AND hc.client_code = ?2", nativeQuery = true)
+//  List<PartnerNotificationTypeDto> getPartnerNotifications (Long facilityId, String personUuid);
+
+
   // client verification query
-
-
-    @Query(value = "SELECT DISTINCT p.uuid FROM patient_person AS p\n" +
+   @Query(value = "SELECT DISTINCT p.uuid FROM patient_person AS p\n" +
             "\tJOIN hiv_enrollment AS e on e.person_uuid = p.uuid\n" +
             "\tINNER JOIN hiv_art_clinical hac ON hac.hiv_enrollment_uuid = e.uuid\n" +
             "\tWHERE p.archived = 1 OR e.archived = 1 AND e.last_modified_date >= ?1 AND e.facility_id = ?2\n" +

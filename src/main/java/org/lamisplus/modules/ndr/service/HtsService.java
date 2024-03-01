@@ -79,6 +79,7 @@ public class HtsService {
 		}
 		if (patientDemographic == null) return false;
 		List<HtsReportDto> patientHtsDetails = getPatientHtsDetails(facilityId, clientCode, start);
+		//List<PartnerNotificationTypeDto> partners = getPartnerNotifications(facilityId, clientCode);
 		String fileName = generatePatientHtsNDRXml(
 				facilityId,
 				obj,
@@ -110,6 +111,10 @@ public class HtsService {
 	  List<HtsReportDto> getPatientHtsDetails(long facilityId, String clientCode, LocalDateTime lastModified ){
 		return data.getHstReportByClientCodeAndLastModified(facilityId, clientCode,lastModified);
 	  }
+
+	//List<PartnerNotificationTypeDto> getPartnerNotifications (long facilityId, String clientCode ){
+	//return data.getPartnerNotifications(facilityId, clientCode);
+	//}
 
 	public void generatePatientsHtsNDRXml(long facilityId, boolean initial) {
 		ObjectFactory objectFactory = new ObjectFactory();
