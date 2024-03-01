@@ -1442,7 +1442,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
             <xs:element name="PrescribedRegimen" type="CodedSimpleType"
                         minOccurs="1" maxOccurs="1">
                 <xs:annotation>
@@ -2728,7 +2727,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
             <xs:element name="ProvidedWithInformationOnFPandDualContraception"  type="xs:boolean" minOccurs="0"
                         maxOccurs="1">
                 <xs:annotation>
@@ -2779,8 +2777,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-
-
     <xs:complexType name="ImmunizationType">
         <xs:sequence>
             <xs:element name="VisitID" type="StringType" minOccurs="1"
@@ -3256,8 +3252,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-
-
     <xs:complexType name="AntenatalRegistrationType">
         <xs:sequence>
             <xs:element name="VisitID" type="StringType" minOccurs="1"
@@ -4176,7 +4170,6 @@
             </xs:element>
             <xs:element name="Consent" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
             <xs:element name="RecencyNumber" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
             <xs:element name="ControlLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
             <xs:element name="VerificationLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
             <xs:element name="LongTermLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
@@ -4191,7 +4184,6 @@
                 </xs:simpleType>
             </xs:element>
             <xs:element name="ViralLoadRequest" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
             <xs:element name="SampleReferenceNumber"
                         type="xs:string" maxOccurs="1" minOccurs="0">
             </xs:element>
@@ -6420,17 +6412,11 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="TestDate" type="xs:date" minOccurs="0" maxOccurs="1" ></xs:element>
-
 			<xs:element name="RecencyNumber" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
-
 			<xs:element name="ControlLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="VerificationLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="LongTermLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="RecencyInterpretation" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6441,9 +6427,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="ViralLoadRequest" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="DateSampleCollected" type="xs:date"
                         minOccurs="0" maxOccurs="1">
 				<xs:annotation>
@@ -6452,9 +6436,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-
 			<xs:element name="PCRLabNumber" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="SampleType" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6463,7 +6445,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="DateSampleSent" type="xs:date"
                         minOccurs="0" maxOccurs="1">
 				<xs:annotation>
@@ -6472,9 +6453,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-
 			<xs:element name="PCRLab" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="ViralLoadResultClassification" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6484,9 +6463,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="HivViralLoad" type="xs:double" minOccurs="0" maxOccurs="1"></xs:element>
-
 			<xs:element name="FinalRecencyTestResult" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6496,12 +6473,8 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="DateConfirmedVL" type="xs:date" minOccurs="0" maxOccurs="1"></xs:element>
-
 			<xs:element name="ViralLoadResult" type="xs:double" maxOccurs="1" minOccurs="0"></xs:element>
-
-
 			<xs:element name="FinalRecencyResultInvestigation" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6511,8 +6484,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
-
 			<xs:element name="SourceDocumentUsed" minOccurs="0"  maxOccurs="unbounded">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6526,25 +6497,15 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="LinkedToCare" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="DateLinkedToCare" type="xs:date" minOccurs="0" maxOccurs="1"></xs:element>
-
 			<xs:element name="InitiatedOnART" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="DateInitiatedOnART" type="xs:date" minOccurs="0" maxOccurs="1"></xs:element>
-
 			<xs:element name="ARTNumber" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="Regimen" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="AdherenceCounselling" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="recordedVL12Month" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="VLResult" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="VlsSixMonth" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6554,7 +6515,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="PopulationType" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6564,8 +6524,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
-
 			<xs:element name="SubPopulationType" maxOccurs="unbounded" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
@@ -6581,17 +6539,11 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-
 			<xs:element name="OfferedIndexTesting" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="ProvidedContacts" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
-
 			<xs:element name="PartnerInformation" type="PartnerInformationType"  minOccurs="0" maxOccurs="unbounded" />
-
-
 			<xs:element name="PatientReferred" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
 			<xs:element name="PatientReferredClientCode" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
-
 		</xs:sequence>
 	</xs:complexType>
 

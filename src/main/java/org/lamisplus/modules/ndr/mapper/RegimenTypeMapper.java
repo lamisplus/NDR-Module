@@ -62,9 +62,7 @@ public class RegimenTypeMapper {
 		sortConditionRegimenType(condition);
 		return condition;
 	}
-	
-	
-	
+
 	public ConditionType regimenType(PatientDemographics demographics, ConditionType condition, List<ArtPharmacy> patientRegimens) {
 		if(demographics != null ){
 			Person person = personRepository.getOne(demographics.getId());
@@ -118,8 +116,6 @@ public class RegimenTypeMapper {
 							throw new IllegalArgumentException("Regimen visit date cannot be null");
 							
 						}
-						
-						
 						if (StringUtils.isNotBlank(regimen.getVisitID())) {
 							regimenType.setVisitID(regimen.getVisitID());
 						} else {
@@ -160,6 +156,24 @@ public class RegimenTypeMapper {
 								log.info("An error occurred parsing the Date Regimen Started date: error{}" + e.getMessage());
 							}
 						}
+						if (StringUtils.isNotBlank(regimen.getDifferentiatedServiceDelivery())) {
+							processDSD(regimenType, regimen);
+						} else {
+							log.info("Differentiated Service Delivery is null");
+						}
+
+						if (StringUtils.isNotBlank(regimen.getDispensing())) {
+							processDispense(regimenType, regimen);
+						} else {
+							log.info("DSD dispense is null");
+						}
+
+						if (StringUtils.isNotBlank(regimen.getMultiMonthDispensing())) {
+							processMultiDispense(regimenType, regimen);
+						} else {
+							log.info("DSD multi dispense is null");
+						}
+
 						regimenTypeList.add(regimenType);
 					});
 			
@@ -194,7 +208,65 @@ public class RegimenTypeMapper {
 		return condition;
 	}
 	
-	
+	private void processDSD(RegimenType regimenType, RegimenDTO regimen) {
+		if (Objects.equals(regimen.getDifferentiatedServiceDelivery(), "Facility")) {
+			regimenType.setDifferentiatedServiceDelivery("DSD1");
+		}else if (Objects.equals(regimen.getDifferentiatedServiceDelivery(), "Community")) {
+			regimenType.setDifferentiatedServiceDelivery("DSD2");
+		}
+	}
+
+	private void processDispense(RegimenType regimenType, RegimenDTO regimen) {
+		if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_FAST-TRACK")) {
+			regimenType.setDispensing("FD1");
+		}else if (regimen.getDispensing().contains("FD2")) {
+			regimenType.setDispensing("FD2");
+		}else if (regimen.getDispensing().contains("FD3")) {
+			regimenType.setDispensing("FD3");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_FACILITY_ART_GROUP:_HCW_LED")) {
+			regimenType.setDispensing("FBM2");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_FACILITY_ART_GROUP:_SUPPORT_GROUP_LED")) {
+			regimenType.setDispensing("FBM3");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_DECENTRALIZATION_(HUB_AND_SPOKE)")) {
+			regimenType.setDispensing("FBM4");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_AFTER_HOURS")) {
+			regimenType.setDispensing("FBM5");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_WEEKENDS_AND_PUBLIC_HOLIDAYS_")) {
+			regimenType.setDispensing("FBM6");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_FACILITY_CHILD_TEEN_ADOLESCENTS_CLUB_(PEER_MANAGED)")) {
+			regimenType.setDispensing("FBM7");
+		}else if (regimen.getDispensing().contains("DDD01")) {
+			regimenType.setDispensing("DDD01");
+		}else if (regimen.getDispensing().contains("DDD02")) {
+			regimenType.setDispensing("DDD02");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_COMMUNITY_PHARMACY_ART_REFILL")) {
+			regimenType.setDispensing("DDD03");
+		}else if (regimen.getDispensing().contains("DDD04")) {
+			regimenType.setDispensing("DDD04");
+		}else if (regimen.getDispensing().contains("DDD05")) {
+			regimenType.setDispensing("DDD05");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_HOME_DELIVERY")) {
+			regimenType.setDispensing("DDD06");
+		}else if (regimen.getDispensing().contains("DDD07")) {
+			regimenType.setDispensing("DDD07");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_OSS_COMMUNITY_PLATFORMS")) {
+			regimenType.setDispensing("CBM6");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_ADOLESCENT_COMMUNITY_ART_PEER-LED_GROUPS")) {
+			regimenType.setDispensing("CBM4");
+		}else if (regimen.getDispensing().contains("DSD_MODEL_COMMUNITY_COMMUNITY_ART_REFILL_GROUP:_PLHIV_–_LED_")) {
+			regimenType.setDispensing("CBM3");
+		}
+	}
+
+	private void processMultiDispense(RegimenType regimenType, RegimenDTO regimen) {
+		if (regimen.getMultiMonthDispensing().contains("MMD-3") || regimen.getMultiMonthDispensing().contains("MMD-4") || regimen.getMultiMonthDispensing().contains("MMD-5")) {
+			regimenType.setMultiMonthDispensing("MMD3");
+		} else if (regimen.getMultiMonthDispensing().contains("MMD-6")) {
+			regimenType.setMultiMonthDispensing("MMD2");
+		} else if (Integer.parseInt(regimen.getPrescribedRegimenDuration()) < 90) {
+			regimenType.setMultiMonthDispensing("MMD1");
+		}
+	}
 	private void processAndSetPrescribeRegimen(
 			ArtPharmacy artPharmacy, Set<Regimen> regimens,
 			Comparator<ArtPharmacy> artVisitDateComparator,
