@@ -283,6 +283,7 @@ public class LaboratoryReportTypeMapper {
                                     codedSimpleType.setCode("83");
                                     codedSimpleType.setCodeDescTxt("CD4 LFA RESULT");
                                     labResult.setLaboratoryResultedTest(codedSimpleType);
+                                    labResult.setLaboratoryTestTypeCode("83");
                                     if (result.equalsIgnoreCase("<200")) {
                                         answerCode.setCode("LessTE200");
                                         answerCode.setCodeSystemCode("LessTE200");
