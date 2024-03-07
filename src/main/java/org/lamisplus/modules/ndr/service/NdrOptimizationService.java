@@ -588,6 +588,7 @@ public class NdrOptimizationService {
 					individualReportType.getMortality().add(mortality);
 				}
 
+
 				MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(patientDemographic);
 				String messageStatusCode = "INITIAL";
 				if (!initial) {
