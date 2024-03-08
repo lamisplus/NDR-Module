@@ -138,7 +138,7 @@ public class PMTCTHTSType {
     }
 
     /**
-     * Sets the value of the visitID property.
+     * Sets the value of the visitID pmvn dependency:treeroperty.
      * 
      * @param value
      *     allowed object is

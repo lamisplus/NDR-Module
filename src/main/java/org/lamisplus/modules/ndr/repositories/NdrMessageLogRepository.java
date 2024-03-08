@@ -118,51 +118,52 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
     Optional<PatientEncounterDTO> getPatientLastEncounter(String identifier, Long facilityId);
 
    @Query(value = "SELECT \n" +
-           "    person_uuid,\n" +
-           "    CAST(\n" +
-           "        json_agg(\n" +
-           "            DISTINCT jsonb_build_object(\n" +
-           "                'visitID', phar.uuid,\n" +
-           "                'visitDate', phar.visitDate,\n" +
-           "                'prescribedRegimenCode', phar.prescribedRegimenCode,\n" +
-           "                'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
-           "                'prescribedRegimenTypeCode', CASE WHEN regimen_type_id = 8 THEN 'OI' ELSE 'ART' END,\n" +
-           "                'prescribedRegimenDuration', phar.duration,\n" +
-           "                'dateRegimenStarted', phar.visitDate,\n" +
-           "                'differentiatedServiceDelivery', phar.dsd_model,\n" +
-           "                'dispensing', phar.dsd_model_type,\n" +
-           "                'multiMonthDispensing', phar.mmd_type\n" +
-           "            )\n" +
-           "        ) AS VARCHAR\n" +
-           "    ) AS regimens\n" +
+           " person_uuid,\n" +
+           " CAST(\n" +
+           "     json_agg(\n" +
+           "         DISTINCT jsonb_build_object(\n" +
+           "             'visitID', phar.uuid,\n" +
+           "             'visitDate', phar.visitDate,\n" +
+           "             'prescribedRegimenCode', phar.prescribedRegimenCode,\n" +
+           "             'prescribedRegimenCodeDescTxt', phar.prescribedRegimenCodeDescTxt,\n" +
+           "             'prescribedRegimenTypeCode', CASE WHEN regimen_type_id = 8 THEN 'OI' ELSE 'ART' END,\n" +
+           "             'prescribedRegimenDuration', phar.duration,\n" +
+           "             'dateRegimenStarted', phar.visitDate,\n" +
+           "             'differentiatedServiceDelivery', phar.dsd_model,\n" +
+           "             'dispensing', phar.dsd_type,\n" +
+           "             'multiMonthDispensing', phar.mmd_type\n" +
+           "         )\n" +
+           "     ) AS VARCHAR\n" +
+           " ) AS regimens\n" +
            "FROM (\n" +
-           "    SELECT DISTINCT \n" +
-           "        pharmacy.person_uuid, \n" +
-           "        pharmacy.uuid, \n" +
-           "        pharmacy.visit_date AS visitDate,\n" +
-           "        pharmacy_object ->> 'name' as name, \n" +
-           "        CAST(pharmacy_object ->> 'duration' as VARCHAR) as duration,\n" +
-           "        hr.regimen_type_id, \n" +
-           "        CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END AS prescribedRegimenCodeDescTxt, \n" +
-           "        CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END AS prescribedRegimenCode,\n" +
-           "        dsd_model, \n" +
-           "        dsd_model_type, \n" +
-           "        mmd_type \n" +
-           "    FROM \n" +
-           "        hiv_art_pharmacy pharmacy,\n" +
-           "        jsonb_array_elements(extra->'regimens') with ordinality p(pharmacy_object)\n" +
-           "        INNER JOIN hiv_regimen hr ON hr.description = CAST(pharmacy_object ->> 'name' AS VARCHAR) \n" +
-           "            AND hr.regimen_type_id IN (1, 2, 3, 4, 14, 8)\n" +
-           "        LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys = hr.description\n" +
-           "        LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description = hrr.regimen\n" +
-           "        LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description = hr.description \n" +
-           "            AND hr.regimen_type_id NOT IN (1, 2, 3, 4, 14)\n" +
-           "    WHERE \n" +
-           "        pharmacy.archived = 0\n" +
-           "        AND pharmacy.person_uuid = ?1\n" +
-           "        AND pharmacy.facility_id = ?2\n" +
-           "        AND pharmacy.visit_date >= ?3\n" +
-           "        AND pharmacy.visit_date <= ?4\n" +
+           " SELECT DISTINCT \n" +
+           "     pharmacy.person_uuid, \n" +
+           "     pharmacy.uuid, \n" +
+           "     pharmacy.visit_date AS visitDate,\n" +
+           "     pharmacy_object ->> 'name' as name, \n" +
+           "     CAST(pharmacy_object ->> 'duration' as VARCHAR) as duration,\n" +
+           "     hr.regimen_type_id, \n" +
+           "     CASE WHEN hrr.regimen IS NULL THEN hr.description ELSE hrr.regimen END AS prescribedRegimenCodeDescTxt, \n" +
+           "     CASE WHEN ncs_reg.code IS NULL THEN ncs_others.code ELSE ncs_reg.code END AS prescribedRegimenCode,\n" +
+           "     dd.dsd_model, \n" +
+           "     dd.dsd_type, \n" +
+           "     mmd_type \n" +
+           " FROM \n" +
+           "     hiv_art_pharmacy pharmacy\n" +
+           "    CROSS JOIN LATERAL jsonb_array_elements(extra->'regimens') with ordinality p(pharmacy_object)\n" +
+           "     INNER JOIN hiv_regimen hr ON hr.description = CAST(pharmacy_object ->> 'name' AS VARCHAR) \n" +
+           "         AND hr.regimen_type_id IN (1, 2, 3, 4, 14, 8)\n" +
+           "     LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys = hr.description\n" +
+           "     LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description = hrr.regimen\n" +
+           "     LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description = hr.description \n" +
+           "         AND hr.regimen_type_id NOT IN (1, 2, 3, 4, 14)\n" +
+           "\tLEFT JOIN dsd_devolvement dd ON dd.person_uuid = pharmacy.person_uuid\n" +
+           " WHERE \n" +
+           "     pharmacy.archived = 0\n" +
+           "     AND pharmacy.person_uuid = ?1\n" +
+           "     AND pharmacy.facility_id = ?2\n" +
+           "     AND pharmacy.visit_date >= ?3\n" +
+           "     AND pharmacy.visit_date <= ?4\n" +
            ") AS phar\n" +
            "GROUP BY person_uuid", nativeQuery = true)
    Optional<PatientPharmacyEncounterDTO> getPatientPharmacyEncounter(String identifier, Long facilityId, LocalDate start, LocalDate end);
