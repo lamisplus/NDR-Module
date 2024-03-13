@@ -167,7 +167,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "'dateRegimenStarted', phar.visitDate,\n" +
             "'differentiatedServiceDelivery', phar.dsd_model,\n" +
             "'dispensing', phar.dsd_type,\n" +
-            "'multiMonthDispensing', phar.mmd_type\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  \n" +
+            "'multiMonthDispensing', phar.mmd_type  \n" +
             "))as varchar) AS regimens\n" +
             " \n" +
             "FROM (\n" +
