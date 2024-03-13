@@ -100,10 +100,10 @@ public class RecaptureBiometricMapper {
 			LocalDate lastUpdated =
 					messageLog.get().getLastUpdated().toLocalDate();
 			log.info("last recapture Date " + lastUpdated);
-//			biometricDTOList =
-//					ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid, lastUpdated);
 			biometricDTOList =
-					ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid);
+					ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid, lastUpdated);
+//			biometricDTOList =
+//					ndrCodeSetRepository.getPatientRecapturedBiometricByPatientUuid(patientUuid);
 			
 		}else {
 			biometricDTOList =
