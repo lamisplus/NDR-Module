@@ -8,7 +8,9 @@ menus:
     name: NDR
     state: ndr
     url: /across/resources/static/ndr/index.html
-umdLocation: /across/resources/static/ndr/index.html
+umdLocation: /across/resources/static/ndr/index.
+gitHubLink:
+  https://api.github.com/repos/lamisplus/NDR-Module/releases/latest
 webModules:
   - breadcrumb: NDR
     name: NDRModule
