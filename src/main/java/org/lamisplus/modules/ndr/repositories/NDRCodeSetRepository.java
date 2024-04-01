@@ -24,8 +24,10 @@ public interface NDRCodeSetRepository extends JpaRepository<NDRCodeSet, String> 
     
  
 
+//    @Query(value = "select template_type as templateType, enrollment_date as enrollmentDate, template, image_quality as quality, replace_date as replaceDate, recapture as replacePrintCount from biometric where person_uuid = :patientUuid" +
+//            " and biometric_type = 'FINGERPRINT' and archived = 0  and recapture = 0 and version_iso_20 = true  and iso = true", nativeQuery = true)
     @Query(value = "select template_type as templateType, enrollment_date as enrollmentDate, template, image_quality as quality from biometric where person_uuid = :patientUuid" +
-            " and biometric_type = 'FINGERPRINT' and archived = 0  and recapture = 0 and version_iso_20 = true  and iso = true", nativeQuery = true)
+        " and biometric_type = 'FINGERPRINT' and archived = 0  and recapture = 0 and version_iso_20 = true  and iso = true", nativeQuery = true)
     List<BiometricDto> getPatientBiometricByPatientUuid(String patientUuid);
     
     

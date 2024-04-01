@@ -50,6 +50,10 @@ public class BiometricTemplateMapper {
                     }
                     biometrics.forEach(biometricDto -> {
                         setEnrollmentDate(biometricDto, fingerPrintType);
+//                        if (biometricDto.getReplaceDate() != null && biometricDto.getReplacePrintCount() != null) {
+//                            log.info(biometricDto.getReplaceDate().toString() + " " + biometricDto.getReplacePrintCount());
+//                            fingerPrintType.setReplacePrint(biometricDto.getReplacePrintCount());
+//                        }
                         String type = biometricDto.getTemplateType();
                         String template = Base64.getEncoder().encodeToString(biometricDto.getTemplate());
                         if (StringUtils.containsIgnoreCase(type, "RIGHT")) {

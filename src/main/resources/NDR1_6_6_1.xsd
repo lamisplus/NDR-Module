@@ -1443,7 +1443,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
             <xs:element name="PrescribedRegimen" type="CodedSimpleType"
                         minOccurs="1" maxOccurs="1">
                 <xs:annotation>
@@ -3798,7 +3797,6 @@
             <xs:enumeration value="No" />
         </xs:restriction>
     </xs:simpleType>
-
     <xs:simpleType name="RestrictedDateType">
         <xs:restriction base="xs:date">
             <xs:minInclusive value="1900-01-01"/>
