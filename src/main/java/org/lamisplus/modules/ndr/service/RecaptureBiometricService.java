@@ -211,7 +211,7 @@ public class RecaptureBiometricService {
 			List<File> files = new ArrayList<>();
 			files = ndrService.getFiles(sourceFolder, files);
 			long thirtyMB = (FileUtils.ONE_MB * 15)*2;
-			File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
+			File folder = new File(BASE_DIR + "temp/biorecapture/" + facilityId + "/");
 			if (ZipUtility.getFolderSize(folder) > thirtyMB) {
 				List<List<File>> splitFiles = split(files, thirtyMB);
 				for (int i = 0; i < splitFiles.size(); i++) {
