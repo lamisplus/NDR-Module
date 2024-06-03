@@ -210,10 +210,10 @@ public class RecaptureBiometricService {
 			new File(Paths.get(outputZipFile).toAbsolutePath().toString()).createNewFile();
 			List<File> files = new ArrayList<>();
 			files = ndrService.getFiles(sourceFolder, files);
-			long thirtyMB = (FileUtils.ONE_MB * 15)*2;
+			long fiftyMB = (FileUtils.ONE_MB * 25)*2;
 			File folder = new File(BASE_DIR + "temp/biorecapture/" + facilityId + "/");
-			if (ZipUtility.getFolderSize(folder) > thirtyMB) {
-				List<List<File>> splitFiles = split(files, thirtyMB);
+			if (ZipUtility.getFolderSize(folder) > fiftyMB) {
+				List<List<File>> splitFiles = split(files, fiftyMB);
 				for (int i = 0; i < splitFiles.size(); i++) {
 					String splitFileName = finalFileName + "_" + (i + 1);
 					String splitOutputZipFile = BASE_DIR + "ndr/" + splitFileName;
@@ -223,7 +223,7 @@ public class RecaptureBiometricService {
 					storeTheFileInBD(facilityId, new AtomicInteger(splitFiles.get(i).size()), demographic, ndrErrors, splitFileName,type, identifier);
 				}
 			} else {
-				ZipUtility.zip(files, Paths.get(outputZipFile).toAbsolutePath().toString(), thirtyMB);
+				ZipUtility.zip(files, Paths.get(outputZipFile).toAbsolutePath().toString(), fiftyMB);
 				storeTheFileInBD(facilityId, new AtomicInteger(files.size()), demographic, ndrErrors, finalFileName,type, identifier);
 			}
 		} catch (Exception exception) {
