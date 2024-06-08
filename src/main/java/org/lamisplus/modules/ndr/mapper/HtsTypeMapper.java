@@ -697,7 +697,7 @@ public static void validateAndSetMaritalStatus (String maritalStatus, HIVTesting
     }
 
 public static void validateAndSetIsIndexClientId (String indexClientId, HIVTestingReportType hivTestingReportType){
-        if(indexClientId != null) {
+        if(indexClientId != null && !indexClientId.isEmpty()) {
             hivTestingReportType.setIsIndexClient(indexClientId);
         }
 }
