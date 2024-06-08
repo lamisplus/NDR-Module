@@ -212,7 +212,7 @@ public class HtsService {
 				jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 				jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
 				SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR1_6_6_0.xsd"));
+				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR1_6_6_1.xsd"));
 				jaxbMarshaller.setSchema(schema);
 				if (conditionType != null) {
 					if(htsTypeMapper.getHivTestingReportType(individualReportType,objectFactory,htsReports, ndrErrors)){
