@@ -44,9 +44,9 @@ public class NDRJSONService {
     String pushEndPoint = "/beep";
     String logsEndPoint = "/errorLogs";
    // String baseUrl = "";
-    String baseUrl = "";
-    String email = "";
-    String password = "";
+    String baseUrl = "******";
+    String email = "*******";
+    String password = "********";
 
     private final NDRPusherRepository ndrPusherRepository;
 
