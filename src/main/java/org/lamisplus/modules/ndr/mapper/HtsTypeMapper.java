@@ -69,12 +69,6 @@ public class HtsTypeMapper {
 
 
 
-
-
-
-
-
-
                     //IndexNotificationServicesType indexNotificationServicesType = objectFactory.createIndexNotificationServicesType();
                     //List<PartnerNotificationType> partnerNotifications = getPartnerNotification(Hts);
                     //define a method pass partnernotificationtype and HTSdto return a list partnerNotifications
@@ -84,6 +78,9 @@ public class HtsTypeMapper {
                     //hivTestingReportType.setIndexNotificationServices(indexNotificationServicesType);
                     //PartnerNotificationType partnerNotificationType = setPartnerNotification(objectFactory, h);
                     //hivTestingReportType.setIndexNotificationServices(partnerNotificationType);
+
+
+
                     hivTestingReportType.setPostTestCounselling(postTestCounsellingType);
                     HIVTestResultType hivTestResultType = setResult(objectFactory, h);
                     hivTestingReportType.setHIVTestResult(hivTestResultType);
@@ -700,7 +697,7 @@ public static void validateAndSetMaritalStatus (String maritalStatus, HIVTesting
     }
 
 public static void validateAndSetIsIndexClientId (String indexClientId, HIVTestingReportType hivTestingReportType){
-        if(indexClientId != null) {
+        if(indexClientId != null && !indexClientId.isEmpty()) {
             hivTestingReportType.setIsIndexClient(indexClientId);
         }
 }

@@ -40,6 +40,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PMTCTType", propOrder = {
+        "ancNumber",
     "immunization",
     "deliveryEncounter",
     "antenatalRegistration",
@@ -53,6 +54,9 @@ import java.util.List;
     "pmtcthts"
 })
 public class PMTCTType {
+
+    @XmlElement(name = "ANCNumber")
+    protected String ancNumber;
 
     @XmlElement(name = "Immunization")
     protected List<ImmunizationType> immunization;
@@ -76,6 +80,30 @@ public class PMTCTType {
     protected List<MaternalCohortType> maternalCohort;
     @XmlElement(name = "PMTCTHTS")
     protected PMTCTHTSType pmtcthts;
+
+    /**
+     * Gets the value of the ancNumber property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getANCNumber() {
+        return ancNumber;
+    }
+
+    /**
+     * Sets the value of the ancNumber property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setANCNumber(String value) {
+        this.ancNumber = value;
+    }
 
     /**
      * Gets the value of the immunization property.
