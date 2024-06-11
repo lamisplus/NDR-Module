@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.ndr.domain.dto.NDREligibleClient;
 import org.lamisplus.modules.ndr.domain.dto.NDRErrorDTO;
 import org.lamisplus.modules.ndr.domain.dto.NdrXmlStatusDto;
-import org.lamisplus.modules.ndr.service.HtsService;
-import org.lamisplus.modules.ndr.service.NDRService;
-import org.lamisplus.modules.ndr.service.NdrOptimizationService;
-import org.lamisplus.modules.ndr.service.RedactService;
+import org.lamisplus.modules.ndr.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +26,7 @@ import java.util.*;
 public class NDRController {
     private final NDRService ndrService;
     private final NdrOptimizationService ndrOptmizationService;
+    private final NdrOptimizerService ndrOptimizerService;
 
     private final SimpMessageSendingOperations messagingTemplate;
     private final HtsService htsService;
@@ -94,7 +92,9 @@ public class NDRController {
     @GetMapping("/optimization")
     public ResponseEntity<Void> generateWithOptimization(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, isInitial));
+        log.info("starting optimizer");
+        //facilityIds.forEach(facilityId -> ndrOptmizationService.generatePatientsNDRXml(facilityId, isInitial));
+        facilityIds.forEach(facilityId -> ndrOptimizerService.generatePatientsNDRXml(facilityId, isInitial));
         log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());
         return ResponseEntity.ok().build();
     }

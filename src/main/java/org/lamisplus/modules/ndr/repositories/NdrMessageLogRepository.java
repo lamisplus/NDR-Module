@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,6 +75,211 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
             "               AND hac.is_commencement = TRUE LIMIT 1\n" ,
             nativeQuery = true)
     Optional<PatientDemographicDTO> getPatientDemographics(String identifier, Long facilityId);
+
+    @Query(value = "SELECT hac.person_uuid as patientUuid, cast( json_agg(distinct  jsonb_build_object('visitID', hac.uuid,\n" +
+            "\t\t\t\t\t\t\t\t\t  'visitDate', CAST(hac.visit_date AS DATE),\n" +
+            "\t\t\t\t\t\t\t\t\t  'weight',  CASE WHEN tvs.body_weight IS NULL THEN 0 ELSE tvs.body_weight END,\n" +
+            "\t\t\t\t\t\t\t\t\t  'childHeight', CASE WHEN tvs.height IS NULL THEN 0 ELSE tvs.height END,\n" +
+            "\t\t\t\t\t\t\t\t\t   'tbStatus', ncs.code,\n" +
+            "\t\t\t\t\t\t\t\t\t\t'bloodPressure', \n" +
+            "\t\t\t\t\t\t\t\t\t\t(CASE WHEN tvs.systolic IS NOT NULL AND tvs.diastolic IS NOT NULL \n" +
+            "\t\t\t\t\t\t\t\t\t\tTHEN CONCAT(CAST(tvs.systolic AS INTEGER), '/', CAST(tvs.diastolic AS INTEGER))\n" +
+            "\t\t\t\t\t\t\t\t\t\tELSE '' END),\n" +
+            "\t\t\t\t\t\t\t\t\t  'nextAppointmentDate', hac.next_appointment)) as varchar) AS encounters\n" +
+            "\tFROM hiv_art_clinical hac \n" +
+            "\tLEFT JOIN triage_vital_sign tvs ON hac.vital_sign_uuid=tvs.uuid AND hac.archived=0\n" +
+            "\tLEFT JOIN base_application_codeset bac_tb ON bac_tb.id=CAST(hac.tb_status AS BIGINT) AND bac_tb.archived=0\n" +
+            "\tLEFT JOIN ndr_code_set ncs ON ncs.code_description=bac_tb.display\n" +
+            "\tWHERE hac.archived = 0\n" +
+            "      AND hac.facility_id = ?1\n" +
+            "      AND hac.visit_date >= ?2\n" +
+            "      AND hac.visit_date <= ?3\n" +
+            "\tGROUP BY hac.person_uuid", nativeQuery = true)
+    HashSet<PatientEncounterDTO> getAllPatientEncounters(Long facilityId, LocalDate start, LocalDate end);
+
+    @Query(value = "SELECT \n" +
+            "  person_uuid, \n" +
+            "  cast(\n" +
+            "    json_agg(\n" +
+            "      DISTINCT jsonb_build_object(\n" +
+            "        'visitID', \n" +
+            "        phar.uuid, \n" +
+            "        'visitDate', \n" +
+            "        phar.visitDate, \n" +
+            "        'prescribedRegimenCode', \n" +
+            "        phar.prescribedRegimenCode, \n" +
+            "        'prescribedRegimenCodeDescTxt', \n" +
+            "        phar.prescribedRegimenCodeDescTxt, \n" +
+            "        'prescribedRegimenTypeCode', \n" +
+            "        (\n" +
+            "          CASE WHEN regimen_type_id IN (8, 9) THEN 'OI' WHEN regimen_type_id IN (10, 11, 15) THEN 'TB' ELSE 'ART' END\n" +
+            "        ), \n" +
+            "        'prescribedRegimenDuration', \n" +
+            "        phar.duration, \n" +
+            "        'dateRegimenStarted', \n" +
+            "        phar.visitDate, \n" +
+            "        'differentiatedServiceDelivery', \n" +
+            "        phar.dsd_model, \n" +
+            "        'dispensing', \n" +
+            "        phar.dsd_type, \n" +
+            "        'multiMonthDispensing', \n" +
+            "        phar.mmd_type\n" +
+            "      )\n" +
+            "    ) as varchar\n" +
+            "  ) AS regimens \n" +
+            "FROM \n" +
+            "  (\n" +
+            "    select \n" +
+            "      * \n" +
+            "    from \n" +
+            "      (\n" +
+            "        SELECT \n" +
+            "          DISTINCT pharmacy.person_uuid, \n" +
+            "          pharmacy.uuid, \n" +
+            "          pharmacy.visit_date AS visitDate, \n" +
+            "          pharmacy_object ->> 'name' as name, \n" +
+            "          cast(\n" +
+            "            pharmacy_object ->> 'duration' as VARCHAR\n" +
+            "          ) as duration, \n" +
+            "          hr.regimen_type_id, \n" +
+            "          (\n" +
+            "            Case when ncs_reg.code is not null then ncs_reg.code_description when ncs_others.code is not null then ncs_others.code_description when ncs_tpt.code is not null then ncs_tpt.code_description end\n" +
+            "          ) AS prescribedRegimenCodeDescTxt, \n" +
+            "          (\n" +
+            "            CASE WHEN ncs_reg.code IS NOT NULL THEN ncs_reg.code WHEN ncs_others.code IS NOT NULL THEN ncs_others.code WHEN ncs_tpt.code IS NOT NULL THEN ncs_tpt.code END\n" +
+            "          ) AS prescribedRegimenCode, \n" +
+            "          dd.dsd_model, \n" +
+            "          dd.dsd_type, \n" +
+            "          mmd_type \n" +
+            "        FROM \n" +
+            "          hiv_art_pharmacy pharmacy CROSS \n" +
+            "          JOIN LATERAL jsonb_array_elements(extra -> 'regimens') with ordinality p(pharmacy_object) \n" +
+            "          INNER JOIN hiv_regimen hr ON hr.description = CAST(\n" +
+            "            pharmacy_object ->> 'regimenName' AS VARCHAR\n" +
+            "          ) \n" +
+            "          LEFT JOIN hiv_regimen_resolver hrr ON hrr.regimensys = hr.description \n" +
+            "          LEFT JOIN ndr_code_set ncs_reg ON ncs_reg.code_description = hrr.regimen \n" +
+            "          LEFT JOIN ndr_code_set ncs_others ON ncs_others.code_description = hr.description \n" +
+            "          LEFT JOIN dsd_devolvement dd ON dd.person_uuid = pharmacy.person_uuid \n" +
+            "          LEFT JOIN ndr_code_set ncs_tpt ON hr.description = any(\n" +
+            "            string_to_array(ncs_tpt.alt_description, ',')\n" +
+            "          ) \n" +
+            "        WHERE \n" +
+            "          pharmacy.archived = 0 \n" +
+            "          AND pharmacy.facility_id = ?1 \n" +
+            "          AND pharmacy.visit_date >= ?2 \n" +
+            "          AND pharmacy.visit_date <= ?3 \n" +
+            "      ) as dt \n" +
+            "    where \n" +
+            "      prescribedRegimenCode is not null\n" +
+            "  ) phar \n" +
+            "GROUP BY \n" +
+            "  person_uuid\n", nativeQuery = true)
+    HashSet<PatientPharmacyEncounterDTO> getAllPatientPharmacyEncounter(Long facilityId, LocalDate start, LocalDate end);
+
+    @Query(value = "SELECT\n" +
+            "    lo.patient_uuid,\n" +
+            "    CAST(\n" +
+            "        json_agg(\n" +
+            "            DISTINCT jsonb_build_object(\n" +
+            "                'visitId', lo.visitid,\n" +
+            "                'visitDate', lo.visitdate,\n" +
+            "                'collectionDate', ls.collectiondate,\n" +
+            "                'laboratoryTestIdentifier', lt.laboratorytestidentifier,\n" +
+            "                'laboratoryTestTypeCode', lt.laboratorytesttypecode,\n" +
+            "                'orderedTestDate', lo.orderedtestdate,\n" +
+            "                'laboratoryResultedTestCode', lt.laboratoryresultedtestcode,\n" +
+            "                'laboratoryResultedTestCodeDescTxt', lt.laboratoryresultedtestcodedesctxt,\n" +
+            "                'laboratoryResultAnswerNumeric', lr.laboratoryresultanswernumeric,\n" +
+            "                'resultedTestDate', lr.resultedtestdate\n" +
+            "            )\n" +
+            "        ) AS VARCHAR\n" +
+            "    ) AS labs\n" +
+            "FROM (\n" +
+            "    SELECT\n" +
+            "        uuid AS VisitID,\n" +
+            "        id,\n" +
+            "        CAST(lo.order_date AS DATE) AS OrderedTestDate,\n" +
+            "        CAST(lo.order_date AS DATE) AS VisitDate,\n" +
+            "        lo.patient_uuid\n" +
+            "    FROM\n" +
+            "        laboratory_order lo\n" +
+            "    WHERE\n" +
+            "        lo.order_date IS NOT NULL\n" +
+            "        AND lo.archived = 0\n" +
+            "        AND lo.facility_id = ?1\n" +
+            "        AND lo.order_date >= ?2\n" +
+            "        AND lo.order_date <= ?3\n" +
+
+            ") lo\n" +
+            "INNER JOIN (\n" +
+            "\t\n" +
+            "\t SELECT\n" +
+            "    lt.id,\n" +
+            "    lt.lab_order_id,\n" +
+            "    lt.lab_test_id,\n" +
+            "    lt.lab_test_group_id,\n" +
+            "    lt.patient_uuid,\n" +
+            "    llt.modified_lab_test_name,  -- Using a modified name for comparison\n" +
+            "    lt.lab_order_id AS LaboratoryTestIdentifier,\n" +
+            "    testncs.code AS LaboratoryTestTypeCode,\n" +
+            "    testncs.code AS LaboratoryResultedTestCode,\n" +
+            "    testncs.code_description AS LaboratoryResultedTestCodeDescTxt\n" +
+            "FROM\n" +
+            "    laboratory_test lt\n" +
+            "INNER JOIN (\n" +
+            "    SELECT\n" +
+            "        id,\n" +
+            "        labtestgroup_id,\n" +
+            "        CASE\n" +
+            "           WHEN lab_test_name ilike 'Gene Xpert' THEN 'Other Test (TB-LAM, LF-LAM, etc)'\n" +
+            "\t       WHEN lab_test_name = 'TB-LAM' THEN 'Other Test (TB-LAM, LF-LAM, etc)'\n" +
+            "\t       WHEN lab_test_name = 'LF-LAM' THEN 'Other Test (TB-LAM, LF-LAM, etc)'\n" +
+            "\t       WHEN lab_test_name = 'Visitect CD4' THEN 'CD4 LFA RESULT'\n" +
+            "            ELSE lab_test_name\n" +
+            "        END AS modified_lab_test_name\n" +
+            "    FROM\n" +
+            "        laboratory_labtest\n" +
+            ") llt ON llt.id = lt.lab_test_id\n" +
+            "LEFT JOIN\n" +
+            "    ndr_code_set testncs ON TRIM(LOWER(llt.modified_lab_test_name)) = TRIM(LOWER(testncs.code_description))\n" +
+            "WHERE\n" +
+            "    lt.archived = 0\n" +
+            "    AND testncs.code_set_nm = 'LAB_RESULTED_TEST'\n" +
+            "    AND lt.facility_id = ?1\n" +
+            ") lt ON lt.lab_order_id = lo.id AND lt.patient_uuid = lo.patient_uuid\n" +
+            "INNER JOIN (\n" +
+            "    SELECT\n" +
+            "        DISTINCT CAST(ls.date_sample_collected AS DATE) AS CollectionDate,\n" +
+            "        ls.patient_uuid,\n" +
+            "        test_id\n" +
+            "    FROM\n" +
+            "        laboratory_sample ls\n" +
+            "    WHERE\n" +
+            "        ls.archived = 0\n" +
+            "        AND ls.facility_id = ?1\n" +
+            "        AND ls.date_sample_collected IS NOT NULL\n" +
+            "        AND ls.date_sample_collected >= ?2\n" +
+            "        AND ls.date_sample_collected <= ?3\n" +
+            ") ls ON ls.test_id = lt.id AND ls.patient_uuid = lo.patient_uuid\n" +
+            "INNER JOIN (\n" +
+            "    SELECT\n" +
+            "        DISTINCT CAST(lr.date_result_reported AS DATE) AS resultedTestDate,\n" +
+            "        lr.patient_uuid,\n" +
+            "        lr.result_reported AS LaboratoryResultAnswerNumeric,\n" +
+            "        lr.test_id\n" +
+            "    FROM\n" +
+            "        laboratory_result lr\n" +
+            "    WHERE\n" +
+            "        lr.archived = 0\n" +
+            "        AND lr.facility_id = ?1\n" +
+            "        AND lr.date_result_reported IS NOT NULL\n" +
+            "        AND lr.result_reported IS NOT NULL\n" +
+            "        AND lr.date_result_reported >= ?2\n" +
+            "        AND lr.date_result_reported <= ?3\n" +
+            ") lr ON lr.test_id = lt.id AND lr.patient_uuid = lt.patient_uuid\n" +
+            "GROUP BY lo.patient_uuid", nativeQuery = true)
+    HashSet<PatientLabEncounterDTO> getAllPatientLabEncounter(Long facilityId, LocalDate start, LocalDate end);
     
     @Query(value = "SELECT hac.person_uuid as patientUuid, cast( json_agg(distinct  jsonb_build_object('visitID', hac.uuid,\n" +
             "\t\t\t\t\t\t\t\t\t  'visitDate', CAST(hac.visit_date AS DATE),\n" +
@@ -336,6 +542,7 @@ public interface NdrMessageLogRepository extends JpaRepository<NdrMessageLog, In
            "           OR (hst.last_modified_date  between ?1 and ?2) \n" +
            "           AND ph.facility_id = ?3", nativeQuery = true)
    List<String>  getPatientIdsEligibleForNDR(LocalDateTime start, LocalDateTime endDate,  long facilityId);
+
    
   @Query(value = "SELECT\n" +
           "    lo.patient_uuid,\n" +
