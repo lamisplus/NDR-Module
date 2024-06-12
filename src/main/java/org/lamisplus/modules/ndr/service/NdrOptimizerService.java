@@ -70,7 +70,57 @@ public class NdrOptimizerService {
 	HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets = new HashSet<>();
 	HashSet<PatientLabEncounterDTO> labEncounterResultSets = new HashSet<>();
 
+	public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean initial, List<String> patientUuidList) {
+		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
+		log.info("folder -> "+ pathname);
+		List<String> idsNotGenerated = new LinkedList<>();
+		ndrService.cleanupFacility(facilityId, pathname);
+		AtomicInteger generatedCount = new AtomicInteger();
+		AtomicInteger errorCount = new AtomicInteger();
+		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
 
+		//get a list of object from DB
+		LocalDate start = LocalDate.of(1985, Month.JANUARY, 1);
+		LocalDate end = LocalDate.now().plusDays(1);
+//		//rework the date issues later
+		HashSet<PatientEncounterDTO> encounterResultSets = data.getAllPatientEncounters(facilityId, start, end);
+		HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets = data.getAllPatientPharmacyEncounter(facilityId, start, end);
+		HashSet<PatientLabEncounterDTO> labEncounterResultSets = data.getAllPatientLabEncounter(facilityId, start, end);
+
+		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
+		log.info("got patient size -> "+ patientUuidList.size());
+
+		String pushIdentifier = UUID.randomUUID().toString();
+
+		patientUuidList.parallelStream()
+			.forEach(id -> {
+				if (getPatientNDRXml(id, facilityId, initial, ndrErrors, pushIdentifier)) {
+					generatedCount.getAndIncrement();
+					patientDemographicDTO[0] = data.getPatientDemographics(id, facilityId).get();
+				} else {
+					idsNotGenerated.add(id);
+					errorCount.getAndIncrement();
+				}
+			});
+		log.info("generated  {}/{}", generatedCount.get(), patientUuidList.size());
+		log.info("files not generated  {}/{}", errorCount.get(), patientUuidList.size());
+		log.info("patientIds of files not generated: {}", idsNotGenerated);
+		File folder = new File(BASE_DIR + "temp/" + facilityId + "/");
+		log.info("fileSize {} bytes ", ZipUtility.getFolderSize(folder));
+		if (ZipUtility.getFolderSize(folder) >= 15_000_000) {
+			log.info(BASE_DIR + "temp/" + facilityId + "/" + " will be split into two");
+		}
+		if (generatedCount.get() > 0) {
+			zipAndSaveTheFilesforDownload(
+					facilityId,
+					pathname,
+					generatedCount,
+					patientDemographicDTO[0],
+					ndrErrors,"treatment", pushIdentifier
+			);
+		}
+		log.error("error list size {}", ndrErrors.size());
+	}
 	public void generatePatientsNDRXml(long facilityId, boolean initial){
 
 		List<String> patientIds = new ArrayList<String>();
@@ -121,14 +171,6 @@ public class NdrOptimizerService {
 		generatedCount.set((int) unModfiedCounts);
 		AtomicInteger errorCount = new AtomicInteger();
 		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
-
-		//get a list of object from DB
-//		LocalDate start = LocalDate.of(1985, Month.JANUARY, 1);
-//		LocalDate end = LocalDate.now().plusDays(1);
-//		//rework the date issues later
-//		HashSet<PatientEncounterDTO> encounterResultSets = data.getAllPatientEncounters(facilityId, start, end);
-//		HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets = data.getAllPatientPharmacyEncounter(facilityId, start, end);
-//		HashSet<PatientLabEncounterDTO> labEncounterResultSets = data.getAllPatientLabEncounter(facilityId, start, end);
 
 		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
 
