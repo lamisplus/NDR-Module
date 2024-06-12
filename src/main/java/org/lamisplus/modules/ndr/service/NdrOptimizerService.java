@@ -66,9 +66,9 @@ public class NdrOptimizerService {
 	public static final String XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION = "\n<!-- This XML was generated from LAMISPlus application -->";
 	public static final String HEADER_BIND_COMMENT = "com.sun.xml.bind.xmlHeaders";
 	public final AtomicLong messageId = new AtomicLong(0);
-	HashSet<PatientEncounterDTO> encounterResultSets = new HashSet<>();
-	HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets = new HashSet<>();
-	HashSet<PatientLabEncounterDTO> labEncounterResultSets = new HashSet<>();
+	HashSet<PatientEncounterDTO> encounterResultSets;
+	HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets;
+	HashSet<PatientLabEncounterDTO> labEncounterResultSets;
 
 	public void generateNDRXMLByFacilityAndListOfPatient(Long facilityId, boolean initial, List<String> patientUuidList) {
 		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
@@ -83,9 +83,9 @@ public class NdrOptimizerService {
 		LocalDate start = LocalDate.of(1985, Month.JANUARY, 1);
 		LocalDate end = LocalDate.now().plusDays(1);
 //		//rework the date issues later
-		HashSet<PatientEncounterDTO> encounterResultSets = data.getAllPatientEncounters(facilityId, start, end);
-		HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets = data.getAllPatientPharmacyEncounter(facilityId, start, end);
-		HashSet<PatientLabEncounterDTO> labEncounterResultSets = data.getAllPatientLabEncounter(facilityId, start, end);
+		 encounterResultSets = data.getAllPatientEncounters(facilityId, start, end);
+		 pharmacyEncounterResultSets = data.getAllPatientPharmacyEncounter(facilityId, start, end);
+		 labEncounterResultSets = data.getAllPatientLabEncounter(facilityId, start, end);
 
 		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
 		log.info("got patient size -> "+ patientUuidList.size());
@@ -129,9 +129,9 @@ public class NdrOptimizerService {
 		LocalDate startDate = LocalDate.of(1985, Month.JANUARY, 1);
 		LocalDate endDate = LocalDate.now().plusDays(1);
 		//rework the date issues later
-		HashSet<PatientEncounterDTO> encounterResultSets = data.getAllPatientEncounters(facilityId, startDate, endDate);
-		HashSet<PatientPharmacyEncounterDTO> pharmacyEncounterResultSets = data.getAllPatientPharmacyEncounter(facilityId, startDate, endDate);
-		HashSet<PatientLabEncounterDTO> labEncounterResultSets = data.getAllPatientLabEncounter(facilityId, startDate, endDate);
+		encounterResultSets = data.getAllPatientEncounters(facilityId, startDate, endDate);
+		pharmacyEncounterResultSets = data.getAllPatientPharmacyEncounter(facilityId, startDate, endDate);
+		labEncounterResultSets = data.getAllPatientLabEncounter(facilityId, startDate, endDate);
 
 		if (initial) {
 			patientIds = data.getPatientIdsEligibleForNDR(start, LocalDateTime.now(), facilityId);
