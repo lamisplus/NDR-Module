@@ -78,7 +78,6 @@ public class NdrOptimizerService {
 		AtomicInteger generatedCount = new AtomicInteger();
 		AtomicInteger errorCount = new AtomicInteger();
 		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
-
 		//get a list of object from DB
 		LocalDate start = LocalDate.of(1985, Month.JANUARY, 1);
 		LocalDate end = LocalDate.now().plusDays(1);
@@ -255,7 +254,6 @@ public class NdrOptimizerService {
 				//patientLabEncounters = getPatientLastLabEncounter(patientId, facilityId, objectMapper, ndrErrors);
 			}
 			// those that have updated
-
 			MortalityType mortality = mortalityTypeMapper.getMortalityType(patientId, facilityId, start, end, ndrErrors);
 			String fileName = generatePatientNDRXml(
 					facilityId, patientDemographic,
