@@ -124,7 +124,7 @@ public class PatientDemographicsMapper {
         // @XmlElement(name = "TreatmentFacility", required = true)
         // @XmlElement(name = "PatientDateOfBirth", required = true)
         //  @XmlElement(name = "PatientSexCode", required = true)
-        PatientDemographicsType patientDemographicsType = new PatientDemographicsType ();
+        PatientDemographicsType patientDemographicsType = new PatientDemographicsType();
         //log.info("patientIdentifier {}", demographicDTO.getPatientIdentifier());
         try {
             if(StringUtils.isNotBlank(demographicDTO.getPatientIdentifier())) {

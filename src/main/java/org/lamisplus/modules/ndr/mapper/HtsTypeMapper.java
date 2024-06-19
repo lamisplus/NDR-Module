@@ -57,35 +57,23 @@ public class HtsTypeMapper {
                     validAndSetHbV(h.getHbvTestResult(), hivTestingReportType);
                     validAndSetHcV(h.getHcvTestResult(), hivTestingReportType);
 
-
-
                     IndexNotificationServicesType indexNotificationServicesType = new IndexNotificationServicesType();
                     //List<PartnerNotificationType> partnerNotifications = getAllPartnerNotification(query);
 
                     List<PartnerNotificationType> partnerNotifications = getAllPartnerNotification(h, errors);
-                    log.info("List of partner notification size {} ", partnerNotifications.size());
-                    indexNotificationServicesType.getPartner().addAll(partnerNotifications);
-                    hivTestingReportType.setIndexNotificationServices(indexNotificationServicesType);
-
-
-
-                    //IndexNotificationServicesType indexNotificationServicesType = objectFactory.createIndexNotificationServicesType();
-                    //List<PartnerNotificationType> partnerNotifications = getPartnerNotification(Hts);
-                    //define a method pass partnernotificationtype and HTSdto return a list partnerNotifications
-                    // should loop and set partner notifications variables
-                    //IndexNotificationServicesType indexNotificationServicesType =  new IndexNotificationServicesType();
-                    //indexNotificationServicesType.getPartner().addAll(getAllPartnerNotification);
-                    //hivTestingReportType.setIndexNotificationServices(indexNotificationServicesType);
-                    //PartnerNotificationType partnerNotificationType = setPartnerNotification(objectFactory, h);
-                    //hivTestingReportType.setIndexNotificationServices(partnerNotificationType);
-
-
+                    if(!partnerNotifications.isEmpty()){
+                        log.info("Total number of partner notification size {} ", partnerNotifications.size());
+                        indexNotificationServicesType.getPartner().addAll(partnerNotifications);
+                        hivTestingReportType.setIndexNotificationServices(indexNotificationServicesType);
+                    }
 
                     hivTestingReportType.setPostTestCounselling(postTestCounsellingType);
                     HIVTestResultType hivTestResultType = setResult(objectFactory, h);
                     hivTestingReportType.setHIVTestResult(hivTestResultType);
                     hivTestingReport.add(hivTestingReportType);
                 } catch (Exception e) {
+                    log.error("Error generating hivTestingReportType uuid {}  errorMsg {}",
+                            h.getClientCode(), e.getMessage());
                     errors.add(new NDRErrorDTO(h.getClientCode(), h.getVisitId(), Arrays.toString(e.getStackTrace())));
                     e.printStackTrace();
                 }
@@ -96,14 +84,16 @@ public class HtsTypeMapper {
     }
 
     private List<PartnerNotificationDTO> getPartnerNotifications (HtsReportDto h, List<NDRErrorDTO> ndrErrors) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            TypeFactory typeFactory = objectMapper.getTypeFactory();
-            return objectMapper.readValue(h.getPartnerNotification(), typeFactory.constructCollectionType(List.class, PartnerNotificationDTO.class));
-        } catch (Exception e) {
-            log.error("Error reading partner notification of patient with uuid {}  errorMsg {}",
-                    h.getClientCode(), e.getMessage());
-            ndrErrors.add(new NDRErrorDTO(h.getClientCode(),  "", e.getMessage()));
+        if(!StringUtils.isBlank(h.getPartnerNotification())){
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                TypeFactory typeFactory = objectMapper.getTypeFactory();
+                return objectMapper.readValue(h.getPartnerNotification(), typeFactory.constructCollectionType(List.class, PartnerNotificationDTO.class));
+            } catch (Exception e) {
+                log.error("Error reading partner notification of patient with uuid {}  errorMsg {}",
+                        h.getClientCode(), e.getMessage());
+                ndrErrors.add(new NDRErrorDTO(h.getClientCode(),  "", e.getMessage()));
+            }
         }
         return new ArrayList<>();
     }
@@ -159,7 +149,7 @@ public class HtsTypeMapper {
             throw new IllegalArgumentException("ScreeningTestResult can not be null kindly correct");
         }
         validateAndSetTestResultDate(h.getScreeningTestResultDate(), testResult);
-        if (h.getConfirmatoryTestResult().equalsIgnoreCase("negative")) {
+        if (!StringUtils.isBlank(h.getConfirmatoryTestResult()) && h.getConfirmatoryTestResult().equalsIgnoreCase("negative")) {
             testResult.setConfirmatoryTestResult("NR");
             testResult.setFinalTestResult("Neg");
             testResult.setTieBreakerTestResult("NR");
@@ -493,8 +483,6 @@ public class HtsTypeMapper {
         postTest.setCondomsProvidedToClient(h.getCondomsProvidedToClient());
         postTest.setClientReferredToOtherServices(h.getClientReferredToOtherServices());
         return postTest;
-
-
     }
 
     private static void validateAndSetFirstTime(String firstTime, HIVTestingReportType hivTestingReportType) {

@@ -252,6 +252,9 @@ public class NDRService {
 //        }
 //    }
 
+
+
+
     public NDRStatus shouldPrintPatientContainerXml(String personUuid , Long facilityId, boolean isInitial, String pushIdentifier) {
         log.info("generating ndr xml of patient with uuid {}" , personUuid);
         try {

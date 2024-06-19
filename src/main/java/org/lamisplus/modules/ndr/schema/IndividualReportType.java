@@ -141,7 +141,7 @@ public class IndividualReportType {
      */
     public List<HIVTestingReportType> getHIVTestingReport() {
         if (hivTestingReport == null) {
-            hivTestingReport = new ArrayList<HIVTestingReportType>();
+            hivTestingReport = new ArrayList<>();
         }
         return this.hivTestingReport;
     }

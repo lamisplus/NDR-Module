@@ -33,7 +33,7 @@ public class NDRController {
     private final RedactService redactService;
 
 
-    @GetMapping("/generate/{personId}")
+    /*@GetMapping("/generate/{personId}")
     public void generatePatientXml(@PathVariable("personId") String personId, @RequestParam("facility") Long facility) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String pushIdentifier = UUID.randomUUID().toString();
@@ -48,6 +48,7 @@ public class NDRController {
         ndrOptmizationService.generatePatientOneNDRXml(facility, true, personId);
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
     }
+
     @GetMapping("/generate")
     public boolean generateFacilityPatientXmls(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial ){
         messagingTemplate.convertAndSend("/topic/ndr-status", "start");
@@ -61,8 +62,9 @@ public class NDRController {
         messagingTemplate.convertAndSend("/topic/ndr-status", "end");
         log.info("Total time taken to generate a file: {}", stopwatch.elapsed().toMillis());
         return result.contains(true);
-    }
-    
+    }*/
+
+    ///this generates a single patient from the table view
     @GetMapping("/generate/patients")
     public void generateFacilitySelectedPatientXmls(
             @RequestParam List<Long> facilityIds,
@@ -102,6 +104,9 @@ public class NDRController {
     @GetMapping("/hts")
     public ResponseEntity<Void> generateHts(@RequestParam List<Long> facilityIds, @RequestParam boolean isInitial) {
         Stopwatch stopwatch = Stopwatch.createStarted();
+
+        LocalDateTime start = LocalDateTime.of(1984, 1, 1, 0, 0);
+        //htsService.InitializeDataSource(facilityIds.get(0), start);
         facilityIds.forEach(facilityId -> htsService.generatePatientsHtsNDRXml(facilityId, isInitial));
         log.info("Total time taken to generate the NDR files: {}", stopwatch.elapsed().toMinutes());
         return ResponseEntity.ok().build();

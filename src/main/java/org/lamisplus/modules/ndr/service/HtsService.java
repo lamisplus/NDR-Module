@@ -14,7 +14,9 @@ import org.lamisplus.modules.ndr.repositories.NdrMessageLogRepository;
 import org.lamisplus.modules.ndr.repositories.NdrXmlStatusRepository;
 import org.lamisplus.modules.ndr.schema.*;
 import org.lamisplus.modules.ndr.utility.ZipUtility;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -23,20 +25,20 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.File;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class HtsService {
-	
+
 	private final NdrMessageLogRepository data;
 	
 	private final NDRService ndrService;
@@ -55,13 +57,31 @@ public class HtsService {
 	public final HtsTypeMapper htsTypeMapper;
 
 	private final NdrOptimizationService ndrOptimizationService;
+	private Marshaller jaxbMarshaller;
+
+	private ArrayList<HtsReportDto> htsReportList;
+	private Map<String, PatientDemographicDTO> patientMap;
+
+	//@Transactional(readOnly = true)
+	public void InitializeDataSource(Long facilityId, LocalDateTime start){
+
+		log.info("Generating HTS Report ResultSets");
+		htsReportList = data.getAllHTSReport(facilityId,start);
+		log.info("Generated htsReportMap size -> "+ htsReportList.size());
+
+		log.info("Generating HTS PatientDemographics");
+		HashSet<PatientDemographicDTO> htsPatientDemographics = data.getAllHtsPatientDemographics(facilityId, start);
+		patientMap = new HashMap<>();
+		for (PatientDemographicDTO patient : htsPatientDemographics) {
+			patientMap.put(patient.getClientCode(), patient);
+		}
+		log.info("Patient Demographic size -> "+ patientMap.size());
+
+		generateHtsMarshaller();
+	}
 
 
-
-
-
-
-	private boolean getPatientHtsNDRXml(String clientCode, long facilityId, boolean initial, ObjectFactory obj, List<NDRErrorDTO> ndrErrors) {
+	private PatientDemographicDTO getPatientHtsNDRXml(String clientCode, long facilityId, boolean initial, ObjectFactory obj, List<NDRErrorDTO> ndrErrors) {
 		log.info("starting process patient xml file information");
 		log.info("facilityId {}, patientId {}", facilityId, clientCode);
 		LocalDateTime start = LocalDateTime.of(1985, Month.JANUARY, 1,0,0);
@@ -69,6 +89,11 @@ public class HtsService {
 
 		PatientDemographicDTO patientDemographic =
 				getPatientDemographic(facilityId, clientCode, start, ndrErrors);
+		if (patientDemographic == null)
+		{
+			log.info("clientCode {} not found", clientCode);
+			return null;
+		}
 
 		if (!initial && patientDemographic != null) {
 			Optional<NdrMessageLog> messageLog =
@@ -77,30 +102,27 @@ public class HtsService {
 				start = messageLog.get().getLastUpdated();
 			}
 		}
-		if (patientDemographic == null) return false;
+
 		List<HtsReportDto> patientHtsDetails = getPatientHtsDetails(facilityId, clientCode, start);
 		//List<PartnerNotificationTypeDto> partners = getPartnerNotifications(facilityId, clientCode);
-		String fileName = generatePatientHtsNDRXml(
-				facilityId,
-				obj,
-				patientDemographic,
-				patientHtsDetails,
-				initial,
-				ndrErrors);
+		String fileName = generatePatientHtsNDRXml(facilityId,obj,patientDemographic,patientHtsDetails,initial,ndrErrors);
 		if (fileName != null) {
 			ndrOptimizationService.saveTheXmlFile(patientDemographic.getPatientIdentifier(), fileName, "hts");
+			return patientDemographic;
 		}
-		return fileName != null;
+		return null;
 	}
 
 
 	  PatientDemographicDTO getPatientDemographic( long facilityId, String clientCode, LocalDateTime lastModified,  List<NDRErrorDTO> ndrErrors){
 		log.info("Getting patient Demographics....");
 		try {
-			Optional<PatientDemographicDTO> htsPatientDemographics = data.getHtsPatientDemographics(facilityId, clientCode, lastModified);
-			if(htsPatientDemographics.isPresent()){
+			PatientDemographicDTO htsPatientDemographics = patientMap.get(clientCode);
+			return 	htsPatientDemographics;
+					//data.getHtsPatientDemographics(facilityId, clientCode, lastModified);
+			/*if(htsPatientDemographics.isPresent()){
 				return htsPatientDemographics.get();
-			}
+			}*/
 		}catch (Exception e){
 		  ndrErrors.add(new NDRErrorDTO(clientCode, "", Arrays.toString(e.getStackTrace())));
 		  e.printStackTrace();
@@ -109,7 +131,8 @@ public class HtsService {
 	  }
 
 	  List<HtsReportDto> getPatientHtsDetails(long facilityId, String clientCode, LocalDateTime lastModified ){
-		return data.getHstReportByClientCodeAndLastModified(facilityId, clientCode,lastModified);
+		   return htsReportList.parallelStream().filter(f-> f.getClientCode().equals(clientCode)).collect(Collectors.toList());
+		//return data.getHstReportByClientCodeAndLastModified(facilityId, clientCode,lastModified);
 	  }
 
 	//List<PartnerNotificationTypeDto> getPartnerNotifications (long facilityId, String clientCode ){
@@ -117,7 +140,9 @@ public class HtsService {
 	//}
 
 	public void generatePatientsHtsNDRXml(long facilityId, boolean initial) {
+
 		ObjectFactory objectFactory = new ObjectFactory();
+
 		final String pathname = BASE_DIR + "temp/" + facilityId + "/";
 		log.info("folder -> "+ pathname);
 		ndrService.cleanupFacility(facilityId, pathname);
@@ -125,8 +150,9 @@ public class HtsService {
 		AtomicInteger errorCount = new AtomicInteger();
 		LocalDateTime start = LocalDateTime.of(1984, 1, 1, 0, 0);
 		List<String> patientIds = new ArrayList<>();
-		List<NDRErrorDTO> ndrErrors = new ArrayList<NDRErrorDTO>();
+		List<NDRErrorDTO> ndrErrors = new ArrayList<>();
 		PatientDemographicDTO[] patientDemographicDTO = new PatientDemographicDTO[1];
+
 		if (initial) {
 			patientIds = data.getHtsClientCode(facilityId, start);
 			log.info("generating initial ....");
@@ -141,14 +167,16 @@ public class HtsService {
 			}
 		}
 
-
 		log.info("patient size -> "+ patientIds.size());
-		LocalDateTime finalStart = start;
+
+		InitializeDataSource(facilityId, start);
+
 		patientIds.parallelStream()
 				.forEach(id -> {
-					if (getPatientHtsNDRXml(id, facilityId, initial,objectFactory, ndrErrors)) {
+					patientDemographicDTO[0] = getPatientHtsNDRXml(id, facilityId, initial,objectFactory, ndrErrors);
+					if (patientDemographicDTO[0] !=null) {
 						generatedCount.getAndIncrement();
-						patientDemographicDTO[0] = data.getHtsPatientDemographics(facilityId, id , finalStart).get();
+						//patientDemographicDTO[0] = data.getHtsPatientDemographics(facilityId, id , finalStart).get();
 					} else {
 						errorCount.getAndIncrement();
 					}
@@ -174,25 +202,26 @@ public class HtsService {
 	}
 
 
-
-
 	private String generatePatientHtsNDRXml(
 			long facilityId,ObjectFactory objectFactory, PatientDemographicDTO patientDemographic,
 			List<HtsReportDto> htsReports, boolean initial, List<NDRErrorDTO> ndrErrors) {
+
 		log.info("generating ndr xml of patient with uuid {}", patientDemographic.getPatientIdentifier());
 		try {
 			log.info("fetching patient demographics....");
 			long id = messageId.incrementAndGet();
-			Container container = new Container();
-			JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+
 			PatientDemographicsType patientDemographics =
 					patientDemographicsMapper.getPatientDemographics(patientDemographic, true);
+
 			if (patientDemographics != null) {
 				log.info("fetching treatment details... ");
+
+				ConditionType conditionType = conditionTypeMapper.getConditionType(patientDemographic, true);
+
 				IndividualReportType individualReportType = new IndividualReportType();
-				ConditionType conditionType =
-						conditionTypeMapper.getConditionType(patientDemographic, true);
 				individualReportType.setPatientDemographics(patientDemographics);
+
 				MessageHeaderType messageHeader = messageHeaderTypeMapper.getMessageHeader(patientDemographic);
 				String messageStatusCode = "INITIAL";
 				if (!initial) {
@@ -204,23 +233,24 @@ public class HtsService {
 				}
 				messageHeader.setMessageStatusCode(messageStatusCode);
 				messageHeader.setMessageUniqueID(Long.toString(id));
+
+				Container container = new Container();
 				container.setMessageHeader(messageHeader);
 				container.setIndividualReport(individualReportType);
 				log.info("Done fetching treatment details ");
-				Marshaller jaxbMarshaller = ndrService.getMarshaller(jaxbContext);
-				jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
-				jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-				jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
-				SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR1_6_6_1.xsd"));
-				jaxbMarshaller.setSchema(schema);
+
 				if (conditionType != null) {
 					if(htsTypeMapper.getHivTestingReportType(individualReportType,objectFactory,htsReports, ndrErrors)){
 						individualReportType.getCondition().add(conditionType);
 					}
 					if(individualReportType.getHIVTestingReport().isEmpty()){
-						throw new IllegalArgumentException("No HTS test was found for patient with client code "+ patientDemographic.getClientCode());
+						log.info("No HTS test was found for patient with client code "+ patientDemographic.getClientCode());
+						//throw new IllegalArgumentException("No HTS test was found for patient with client code "+ patientDemographic.getClientCode());
+						return null;
 					}
+				}else{
+					log.info("conditionType is null");
+					return null;
 				}
 				log.info("converting treatment details to xml... ");
 				String fileName = ndrService.processAndGenerateNDRFile(facilityId, jaxbMarshaller, container, patientDemographic, id, ndrErrors);
@@ -240,5 +270,27 @@ public class HtsService {
 		return null;
 	}
 
+	private Marshaller generateHtsMarshaller() {
+		try {
+			log.info("generating a Marshaller object....");
+
+			JAXBContext jaxbContext = JAXBContext.newInstance(Container.class);
+			jaxbMarshaller = ndrService.getMarshaller(jaxbContext);
+			jaxbMarshaller.setProperty(HEADER_BIND_COMMENT, XML_WAS_GENERATED_FROM_LAMISPLUS_APPLICATION);
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, JAXB_ENCODING);
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = sf.newSchema(getClass().getClassLoader().getResource("NDR1_6_6_1.xsd"));
+			jaxbMarshaller.setSchema(schema);
+
+			return jaxbMarshaller;
+
+		} catch (Exception e) {
+			log.error("An error occur when generating Marshaller");
+			log.error("error: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }
